@@ -25,6 +25,7 @@ export default function Home() {
   let [filterRating, setFilterRating] = useState([0, 100]);
   let [filterCategory, setFilterCategory] = useState([])
   let [filterHideUnwatched, setFilterHideUnwatched] = useState(false);
+  let [filterHideWatched, setFilterHideWatched] = useState(false);
 
   let [optionsState, setOptionsState] = useState(1)
   let [seasonState, setSeasonState] = useState(0)
@@ -230,6 +231,13 @@ export default function Home() {
             <div className={styles.filter_input}>
               <Switch checked={filterHideUnwatched} onChange={(e) => {setFilterHideUnwatched(e.target.checked)}}/>
             </div>
+
+            <div className={styles.title}>
+              Hide Watched
+            </div>
+            <div className={styles.filter_input}>
+              <Switch checked={filterHideWatched} onChange={(e) => {setFilterHideWatched(e.target.checked)}}/>
+            </div>
           </div>
           :
           <div>
@@ -292,6 +300,10 @@ export default function Home() {
               if((getAverageRating(media) < filterRating[0] || getAverageRating(media) > filterRating[1])) { 
                 return;
               }
+            }
+
+            if(filterHideWatched && getAverageRating(media) != -1) {
+              return;
             }
 
             if(!media.toLowerCase().includes(filterName.toLowerCase()) && filterName.toLowerCase() != "") {
