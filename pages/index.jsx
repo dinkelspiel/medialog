@@ -326,7 +326,7 @@ export default function Home() {
                   <div className={styles.selected} />
                   : ""
                 }
-                <Image className={styles.image_spacer} src={editableData[media]["cover_url"] != undefined ? editableData[media]["cover_url"] : ""} height="64" width="64" />
+                <img className={styles.image_spacer} src={editableData[media]["cover_url"] != undefined ? editableData[media]["cover_url"] : ""} height="64" width="64" />
                 <div className={styles.name}>
                   {editableData[media]["disname"]}
                 </div>
