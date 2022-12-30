@@ -6,9 +6,9 @@ import ReactJson from '@textea/json-viewer'
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse<{[key: string]: Media}>
+  res: NextApiResponse<any>
 ) {
-  let data: {[key: string]: Media} = await get_data();
+  let data = await get_data();
 
   if(req.method == "GET") {
     res.status(200).json(await get_data());

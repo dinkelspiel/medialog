@@ -1,14 +1,13 @@
 import path from 'path';
 import { promises as fs } from 'fs';
-import type { Media, MediaSeason } from "./types"
 
-export async function get_data(): {[key: string]: Media} {
+export async function get_data() {
   const jsonDirectory = path.join(process.cwd(), 'data');
   const fileContents = await fs.readFile(jsonDirectory + '/data.json', 'utf8');
   return JSON.parse(fileContents)
 }
 
-export async function set_data(data: {[key: string]: Media}) {
+export async function set_data(data: object) {
   let date = new Date().toUTCString().substring(5, new Date().toUTCString().length - 4).replaceAll(" ", "-");
 
   const dataDirectory = path.join(process.cwd(), 'data');

@@ -5,7 +5,6 @@
 import ThumbsUpDownIcon from '@mui/icons-material/ThumbsUpDown';
 import TvIcon from '@mui/icons-material/Tv';
 import { Delete } from '@mui/icons-material';
-import { get_data, set_data } from "../src/data"
 import { Media, MediaSeason } from "../src/types"
 import Image from 'next/image'
 
@@ -17,7 +16,7 @@ import { Button, Icon, IconButton, MenuItem, Select, Slider, Switch, TextField }
 
 export default function Home() {
 
-  let [editMedia, setEditMedia]: String = useState("");
+  let [editMedia, setEditMedia] = useState("");
   let [editMediaExpanded, setEditMediaExpanded] = useState("");
 
   let [editableData, setEditableData] = useState(JSON.parse(JSON.stringify(data)));
@@ -44,21 +43,21 @@ export default function Home() {
   let [editMediaCoverURL, setEditMediaCoverURL] = useState("")
   let [editMediaError, setEditMediaError] = useState("")
 
-  function getAverageRating(media: String): Number {
+  function getAverageRating(media) {
     if(!Object.keys(editableData).includes(media)) {
       return -1;
     }
 
-    let totalRating: Number = 0;
+    let totalRating = 0;
 
     Object.keys(editableData[media]["seasons"]).forEach((season, idx) => {
-      totalRating += Number(editableData[media]["seasons"][season]["rating"])
+      totalRating += parseInt(editableData[media]["seasons"][season]["rating"])
     })
 
-    return String(totalRating / Object.keys(editableData[media]["seasons"]).length) == "NaN" ? -1 : parseInt(totalRating / Object.keys(editableData[media]["seasons"]).length)
+    return String(totalRating / Object.keys(editableData[media]["seasons"]).length) == "NaN" ? -1 : parseInt((totalRating / Object.keys(editableData[media]["seasons"]).length).toString())
   }
 
-  function getCategoryIcon(category: String): JSX.Element {
+  function getCategoryIcon(category) {
     switch(category) {
       case "series":
         return <TvIcon />
@@ -88,8 +87,8 @@ export default function Home() {
     console.log(await (await res).text())
   }
 
-  const handleChangeRating = (event: Event, newValue: number | number[]) => {
-    setFilterRating(newValue as number[]);
+  const handleChangeRating = (event, newValue) => {
+    setFilterRating(newValue);
   };
 
   function handleChangeName(event) {    setFilterName(event.target.value);  }
@@ -310,13 +309,12 @@ export default function Home() {
             }
 
             return(
-              <div className={styles.row} onClick={() => { setEditMedia(media); setSeasonState(0) }}>
+              <div key={media} className={styles.row} onClick={() => { setEditMedia(media); setSeasonState(0) }}>
                 { editMedia == media ?
                   <div className={styles.selected} />
                   : ""
                 }
-                <img className={styles.image_spacer} src={editableData[media]["cover_url"] != undefined ? editableData[media]["cover_url"] : ""} height="64" width="64">
-                </img>
+                <Image className={styles.image_spacer} src={editableData[media]["cover_url"] != undefined ? editableData[media]["cover_url"] : ""} height="64" width="64" />
                 <div className={styles.name}>
                   {editableData[media]["disname"]}
                 </div>
@@ -360,7 +358,7 @@ export default function Home() {
                       Object.keys(editableData[editMedia]["seasons"]).map((val, idx) => {
 
                         return (
-                          <div>
+                          <div key={editMedia + val}>
                             <div className={styles.season_header} onClick={() => {editMediaExpanded != val ? setEditMediaExpanded(val) : setEditMediaExpanded("")}}>
                               <input className={styles.season_title} value={editableData[editMedia]["seasons"][val]["disname"]} onInput={(e) => {handleCustomInput(e, "studio", val)}} />
                               {
