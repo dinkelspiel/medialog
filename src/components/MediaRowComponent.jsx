@@ -17,7 +17,7 @@ const MediaRowComponent = (props) => {
     }
 
     return (
-        <div key={props.media} className={styles.row} onClick={() => { props.setEditMedia(props.media); props.setSeasonState(0); props.setMobileState(2) }}>
+        <div key={props.media} className={styles.row} onClick={() => { props.setEditMedia(props.media); props.setSeasonState(0); props.setMobileState ? props.setMobileState(2) : () => {} }}>
             { props.editMedia == props.media ?
                 <div className={styles.selected} />
                 : ""

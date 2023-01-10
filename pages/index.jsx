@@ -74,129 +74,12 @@ export default function Home() {
   
   return (
     <div>
-      <div className={styles.wrapper}>
-        { JSON.stringify(data) != JSON.stringify(editableData) ?
-          <div className={styles.change_container}>
-            Update Saved Data? <IconButton onClick={async () => {await set_data_from_editable()}}><Check /></IconButton> <IconButton onClick={() => {setEditableData(JSON.parse(JSON.stringify(data)))}}><Close /></IconButton>
-          </div> : ""
-        }
-        
-        { size.width > 830 ?
-          <div>
-            <OptionsContainer {...{
-              filterProps: {
-                filterName: filterName,
-                setFilterName: setFilterName,
-
-                filterRating: filterRating,
-                setFilterRating: setFilterRating,
-
-                filterCategory: filterCategory,
-                setFilterCategory: setFilterCategory,
-
-                filterHideUnwatched: filterHideUnwatched,
-                setFilterHideUnwatched: setFilterHideUnwatched,
-
-                filterHideWatched: filterHideWatched,
-                setFilterHideWatched: setFilterHideWatched
-              },
-              createProps: {
-                editableData: editableData,
-                setEditableData: setEditableData
-              },
-              setRef: optionsContainerRef
-            }}/>
-
-            <MediaContainer {...{
-              setRef: mediaContainerRef,
-
-              filterName: filterName,
-              filterCategory: filterCategory,
-              filterHideUnwatched: filterHideUnwatched,
-              filterHideWatched: filterHideWatched,
-              filterRating: filterRating,
-
-              editableData: editableData,
-
-              editMedia: editMedia,
-              setEditMedia: setEditMedia,
-
-              setSeasonState: setSeasonState
-            }} />
-
-            <SeasonContainer {...{
-              setRef: seasonsContainerRef,
-
-              editMedia: editMedia,
-              setEditMedia: setEditMedia,
-
-              seasonState: seasonState,
-              setSeasonState: setSeasonState,
-
-              editableData: editableData,
-              setEditableData: setEditableData
-            }} />
-          </div>
-          :
-          <div>
-            {
-              mobileState == 0 ?
-                <OptionsContainer {...{
-                  filterProps: {
-                    filterName: filterName,
-                    setFilterName: setFilterName,
+      { JSON.stringify(data) != JSON.stringify(editableData) ?
+        <div className={styles.change_container}>
+          Update Saved Data? <IconButton onClick={async () => {await set_data_from_editable()}}><Check /></IconButton> <IconButton onClick={() => {setEditableData(JSON.parse(JSON.stringify(data)))}}><Close /></IconButton>
+        </div> : ""
+      }
       
-                    filterRating: filterRating,
-                    setFilterRating: setFilterRating,
-      
-                    filterCategory: filterCategory,
-                    setFilterCategory: setFilterCategory,
-      
-                    filterHideUnwatched: filterHideUnwatched,
-                    setFilterHideUnwatched: setFilterHideUnwatched,
-      
-                    filterHideWatched: filterHideWatched,
-                    setFilterHideWatched: setFilterHideWatched
-                  },
-                  createProps: {
-                    editableData: editableData,
-                    setEditableData: setEditableData
-                  },
-                  setRef: optionsContainerRef
-                }}/> : mobileState == 1 ?  
-                <MediaContainer {...{
-                  setRef: mediaContainerRef,
-      
-                  filterName: filterName,
-                  filterCategory: filterCategory,
-                  filterHideUnwatched: filterHideUnwatched,
-                  filterHideWatched: filterHideWatched,
-                  filterRating: filterRating,
-      
-                  editableData: editableData,
-      
-                  editMedia: editMedia,
-                  setEditMedia: setEditMedia,
-      
-                  setSeasonState: setSeasonState,
-
-                  setMobileState: setMobileState
-                }} /> : mobileState == 2 ? <SeasonContainer {...{
-                  setRef: seasonsContainerRef,
-      
-                  editMedia: editMedia,
-                  setEditMedia: setEditMedia,
-      
-                  seasonState: seasonState,
-                  setSeasonState: setSeasonState,
-      
-                  editableData: editableData,
-                  setEditableData: setEditableData
-                }} /> : ""
-            }
-          </div>
-        }
-      </div>
       { size.width < 1370 ?
         <div className={styles.navbar}>
           <div className={styles.container}>
@@ -206,6 +89,123 @@ export default function Home() {
           </div>
         </div> : ""
       }
+
+      { size.width > 830 ?
+        <div className={styles.wrapper}>
+          <OptionsContainer {...{
+            filterProps: {
+              filterName: filterName,
+              setFilterName: setFilterName,
+
+              filterRating: filterRating,
+              setFilterRating: setFilterRating,
+
+              filterCategory: filterCategory,
+              setFilterCategory: setFilterCategory,
+
+              filterHideUnwatched: filterHideUnwatched,
+              setFilterHideUnwatched: setFilterHideUnwatched,
+
+              filterHideWatched: filterHideWatched,
+              setFilterHideWatched: setFilterHideWatched
+            },
+            createProps: {
+              editableData: editableData,
+              setEditableData: setEditableData
+            },
+            setRef: optionsContainerRef
+          }}/>
+
+          <MediaContainer {...{
+            setRef: mediaContainerRef,
+
+            filterName: filterName,
+            filterCategory: filterCategory,
+            filterHideUnwatched: filterHideUnwatched,
+            filterHideWatched: filterHideWatched,
+            filterRating: filterRating,
+
+            editableData: editableData,
+
+            editMedia: editMedia,
+            setEditMedia: setEditMedia,
+
+            setSeasonState: setSeasonState
+          }} />
+
+          <SeasonContainer {...{
+            setRef: seasonsContainerRef,
+
+            editMedia: editMedia,
+            setEditMedia: setEditMedia,
+
+            seasonState: seasonState,
+            setSeasonState: setSeasonState,
+
+            editableData: editableData,
+            setEditableData: setEditableData
+          }} />
+        </div>
+        :
+        <div className={styles.wrapper}>
+          {
+            mobileState == 0 ?
+              <OptionsContainer {...{
+                filterProps: {
+                  filterName: filterName,
+                  setFilterName: setFilterName,
+    
+                  filterRating: filterRating,
+                  setFilterRating: setFilterRating,
+    
+                  filterCategory: filterCategory,
+                  setFilterCategory: setFilterCategory,
+    
+                  filterHideUnwatched: filterHideUnwatched,
+                  setFilterHideUnwatched: setFilterHideUnwatched,
+    
+                  filterHideWatched: filterHideWatched,
+                  setFilterHideWatched: setFilterHideWatched
+                },
+                createProps: {
+                  editableData: editableData,
+                  setEditableData: setEditableData
+                },
+                setRef: optionsContainerRef
+              }}/> : mobileState == 1 ?  
+              <MediaContainer {...{
+                setRef: mediaContainerRef,
+    
+                filterName: filterName,
+                filterCategory: filterCategory,
+                filterHideUnwatched: filterHideUnwatched,
+                filterHideWatched: filterHideWatched,
+                filterRating: filterRating,
+    
+                editableData: editableData,
+    
+                editMedia: editMedia,
+                setEditMedia: setEditMedia,
+    
+                setSeasonState: setSeasonState,
+
+                setMobileState: setMobileState
+              }} /> : mobileState == 2 ? <SeasonContainer {...{
+                setRef: seasonsContainerRef,
+    
+                editMedia: editMedia,
+                setEditMedia: setEditMedia,
+    
+                seasonState: seasonState,
+                setSeasonState: setSeasonState,
+    
+                editableData: editableData,
+                setEditableData: setEditableData
+              }} /> : ""
+          }
+        </div>
+      }
+
     </div>
   )
 }
