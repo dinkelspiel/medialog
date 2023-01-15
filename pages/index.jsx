@@ -32,6 +32,9 @@ export default function Home() {
   let [filterHideUnwatched, setFilterHideUnwatched] = useState(false);
   let [filterHideWatched, setFilterHideWatched] = useState(false);
 
+  let [sortAfter, setSortAfter] = useState("name")
+  let [sortReverse, setSortReverse] = useState(false)
+
   let [seasonState, setSeasonState] = useState(0)
   let [mobileState, setMobileState] = useState(1)
 
@@ -113,6 +116,13 @@ export default function Home() {
               editableData: editableData,
               setEditableData: setEditableData
             },
+            sortProps: {
+              sortAfter: sortAfter,
+              setSortAfter: setSortAfter,
+
+              sortReverse: sortReverse,
+              setSortReverse: setSortReverse
+            },
             setRef: optionsContainerRef
           }}/>
 
@@ -130,7 +140,10 @@ export default function Home() {
             editMedia: editMedia,
             setEditMedia: setEditMedia,
 
-            setSeasonState: setSeasonState
+            setSeasonState: setSeasonState,
+
+            sortAfter: sortAfter,
+            sortReverse: sortReverse
           }} />
 
           <SeasonContainer {...{
