@@ -93,6 +93,14 @@
     border: 1px solid #FF597B;
 }
 
+@media only screen and (max-width: 470px){
+    .name {
+        width: auto !important;
+        min-width: none !important;
+        max-width: none !important;
+    }
+}
+
 @media only screen and (max-width: 1370px){
     .media_container {
         margin-left: auto;

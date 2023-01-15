@@ -1,6 +1,7 @@
 import React from 'react'
 import styles from "./media.module.css"
 import MediaRowComponent from "./MediaRowComponent"
+import useWindowSize from "../size"
 
 import { ThumbsUpDown, Tv } from '@mui/icons-material'
 
@@ -23,7 +24,9 @@ const MediaContainer = (props) => {
     return (
         <div className={styles.media_container} ref={props.setRef}> 
             <div className={styles.header}>
-                <div className={styles.image_spacer} />
+                { useWindowSize().width > 470 ?
+                    <div className={styles.image_spacer} /> : ""
+                }
                 <div className={styles.name}>
                     Name
                 </div>
