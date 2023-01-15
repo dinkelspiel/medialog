@@ -1,6 +1,7 @@
 import { MenuBook, Movie, Podcasts, Tv } from '@mui/icons-material'
-import React from 'react'
+import React, {useState, useEffect} from 'react'
 import styles from "./media.module.css"
+import useWindowSize from "../size"
 
 const MediaRowComponent = (props) => {
     function getCategoryIcon(category) {
@@ -22,7 +23,10 @@ const MediaRowComponent = (props) => {
                 <div className={styles.selected} />
                 : ""
             }
-            <img className={styles.image_spacer} src={props.editableData[props.media]["cover_url"] != undefined ? props.editableData[props.media]["cover_url"] : ""} height="64" width="64" />
+            { useWindowSize().width > 470 ?
+                <img className={styles.image_spacer} src={props.editableData[props.media]["cover_url"] != undefined ? props.editableData[props.media]["cover_url"] : ""} height="64" width="64" />
+                : ""
+            }
             <div className={styles.name}>
                 {props.editableData[props.media]["disname"]}
             </div>
