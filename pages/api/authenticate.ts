@@ -11,8 +11,7 @@ export default async function handler(
   let data = await get_data();
 
   if(req.method == "GET") {
-    let obj = await get_data();
-    res.status(200).json(obj);
+    res.status(200).json(await get_data());
   } else if(req.method == "PUT") {
     if(JSON.parse(req.body)["data"] == undefined) {
         res.status(400).send("No data provided in body")
