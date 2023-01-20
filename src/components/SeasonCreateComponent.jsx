@@ -45,7 +45,7 @@ const SeasonCreateComponent = (props) => {
                     })
                 }
                 </div>
-            <div>
+            <div className={styles.scontainer}>
                 <div className={styles.title}>
                     Name
                 </div>
