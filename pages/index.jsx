@@ -11,7 +11,6 @@ import { Media, MediaSeason } from "../src/types"
 import Image from 'next/image'
 
 import styles from "./index.module.css"
-import data from "../data/data.json"
 import { Add, Check, Close, ExpandLess, ExpandMore, MenuBook, Movie, Podcasts, Tune, FormatListBulleted, Settings } from '@mui/icons-material';
 import { useRef, useState, useEffect } from 'react';
 import { Button, Icon, IconButton, MenuItem, Select, Slider, Switch, TextField } from '@mui/material';
@@ -26,7 +25,8 @@ export default function Home() {
 
   let [editMedia, setEditMedia] = useState("");
 
-  let [editableData, setEditableData] = useState(JSON.parse(JSON.stringify(data)));
+  let [data, setData] = useState({});
+  let [editableData, setEditableData] = useState({});
 
   let [filterName, setFilterName] = useState("");
   let [filterRating, setFilterRating] = useState([0, 100]);
@@ -40,6 +40,17 @@ export default function Home() {
   let [seasonState, setSeasonState] = useState(0)
   let [mobileState, setMobileState] = useState(1)
 
+  async function get_data() {
+    let res = await fetch('/api/data', {
+      method: 'GET'
+    })
+
+    let json_response = await res.json()
+
+    setData(JSON.parse(JSON.stringify(json_response)));
+    setEditableData(JSON.parse(JSON.stringify(json_response)));
+  }
+
   async function set_data_from_editable() {
     let res = fetch('/api/data', {
       method: 'PUT',
@@ -48,6 +59,7 @@ export default function Home() {
       })
     })
     console.log(await (await res).text())
+    get_data();
   }
 
   function handleNavbar(clickedIcon) {
@@ -70,6 +82,10 @@ export default function Home() {
       }
     }
   }
+
+  useEffect(() => {
+    get_data();
+  }, [])
 
   let seasonsContainerRef = useRef(null)
   let mediaContainerRef = useRef(null)
