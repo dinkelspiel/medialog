@@ -45,6 +45,10 @@ export default function Home() {
       method: 'GET'
     })
 
+    if(res.status == 400) {
+      window.location.replace("/login")
+      return;
+    }
     let json_response = await res.json()
 
     setData(JSON.parse(JSON.stringify(json_response)));
