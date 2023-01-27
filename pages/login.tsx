@@ -2,7 +2,7 @@ import { Button, TextField } from '@mui/material'
 import React, { useState } from 'react'
 import styles from "../styles/login.module.css"
 
-const login = () => {
+const Login = () => {
     let [value, setValue] = useState("");
   
     return (
@@ -17,4 +17,4 @@ const login = () => {
   )
 }
 
-export default login
+export default Login
