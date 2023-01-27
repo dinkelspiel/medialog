@@ -41,7 +41,7 @@ export default function Home() {
   let [mobileState, setMobileState] = useState(1)
 
   async function get_data() {
-    let res = await fetch('/api/data', {
+    let res = await fetch(`/api/data?password=${localStorage.getItem("password")}`, {
       method: 'GET'
     })
 
@@ -52,7 +52,7 @@ export default function Home() {
   }
 
   async function set_data_from_editable() {
-    let res = fetch('/api/data', {
+    let res = fetch(`/api/data?password=${localStorage.getItem("password")}`, {
       method: 'PUT',
       body: JSON.stringify({
         data: editableData
