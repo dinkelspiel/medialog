@@ -6,14 +6,16 @@ const Login = () => {
     let [value, setValue] = useState("");
   
     return (
-    <div className={styles.main}>
-        <TextField onChange={(e) => setValue(e.target.value)} />
-        <Button variant="outlined" onClick={() => {
-            console.log(value);
-            localStorage.setItem("password", value);
-            window.location.replace("/")
-        }}>Log in</Button>
-    </div>
+        <div className={styles.main}>
+            <div className={styles.container}>
+                <TextField fullWidth onChange={(e) => setValue(e.target.value)} />
+                <Button variant="outlined" fullWidth onClick={() => {
+                    console.log(value);
+                    localStorage.setItem("password", value);
+                    window.location.replace("/")
+                }}>Log in</Button>
+            </div>
+        </div>
   )
 }
 

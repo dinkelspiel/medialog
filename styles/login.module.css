@@ -1,9 +1,22 @@
 .main {
-    width: 100vw;
-    height: 100vh;
+    height: calc(100vh - 16px);
+    width: calc(100vw - 16px);
+}
+
+.container {
+    position: relative;
+    width: 350px;
+    height: 350px;
+    margin: auto auto;
+    top: 50vh;
+    transform: translateY(-50%);
     display: flex;
     align-items: center;
     justify-content: center;
     flex-direction: column;
     gap: 10px;
+    background-color: #FFF;
+    border-radius: 20px;
+    filter: drop-shadow(0px 16px 16px lightgray);   
+    padding: 100px;
 }
