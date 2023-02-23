@@ -9,7 +9,7 @@ const SeasonCreateComponent = (props) => {
 
     let [name, setName] = useState("")
     let [studio, setStudio] = useState("")
-    let [rating, setRating] = useState(0)
+    let [rating, setRating] = useState(-1)
     let [notes, setNotes] = useState("")
 
     let [expandedSeason, setExpandedSeason] = useState("")
