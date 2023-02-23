@@ -13,12 +13,20 @@ const MediaContainer = (props) => {
         }
     
         let totalRating = 0;
+        let countedSeasons = 0;
     
         Object.keys(props.editableData[media]["seasons"]).forEach((season, idx) => {
-          totalRating += parseInt(props.editableData[media]["seasons"][season]["rating"])
+            if(props.editableData[media]["seasons"][season]["rating"] > -1) {
+                totalRating += parseInt(props.editableData[media]["seasons"][season]["rating"])
+                countedSeasons += 1;
+            }
         })
     
-        return String(totalRating / Object.keys(props.editableData[media]["seasons"]).length) == "NaN" ? -1 : parseInt((totalRating / Object.keys(props.editableData[media]["seasons"]).length).toString())
+        if(countedSeasons == 0) {
+            return -1;
+        }
+
+        return parseInt(totalRating / countedSeasons)
     }
 
     return (
