@@ -15,7 +15,7 @@
             ])
         </div>
         <div class="grid-item my-3 rounded-lg bg-card">
-            @invlude('dashboard/includes/add')
+            @include('dashboard/includes/add')
         </div>
         <div class="grid-item m-3 flex flex-col">
 

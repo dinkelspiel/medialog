@@ -1,3 +1,11 @@
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
+
+.input {
+    @apply max-w-full border-secondary rounded-lg border h-14 justify-center leading-13 px-3 bg-transparent
+}
+
+.btn {
+    @apply max-w-full bg-secondary rounded-lg h-14 justify-center leading-13 text-center text-white hover:bg-secondary-hover cursor-pointer  active:bg-secondary-active
+}
