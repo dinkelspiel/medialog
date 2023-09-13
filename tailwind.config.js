@@ -10,9 +10,9 @@ export default {
       colors: {
         'color': '#FFFBFE',
         'card': '#FAF1F0',
-        'secondary': '#E6BEB7',
-        'secondary-hover': '#DFADA4',
-        'secondary-active': '#EBCCC6'
+        'secondary': '#d1857b',
+        'secondary-hover': '#c6685d',
+        'secondary-active': '#d6938a'
       },
       lineHeight: {
         '13': '3.25rem',

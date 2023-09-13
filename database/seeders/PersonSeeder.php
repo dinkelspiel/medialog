@@ -2,19 +2,18 @@
 
 namespace Database\Seeders;
 
-use App\Models\Category;
-use Database\Factories\CategoryFactory;
+use App\Models\Person;
 use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
 
-class CategorySeeder extends Seeder
+class PersonSeeder extends Seeder
 {
     /**
      * Run the database seeds.
      */
     public function run(): void
     {
-        Category::factory()
+        Person::factory()
             ->count(40)
             ->create();
     }

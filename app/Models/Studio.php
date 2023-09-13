@@ -9,12 +9,5 @@ class Studio extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'name',
-    ];
-
-    public function media()
-    {
-        $this->hasMany(Media::class);
-    }
+    // Name
 }
