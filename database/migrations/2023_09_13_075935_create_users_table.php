@@ -15,8 +15,9 @@ return new class extends Migration
             $table->id();
             $table->string('username');
             $table->string('email');
-            $table->string('string', 64);
-            $table->timestamps();
+            $table->string('password', 64);
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent();
         });
     }
 

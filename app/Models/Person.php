@@ -10,4 +10,8 @@ class Person extends Model
     use HasFactory;
 
     // Name
+
+    protected $fillable = [
+        'name'
+    ];
 }

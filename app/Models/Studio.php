@@ -10,4 +10,8 @@ class Studio extends Model
     use HasFactory;
 
     // Name
+
+    protected $fillable = [
+        'name'
+    ];
 }

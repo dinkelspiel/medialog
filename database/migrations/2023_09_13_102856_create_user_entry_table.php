@@ -19,7 +19,8 @@ return new class extends Migration
             $table->integer('rating')->unsigned();
             $table->text('notes');
             $table->foreignIdFor(User::class);
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent();
         });
     }
 

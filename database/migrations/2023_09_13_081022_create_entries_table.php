@@ -19,7 +19,8 @@ return new class extends Migration
             $table->text('name');
             $table->foreignIdFor(Studio::class);
             $table->text('cover_url');
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent();
         });
     }
 
