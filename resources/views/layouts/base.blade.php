@@ -6,6 +6,7 @@
     <title>Medialog</title>
 
     @vite('resources/css/app.css')
+    @livewireStyles
 </head>
 <body>
     <div class="grid h-screen bg-color mr-3" style="grid-template-columns: 5rem 1fr">
@@ -18,5 +19,6 @@
             @yield('content')
         </div>
     </div> 
+    @livewireScripts
 </body>
 </html>

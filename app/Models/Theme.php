@@ -10,4 +10,8 @@ class Theme extends Model
     use HasFactory;
 
     // Name
+
+    protected $fillable = [
+        'name'
+    ];
 }

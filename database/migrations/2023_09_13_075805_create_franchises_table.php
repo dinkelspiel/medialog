@@ -16,7 +16,8 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->foreignIdFor(Category::class);
-            $table->timestamps();
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('updated_at')->useCurrent();
         });
     }
 
