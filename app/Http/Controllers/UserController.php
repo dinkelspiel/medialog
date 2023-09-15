@@ -18,7 +18,7 @@ class UserController extends Controller
         ]);
 
         if ($validator->fails()) {
-            return redirect('/login')->withErrors($validator)->withInput();
+            return redirect('/login')->withErrors($validator)->withInput(['username', 'email']);
         }
 
         $user = new User;

@@ -7,16 +7,16 @@
             <input class="input" placeholder="Username" name="user" required>
             <input class="input" placeholder="Email" type="email" name="email" required>
             <input class="input mb-3" placeholder="Password" type="password" name="password" required>
-            <button class="btn">Sign up</button>
+            <button class="btn" type="submit">Sign up</button>
         </form>
         <form action="/api/auth/login" method="post" class="flex flex-col pt-6 md:pt-0 md:ps-10 gap-3">
-            <input class="input" placeholder="Email" type="email" required>
-            <input class="input mb-3" placeholder="Password" type="password" required>
-            <button class="btn">Log in</button>
+            @csrf
+            <input class="input" placeholder="Email" name="email" type="email" required>
+            <input class="input mb-3" placeholder="Password" name="password" type="password" required>
+            <button class="btn" type="submit">Log in</button>
         </div>
-    </div>
-    @if ($errors->any())
-        <div class="max-w-full bg-red-500 border border-red-600 rounded-lg h-14 justify-center leading-13 text-center text-white">
+        @if ($errors->any())
+        <div class="max-w-full bg-red-500 border border-red-600 rounded-lg h-14 px-6 justify-center leading-13 text-center text-white">
             <ul>
                 @foreach ($errors->all() as $error)
                     <li>{{ $error }}</li>
@@ -24,5 +24,6 @@
             </ul>
         </div>
     @endif
+    </div>
 </div>
 @endsection

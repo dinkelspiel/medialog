@@ -1,5 +1,7 @@
 <?php
 
+use App\Http\Middleware\Authenticate;
+use App\Http\Middleware\VerifySession;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,8 +17,8 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/dashboard', function () {
     return view('dashboard.index');
-});
+})->middleware(VerifySession::class);
 
 Route::get('/login', function () {
     return view('login.index');
-});
+})->middleware(VerifySession::class);
