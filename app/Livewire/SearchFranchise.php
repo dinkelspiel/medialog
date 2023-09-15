@@ -12,7 +12,7 @@ class SearchFranchise extends Component
     public function render()
     {
         return view('livewire.search-franchise', [
-            'franchises' => Franchise::where('name', $this->search)->get(),
+            'franchises' => Franchise::where('name', 'like', '%' . $this->search . '%')->get(),
         ]);
     }
 }

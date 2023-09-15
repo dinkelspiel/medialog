@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
 class Franchise extends Model
@@ -17,8 +18,13 @@ class Franchise extends Model
         'name'
     ];
 
-    function category(): HasOne
+    public function category(): HasOne
     {
         return $this->hasOne(Category::class);
     }
+
+    public function entries(): HasMany
+    {
+        return $this->hasMany(Entry::class);
+    } 
 }
