@@ -2,6 +2,7 @@
 
 namespace Database\Factories;
 
+use App\Models\Category;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +18,8 @@ class FranchiseFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => fake()->company()
+            'name' => 'The ' . ucfirst($this->faker->unique()->word) . ' ' . ucfirst($this->faker->unique()->word),        
+            'category_id' => Category::inRandomOrder()->first()->id
         ];
     }
 }

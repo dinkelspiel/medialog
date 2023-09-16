@@ -14,7 +14,7 @@ class GenreSeeder extends Seeder
     public function run(): void
     {
         Genre::factory()
-            ->count(40)
+            ->count(15)
             ->create();
     }
 }
