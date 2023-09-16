@@ -11,9 +11,7 @@ class AuthController extends Controller
 {
     public function login(Request $request)
     {
-        session_start();
-
-        if(isset($_SESSION['id']))
+        if(!is_null($request->get('id')))
         {
             return redirect('/dashboard');
         }
@@ -37,10 +35,9 @@ class AuthController extends Controller
             return redirect('/login')->withErrors(['email_or_password' => 'The email or password is incorrect.'])->onlyInput('email');
         }
 
-
-        $_SESSION['id'] = $user->id;
-        $_SESSION['username'] = $user->username;
-        $_SESSION['email'] = $user->email;
+        $request->session()->put('id', $user->id);
+        $request->session()->put('username', $user->username);
+        $request->session()->put('email', $user->email);
 
         return redirect('/dashboard');
     }

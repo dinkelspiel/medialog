@@ -4,7 +4,7 @@
     <div class="flex flex-col md:flex-row mx-auto w-max justify-center items-center">
         <form action="/api/user" method="post" class="border-secondary border-b pb-6 md:border-b-0 md:pb-0 md:border-r border-dashed flex flex-col md:pr-10 gap-3 md:h-96 justify-center">
             @csrf
-            <input class="input" placeholder="Username" name="user" required>
+            <input class="input" placeholder="Username" name="username" required>
             <input class="input" placeholder="Email" type="email" name="email" required>
             <input class="input mb-3" placeholder="Password" type="password" name="password" required>
             <button class="btn" type="submit">Sign up</button>

@@ -13,24 +13,24 @@ class VerifySession
     {
         session_start();
 
-        if(!isset($_SESSION['id'])) 
+        if(is_null($request->session()->get('id'))) 
         {
             return redirect('/login');
         }
 
-        $sessionId = $_SESSION['id'];
+        $sessionId = $request->session()->get('id');
 
         $user = User::where('id', $sessionId)->first();
 
         if(is_null($user))
         {
-            $_SESSION = [];
+            $request->session()->forget(['id', 'username', 'email']);
             return redirect('/login');
         }
 
-        $_SESSION['id'] = $user->id;
-        $_SESSION['username'] = $user->username;
-        $_SESSION['email'] = $user->email;
+        $request->session()->put('id', $user->id);
+        $request->session()->put('username', $user->username);
+        $request->session()->put('email', $user->email);
 
         $request->attributes->add(['user' => $user]);
 
