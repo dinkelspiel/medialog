@@ -17,8 +17,17 @@ use Illuminate\Support\Facades\Route;
 
 Route::get('/dashboard', function () {
     return view('dashboard.index');
-})->middleware(VerifySession::class);
+})->middleware(['web', VerifySession::class]);
+
+Route::get('/islogged', function() {
+    return 'loggedin';
+})->middleware(['web', VerifySession::class]);
 
 Route::get('/login', function () {
+    if(!is_null(session('id')))
+    {
+        return redirect('/dashboard');
+    }
+
     return view('login.index');
-})->middleware(VerifySession::class);
+})->middleware(['web']);

@@ -5,6 +5,7 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 
@@ -12,12 +13,13 @@ class Entry extends Model
 {
     use HasFactory;
 
-    // Studio
-    // Media
+    protected $fillable = [
+        'studio', 'media'
+    ];
 
-    public function franchise(): HasOne
+    public function franchise(): BelongsTo
     {
-        return $this->hasOne(Franchise::class);
+        return $this->BelongsTo(Franchise::class);
     }
 
     public function studio(): BelongsTo
@@ -25,23 +27,28 @@ class Entry extends Model
         return $this->belongsTo(Studio::class);
     }
 
-    public function theme(): HasMany
+    public function theme(): BelongsToMany
     {
-        return $this->hasMany(Theme::class);
+        return $this->belongsToMany(Theme::class);
     }
 
-    public function producer(): HasMany
+    public function producer(): BelongsToMany
     {
-        return $this->hasMany(Person::class);
+        return $this->belongsToMany(Person::class);
     }
 
-    public function genre(): HasMany
+    public function genre(): BelongsToMany
     {
-        return $this->hasMany(Genre::class);
+        return $this->belongsToMany(Genre::class);
     }
 
-    public function actor(): HasMany
+    public function actor(): BelongsToMany
     {
-        return $this->hasMany(Person::class);
+        return $this->belongsToMany(Person::class);
+    }
+
+    public function userEntries(): HasMany
+    {
+        return $this->hasMany(UserEntry::class);
     }
 }

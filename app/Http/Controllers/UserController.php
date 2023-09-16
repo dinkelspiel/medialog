@@ -27,6 +27,10 @@ class UserController extends Controller
         $user->password = Hash::make($request->input('password'));
         $user->save();
 
-        return response()->json(['message' => 'User created successfully!'], 201);
+        $request->session()->put('id', $user->id);
+        $request->session()->put('username', $user->username);
+        $request->session()->put('email', $user->email);
+
+        return redirect('/dashboard');
     }
 }

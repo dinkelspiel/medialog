@@ -2,6 +2,8 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\UserEntryController;
+use App\Http\Middleware\VerifySession;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -21,5 +23,7 @@ use Illuminate\Support\Facades\Route;
 // });
 
 Route::middleware(['web'])->post('/user', [UserController::class, 'create']);
+Route::middleware(['web', VerifySession::class])->post('/user/entry', [UserEntryController::class, 'create']);
+Route::middleware(['web', VerifySession::class])->patch('/user/entry', [UserEntryController::class, 'update']);
 
 Route::middleware(['web'])->post('/auth/login', [AuthController::class, 'login']);
