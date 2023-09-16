@@ -1,7 +1,7 @@
 <?php
 
 use App\Models\Entry;
-use App\Models\Person;
+use App\Models\User;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -13,10 +13,12 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('entry_actor', function (Blueprint $table) {
+        Schema::create('user_entries', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Entry::class);
-            $table->foreignIdFor(Person::class);
+            $table->integer('rating')->unsigned();
+            $table->text('notes');
+            $table->foreignIdFor(User::class);
             $table->timestamp('created_at')->useCurrent();
             $table->timestamp('updated_at')->useCurrent();
         });
@@ -27,6 +29,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('entry_actor');
+        Schema::dropIfExists('user_entries');
     }
 };
