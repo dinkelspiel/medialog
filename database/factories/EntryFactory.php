@@ -2,6 +2,9 @@
 
 namespace Database\Factories;
 
+use App\Models\Franchise;
+use App\Models\Studio;
+use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\Factory;
 
 /**
@@ -17,7 +20,10 @@ class EntryFactory extends Factory
     public function definition(): array
     {
         return [
-            //
+            'franchise_id' => Franchise::inRandomOrder()->first()->id,
+            'name' => 'Season ' . fake()->word(),
+            'studio_id' => Studio::inRandomOrder()->first()->id,
+            'cover_url' => fake()->imageUrl()
         ];
     }
 }

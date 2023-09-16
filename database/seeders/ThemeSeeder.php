@@ -14,7 +14,7 @@ class ThemeSeeder extends Seeder
     public function run(): void
     {
         Theme::factory()
-            ->count(40)
+            ->count(15)
             ->create();
     }
 }
