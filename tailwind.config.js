@@ -14,7 +14,8 @@ export default {
         'card-active': '#EDCDC9',
         'secondary': '#d1857b',
         'secondary-hover': '#c6685d',
-        'secondary-active': '#d6938a'
+        'secondary-active': '#d6938a',
+        'modal': 'rgba(15, 23, 42, 0.3)'
       },
       lineHeight: {
         '13': '3.25rem',

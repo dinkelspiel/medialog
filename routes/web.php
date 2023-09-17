@@ -19,8 +19,8 @@ Route::get('/dashboard', function () {
     return view('dashboard.index');
 })->middleware(['web', VerifySession::class]);
 
-Route::get('/islogged', function() {
-    return 'loggedin';
+Route::get('/dashboard/add', function () {
+    return view('dashboard.add.index');
 })->middleware(['web', VerifySession::class]);
 
 Route::get('/login', function () {

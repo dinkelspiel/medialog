@@ -2,7 +2,7 @@
     <input wire:model.live="search" type="text" placeholder="Search franchise..." class="grid-item col-span-2 input"/>
 
     @if($search != "")
-        <ul class="grid-item col-span-2 flex flex-col">
+        <ul class="grid-item col-span-2 flex flex-col overflow-y-scroll no-scrollbar" style="height: calc(100vh - 8rem)">
             @foreach($entries as $entry)
                 <li>
                     <form action="/api/user/entry" method="post">
@@ -31,10 +31,10 @@
                     </form>         
                 </li>
             @endforeach
+            <a href="/dashboard/add" class="text-secondary hover:text-secondary-hover active:text-secondary-active duration-100  text-sm text-center col-span-2 mt-6 mb-3 cursor-pointer">
+                Does your franchise not exist? Add it
+            </a>
         </ul>
-        <div class="text-secondary hover:text-secondary-hover active:text-secondary-active duration-100  text-sm text-center col-span-2 mt-6 mb-3 cursor-pointer">
-            Does your media not exist? Add it
-        </div>
     @else
         <div class="text-gray-500 text-sm">
             Enter a term to search for users.

@@ -11,7 +11,7 @@
             <div class="text-lg font-normal">
                 {{ $userEntry->entry->name }}
             </div>
-            <button wire:click="closeUserEntry" class="ms-auto bg-none hover:bg-secondary-hover active:bg-secondary-active duration-200 w-8 h-8 rounded-lg">
+            <button wire:click="closeUserEntry" class="ms-auto text-secondary hover:text-secondary-hover active:text-secondary-active duration-100 cursor-pointer">
                 X
             </button>
         </div>
