@@ -14,7 +14,7 @@
     <div class="grid h-screen bg-color mr-3" style="grid-template-columns: 5rem 1fr">
         <div class="grid-item">
             @include('includes.header', [
-                'page' => 'home'
+                'page' => $header
             ])
         </div>
         <div class="grid-item">

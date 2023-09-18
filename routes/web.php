@@ -31,3 +31,7 @@ Route::get('/login', function () {
 
     return view('login.index');
 })->middleware(['web']);
+
+Route::get('/profile', function() {
+    return view('profile.index');
+})->middleware(['web', VerifySession::class]);

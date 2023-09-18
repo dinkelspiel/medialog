@@ -27,3 +27,4 @@ Route::middleware(['web', VerifySession::class])->post('/user/entry', [UserEntry
 Route::middleware(['web', VerifySession::class])->patch('/user/entry', [UserEntryController::class, 'update']);
 
 Route::middleware(['web'])->post('/auth/login', [AuthController::class, 'login']);
+Route::middleware(['web'])->post('/auth/logout', [AuthController::class, 'logout']);
