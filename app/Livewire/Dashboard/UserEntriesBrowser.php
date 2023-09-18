@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\Dashboard;
 
 use App\Models\UserEntry;
 use Livewire\Component;
@@ -14,7 +14,7 @@ class UserEntriesBrowser extends Component
 
     public function render()
     {
-        return view('livewire.user-entries-browser', [
+        return view('livewire.dashboard.user-entries-browser', [
             'userEntries' => UserEntry::where('user_id', request()->session()->get('id'))->get(),
         ]);
     }

@@ -1,3 +1,3 @@
 <div>
-    <livewire:search-franchise /> 
+    <livewire:dashboard.add />
 </div>

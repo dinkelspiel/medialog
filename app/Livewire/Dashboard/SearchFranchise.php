@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\Dashboard;
 
 use App\Models\Entry;
 use App\Models\Franchise;
@@ -22,7 +22,7 @@ class SearchFranchise extends Component
             $query->where('user_id', $userId);
         })->get();
 
-        return view('livewire.search-franchise', [
+        return view('livewire.dashboard.search-franchise', [
             'uid' => $userId,
             'entries' => $entriesWithoutUserEntry,
         ]);

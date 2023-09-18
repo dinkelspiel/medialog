@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\Dashboard;
 
 use Livewire\Component;
 
@@ -21,19 +21,19 @@ class UserEntry extends Component
 
         if(!isset($userEntry))
         {
-            return view('livewire.user-entry', [
+            return view('livewire.dashboard.user-entry', [
                 'error' => "No user entry with id"
             ]);
         }
 
         if($userId != $userEntry->user_id)
         {
-            return view('livewire.user-entry', [
+            return view('', [
                 'error' => "User ids do not match. Loading user entry failed!"
             ]);
         }
 
-        return view('livewire.user-entry', [
+        return view('', [
             'userEntry' => $userEntry
         ]);
     }

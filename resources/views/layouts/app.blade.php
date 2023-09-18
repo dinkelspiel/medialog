@@ -18,7 +18,10 @@
             ])
         </div>
         <div class="grid-item">
-            @yield('content')
+            @if(isset($slot))
+                {{ $slot }}
+            @endif
+            @yield('content')            
         </div>
     </div>
 

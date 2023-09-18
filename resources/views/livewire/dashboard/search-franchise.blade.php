@@ -2,7 +2,7 @@
     <input wire:model.live="search" type="text" placeholder="Search franchise..." class="grid-item col-span-2 input"/>
 
     @if($search != "")
-        <ul class="grid-item col-span-2 flex flex-col overflow-y-scroll no-scrollbar" style="height: calc(100vh - 8rem)">
+        <ul class="grid-item col-span-2 flex flex-col overflow-y-scroll no-scrollbar" style="height: calc(100vh - 12rem)">
             @foreach($entries as $entry)
                 <li>
                     <form action="/api/user/entry" method="post">

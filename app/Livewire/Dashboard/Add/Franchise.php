@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\Dashboard\Add;
 
 use App\Models\Category;
 use App\Models\Studio;
 use Livewire\Component;
 use LivewireUI\Modal\ModalComponent;
 
-class AddFranchise extends ModalComponent
+class Franchise extends ModalComponent
 {
     public $listeners = ['refreshEntries' => '$refresh'];
     
@@ -18,7 +18,7 @@ class AddFranchise extends ModalComponent
         $studios = Studio::all();
         $studios->sort();
 
-        return view('livewire.add-franchise', [
+        return view('livewire.dashboard.add.franchise', [
             'entries' => $this->entries,
             'studios' => $studios,
             'categories' => Category::all()
