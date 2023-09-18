@@ -33,7 +33,7 @@
             @endif
         </div>
         @foreach ($entries as $entry)
-            <div wire:key="{{ $loop->index }}" class="flex flex-col gap-3 ps-3 border-s border-secondary">
+            <div wire:key="{{ $loop->index }}" class="flex flex-col gap-3 mb-3 ps-3 border-s border-secondary">
                 <div>
                     Name
                 </div>
@@ -87,11 +87,11 @@
                 <input class="input" placeholder="https://web.com/image.png">
             </div>
         @endforeach
-        @if(count($entries) > 0)
+        {{-- @if(count($entries) > 0)
             <button class="small-btn" wire:click="$dispatch('openAddStudio')">
                 Add Studio
             </button>
-        @endif
+        @endif --}}
     </div>
     <script>
         function updateStudios(event)
@@ -101,9 +101,9 @@
             studios.innerHTML += `
                 <div class="flex flex-row">
                     &#x2022; ${event.target.value}
-                    <div class="ms-auto text-btn">
+                    <button class="ms-auto text-btn" onclick="remove">
                         Remove
-                    </div>
+                    </button>
                 </div>
 `;
 

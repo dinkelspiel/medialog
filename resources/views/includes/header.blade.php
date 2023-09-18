@@ -1,12 +1,12 @@
 <div class="flex flex-col py-3 h-screen items-center gap-2 justify-start">
-    <div class="icon-btn-nav icon-btn-pink">
+    <a href="/" class="icon-btn-nav @if($page == 'home') icon-btn-pink @else icon-btn-white @endif">
         <img src="/assets/logo.svg">
-    </div>
-    <div class="icon-btn-nav icon-btn-white mb-auto">
+    </a>
+    <a href="/dashboard" class="icon-btn-nav @if($page == 'dashboard') icon-btn-pink @else icon-btn-white @endif mb-auto">
         <img src="/assets/house.svg">
-    </div>
+    </a>
 
-    <div class="icon-btn-nav icon-btn-white">
+    <a href="/profile" class="icon-btn-nav @if($page == 'profile') icon-btn-pink @else icon-btn-white @endif">
         <img src="/assets/person.svg">
-    </div>
+    </a>
 </div>
