@@ -5,6 +5,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Medialog</title>
 
+    <link rel="icon" type="image/x-icon" href="/favicon.ico">
+
     @vite('resources/css/app.css')
     @livewireStyles
 </head>
@@ -18,7 +20,7 @@
         <div class="grid-item">
             @yield('content')
         </div>
-    </div> 
+    </div>
 
     @livewireScripts
 </body>
