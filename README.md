@@ -2,7 +2,7 @@
 
 A self hosted solution for privately rating and reviewing different sorts of media
 
-<img src="./public/favicon.ico" alt="logo">
+![Logo](./public/favicon.ico)
 
 ## Run
 
