@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Livewire;
+namespace App\Livewire\Dashboard;
 
 use Livewire\Component;
 
-class Dashboard extends Component
+class Index extends Component
 {
     public $showUserEntry = false;
     public $showAddEntry = false;
@@ -49,10 +49,12 @@ class Dashboard extends Component
 
     public function render()
     {
-        return view('livewire.dashboard', [
+        return view('livewire.dashboard.index', [
             'showUserEntry' => $this->showUserEntry,
             'showAddEntry' => $this->showAddEntry,
             'showAddStudio' => $this->showAddStudio
+        ])->layout('layouts.app', [
+            'header' => 'dashboard'
         ]);
     }
 }

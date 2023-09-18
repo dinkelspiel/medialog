@@ -7,10 +7,12 @@
                 <img src="/assets/noimg.png" class="rounded-lg h-full w-28 object-cover">
             @endif
             
-            <div class="ms-3 flex flex-col justify-center">
-                <div class="text-xs text-slate-800">
-                    {{ $userEntry->entry->name }}
-                </div>
+            <div class="ms-3 flex flex-col justify-center" style="gap: -5px">
+                @if(count($userEntry->entry->franchise->entries) > 1)
+                    <div class="text-xs text-slate-800">
+                        {{ $userEntry->entry->name }}
+                    </div>
+                @endif
                 <div class="text-base">
                     {{ $userEntry->entry->franchise->name }}   
                 </div>

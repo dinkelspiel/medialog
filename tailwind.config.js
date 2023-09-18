@@ -15,6 +15,7 @@ export default {
         'secondary': '#d1857b',
         'secondary-hover': '#c6685d',
         'secondary-active': '#d6938a',
+        'outline': '#E6BEB7',
         'modal': 'rgba(15, 23, 42, 0.3)'
       },
       lineHeight: {

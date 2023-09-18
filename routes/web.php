@@ -2,6 +2,7 @@
 
 use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\VerifySession;
+use App\Livewire\Auth\Auth;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -15,23 +16,19 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::get('/dashboard', function () {
-    return view('dashboard.index');
-})->middleware(['web', VerifySession::class]);
+Route::middleware([VerifySession::class])->group(function() {
+    Route::get('/dashboard', App\Livewire\Dashboard\Index::class);
+    
+    Route::get('/dashboard/add', function () {
+        if(!auth()->check())
+        {
+            return redirect('/login');
+        }
+    
+        return view('dashboard.add.index');
+    });
 
-Route::get('/dashboard/add', function () {
-    return view('dashboard.add.index');
-})->middleware(['web', VerifySession::class]);
+    Route::get('/profile', App\Livewire\Profile\Index::class);
+});
 
-Route::get('/login', function () {
-    if(!is_null(session('id')))
-    {
-        return redirect('/dashboard');
-    }
-
-    return view('login.index');
-})->middleware(['web']);
-
-Route::get('/profile', function() {
-    return view('profile.index');
-})->middleware(['web', VerifySession::class]);
+Route::get('/login', App\Livewire\Auth\Index::class)->name('login');
