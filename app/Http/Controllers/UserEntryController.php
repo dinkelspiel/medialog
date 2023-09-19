@@ -46,7 +46,7 @@ class UserEntryController extends Controller
 
     public function update(Request $request)
     {
-        $user = $request->attributes->get('user');
+        $user = auth()->user();
 
         $validator = Validator::make($request->all(), [
             'rating' => 'required|numeric',
