@@ -34,8 +34,6 @@ class Index extends Component
         $user->password = Hash::make($this->password);
         $user->save();
 
-
-
         session()->flash('message', 'Registration Successful.');
     }
     

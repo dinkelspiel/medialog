@@ -45,7 +45,7 @@
                     <div id="studios">
                     
                     </div>
-                    <select class="input" onchange="updateStudios(event)">
+                    <select class="input">
                         @foreach($studios as $studio)
                             <option>
                                 {{ $studio->name }}
@@ -87,27 +87,8 @@
                 <input class="input" placeholder="https://web.com/image.png">
             </div>
         @endforeach
-        {{-- @if(count($entries) > 0)
-            <button class="small-btn" wire:click="$dispatch('openAddStudio')">
-                Add Studio
-            </button>
-        @endif --}}
+        @foreach($entries as $entry)
+             <livewire:dashobard.add.franchise.entry :franchise = {{$entry}}>
+        @endforeach
     </div>
-    <script>
-        function updateStudios(event)
-        {
-            let studios = document.getElementById('studios');
-
-            studios.innerHTML += `
-                <div class="flex flex-row">
-                    &#x2022; ${event.target.value}
-                    <button class="ms-auto text-btn" onclick="remove">
-                        Remove
-                    </button>
-                </div>
-`;
-
-            console.log(studios.innerHTML)
-        }
-    </script>
 </div>

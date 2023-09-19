@@ -15,7 +15,8 @@ class Franchise extends Model
     // Category
 
     protected $fillable = [
-        'name'
+        'name',
+        'category_id'
     ];
 
     public function category(): HasOne
