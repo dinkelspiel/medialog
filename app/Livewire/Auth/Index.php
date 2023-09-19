@@ -41,6 +41,9 @@ class Index extends Component
     
     public function login()
     {
+        $this->email = $this->logEmail;
+        $this->password = $this->logPassword;
+
         $credentials = $this->validate([
             'email' => 'required|email',
             'password' => 'required',

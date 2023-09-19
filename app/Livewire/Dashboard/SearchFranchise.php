@@ -13,7 +13,7 @@ class SearchFranchise extends Component
     public function render()
     {
         $searchString = $this->search;
-        $userId = request()->session()->get('id');
+        $userId = auth()->user()->id;
 
         $entriesWithoutUserEntry = Entry::whereHas('franchise', function ($query) use ($searchString) {
             $query->where('name', 'LIKE', '%' . $searchString . '%');
