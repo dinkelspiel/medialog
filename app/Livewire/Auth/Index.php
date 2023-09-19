@@ -3,26 +3,38 @@
 namespace App\Livewire\Auth;
 
 use App\Models\User;
-use Hash;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Session;
 use Illuminate\Support\Facades\Validator;
 use Livewire\Component;
 
 class Index extends Component
 {
-    public $email, $password, $username;
+    public $regEmail, $regPassword, $regUsername;
+    public $logEmail, $logPassword;
+
+    public $username, $email, $password;
 
     public function register()
     {
-        $validatedData = $this->validate([
-            'username' => 'requird:unique:users',
+        $this->username = $this->regUsername;
+        $this->email = $this->regEmail;
+        $this->password = $this->regPassword;
+
+        $this->validate([
+            'username' => 'required|unique:users',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:6'
         ]);
 
-        $validatedData['password'] = Hash::make($this->password);
-        User::create($validatedData);
+        $user = new User;
+        $user->username = $this->username;
+        $user->email = $this->email;
+        $user->password = Hash::make($this->password);
+        $user->save();
+
+
 
         session()->flash('message', 'Registration Successful.');
     }
@@ -35,7 +47,7 @@ class Index extends Component
         ]);
 
         if(auth()->attempt($credentials)) {
-            return redirect('/dashboard');
+            $this->redirect('/dashboard');
         } else {
             session()->flash('error', 'Invalid credentials');
         }
@@ -45,7 +57,7 @@ class Index extends Component
     {
         if(auth()->check())
         {
-            return redirect('/dashboard');
+            $this->redirect('/dashboard');
         }
 
         return view('livewire.auth.index')->layout('layouts.app', [

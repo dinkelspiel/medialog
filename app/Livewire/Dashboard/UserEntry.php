@@ -28,12 +28,12 @@ class UserEntry extends Component
 
         if($userId != $userEntry->user_id)
         {
-            return view('', [
+            return view('livewire.dashboard.user-entry', [
                 'error' => "User ids do not match. Loading user entry failed!"
             ]);
         }
 
-        return view('', [
+        return view('livewire.dashboard.user-entry', [
             'userEntry' => $userEntry
         ]);
     }
