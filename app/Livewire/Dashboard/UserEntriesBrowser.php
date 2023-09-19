@@ -15,7 +15,7 @@ class UserEntriesBrowser extends Component
     public function render()
     {
         return view('livewire.dashboard.user-entries-browser', [
-            'userEntries' => UserEntry::where('user_id', request()->session()->get('id'))->get(),
+            'userEntries' => UserEntry::where('user_id', auth()->user()->id)->get(),
         ]);
     }
 }

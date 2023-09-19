@@ -10,7 +10,7 @@ class UserEntryController extends Controller
 {
     public function create(Request $request)
     {
-        $user = $request->attributes->get('user');
+        $user = auth()->user();
 
         $validator = Validator::make($request->all(), [
             'franchise_id' => 'required|numeric',
