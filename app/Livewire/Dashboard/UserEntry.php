@@ -15,7 +15,7 @@ class UserEntry extends Component
 
     public function render()
     {
-        $userId = session('id');
+        $userId = auth()->user()->id;
 
         $userEntry = \App\Models\UserEntry::where('id', $this->userEntryId)->first();
 
