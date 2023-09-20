@@ -14,7 +14,7 @@ class Entry extends Model
     use HasFactory;
 
     protected $fillable = [
-        'studio', 'media'
+        'studio', 'media', 'id'
     ];
 
     public function franchise(): BelongsTo

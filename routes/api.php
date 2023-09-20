@@ -21,6 +21,3 @@ use Illuminate\Support\Facades\Route;
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
-
-Route::middleware(['web', VerifySession::class])->post('/user/entry', [UserEntryController::class, 'create']);
-Route::middleware(['web', VerifySession::class])->patch('/user/entry', [UserEntryController::class, 'update']);
