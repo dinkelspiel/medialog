@@ -3,6 +3,7 @@
 namespace App\Livewire\Dashboard\Add;
 
 use App\Models\Category;
+use App\Models\Entry;
 use App\Models\Franchise;
 use App\Models\Studio;
 use Livewire\Component;
@@ -10,17 +11,16 @@ use Livewire\Component;
 class AddFranchise extends Component
 {
     public $listeners = ['refreshEntries' => '$refresh'];
-    
-    public Franchise $franchise;
 
-    public function mount()
-    {
+    public $franchise;
+
+    public function mount() {
         $this->franchise = Franchise::create([
             'name' => '',
-            'category_id' => 0
+            'category_id' => 1
         ]);
     }
-    
+
     public function render()
     {
         $studios = Studio::all();
@@ -30,18 +30,19 @@ class AddFranchise extends Component
             'entries' => $this->franchise->entries,
             'studios' => $studios,
             'categories' => Category::all()
-        ])->layout('layouts.app', [ 
+        ])->layout('layouts.app', [
             'header' => 'dashboard'
         ]);
     }
 
     public function addEntry()
     {
-        $this->franchise->entries->create([
-            'name' => 'asd',
+        $this->franchise->entries->push(Entry::create([
+            'franchise_id' => $this->franchise->id,
+            'name' => '',
             'studio_id' => 1,
             'cover_url' => ''
-        ]);
+        ]));
     }
 
     public function removeEntry()

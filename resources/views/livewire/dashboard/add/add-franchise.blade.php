@@ -87,8 +87,10 @@
                 <input class="input" placeholder="https://web.com/image.png">
             </div>
         @endforeach
+
+
         @foreach($entries as $entry)
-             <livewire:dashobard.add.franchise.entry :franchise = {{$entry}}>
+             <livewire:dashboard.add.add-entry :entry="$entry" :key="$entry->id" />
         @endforeach
     </div>
 </div>
