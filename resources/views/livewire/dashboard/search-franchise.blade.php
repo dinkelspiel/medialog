@@ -5,8 +5,7 @@
         <ul class="grid-item col-span-2 flex flex-col overflow-y-scroll no-scrollbar" style="height: calc(100vh - 12rem)">
             @foreach($entries as $entry)
                 <li>
-                    {{ dd($entry) }}
-                    <button type="submit" wire:click="" class="h-20 w-full text-left rounded-lg duration-200 border-card hover:bg-card-hover active:rounded-xl active:bg-card-active hover:border-secondary border-dashed border p-3 flex flex-row cursor-pointer">
+                    <button wire:click="create({{ $entry->franchise->id }}, {{ $entry->id }})" class="h-20 w-full text-left rounded-lg duration-200 border-card hover:bg-card-hover active:rounded-xl active:bg-card-active hover:border-secondary border-dashed border p-3 flex flex-row cursor-pointer">
                         @if(count($entry->franchise->entries) > 0)
                             <img src="{{ $entry->cover_url }}" class="rounded-lg h-full w-28 object-cover">
                         @else

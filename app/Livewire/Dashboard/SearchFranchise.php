@@ -28,7 +28,7 @@ class SearchFranchise extends Component
             session()->flash("error", "Invalid input");
         }
 
-        $userEntry = UserEntry::where('entry_id', $entryId)
+        $userEntry = \App\Models\UserEntry::where('entry_id', $entryId)
             ->where('user_id', $user->id)
             ->first();
 
@@ -37,7 +37,7 @@ class SearchFranchise extends Component
             session()->flash("error", "An entry of this id already exists for user");
         }
 
-        $userEntry = new UserEntry;
+        $userEntry = new \App\Models\UserEntry;
         $userEntry->rating = 0;
         $userEntry->notes = "";
         $userEntry->user_id = $user->id;
