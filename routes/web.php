@@ -1,5 +1,6 @@
 <?php
 
+use App\Http\Controllers\UserEntryController;
 use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\VerifySession;
 use App\Livewire\Auth\Auth;

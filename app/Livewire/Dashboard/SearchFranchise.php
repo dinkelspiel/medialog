@@ -43,6 +43,9 @@ class SearchFranchise extends Component
         $userEntry->user_id = $user->id;
         $userEntry->entry_id = $entryId;
         $userEntry->save();
+        
+        $userEntry->refresh();
+        $this->dispatch('refreshUserEntries');
     }
 
     public function render()
