@@ -13,11 +13,11 @@
 }
 
 .btn {
-    @apply max-w-full w-full bg-secondary rounded-lg h-14 justify-center leading-13 text-center text-white hover:bg-secondary-hover cursor-pointer  active:bg-secondary-active duration-150
+    @apply max-w-full w-full active:rounded-xl bg-secondary rounded-lg h-14 justify-center leading-13 text-center text-white hover:bg-secondary-hover cursor-pointer  active:bg-secondary-active duration-150
 }
 
 .small-btn {
-    @apply rounded-lg h-14 bg-secondary hover:bg-secondary-hover active:bg-secondary-active duration-150 cursor-pointer text-white px-3 flex items-center justify-center text-center
+    @apply rounded-lg active:rounded-xl h-12 bg-secondary hover:bg-secondary-hover active:bg-secondary-active duration-150 cursor-pointer text-white px-3 flex items-center justify-center text-center
 }
 
 .icon-btn {

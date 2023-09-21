@@ -21,3 +21,9 @@ use Illuminate\Support\Facades\Route;
 // Route::middleware('auth:sanctum')->get('/user', function (Request $request) {
 //     return $request->user();
 // });
+
+Route::middleware([VerifySession::class, 'web'])->group(function() {
+    Route::patch('/user/entries/{entryId}', [UserEntryController::class, 'update']);
+    Route::delete('/user/entries/{entryId}', [UserEntryController::class, 'delete']);
+});
+
