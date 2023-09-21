@@ -25,5 +25,6 @@ use Illuminate\Support\Facades\Route;
 Route::middleware([VerifySession::class, 'web'])->group(function() {
     Route::patch('/user/entries/{entryId}', [UserEntryController::class, 'update']);
     Route::delete('/user/entries/{entryId}', [UserEntryController::class, 'delete']);
+    Route::post('/user/entries/{entryId}/read', [UserEntryController::class, 'read']);
 });
 
