@@ -22,7 +22,7 @@
     </div>
     @if(!$canGetRandom)
         <div class="error mt-3">
-            You must have atleast one un-completed franchise to get random
+            You must have atleast one un-completed franchise to get a random one
         </div>
     @endif
 

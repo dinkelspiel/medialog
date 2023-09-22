@@ -43,7 +43,7 @@ class SearchFranchise extends Component
         $userEntry->user_id = $user->id;
         $userEntry->entry_id = $entryId;
         $userEntry->save();
-        
+
         $userEntry->refresh();
         $this->dispatch('refreshUserEntries');
     }
@@ -62,7 +62,7 @@ class SearchFranchise extends Component
 
         return view('livewire.dashboard.search-franchise', [
             'uid' => $userId,
-            'entries' => $entriesWithoutUserEntry,
+            'entries' => $entriesWithoutUserEntry
         ]);
     }
 }
