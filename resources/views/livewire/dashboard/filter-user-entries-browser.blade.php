@@ -41,7 +41,7 @@
     @endif
     @if(!is_null($franchise))
         <div class="pt-6 rounded-lg h-20 w-full object-cover flex flex-col gap-3">
-            <img src="{{ $franchise->entries->first()->cover_url }}" class="rounded-lg h-60 w-full object-cover">
+            <img src="{{ $franchise->entries->first()->cover_url }}" class="rounded-lg h-20 w-full object-cover">
             <div>
                 <i>{{ $franchise->name }}</i>. A <i>{{ $franchise->category->name }}</i> made by @foreach ($franchise->entries as $entry) <i>{{ $entry->studio->name }}</i>@if($loop->remaining == 1) and @elseif(!$loop->last),@endif @endforeach
             </div>
