@@ -13,13 +13,19 @@
         <input class="input w-full" placeholder="Sort After">
     </div>
     <div class="pt-6 w-full">
-        <button wire:click="getRandom" class="btn">
+        <button class="btn" @if(!$canGetRandom)disabled @else wire:click="getRandom" @endif>
             I'm feeling lucky
         </button>
         <div class="text-left text-neutral-400 text-xs pt-2">
             Get a random media from Medialog with the given parameters
         </div>
     </div>
+    @if(!$canGetRandom)
+        <div class="error mt-3">
+            You must have atleast one un-completed franchise to get random
+        </div>
+    @endif
+
     @if(!is_null($franchise))
         <div class="pt-6 rounded-lg h-20 w-full object-cover flex flex-col gap-3">
             <img src="{{ $franchise->entries->first()->cover_url }}" class="rounded-lg h-20 w-full object-cover">

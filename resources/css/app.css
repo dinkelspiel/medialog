@@ -16,6 +16,11 @@
     @apply max-w-full w-full active:rounded-xl bg-secondary rounded-lg h-14 justify-center leading-13 text-center text-white hover:bg-secondary-hover cursor-pointer  active:bg-secondary-active duration-150
 }
 
+button:disabled,
+button[disabled]{
+    @apply hover:rounded-lg active:rounded-lg bg-gray-300 hover:bg-gray-300 active:bg-gray-300 cursor-default
+}
+
 .small-btn {
     @apply rounded-lg active:rounded-xl h-12 bg-secondary hover:bg-secondary-hover active:bg-secondary-active duration-150 cursor-pointer text-white px-3 flex items-center justify-center text-center
 }
@@ -41,11 +46,11 @@
 }
 
 .icon-btn-pink {
-    @apply icon-btn bg-violet-200 hover:bg-violet-300 active:bg-violet-100 
+    @apply icon-btn bg-violet-200 hover:bg-violet-300 active:bg-violet-100
 }
 
 .icon-btn-green {
-    @apply icon-btn bg-lime-200 hover:bg-lime-300 active:bg-lime-100 
+    @apply icon-btn bg-lime-200 hover:bg-lime-300 active:bg-lime-100
 }
 
 .scrollable-grid-item {
@@ -71,11 +76,15 @@
 .slider {
     @apply w-full h-2 rounded-full bg-slate-300 outline-none opacity-70 duration-75 appearance-none
 }
-  
+
 .slider::-webkit-slider-thumb {
     @apply w-6 h-6 rounded-lg hover:rounded-xl active:rounded-full bg-secondary cursor-pointer appearance-none hover:bg-secondary-hover active:bg-secondary-active duration-200;
 }
-  
+
 .slider::-moz-range-thumb {
     @apply w-6 h-6 rounded-lg hover:rounded-xl active:rounded-full bg-secondary cursor-pointer appearance-none hover:bg-secondary-hover active:bg-secondary-active duration-200;
+}
+
+.error {
+    @apply max-w-full bg-red-400 rounded-lg px-6 justify-center py-3 text-center text-white;
 }
