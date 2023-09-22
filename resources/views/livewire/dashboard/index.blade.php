@@ -87,8 +87,8 @@
                         </form>
                     </div>
                 @else
-                    <button wire:click="markAsRead({{ $userEntry->id }})" type="submit" class="btn my-auto">
-                        Mark as read
+                    <button wire:click="markAsComplete({{ $userEntry->id }})" type="submit" class="btn my-auto">
+                        Mark as complete
                     </button>
                 @endif
             @endif
