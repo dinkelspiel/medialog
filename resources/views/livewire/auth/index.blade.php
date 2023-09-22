@@ -19,7 +19,7 @@
             <button class="btn" type="submit">Log in</button>
         </div>
         @if (session()->has('error'))
-            <div class="max-w-full bg-red-400 border border-red-500 rounded-lg h-14 px-6 justify-center leading-13 text-center text-white">
+            <div class="error">
                 {{ session('error') }}
             </div>
         @endif

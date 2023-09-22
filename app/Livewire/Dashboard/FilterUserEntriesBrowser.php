@@ -19,8 +19,10 @@ class FilterUserEntriesBrowser extends Component
 
     public function render()
     {
+        $user = auth()->user();
         return view('livewire.dashboard.filter-user-entries-browser', [
-            'franchise' => $this->franchise
+            'franchise' => $this->franchise,
+            'canGetRandom' => count(UserEntry::where('user_id', $user->id)->where('rating', null)->get()) >= 1
         ]);
     }
 }
