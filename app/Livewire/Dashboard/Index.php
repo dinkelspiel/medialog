@@ -16,6 +16,11 @@ class Index extends Component
         $this->userEntry = UserEntry::where('id', $id)->where('user_id', auth()->user()->id)->first();
     }
 
+    public function closeUserEntry()
+    {
+        $this->userEntry = null;
+    }
+
     public function markAsComplete(int $entryId)
     {
         $user = auth()->user();
