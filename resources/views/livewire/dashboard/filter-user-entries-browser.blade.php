@@ -45,6 +45,9 @@
             <div>
                 <i>{{ $franchise->name }}</i>. A <i>{{ $franchise->category->name }}</i> made by @foreach ($franchise->entries as $entry) <i>{{ $entry->studio->name }}</i>@if($loop->remaining == 1) and @elseif(!$loop->last),@endif @endforeach
             </div>
+            <button class="btn" wire:click="addFranchise">
+                Add
+            </button>
         </div>
     @endif
 </div>

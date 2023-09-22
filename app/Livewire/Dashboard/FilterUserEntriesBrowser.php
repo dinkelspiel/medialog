@@ -51,6 +51,24 @@ class FilterUserEntriesBrowser extends Component
         }
     }
 
+    public function addFranchise()
+    {
+        $user = auth()->user();
+        foreach($this->franchise->entries as $entry)
+        {
+            $userEntry = new UserEntry;
+            $userEntry->entry_id = $entry->id;
+            $userEntry->rating = null;
+            $userEntry->notes = "";
+            $userEntry->user_id = $user->id;
+            $userEntry->save();
+        }
+        $this->franchise = null;
+        
+        $userEntry->refresh();
+        $this->dispatch('refreshUserEntries');
+    }
+
     public function render()
     {
         $user = auth()->user();
