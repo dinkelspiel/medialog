@@ -64,7 +64,7 @@ class FilterUserEntriesBrowser extends Component
             $userEntry->save();
         }
         $this->franchise = null;
-        
+
         $userEntry->refresh();
         $this->dispatch('refreshUserEntries');
     }
@@ -72,9 +72,31 @@ class FilterUserEntriesBrowser extends Component
     public function render()
     {
         $user = auth()->user();
+     
+        if(!$this->includeAllFranchises)
+        {
+            if($this->includeAlreadyWatched)
+            {
+                $amount = UserEntry::inRandomOrder()->where('user_id', $user->id)->count();
+            } else 
+            {
+                $amount = UserEntry::inRandomOrder()->where('user_id', $user->id)->where('rating', null)->count();
+            }
+        } else {
+            if($this->includeAlreadyWatched)
+            {
+                $amount = Franchise::inRandomOrder()->has('entries')->count();
+            } else 
+            {
+                $amount = Entry::inRandomOrder()->whereDoesntHave('userEntries', function ($query) use ($user) {
+                    $query->where('user_id', $user->id)->where('rating', '!=', null);
+                })->count();
+            }
+        }
+     
         return view('livewire.dashboard.filter-user-entries-browser', [
             'franchise' => $this->franchise,
-            'canGetRandom' => count(UserEntry::where('user_id', $user->id)->where('rating', null)->get()) >= 1,
+            'canGetRandom' => $amount >= 1,
             'includeAllFranchises' => $this->includeAllFranchises,
             'includeAlreadyWatched' => $this->includeAlreadyWatched
         ]);
