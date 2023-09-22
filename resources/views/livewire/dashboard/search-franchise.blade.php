@@ -13,9 +13,11 @@
                         @endif
 
                         <div class="ms-3 flex flex-col justify-center">
-                            <div class="text-xs text-slate-800">
-                                {{ $entry->name }}
-                            </div>
+                            @if(count($entry->franchise->entries) > 1)
+                                <div class="text-xs text-slate-800">
+                                    {{ $entry->name }}
+                                </div>
+                            @endif
                             <div class="text-base">
                                 {{ $entry->franchise->name }}
                             </div>
