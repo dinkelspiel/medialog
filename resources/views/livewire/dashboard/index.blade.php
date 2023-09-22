@@ -11,7 +11,7 @@
                     @else
                         <img src="/assets/noimg.png" class="rounded-lg h-full w-28 object-cover">
                     @endif
-                    
+
                     <div class="ms-3 flex flex-col justify-center" style="gap: -5px">
                         @if(count($browserEntry->entry->franchise->entries) > 1)
                             <div class="text-xs text-slate-800">
@@ -19,13 +19,13 @@
                             </div>
                         @endif
                         <div class="text-base">
-                            {{ $browserEntry->entry->franchise->name }}   
+                            {{ $browserEntry->entry->franchise->name }}
                         </div>
                         <div class="text-sm text-slate-800">
                             {{ $browserEntry->entry->studio->name }}
                         </div>
-                    </div>  
-                </button> 
+                    </div>
+                </button>
             @endforeach
         </div>
     </div>
@@ -39,9 +39,11 @@
                         <div class="text-lg font-semibold">
                             {{ $userEntry->entry->franchise->name }}
                         </div>
-                        <div class="text-lg font-normal">
-                            {{ $userEntry->entry->name }}
-                        </div>
+                        @if( count($userEntry->entry->franchise->entries) > 1 )
+                            <div class="text-lg font-normal">
+                                {{ $userEntry->entry->name }}
+                            </div>
+                        @endif
                     </div>
                     <button wire:click="closeUserEntry" class="ms-auto text-secondary hover:text-secondary-hover active:text-secondary-active duration-100 cursor-pointer">
                         X
@@ -50,7 +52,7 @@
                 @if(!is_null($userEntry->rating))
                     <form action="/api/user/entries/{{ $userEntry->id }}" method="POST" class="flex flex-col gap-3 h-full">
                         @method('PATCH')
-                        @csrf 
+                        @csrf
 
                         <input type="hidden" name="entry_id" value="{{ $userEntry->id }}">
                         <div id="rating-label">
@@ -67,7 +69,7 @@
 
                         <button type="submit" class="btn mt-auto">
                             Save
-                        </button> 
+                        </button>
                     </form>
                     <div class="flex flex-row gap-2 pt-2">
                         <form action="/dashboard/edit/{{ $userEntry->entry->franchise->id }}" method="GET" class="w-full">
@@ -75,13 +77,13 @@
                             <button type="submit" class="small-btn w-full">
                                 Edit
                             </button>
-                        </form> 
+                        </form>
                         <form action="/api/user/entries/{{ $userEntry->id }}" method="POST" class="w-full">
                             @method('DELETE')
                             @csrf
                             <button type="submit" class="small-btn w-full">
                                 Remove
-                            </button> 
+                            </button>
                         </form>
                     </div>
                 @else
@@ -89,7 +91,7 @@
                         @csrf
                         <button type="submit" class="btn my-auto">
                             Mark as read
-                        </button> 
+                        </button>
                     </form>
                 @endif
             @endif
