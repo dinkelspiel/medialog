@@ -87,12 +87,9 @@
                         </form>
                     </div>
                 @else
-                    <form action="/api/user/entries/{{ $userEntry->id }}/read" method="POST" class="p-3 h-full flex flex-col gap-3">
-                        @csrf
-                        <button type="submit" class="btn my-auto">
-                            Mark as read
-                        </button>
-                    </form>
+                    <button wire:click="markAsRead({{ $userEntry->id }})" type="submit" class="btn my-auto">
+                        Mark as read
+                    </button>
                 @endif
             @endif
         </div>
