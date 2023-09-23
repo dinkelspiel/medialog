@@ -4,6 +4,9 @@
     </div>
     <div class="grid-item m-3 flex flex-col scrollable-grid-item no-scrollbar">
         <div>
+            <div>
+                {{ $sortAfter }}
+            </div>
             @foreach($userEntries as $browserEntry)
                 <button wire:click="showUserEntry({{ $browserEntry->id }})" class="h-20 w-full text-left rounded-lg duration-200 border-color hover:bg-card-hover active:rounded-xl active:bg-card-active hover:border-secondary border-dashed border p-3 flex flex-row cursor-pointer">
                     @if(count($browserEntry->entry->franchise->entries) > 0)

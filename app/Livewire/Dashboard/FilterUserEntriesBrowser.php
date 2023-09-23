@@ -2,6 +2,7 @@
 
 namespace App\Livewire\Dashboard;
 
+use App\Enums\SortAfterEnum;
 use App\Models\Entry;
 use App\Models\Franchise;
 use App\Models\UserEntry;
@@ -13,6 +14,8 @@ class FilterUserEntriesBrowser extends Component
 
     public bool $includeAllFranchises = false;
     public bool $includeAlreadyWatched = false;
+
+    public array $sortAfter = [];
 
     public function toggleIncludeAllFranchises()
     {
@@ -69,8 +72,23 @@ class FilterUserEntriesBrowser extends Component
         $this->dispatch('refreshUserEntries');
     }
 
+    public function setSortAfter(string $sort)
+    {
+        if(!in_array($sort, $this->sortAfter))
+        {
+            return;
+        }
+
+        $this->dispatch('setSortAfter', $sort);
+    }
+
     public function render()
     {
+        if($this->sortAfter === [])
+        {
+            $this->sortAfter = array_column(SortAfterEnum::cases(), 'value');
+        }
+
         $user = auth()->user();
      
         if(!$this->includeAllFranchises)
@@ -97,6 +115,7 @@ class FilterUserEntriesBrowser extends Component
         return view('livewire.dashboard.filter-user-entries-browser', [
             'franchise' => $this->franchise,
             'canGetRandom' => $amount >= 1,
+            'sortAfter' => $this->sortAfter,
             'includeAllFranchises' => $this->includeAllFranchises,
             'includeAlreadyWatched' => $this->includeAlreadyWatched
         ]);
