@@ -10,9 +10,18 @@
         <input class="input" placeholder="Themes">
     </div>
     <div class="py-6 border-b w-full border-b-outline border-dashed">
-        <input class="input w-full" placeholder="Sort After">
+        <div class="pb-1">
+            Sort After
+        </div>
+        <select class="input w-full" placeholder="Sort After">
+            @foreach($sortAfter as $sort)
+                <option wire:click="setSortAfter('{{ $sort }}')">
+                    {{ $sort }}
+                </option>
+            @endforeach
+        </select>
     </div>
-    <div class="flex flex-row gap-3 items-center pt-6">
+    <div class="flex flex-row gap-3 items-center pt-6 pb-1">
         <div class="flex flex-row gap-2">
             <div>
                 Include all franchises
