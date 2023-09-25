@@ -88,3 +88,7 @@ button[disabled]{
 .error {
     @apply max-w-full bg-red-400 rounded-lg px-6 justify-center py-3 text-center text-white;
 }
+
+.success {
+    @apply max-w-full bg-lime-500 border rounded-lg h-14 px-6 justify-center leading-13 text-center text-white;
+}

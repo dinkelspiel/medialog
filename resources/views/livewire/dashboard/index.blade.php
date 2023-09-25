@@ -32,7 +32,9 @@
     @if($userEntry)
         <div class="grid-item my-3 rounded-lg bg-card p-3 flex flex-col">
             @if(isset($error))
-                {{ $error }}
+                <div class="error">
+                    {{ $error }}
+                </div>
             @else
                 <div class="flex flex-row items-center gap-3">
                     <div class="flex flex-row w-full gap-3 justify-center">
@@ -50,7 +52,7 @@
                     </button>
                 </div>
                 @if(!is_null($userEntry->rating))
-                    <form action="/api/user/entries/{{ $userEntry->id }}" method="POST" class="flex flex-col gap-3 h-full">
+                    <div class="flex flex-col gap-3 h-full">
                         @method('PATCH')
                         @csrf
 
@@ -59,18 +61,22 @@
                             Rating
                         </div>
                         <div class="flex flex-row-reverse gap-3 items-center">
-                            <input class="slider" id="rating" type="range" min="0" max="100" name="rating" value="{{ $userEntry->rating }}" oninput="this.nextElementSibling.value = this.value">
+                            <input class="slider" id="rating" type="range" min="0" max="100" name="rating" wire:model="userEntry.rating" oninput="this.nextElementSibling.value = this.value">
                             <output class="w-5">{{ $userEntry->rating }}</output>
                         </div>
                         <div>
                             Notes
                         </div>
-                        <textarea class="w-full input !h-full resize-none !text-base p-3" name="notes">{{ $userEntry->notes }}</textarea>
-
-                        <button type="submit" class="btn mt-auto">
+                        <textarea class="w-full input !h-full resize-none !text-base p-3" name="notes" wire:model="userEntry.notes">{{ $userEntry->notes }}</textarea>
+                        @if(session()->has('userEntryMessage'))
+                            <div class="success">
+                                {{ session('userEntryMessage') }}
+                            </div>
+                        @endif
+                        <button wire:click="saveUserEntry" class="btn mt-auto">
                             Save
                         </button>
-                    </form>
+                    </div>
                     <div class="flex flex-row gap-2 pt-2">
                         <form action="/dashboard/edit/{{ $userEntry->entry->franchise->id }}" method="GET" class="w-full">
                             @csrf
@@ -78,13 +84,11 @@
                                 Edit
                             </button>
                         </form>
-                        <form action="/api/user/entries/{{ $userEntry->id }}" method="POST" class="w-full">
-                            @method('DELETE')
-                            @csrf
-                            <button type="submit" class="small-btn w-full">
+                        <div class="w-full">
+                            <button wire:click="deleteUserEntry" class="small-btn w-full">
                                 Remove
                             </button>
-                        </form>
+                        </div>
                     </div>
                 @else
                     <button wire:click="markAsComplete({{ $userEntry->id }})" type="submit" class="btn my-auto">

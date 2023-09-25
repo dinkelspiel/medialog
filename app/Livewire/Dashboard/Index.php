@@ -10,7 +10,12 @@ class Index extends Component
 {
     public $listeners = ['refreshUserEntries' => '$refresh', 'setSortAfter' => 'setSortAfter'];
 
-    public ?UserEntry $userEntry = null;
+    protected $rules = [
+        'userEntry.rating' => 'required',
+        'userEntry.notes' => '',
+    ];
+
+    public $userEntry = null;
 
     public string $sortAfter = "";
 
@@ -44,6 +49,26 @@ class Index extends Component
         $userEntry->save();
 
         $this->userEntry = $userEntry;
+    }
+
+    public function saveUserEntry()
+    {
+        $user = auth()->user();
+
+        if($this->userEntry->user_id != $user->id)
+        {
+            return "You cannot edit a user entry that is not yours.";
+        }
+
+        $this->userEntry->save();
+
+        session()->flash("userEntryMessage", "Update successful");
+    }
+
+    public function deleteUserEntry()
+    {
+        $this->userEntry->delete();
+        $this->userEntry = null;
     }
 
     public function render()
