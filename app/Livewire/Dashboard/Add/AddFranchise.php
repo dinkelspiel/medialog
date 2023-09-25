@@ -13,6 +13,42 @@ class AddFranchise extends Component
     public string $franchiseName = "";
     public string $franchiseCategory = "";
 
+    public array $entries = [];
+
+    public function addEntry()
+    {
+        $this->entries[] = ['name' => '', 'studio_id' => '1', 'cover_url' => '', 'producers' => []];
+    }
+
+    public function removeEntry(int $index)
+    {
+        unset($this->entries[$index]);
+        $this->entries = array_values($this->entries);
+    }
+
+    public function addProducer(int $entryId, string $person)
+    {
+        array_push($this->entries[$entryId]['producers'], $person);
+    }
+
+    public function removeProducer(int $entryId, string $person)
+    {
+        array_push($this->entries[$entryId]['producers'], $person);
+    }
+
+    public function save()
+    {
+        $franchise = Franchise::create(['name' => $this->franchiseName, 'category_id' => Category::where('name', $this->franchiseCategory)->id]);
+
+        foreach($this->entries as $entry)
+        {
+            $entry->franchise_id = $franchise->id;
+            $franchise->addEntry(new Entry($entry));
+        }
+
+        return redirect('/dashboard');
+    }
+
     public function mount()
     {
         $this->franchiseCategory = Category::first()->name;
@@ -23,21 +59,8 @@ class AddFranchise extends Component
         $studios = Studio::all();
         $studios->sort();
 
-        return view('livewire.dashboard.add.add-franchise');
-    }
-
-    public function addEntry()
-    {
-        $this->franchise->entries->push(Entry::create([
-            'franchise_id' => $this->franchise->id,
-            'name' => '',
-            'studio_id' => 1,
-            'cover_url' => ''
-        ]));
-    }
-
-    public function removeEntry()
-    {
-        array_shift($this->entries);
+        return view('livewire.dashboard.add.add-franchise')->layout('layouts.app', [
+            'header' => 'dashboard'
+        ]);
     }
 }
