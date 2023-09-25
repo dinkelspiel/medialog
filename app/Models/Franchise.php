@@ -29,4 +29,9 @@ class Franchise extends Model
     {
         return $this->hasMany(Entry::class);
     }
+
+    public function addEntry(Entry $entry)
+    {
+        return $this->entries()->save($entry);
+    }
 }
