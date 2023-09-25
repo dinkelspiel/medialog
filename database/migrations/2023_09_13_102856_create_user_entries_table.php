@@ -16,7 +16,7 @@ return new class extends Migration
         Schema::create('user_entries', function (Blueprint $table) {
             $table->id();
             $table->foreignIdFor(Entry::class);
-            $table->integer('rating')->unsigned();
+            $table->integer('rating')->unsigned()->nullable();
             $table->text('notes');
             $table->foreignIdFor(User::class);
             $table->timestamp('created_at')->useCurrent();

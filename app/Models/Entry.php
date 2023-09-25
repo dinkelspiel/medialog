@@ -27,24 +27,24 @@ class Entry extends Model
         return $this->belongsTo(Studio::class);
     }
 
-    public function theme(): BelongsToMany
+    public function themes(): BelongsToMany
     {
-        return $this->belongsToMany(Theme::class);
+        return $this->belongsToMany(Theme::class, 'entry_themes');
     }
 
-    public function producer(): BelongsToMany
+    public function producers(): BelongsToMany
     {
-        return $this->belongsToMany(Person::class);
+        return $this->belongsToMany(Person::class, 'entry_producers');
     }
 
-    public function genre(): BelongsToMany
+    public function genres(): BelongsToMany
     {
-        return $this->belongsToMany(Genre::class);
+        return $this->belongsToMany(Genre::class, 'entry_genres');
     }
 
-    public function actor(): BelongsToMany
+    public function cast(): BelongsToMany
     {
-        return $this->belongsToMany(Person::class);
+        return $this->belongsToMany(Person::class, 'entry_cast');
     }
 
     public function userEntries(): HasMany
