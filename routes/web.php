@@ -19,10 +19,13 @@ use Illuminate\Support\Facades\Route;
 
 Route::middleware([VerifySession::class])->group(function() {
     Route::get('/dashboard', App\Livewire\Dashboard\Index::class);
-    
+
     Route::get('/dashboard/add', App\Livewire\Dashboard\Add\AddFranchise::class);
 
     Route::get('/profile', App\Livewire\Profile\Index::class);
 });
 
+Route::get('/', function() {
+    return redirect('/login');
+});
 Route::get('/login', App\Livewire\Auth\Index::class)->name('login');
