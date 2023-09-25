@@ -42,7 +42,7 @@
                             {{ $userEntry->entry->franchise->name }}
                         </div>
                         @if( count($userEntry->entry->franchise->entries) > 1 )
-                            <div class="text-lg font-normal">
+                            <div class="text-lg font-nsemiboldormal">
                                 {{ $userEntry->entry->name }}
                             </div>
                         @endif
@@ -57,17 +57,32 @@
                         @csrf
 
                         <input type="hidden" name="entry_id" value="{{ $userEntry->id }}">
-                        <div id="rating-label">
+                        <div id="rating-label" class="font-semibold">
                             Rating
                         </div>
                         <div class="flex flex-row-reverse gap-3 items-center">
                             <input class="slider" id="rating" type="range" min="0" max="100" name="rating" wire:model="userEntry.rating" oninput="this.nextElementSibling.value = this.value">
                             <output class="w-5">{{ $userEntry->rating }}</output>
                         </div>
-                        <div>
+                        <div class="font-semibold">
                             Notes
                         </div>
                         <textarea class="w-full input !h-full resize-none !text-base p-3" name="notes" wire:model="userEntry.notes">{{ $userEntry->notes }}</textarea>
+                        <div class="grid grid-cols-2">
+                            <div class="grid-item font-semibold">
+                                Watched
+                            </div>
+                            <div class="grid-item font-semibold text-right">
+                                Last Updated
+                            </div>
+                            <div class="grid-item">
+                                {{ $userEntry->created_at }}
+                            </div>
+                            <div class="grid-item text-right">
+                                {{ $userEntry->updated_at }}
+                            </div>
+                        </div>
+
                         @if(session()->has('userEntryMessage'))
                             <div class="success">
                                 {{ session('userEntryMessage') }}
