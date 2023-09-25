@@ -36,19 +36,19 @@ class FilterUserEntriesBrowser extends Component
             if($this->includeAlreadyWatched)
             {
                 $userEntry = UserEntry::inRandomOrder()->where('user_id', $user->id)->first();
-            } else 
+            } else
             {
-                $userEntry = UserEntry::inRandomOrder()->where('user_id', $user->id)->where('rating', null)->first();
+                $userEntry = UserEntry::inRandomOrder()->where('user_id', $user->id)->where('watched_at', null)->first();
             }
             $this->franchise = $userEntry->entry->franchise;
         } else {
             if($this->includeAlreadyWatched)
             {
                 $this->franchise = Franchise::inRandomOrder()->has('entries')->first();
-            } else 
+            } else
             {
                 $this->franchise = Entry::inRandomOrder()->whereDoesntHave('userEntries', function ($query) use ($user) {
-                    $query->where('user_id', $user->id)->where('rating', '!=', null);
+                    $query->where('user_id', $user->id)->where('watched_at', '!=', null);
                 })->first()->franchise;
             }
         }
@@ -61,7 +61,7 @@ class FilterUserEntriesBrowser extends Component
         {
             $userEntry = new UserEntry;
             $userEntry->entry_id = $entry->id;
-            $userEntry->rating = null;
+            $userEntry->rating = 0;
             $userEntry->notes = "";
             $userEntry->user_id = $user->id;
             $userEntry->save();
@@ -90,28 +90,28 @@ class FilterUserEntriesBrowser extends Component
         }
 
         $user = auth()->user();
-     
+
         if(!$this->includeAllFranchises)
         {
             if($this->includeAlreadyWatched)
             {
                 $amount = UserEntry::inRandomOrder()->where('user_id', $user->id)->count();
-            } else 
+            } else
             {
-                $amount = UserEntry::inRandomOrder()->where('user_id', $user->id)->where('rating', null)->count();
+                $amount = UserEntry::inRandomOrder()->where('user_id', $user->id)->where('watched_at', null)->count();
             }
         } else {
             if($this->includeAlreadyWatched)
             {
                 $amount = Franchise::inRandomOrder()->has('entries')->count();
-            } else 
+            } else
             {
                 $amount = Entry::inRandomOrder()->whereDoesntHave('userEntries', function ($query) use ($user) {
-                    $query->where('user_id', $user->id)->where('rating', '!=', null);
+                    $query->where('user_id', $user->id)->where('watched_at', '!=', null);
                 })->count();
             }
         }
-     
+
         return view('livewire.dashboard.filter-user-entries-browser', [
             'franchise' => $this->franchise,
             'canGetRandom' => $amount >= 1,
