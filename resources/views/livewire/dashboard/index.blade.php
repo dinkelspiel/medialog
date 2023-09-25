@@ -1,6 +1,6 @@
 <div class="grid h-screen" style="grid-template-columns: 0.9fr 1.2fr 0.9fr">
     <div class="grid-item my-3 rounded-lg bg-card">
-        @include('dashboard/includes/add')
+        <livewire:dashboard.add.add-franchise />
     </div>
     <div class="grid-item m-3 flex flex-col scrollable-grid-item no-scrollbar">
         <div>
