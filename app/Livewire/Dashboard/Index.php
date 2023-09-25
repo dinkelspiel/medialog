@@ -93,6 +93,7 @@ class Index extends Component
                 break;
             case SortAfterEnum::AZ->value:
                 $userEntries = UserEntry::with(['entry.franchise'])
+                    ->where('user_id', auth()->user()->id)
                     ->join('entries', 'user_entries.entry_id', '=', 'entries.id') // join the entries table
                     ->join('franchises', 'entries.franchise_id', '=', 'franchises.id') // join the franchises table
                     ->orderBy('franchises.name') // order by franchise name
