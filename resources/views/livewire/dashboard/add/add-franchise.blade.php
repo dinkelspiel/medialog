@@ -8,14 +8,14 @@
         <div>
             Name
         </div>
-        <input class="input" placeholder="Name">
+        <input class="input" placeholder="Name" wire.model="franchiseName">
         <div>
             Category
         </div>
-        <select class="input">
-            @foreach($categories as $category)
+        <select class="input" wire.model="franchiseCategory">
+            @foreach(Category::all()->pluck('name') as $category)
                 <option>
-                    {{ $category->name }}
+                    {{ $category }}
                 </option>
             @endforeach
         </select>
@@ -37,13 +37,13 @@
                 <div>
                     Name
                 </div>
-                <input class="input" placeholder="Name">            
+                <input class="input" placeholder="Name">
                 <div>
                     Studio
                 </div>
                 <div class="flex flex-col gap-3 w-full">
                     <div id="studios">
-                    
+
                     </div>
                     <select class="input">
                         @foreach($studios as $studio)
@@ -52,35 +52,35 @@
                             </option>
                         @endforeach
                     </select>
-                </div>        
+                </div>
                 <div>
                     Producers
                 </div>
                 <div class="flex flex-row gap-3 w-full">
                     <input class="input w-full" placeholder="Producers">
                     <button class="small-btn w-32">Add</button>
-                </div>   
+                </div>
                 <div>
                     Actors
                 </div>
                 <div class="flex flex-row gap-3 w-full">
                     <input class="input w-full" placeholder="Actors">
                     <button class="small-btn w-32">Add</button>
-                </div>   
+                </div>
                 <div>
                     Genres
                 </div>
                 <div class="flex flex-row gap-3 w-full">
                     <input class="input w-full" placeholder="Genres">
                     <button class="small-btn w-32">Add</button>
-                </div>   
+                </div>
                 <div>
                     Themes
                 </div>
                 <div class="flex flex-row gap-3 w-full">
                     <input class="input w-full" placeholder="Themes">
                     <button class="small-btn w-32">Add</button>
-                </div>        
+                </div>
                 <div>
                     Cover Image URL
                 </div>

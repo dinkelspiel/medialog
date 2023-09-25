@@ -10,15 +10,12 @@ use Livewire\Component;
 
 class AddFranchise extends Component
 {
-    public $listeners = ['refreshEntries' => '$refresh'];
+    public string $franchiseName = "";
+    public string $franchiseCategory = "";
 
-    public $franchise;
-
-    public function mount() {
-        $this->franchise = Franchise::create([
-            'name' => '',
-            'category_id' => 1
-        ]);
+    public function mount()
+    {
+        $this->franchiseCategory = Category::first()->name;
     }
 
     public function render()
@@ -26,13 +23,7 @@ class AddFranchise extends Component
         $studios = Studio::all();
         $studios->sort();
 
-        return view('livewire.dashboard.add.add-franchise', [
-            'entries' => $this->franchise->entries,
-            'studios' => $studios,
-            'categories' => Category::all()
-        ])->layout('layouts.app', [
-            'header' => 'dashboard'
-        ]);
+        return view('livewire.dashboard.add.add-franchise');
     }
 
     public function addEntry()
