@@ -24,7 +24,7 @@
             </div>
         @endif
         @if (session()->has('message'))
-            <div class="max-w-full bg-lime-400 border border-lime-500 rounded-lg h-14 px-6 justify-center leading-13 text-center text-white">
+            <div class="success">
                 {{ session('message') }}
             </div>
         @endif
