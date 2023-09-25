@@ -4,6 +4,7 @@ namespace App\Livewire\Dashboard;
 
 use App\Enums\SortAfterEnum;
 use App\Models\UserEntry;
+use Carbon\Carbon;
 use Livewire\Component;
 
 class Index extends Component
@@ -45,7 +46,7 @@ class Index extends Component
             return "No valid user entry found";
         }
 
-        $userEntry->rating = 0;
+        $userEntry->watched_at = Carbon::now();
         $userEntry->save();
 
         $this->userEntry = $userEntry;
@@ -81,14 +82,14 @@ class Index extends Component
         $userEntries = UserEntry::where('user_id', auth()->user()->id);
         switch($this->sortAfter)
         {
-            case SortAfterEnum::Created->value:
-                $userEntries = $userEntries->orderBy('created_at', 'desc')->get();
+            case SortAfterEnum::Watched->value:
+                $userEntries = $userEntries->orderBy('watched_at', 'desc')->orderBy('id', 'desc')->get();
                 break;
             case SortAfterEnum::Updated->value:
-                $userEntries = $userEntries->orderBy('updated_at', 'desc')->get();
+                $userEntries = $userEntries->orderBy('updated_at', 'desc')->orderBy('id', 'desc')->get();
                 break;
             case SortAfterEnum::Rating->value:
-                $userEntries = $userEntries->orderBy('rating', 'desc')->get();
+                $userEntries = $userEntries->orderBy('rating', 'desc')->orderBy('id', 'desc')->get();
                 break;
             case SortAfterEnum::AZ->value:
                 $userEntries = UserEntry::with(['entry.franchise'])

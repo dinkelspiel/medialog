@@ -38,7 +38,7 @@ class SearchFranchise extends Component
         }
 
         $userEntry = new \App\Models\UserEntry;
-        $userEntry->rating = null;
+        $userEntry->rating = 0;
         $userEntry->notes = "";
         $userEntry->user_id = $user->id;
         $userEntry->entry_id = $entryId;

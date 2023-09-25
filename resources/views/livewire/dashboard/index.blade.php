@@ -51,7 +51,7 @@
                         X
                     </button>
                 </div>
-                @if(!is_null($userEntry->rating))
+                @if(!is_null($userEntry->watched_at))
                     <div class="flex flex-col gap-3 h-full">
                         @method('PATCH')
                         @csrf
@@ -76,7 +76,7 @@
                                 Last Updated
                             </div>
                             <div class="grid-item">
-                                {{ $userEntry->created_at }}
+                                {{ $userEntry->watched_at }}
                             </div>
                             <div class="grid-item text-right">
                                 {{ $userEntry->updated_at }}
