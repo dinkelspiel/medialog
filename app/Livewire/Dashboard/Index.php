@@ -17,7 +17,6 @@ class Index extends Component
     public function setSortAfter(string $sort)
     {
         $this->sortAfter = $sort;
-        dd($sort);
     }
 
     public function showUserEntry($id)
@@ -57,7 +56,7 @@ class Index extends Component
         $userEntries = UserEntry::where('user_id', auth()->user()->id);
         switch($this->sortAfter)
         {
-            case SortAfterEnum::Created->value: 
+            case SortAfterEnum::Created->value:
                 $userEntries = $userEntries->orderBy('created_at', 'desc')->get();
                 break;
             case SortAfterEnum::Updated->value:
@@ -67,9 +66,12 @@ class Index extends Component
                 $userEntries = $userEntries->orderBy('rating', 'desc')->get();
                 break;
             case SortAfterEnum::AZ->value:
-                $userEntries = UserEntry::with(['franchise' => function ($query) {
-                    $query->orderBy('name')->orderBy('id');
-                }])->orderBy('franchise_id')->get();                
+                $userEntries = UserEntry::with(['entry.franchise'])
+                    ->join('entries', 'user_entries.entry_id', '=', 'entries.id') // join the entries table
+                    ->join('franchises', 'entries.franchise_id', '=', 'franchises.id') // join the franchises table
+                    ->orderBy('franchises.name') // order by franchise name
+                    ->select('user_entries.*') // select only user_entries fields to avoid field name conflicts
+                    ->get();
                 break;
         }
 
