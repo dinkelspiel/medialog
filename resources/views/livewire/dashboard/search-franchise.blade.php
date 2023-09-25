@@ -34,7 +34,7 @@
         </ul>
     @else
         <div class="text-gray-500 text-sm">
-            Enter a term to search for users.
+            Enter a term to search for franchises.
         </div>
     @endif
 </div>
