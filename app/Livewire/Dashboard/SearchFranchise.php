@@ -54,7 +54,10 @@ class SearchFranchise extends Component
         $userId = auth()->user()->id;
 
         $entriesWithoutUserEntry = Entry::whereHas('franchise', function ($query) use ($searchString) {
-            $query->where('name', 'LIKE', '%' . $searchString . '%');
+            if($searchString != "*")
+            {
+                $query->where('name', 'LIKE', '%' . $searchString . '%');
+            }
         })
         ->whereDoesntHave('userEntries', function ($query) use ($userId) {
             $query->where('user_id', $userId);
