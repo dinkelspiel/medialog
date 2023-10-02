@@ -5,9 +5,6 @@
 
         <input class="input" placeholder="Studio">
         <input class="input" placeholder="Category">
-
-        <input class="input" placeholder="Genres">
-        <input class="input" placeholder="Themes">
     </div>
     <div class="py-6 border-b w-full border-b-outline border-dashed">
         <div class="pb-1">

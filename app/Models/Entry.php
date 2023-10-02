@@ -27,24 +27,9 @@ class Entry extends Model
         return $this->belongsTo(Studio::class);
     }
 
-    public function themes(): BelongsToMany
-    {
-        return $this->belongsToMany(Theme::class, 'entry_themes');
-    }
-
     public function producers(): BelongsToMany
     {
         return $this->belongsToMany(Person::class, 'entry_producers');
-    }
-
-    public function genres(): BelongsToMany
-    {
-        return $this->belongsToMany(Genre::class, 'entry_genres');
-    }
-
-    public function cast(): BelongsToMany
-    {
-        return $this->belongsToMany(Person::class, 'entry_cast');
     }
 
     public function userEntries(): HasMany
