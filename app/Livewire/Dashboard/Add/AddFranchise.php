@@ -5,10 +5,8 @@ namespace App\Livewire\Dashboard\Add;
 use App\Models\Category;
 use App\Models\Entry;
 use App\Models\Franchise;
-use App\Models\Genre;
 use App\Models\Person;
 use App\Models\Studio;
-use App\Models\Theme;
 use Livewire\Component;
 
 class AddFranchise extends Component
@@ -16,11 +14,13 @@ class AddFranchise extends Component
     public string $franchiseName = "";
     public string $franchiseCategory = "";
 
+    public string $addStudioName = "", $addPersonName = "";
+
     public array $entries = [];
 
     public function addEntry()
     {
-        $this->entries[] = ['name' => '', 'studio' => '', 'cover_url' => '', 'producers' => [], 'cast' => [], 'genres' => [], 'themes' => []];
+        $this->entries[] = ['name' => '', 'studio' => '', 'cover_url' => '', 'producers' => []];
     }
 
     public function removeEntry(int $index)
@@ -54,6 +54,12 @@ class AddFranchise extends Component
 
     public function save()
     {
+        if(Franchise::where('name', $this->franchiseName)->first() != null)
+        {
+            session()->flash('error', 'Franchise with name already exists');
+            return;
+        }
+
         $franchise = Franchise::create(['name' => $this->franchiseName, 'category_id' => Category::where('name', $this->franchiseCategory)->first()->id]);
 
         foreach($this->entries as $entryRaw)
@@ -66,30 +72,6 @@ class AddFranchise extends Component
 
             $entry = $franchise->addEntry($entry);
 
-            foreach($entryRaw['themes'] as $themeRaw)
-            {
-                $theme = Theme::where('name', $themeRaw)->first();
-
-                if($theme == null)
-                {
-                    continue;
-                }
-
-                $entry->themes()->attach(['theme_id' => $theme->id]);
-            }
-
-            foreach($entryRaw['genres'] as $genreRaw)
-            {
-                $genre = Genre::where('name', $genreRaw)->first();
-
-                if($genre == null)
-                {
-                    continue;
-                }
-
-                $entry->genres()->attach(['genre_id' => $genre->id]);
-            }
-
             foreach($entryRaw['producers'] as $producerRaw)
             {
                 $producer = Person::where('name', $producerRaw)->first();
@@ -101,23 +83,53 @@ class AddFranchise extends Component
 
                 $entry->producers()->attach(['person_id' => $producer->id]);
             }
-
-            foreach($entryRaw['cast'] as $castRaw)
-            {
-                $cast = Person::where('name', $castRaw)->first();
-
-                if($cast == null)
-                {
-                    continue;
-                }
-
-                $entry->cast()->attach(['person_id' => $cast->id]);
-            }
         }
 
         $franchise->save();
 
         return redirect('/dashboard');
+    }
+
+    public function savePerson()
+    {
+        if(strlen($this->addPersonName) == 0)
+        {
+            return;
+        }
+
+        if(Person::where('name', $this->addPersonName)->first() != null)
+        {
+            session()->flash('error', 'Person with name already exists');
+            return;
+        }
+
+        $person = new Person;
+        $person->name = $this->addPersonName;
+        $person->save();
+
+        $this->addPersonName = "";
+        session()->flash('message', 'Added person successfully');
+    }
+
+    public function saveStudio()
+    {
+        if(strlen($this->addStudioName) == 0)
+        {
+            return;
+        }
+
+        if(Studio::where('name', $this->addStudioName)->first() != null)
+        {
+            session()->flash('error', 'Studio with name already exists');
+            return;
+        }
+
+        $studio = new Studio;
+        $studio->name = $this->addStudioName;
+        $studio->save();
+
+        $this->addStudioName = "";
+        session()->flash('message', 'Added studio successfully');
     }
 
     public function mount()

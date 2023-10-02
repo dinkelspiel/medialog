@@ -88,22 +88,15 @@
                                 {{ session('userEntryMessage') }}
                             </div>
                         @endif
-                        <button wire:click="saveUserEntry" class="btn mt-auto">
-                            Save
-                        </button>
-                    </div>
-                    <div class="flex flex-row gap-2 pt-2">
-                        <form action="/dashboard/edit/{{ $userEntry->entry->franchise->id }}" method="GET" class="w-full">
-                            @csrf
-                            <button type="submit" class="small-btn w-full">
-                                Edit
+                        <div class="flex gap-3">
+                            <button wire:click="saveUserEntry" class="btn mt-auto">
+                                Save
                             </button>
-                        </form>
-                        <div class="w-full">
-                            <button wire:click="deleteUserEntry" class="small-btn w-full">
+                            <button wire:click="deleteUserEntry" class="btn !w-max px-10">
                                 Remove
                             </button>
                         </div>
+                    </div>
                     </div>
                 @else
                     <button wire:click="markAsComplete({{ $userEntry->id }})" type="submit" class="btn my-auto">
