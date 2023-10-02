@@ -3,6 +3,8 @@
 namespace App\Livewire\Dashboard;
 
 use App\Enums\SortAfterEnum;
+use App\Models\Entry;
+use App\Models\Franchise;
 use App\Models\UserEntry;
 use Carbon\Carbon;
 use Livewire\Component;
@@ -72,6 +74,78 @@ class Index extends Component
         $this->userEntry = null;
     }
 
+    // Filter User Entries Browser
+
+    public ?Franchise $franchise = null;
+
+    public bool $includeAllFranchises = false;
+    public bool $includeAlreadyWatched = false;
+
+    public array $sortAfterSelect = [];
+    public string $sortTitle = "", $sortSeason = "";
+
+    public $page = "add";
+
+    public function setPage(string $page)
+    {   
+        $this->page = $page;
+    }
+
+    public function toggleIncludeAllFranchises()
+    {
+        $this->includeAllFranchises = !$this->includeAllFranchises;
+    }
+
+    public function toggleIncludeAlreadyWatched()
+    {
+        $this->includeAlreadyWatched = !$this->includeAlreadyWatched;
+    }
+
+    public function getRandom()
+    {
+        $user = auth()->user();
+
+        if(!$this->includeAllFranchises)
+        {
+            if($this->includeAlreadyWatched)
+            {
+                $userEntry = UserEntry::inRandomOrder()->where('user_id', $user->id)->first();
+            } else
+            {
+                $userEntry = UserEntry::inRandomOrder()->where('user_id', $user->id)->where('watched_at', null)->first();
+            }
+            $this->franchise = $userEntry->entry->franchise;
+        } else {
+            if($this->includeAlreadyWatched)
+            {
+                $this->franchise = Franchise::inRandomOrder()->has('entries')->first();
+            } else
+            {
+                $this->franchise = Entry::inRandomOrder()->whereDoesntHave('userEntries', function ($query) use ($user) {
+                    $query->where('user_id', $user->id)->where('watched_at', '!=', null);
+                })->first()->franchise;
+            }
+        }
+    }
+
+    public function addFranchise()
+    {
+        $user = auth()->user();
+        foreach($this->franchise->entries as $entry)
+        {
+            $userEntry = new UserEntry;
+            $userEntry->entry_id = $entry->id;
+            $userEntry->rating = 0;
+            $userEntry->notes = "";
+            $userEntry->user_id = $user->id;
+            $userEntry->save();
+        }
+        $this->franchise = null;
+
+        $userEntry->refresh();
+        $this->dispatch('refreshUserEntries');
+    }
+
     public function render()
     {
         if($this->sortAfter === "")
@@ -79,7 +153,15 @@ class Index extends Component
             $this->sortAfter = array_column(SortAfterEnum::cases(), 'value')[0];
         }
 
-        $userEntries = UserEntry::where('user_id', auth()->user()->id);
+        $sortTitle = $this->sortTitle;
+        $userEntries = UserEntry::where('user_id', auth()->user()->id)->with([
+            'entry.franchise' => function ($query) use ($sortTitle) {
+                if($sortTitle != "")
+                {
+                    $query->where('name', 'like', '%' . $sortTitle . '%');
+                }
+            }
+        ]);
         switch($this->sortAfter)
         {
             case SortAfterEnum::Watched->value:
@@ -92,8 +174,7 @@ class Index extends Component
                 $userEntries = $userEntries->orderBy('rating', 'desc')->orderBy('id', 'desc')->get();
                 break;
             case SortAfterEnum::AZ->value:
-                $userEntries = UserEntry::with(['entry.franchise'])
-                    ->where('user_id', auth()->user()->id)
+                $userEntries = $userEntries->with(['entry.franchise'])
                     ->join('entries', 'user_entries.entry_id', '=', 'entries.id') // join the entries table
                     ->join('franchises', 'entries.franchise_id', '=', 'franchises.id') // join the franchises table
                     ->orderBy('franchises.name') // order by franchise name
@@ -102,10 +183,47 @@ class Index extends Component
                 break;
         }
 
+        // Filter User Entries
+
+        if($this->sortAfterSelect === [])
+        {
+            $this->sortAfterSelect = array_column(SortAfterEnum::cases(), 'value');
+        }
+
+        $user = auth()->user();
+
+        if(!$this->includeAllFranchises)
+        {
+            if($this->includeAlreadyWatched)
+            {
+                $amount = UserEntry::inRandomOrder()->where('user_id', $user->id)->count();
+            } else
+            {
+                $amount = UserEntry::inRandomOrder()->where('user_id', $user->id)->where('watched_at', null)->count();
+            }
+        } else {
+            if($this->includeAlreadyWatched)
+            {
+                $amount = Franchise::inRandomOrder()->has('entries')->count();
+            } else
+            {
+                $amount = Entry::inRandomOrder()->whereDoesntHave('userEntries', function ($query) use ($user) {
+                    $query->where('user_id', $user->id)->where('watched_at', '!=', null);
+                })->count();
+            }
+        }
+
         return view('livewire.dashboard.index', [
             'userEntry' => $this->userEntry,
             'userEntries' => $userEntries,
-            'sortAfter' => $this->sortAfter
+            'sortAfter' => $this->sortAfter,
+            'sortAfterArray' => $this->sortAfterSelect,
+            'sortTitle' => $this->sortTitle,
+            
+            'franchise' => $this->franchise,
+            'canGetRandom' => $amount >= 1,
+            'includeAllFranchises' => $this->includeAllFranchises,
+            'includeAlreadyWatched' => $this->includeAlreadyWatched
         ])->layout('layouts.app', [
             'header' => 'dashboard'
         ]);

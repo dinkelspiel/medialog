@@ -19,7 +19,7 @@ class Entry extends Model
 
     public function franchise(): BelongsTo
     {
-        return $this->BelongsTo(Franchise::class);
+        return $this->belongsTo(Franchise::class);
     }
 
     public function studio(): BelongsTo
