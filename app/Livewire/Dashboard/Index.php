@@ -82,7 +82,11 @@ class Index extends Component
     public bool $includeAlreadyWatched = false;
 
     public array $sortAfterSelect = [];
-    public string $sortTitle = "", $sortSeason = "";
+    public string $filterTitle = "";
+    public string $filterSeason = "";
+    public string $filterStudio = "";
+    public string $filterProducer = "";
+    public string $filterCategory = "";
 
     public $page = "add";
 
@@ -218,7 +222,8 @@ class Index extends Component
             'userEntries' => $userEntries,
             'sortAfter' => $this->sortAfter,
             'sortAfterArray' => $this->sortAfterSelect,
-            'sortTitle' => $this->sortTitle,
+            
+            'filterTitle' => $this->filterTitle,
             
             'franchise' => $this->franchise,
             'canGetRandom' => $amount >= 1,
