@@ -157,12 +157,12 @@ class Index extends Component
             $this->sortAfter = array_column(SortAfterEnum::cases(), 'value')[0];
         }
 
-        $sortTitle = $this->sortTitle;
+        $filterTitle = $this->filterTitle;
         $userEntries = UserEntry::where('user_id', auth()->user()->id)->with([
-            'entry.franchise' => function ($query) use ($sortTitle) {
-                if($sortTitle != "")
+            'entry.franchise' => function ($query) use ($filterTitle) {
+                if($filterTitle != "")
                 {
-                    $query->where('name', 'like', '%' . $sortTitle . '%');
+                    $query->where('name', 'like', '%' . $filterTitle . '%');
                 }
             }
         ]);

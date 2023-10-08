@@ -1,8 +1,40 @@
 <div class="grid grid-cols-2 m-3 gap-3">
     <input wire:model.live="search" type="text" placeholder="Search franchise..." class="grid-item col-span-2 input"/>
+    
+    <select class="col-span-2 input" wire:model.live="category">
+        <option value="0">
+            Select a Category
+        </option>
+        @foreach(\App\Models\Category::all() as $category)
+            <option value="{{ $category->id }}">
+                {{ $category->name }}
+            </option>
+        @endforeach
+    </select>
+    
+    <select class="input" wire:model.live="studio">
+        <option value="0">
+            Select a Studio
+        </option>
+        @foreach(\App\Models\Studio::all() as $studio)
+            <option value="{{ $studio->id }}">
+                {{ $studio->name }}
+            </option>
+        @endforeach
+    </select>
+    <select class="input" wire:model.live="producer">
+        <option value="0">
+            Select a Producer
+        </option>
+        @foreach(\App\Models\Person::all() as $person)
+            <option value="{{ $person->id }}">
+                {{ $person->name }}
+            </option>
+        @endforeach
+    </select>
 
-    @if($search != "")
-        <ul class="grid-item col-span-2 flex flex-col overflow-y-scroll no-scrollbar" style="height: calc(100vh - 12rem)">
+    @if($search != "" || $this->studio != "0")
+        <ul class="grid-item col-span-2 flex flex-col overflow-y-scroll no-scrollbar" style="height: calc(100vh - 20rem)">
             @foreach($entries as $entry)
                 <li>
                     <button wire:click="create({{ $entry->franchise->id }}, {{ $entry->id }})" class="h-20 w-full text-left rounded-lg duration-200 border-card hover:bg-card-hover active:rounded-xl active:bg-card-active hover:border-secondary border-dashed border p-3 flex flex-row cursor-pointer">
