@@ -2,14 +2,19 @@
 
 namespace App\Livewire\Dashboard;
 
+use App\Models\Category;
 use App\Models\Entry;
 use App\Models\Franchise;
+use App\Models\Person;
 use Illuminate\Support\Facades\Validator;
 use Livewire\Component;
 
 class SearchFranchise extends Component
 {
     public $search = '';
+    public $studio = '0';
+    public $category = '0';
+    public $producer = '0';
 
     public function create(int $franchiseId, int $entryId)
     {
@@ -54,18 +59,43 @@ class SearchFranchise extends Component
         $userId = auth()->user()->id;
 
         $entriesWithoutUserEntry = Entry::whereHas('franchise', function ($query) use ($searchString) {
-            if($searchString != "*")
+            if($searchString != "*" && $searchString != "")
             {
-                $query->where('name', 'LIKE', '%' . $searchString . '%');
+                $query->where('franchises.name', 'LIKE', '%' . $searchString . '%');
             }
         })
         ->whereDoesntHave('userEntries', function ($query) use ($userId) {
-            $query->where('user_id', $userId);
-        })->get();
+            $query->where('user_entries.user_id', $userId);
+        });
+        
+        $producer = $this->producer;
+        $category = $this->category;
+        
+        if($this->studio != "0")
+        {
+            $entriesWithoutUserEntry->where('entries.studio_id', $this->studio);
+        }
+        if($this->producer != "0")
+        {
+            $entriesWithoutUserEntry->whereHas('producers', function($q) use ($producer) {
+                $q->where('people.id', $producer);
+            });
+        }
+        if($this->category != "0")
+        {
+            $entriesWithoutUserEntry->whereHas('franchise', function($q) use ($category) {
+                $q->where('franchises.category_id', $category);
+            });
+        }
+        
+        $entriesWithoutUserEntry = $entriesWithoutUserEntry->get();
 
         return view('livewire.dashboard.search-franchise', [
             'uid' => $userId,
-            'entries' => $entriesWithoutUserEntry
+            'entries' => $entriesWithoutUserEntry,
+            'searchStudio' => $this->studio,
+            'searchProducer' => $this->producer,
+            'searchCategory' => $this->category
         ]);
     }
 }
