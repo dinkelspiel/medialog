@@ -74,10 +74,24 @@
                     </div>
                 @endif
                 @if(!is_null($franchise))
-                    <div class="pt-6 rounded-lg  object-cover flex flex-col gap-3 col-span-2">
-                        <img src="{{ $franchise->entries->first()->cover_url }}" class="rounded-lg h-20 w-full object-cover">
-                        <div>
-                            <i>{{ $franchise->name }}</i>. A <i>{{ $franchise->category->name }}</i> made by @foreach ($franchise->entries as $entry) <i>{{ $entry->studio->name }}</i>@if($loop->remaining == 1) and @elseif(!$loop->last),@endif @endforeach
+                    <div class="pt-6 rounded-lg object-cover flex flex-row gap-3 col-span-2">
+                        <img src="{{ $franchise->entries->first()->cover_url }}" class="rounded-lg w-40 h-60 object-cover">
+                        <div class="flex flex-col gap-3">
+                            <div class="font-semibold">
+                                <i>{{ $franchise->name }}</i>.
+                            </div>
+                            <div>
+                                A <i>{{ $franchise->category->name }}</i> directed/written by                                 
+                                @foreach($franchise->entries as $entry)
+                                    @foreach(\App\Models\EntryProducer::where('entry_id', $entry->id)->get() as $producer)
+                                        <i>{{ $producer->person->name }}</i>@if($loop->remaining == 1) and @elseif(!$loop->last),@endif
+                                    @endforeach
+                                @endforeach
+                            </div>
+                            <div>
+   
+                                Studios include @foreach ($franchise->entries as $entry) <i>{{ $entry->studio->name }}</i>@if($loop->remaining == 1) and @elseif(!$loop->last),@endif @endforeach
+                            </div>
                         </div>
                     </div>
                 @endif
