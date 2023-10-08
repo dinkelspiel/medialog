@@ -11,15 +11,79 @@
         @if($page == 'add')
             <livewire:dashboard.search-franchise /> 
         @elseif($page == 'filter')
-            <div class="p-3">
-                <div class="grid grid-cols-2 gap-2 pb-6 border-b border-b-outline border-dashed">
-                    <input class="input col-span-2" placeholder="Title" type="text" wire:model="sortTitle">
-                    <input class="input col-span-2" placeholder="Season" type="text" wire:model="sortSeason">
-                    {{ $sortTitle }}
-                    <input class="input" placeholder="Studio">
-                    <input class="input" placeholder="Category">
+            <div class="grid grid-cols-2 gap-2 p-3">
+                {{-- Filter Options --}}
+                <input class="input col-span-2" placeholder="Title" type="text" wire:model="filterTitle">
+                <input class="input col-span-2" placeholder="Season" type="text" wire:model="filterSeason">
+                <select class="input" placeholder="Studio" wire:model="filterStudio">
+                    <option value="">
+                        Select a Studio
+                    </option>
+                    @foreach(\App\Models\Studio::all() as $studio)
+                        <option value="{{ $studio->id }}">
+                            {{ $studio->name }}
+                        </option>
+                    @endforeach
+                </select>
+                <select class="input" placeholder="Producer" wire:model="filterProducer">
+                    <option value="">
+                        Select a Producer
+                    </option>
+                    @foreach(\App\Models\Person::all() as $person)
+                        <option value="{{ $person->id }}">
+                            {{ $person->name }}
+                        </option>
+                    @endforeach
+                </select>
+                <select class="input col-span-2" wire:model="filterCategory" placeholder="Category">
+                    <option value="">
+                        Select a Category
+                    </option>
+                    @foreach(\App\Models\Category::all() as $category)
+                        <option value="{{ $category->id }}">
+                            {{ $category->name }}
+                        </option>
+                    @endforeach
+                </select>
+
+                {{-- I'm Feeling Lucky --}}
+                <button class="btn col-span-2 mt-3" @if(!$canGetRandom)disabled @else wire:click="getRandom" @endif>
+                    I'm feeling lucky
+                </button>
+                <div class="text-left text-neutral-400 text-xs pt-2 col-span-2">
+                    Get a random media from Medialog with the given parameters
                 </div>
-                <div class="py-6 border-b w-full border-b-outline border-dashed">
+
+                <div class="flex flex-row gap-2">
+                    <div>
+                        Include all franchises
+                    </div>
+                    <input type="checkbox" wire:click="toggleIncludeAllFranchises" @if($includeAllFranchises) checked @endif>
+                </div>
+                <div class="flex flex-row gap-2">
+                    <div>
+                        Include already watched
+                    </div>
+                    <input type="checkbox" wire:click="toggleIncludeAlreadyWatched" @if($includeAlreadyWatched) checked @endif>
+                </div>
+
+                {{-- I'm Feeling Lucky Result --}}
+                @if(!$canGetRandom)
+                    <div class="error mt-3 col-span-2">
+                        You must have atleast one un-completed franchise
+                    </div>
+                @endif
+                @if(!is_null($franchise))
+                    <div class="pt-6 rounded-lg  object-cover flex flex-col gap-3 col-span-2">
+                        <img src="{{ $franchise->entries->first()->cover_url }}" class="rounded-lg h-20 w-full object-cover">
+                        <div>
+                            <i>{{ $franchise->name }}</i>. A <i>{{ $franchise->category->name }}</i> made by @foreach ($franchise->entries as $entry) <i>{{ $entry->studio->name }}</i>@if($loop->remaining == 1) and @elseif(!$loop->last),@endif @endforeach
+                        </div>
+                    </div>
+                @endif
+
+                {{-- Sort After --}}
+                <div class="my-6 pt-6 border-t w-full border-t-outline border-dashed col-span-2">
                     <div class="pb-1">
                         Sort After
                     </div>
@@ -31,44 +95,6 @@
                         @endforeach
                     </select>
                 </div>
-                <div class="flex flex-row gap-3 items-center pt-6 pb-1">
-                    <div class="flex flex-row gap-2">
-                        <div>
-                            Include all franchises
-                        </div>
-                        <input type="checkbox" wire:click="toggleIncludeAllFranchises" @if($includeAllFranchises) checked @endif>
-                    </div>
-                    <div class="flex flex-row gap-2">
-                        <div>
-                            Include already watched
-                        </div>
-                        <input type="checkbox" wire:click="toggleIncludeAlreadyWatched" @if($includeAlreadyWatched) checked @endif>
-                    </div>
-                </div>
-                <div class="pt-3 w-full">
-                    <button class="btn" @if(!$canGetRandom)disabled @else wire:click="getRandom" @endif>
-                        I'm feeling lucky
-                    </button>
-                    <div class="text-left text-neutral-400 text-xs pt-2">
-                        Get a random media from Medialog with the given parameters
-                    </div>
-                </div>
-                @if(!$canGetRandom)
-                    <div class="error mt-3">
-                        You must have atleast one un-completed franchise
-                    </div>
-                @endif
-                @if(!is_null($franchise))
-                    <div class="pt-6 rounded-lg h-20 w-full object-cover flex flex-col gap-3">
-                        <img src="{{ $franchise->entries->first()->cover_url }}" class="rounded-lg h-20 w-full object-cover">
-                        <div>
-                            <i>{{ $franchise->name }}</i>. A <i>{{ $franchise->category->name }}</i> made by @foreach ($franchise->entries as $entry) <i>{{ $entry->studio->name }}</i>@if($loop->remaining == 1) and @elseif(!$loop->last),@endif @endforeach
-                        </div>
-                        <button class="btn" wire:click="addFranchise">
-                            Add
-                        </button>
-                    </div>
-                @endif
             </div>
         @else
             <div>   
