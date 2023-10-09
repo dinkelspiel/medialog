@@ -9,14 +9,14 @@
             </button>
         </div>
         @if($page == 'add')
-            <livewire:dashboard.search-franchise /> 
+            <livewire:dashboard.search-franchise />
         @elseif($page == 'filter')
             <div class="grid grid-cols-2 gap-2 p-3">
                 {{-- Filter Options --}}
-                <input class="input col-span-2" placeholder="Title" type="text" wire:model="filterTitle">
-                <input class="input col-span-2" placeholder="Season" type="text" wire:model="filterSeason">
-                <select class="input" placeholder="Studio" wire:model="filterStudio">
-                    <option value="">
+                <input class="input col-span-2" placeholder="Title" type="text" wire:model.live="filterTitle">
+                <input class="input col-span-2" placeholder="Season" type="text" wire:model.live="filterSeason">
+                <select class="input" placeholder="Studio" wire:model.live="filterStudio">
+                    <option value="0">
                         Select a Studio
                     </option>
                     @foreach(\App\Models\Studio::all() as $studio)
@@ -25,8 +25,8 @@
                         </option>
                     @endforeach
                 </select>
-                <select class="input" placeholder="Producer" wire:model="filterProducer">
-                    <option value="">
+                <select class="input" placeholder="Producer" wire:model.live="filterProducer">
+                    <option value="0">
                         Select a Producer
                     </option>
                     @foreach(\App\Models\Person::all() as $person)
@@ -35,8 +35,8 @@
                         </option>
                     @endforeach
                 </select>
-                <select class="input col-span-2" wire:model="filterCategory" placeholder="Category">
-                    <option value="">
+                <select class="input col-span-2" wire:model.live="filterCategory" placeholder="Category">
+                    <option value="0">
                         Select a Category
                     </option>
                     @foreach(\App\Models\Category::all() as $category)
@@ -81,7 +81,7 @@
                                 <i>{{ $franchise->name }}</i>.
                             </div>
                             <div>
-                                A <i>{{ $franchise->category->name }}</i> directed/written by                                 
+                                A <i>{{ $franchise->category->name }}</i> directed/written by
                                 @foreach($franchise->entries as $entry)
                                     @foreach(\App\Models\EntryProducer::where('entry_id', $entry->id)->get() as $producer)
                                         <i>{{ $producer->person->name }}</i>@if($loop->remaining == 1) and @elseif(!$loop->last),@endif
@@ -89,7 +89,7 @@
                                 @endforeach
                             </div>
                             <div>
-   
+
                                 Studios include @foreach ($franchise->entries as $entry) <i>{{ $entry->studio->name }}</i>@if($loop->remaining == 1) and @elseif(!$loop->last),@endif @endforeach
                             </div>
                         </div>
@@ -111,7 +111,7 @@
                 </div>
             </div>
         @else
-            <div>   
+            <div>
                 Invalid page
             </div>
         @endif
