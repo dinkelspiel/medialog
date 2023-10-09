@@ -1,4 +1,4 @@
-<div class="grid grid-cols-2 m-3 gap-3">
+<div class="grid grid-cols-2 m-3 gap-2">
     <input wire:model.live="search" type="text" placeholder="Search franchise..." class="grid-item col-span-2 input"/>
     
     <select class="col-span-2 input" wire:model.live="category">
