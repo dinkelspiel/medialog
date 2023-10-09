@@ -332,9 +332,17 @@ class Index extends Component
         if($this->filterCategory != "0")
         {
             $filterCategory = $this->filterCategory;
-            $userEntries = $userEntries->whereHas('entry.franchises', function($query) use($filterCategory) {
+            $userEntries = $userEntries->whereHas('entry.franchise', function($query) use($filterCategory) {
                 $query->where('category_id', $filterCategory);
             });
+        }
+        if($this->filterProducer != "0")
+        {
+            $producerId = $this->filterProducer;
+            $userEntries = $userEntries
+                ->whereHas('entry.producers', function($query) use ($producerId) {
+                    $query->where('person_id', $producerId);
+                });
         }
         $userEntries = $userEntries->get();
 
