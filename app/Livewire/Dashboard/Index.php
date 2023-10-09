@@ -228,8 +228,11 @@ class Index extends Component
                 }
                 if($this->filterCategory != "0")
                 {
+                    $filterCategory = $this->filterCategory;
                     $franchise = $franchise
-                        ->where('category_id', $this->filterCategory);
+                        ->whereHas('franchise', function($query) use($filterCategory){
+                            $query->where('category_id', $filterCategory);
+                        }); 
                 }
                 if($this->filterProducer != "0")
                 {
@@ -240,7 +243,12 @@ class Index extends Component
                         });
                 }
 
-                $this->franchise = $franchise->first()->franchise;
+                if($franchise->first() != null)
+                {
+                    $this->franchise = $franchise->first()->franchise;
+                } else {
+                    $this->franchise = null;
+                }
             }
         }
     }
