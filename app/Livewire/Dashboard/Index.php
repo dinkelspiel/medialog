@@ -119,29 +119,44 @@ class Index extends Component
                 $userEntry = UserEntry::inRandomOrder()->where('user_id', $user->id)->where('watched_at', null);
             }
 
-            $userEntry = $userEntry
-                ->join('entries', 'user_entries.entry_id', '=', 'entries.id')
-                ->join('franchises', 'entries.franchise_id', 'franchises.id');
-
             if($this->filterTitle != "")
             {
                 $userEntry = $userEntry
-                    ->where('franchises.name', 'LIKE', '%' . $this->filterTitle . '%');
+                    ->whereHas('entry.franchise', function($query) {
+                        $query->where('name', 'LIKE', '%' . $this->filterTitle . '%');
+                    });
             }
             if($this->filterSeason != "")
             {
+                $filterSeason = $this->filterSeason;
                 $userEntry = $userEntry
-                    ->where('entries.name', 'LIKE', '%' . $this->filterSeason . '%');
+                    ->whereHas('entry', function($query) use($filterSeason) {
+                        $query->where('name', 'LIKE', '%' . $filterSeason . '%');
+                    });
             }
             if($this->filterStudio != "0")
             {
+                $filterStudio = $this->filterStudio;
                 $userEntry = $userEntry
-                    ->where('entries.studio_id', $this->filterStudio);
+                    ->whereHas('entry', function($query) use($filterStudio) {
+                        $query->where('studio_id', $filterStudio);
+                    });
             }
             if($this->filterCategory != "0")
             {
+                $filterCategory = $this->filterCategory;
                 $userEntry = $userEntry
-                    ->where('franchises.category_id', $this->filterCategory);
+                    ->whereHas('entry.franchise', function($query) use($filterCategory) {
+                        $query->where('category_id', $filterCategory);
+                    });
+            }
+            if($this->filterProducer != "0")
+            {
+                $producerId = $this->filterProducer;
+                $userEntry = $userEntry
+                    ->whereHas('entry.producers', function($query) use ($producerId) {
+                        $query->where('person_id', $producerId);
+                    });
             }
 
             $userEntry = $userEntry->first();
@@ -156,17 +171,26 @@ class Index extends Component
             if($this->includeAlreadyWatched)
             {
                 $franchise = Franchise::inRandomOrder()
-                ->whereHas('entries', function ($query) {
-                    if($this->filterStudio != "0")
-                    {
-                        $query->where('studio_id', $this->filterStudio);
-                    }
-                    if($this->filterSeason != "")
-                    {
-                        $query->where('name', 'LIKE', '%' . $this->filterSeason . '%');
-                    }
-                })
-                ->has('entries');
+                    ->whereHas('entries', function ($query) {
+                        if($this->filterStudio != "0")
+                        {
+                            $query = $query->where('studio_id', $this->filterStudio);
+                        }
+                        if($this->filterSeason != "")
+                        {
+                            $query = $query->where('name', 'LIKE', '%' . $this->filterSeason . '%');
+                        }
+
+                        if($this->filterProducer != "0")
+                        {
+                            $producerId = $this->filterProducer;
+                            $query = $query
+                                ->whereHas('producers', function($q) use ($producerId) {
+                                    $q->where('person_id', $producerId);
+                                });
+                        }
+                    })
+                    ->has('entries');
 
                 if($this->filterTitle != "")
                 {
@@ -178,33 +202,42 @@ class Index extends Component
                     $franchise = $franchise
                         ->where('franchises.category_id', $this->filterCategory);
                 }
-                $franchise = $franchise->first();
+                $franchise = $franchise->inRandomOrder()->first();
             } else
             {
                 $franchise = Entry::inRandomOrder()->whereDoesntHave('userEntries', function ($query) use ($user) {
                     $query->where('user_id', $user->id)->where('watched_at', '!=', null);
-                })
-                ->join('franchises', 'entries.franchise_id', 'franchises.id');
+                });
 
                 if($this->filterTitle != "")
                 {
-                    $franchise = $franchise
-                        ->where('franchises.name', 'LIKE', '%' . $this->filterTitle . '%');
+                    $filterTitle = $this->filterTitle;
+                    $franchise = $franchise->whereHas('franchise', function($query) use($filterTitle) {
+                        $query->where('name', 'LIKE', '%' . $filterTitle . '%');
+                    });
                 }
                 if($this->filterSeason != "")
                 {
                     $franchise = $franchise
-                        ->where('entries.name', 'LIKE', '%' . $this->filterSeason . '%');
+                        ->where('name', 'LIKE', '%' . $this->filterSeason . '%');
                 }
                 if($this->filterStudio != "0")
                 {
                     $franchise = $franchise
-                        ->where('entries.studio_id', $this->filterStudio);
+                        ->where('studio_id', $this->filterStudio);
                 }
                 if($this->filterCategory != "0")
                 {
                     $franchise = $franchise
-                        ->where('franchises.category_id', $this->filterCategory);
+                        ->where('category_id', $this->filterCategory);
+                }
+                if($this->filterProducer != "0")
+                {
+                    $producerId = $this->filterProducer;
+                    $franchise = $franchise
+                        ->whereHas('producers', function($query) use ($producerId) {
+                            $query->where('person_id', $producerId);
+                        });
                 }
 
                 $this->franchise = $franchise->first()->franchise;
@@ -254,47 +287,54 @@ class Index extends Component
                     $query->where('name', 'like', '%' . $filterTitle . '%');
                 }
             }
-        ])
-            ->join('entries', 'user_entries.entry_id', '=', 'entries.id')
-            ->join('franchises', 'entries.franchise_id', 'franchises.id');
+        ]);
 
         switch($this->sortAfter)
         {
             case SortAfterEnum::Watched->value:
-                $userEntries = $userEntries->orderBy('watched_at', 'desc')->orderBy('user_entries.id', 'desc');
+                $userEntries = $userEntries->orderBy('user_entries.watched_at', 'desc')->orderBy('user_entries.id', 'desc');
                 break;
             case SortAfterEnum::Updated->value:
-                $userEntries = $userEntries->orderBy('updated_at', 'desc')->orderBy('user_entries.id', 'desc');
+                $userEntries = $userEntries->orderBy('user_entries.updated_at', 'desc')->orderBy('user_entries.id', 'desc');
                 break;
             case SortAfterEnum::Rating->value:
-                $userEntries = $userEntries->orderBy('rating', 'desc')->orderBy('user_entries.id', 'desc');
+                $userEntries = $userEntries->orderBy('user_entries.rating', 'desc')->orderBy('user_entries.id', 'desc');
                 break;
             case SortAfterEnum::AZ->value:
-                $userEntries = $userEntries->with(['entry.franchise'])
-                    ->orderBy('franchises.name') // order by franchise name
-                    ->select('user_entries.*'); // select only user_entries fields to avoid field name conflicts
+                $userEntries = $userEntries->whereHas('entry.franchise', function($query) {
+                    $query->orderBy('franchises.name');
+                }); 
                 break;
         }
 
         if($this->filterTitle != "")
         {
+            $filterTitle = $this->filterTitle;
             $userEntries = $userEntries
-                ->where('franchises.name', 'LIKE', '%' . $this->filterTitle . '%');
+                ->whereHas('entry.franchise', function($query) use ($filterTitle) {
+                    $query->where('name', 'LIKE', '%' . $filterTitle . '%');
+                });
         }
         if($this->filterSeason != "")
         {
-            $userEntries = $userEntries
-                ->where('entries.name', 'LIKE', '%' . $this->filterSeason . '%');
+            $filterSeason = $this->filterSeason;
+            $userEntries = $userEntries->whereHas('entry', function($query) use($filterSeason) {
+                $query->where('name', 'LIKE', '%' . $filterSeason . '%');
+            });
         }
         if($this->filterStudio != "0")
         {
-            $userEntries = $userEntries
-                ->where('entries.studio_id', $this->filterStudio);
+            $filterStudio = $this->filterStudio;
+            $userEntries = $userEntries->whereHas('entry', function($query) use($filterStudio) {
+                $query->where('studio_id', $filterStudio);
+            });
         }
         if($this->filterCategory != "0")
         {
-            $userEntries = $userEntries
-                ->where('franchises.category_id', $this->filterCategory);
+            $filterCategory = $this->filterCategory;
+            $userEntries = $userEntries->whereHas('entry.franchises', function($query) use($filterCategory) {
+                $query->where('category_id', $filterCategory);
+            });
         }
         $userEntries = $userEntries->get();
 
