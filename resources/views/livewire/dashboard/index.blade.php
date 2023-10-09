@@ -83,14 +83,14 @@
                             <div>
                                 A <i>{{ $franchise->category->name }}</i> directed/written by
                                 @foreach($franchise->entries as $entry)
-                                    @foreach(\App\Models\EntryProducer::where('entry_id', $entry->id)->get() as $producer)
-                                        <i>{{ $producer->person->name }}</i>@if($loop->remaining == 1) and @elseif(!$loop->last),@endif
+                                    @foreach($entry->uniqueProducers() as $producer)
+                                        <i>{{ $producer->name }}</i>@if(!$loop->last), @endif
                                     @endforeach
+                                    @if(!$loop->last) and @endif
                                 @endforeach
                             </div>
                             <div>
-
-                                Studios include @foreach ($franchise->entries as $entry) <i>{{ $entry->studio->name }}</i>@if($loop->remaining == 1) and @elseif(!$loop->last),@endif @endforeach
+                                Studios include @foreach ($franchise->entries as $entry) <i>{{ $entry->uniqueStudios() }}</i>@if(!$loop->last), @endif @endforeach
                             </div>
                         </div>
                     </div>

@@ -36,4 +36,14 @@ class Entry extends Model
     {
         return $this->hasMany(UserEntry::class);
     }
+
+    public function uniqueProducers()
+    {
+        return $this->producers->unique('name');
+    }
+
+    public function uniqueStudios()
+    {
+        return $this->studio->name;
+    }
 }
