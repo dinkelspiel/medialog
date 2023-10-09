@@ -176,10 +176,27 @@
                         <div id="rating-label" class="font-semibold">
                             Rating
                         </div>
-                        <div class="flex flex-row-reverse gap-3 items-center">
-                            <input class="slider" id="rating" type="range" min="0" max="100" name="rating" wire:model="userEntry.rating" oninput="this.nextElementSibling.value = this.value">
-                            <output class="w-5">{{ $userEntry->rating }}</output>
-                        </div>
+                        @switch(auth()->user()->rating_style)
+                            @case(\App\Enums\UserRatingStyleEnum::Range)
+                                <div class="flex flex-row-reverse gap-3 items-center">
+                                    <input class="slider" id="rating" type="range" min="0" max="100" name="rating" wire:model="userEntry.rating" oninput="this.nextElementSibling.value = this.value">
+                                    <output class="w-5">{{ $userEntry->rating }}</output>
+                                </div>
+                                @break
+                            @case(\App\Enums\UserRatingStyleEnum::Stars)
+                                <div class="grid grid-cols-10">
+                                    @for($i = 0; $i < 10; $i++)
+                                        <button class="text-4xl cursor-pointer text-secondary" wire:click="setRating({{ ($i + 1) * 10 }})">
+                                            @if(round($userEntry->rating / 10) >= $i + 1)
+                                                &#9733;
+                                            @else 
+                                                &#9734;
+                                            @endif
+                                        </button>
+                                    @endfor
+                                </div>
+                                @break
+                        @endswitch
                         <div class="font-semibold">
                             Notes
                         </div>

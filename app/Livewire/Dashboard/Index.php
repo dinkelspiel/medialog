@@ -54,6 +54,12 @@ class Index extends Component
         $this->userEntry = $userEntry;
     }
 
+    public function setRating(int $rating)
+    {
+        $this->userEntry->rating = $rating;
+        $this->userEntry->save();
+    }
+
     public function saveUserEntry()
     {
         $user = auth()->user();
