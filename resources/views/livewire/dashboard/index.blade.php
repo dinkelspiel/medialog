@@ -82,15 +82,23 @@
                             </div>
                             <div>
                                 A <i>{{ $franchise->category->name }}</i> directed/written by
-                                @foreach($franchise->entries as $entry)
-                                    @foreach($entry->uniqueProducers() as $producer)
-                                        <i>{{ $producer->name }}</i>@if(!$loop->last), @endif
-                                    @endforeach
-                                    @if(!$loop->last) and @endif
+                                
+                                @php
+                                $uniqueProducers = $franchise->entries->flatMap(function ($entry) {
+                                    return $entry->producers;
+                                })->unique('id');
+                                @endphp
+
+                                @foreach($uniqueProducers as $producer)
+                                    <i>{{ $producer->name }}</i>@if($loop->remaining == 1) and @elseif(!$loop->last),@endif
                                 @endforeach
                             </div>
                             <div>
-                                Studios include @foreach ($franchise->entries as $entry) <i>{{ $entry->uniqueStudios() }}</i>@if(!$loop->last), @endif @endforeach
+                                @php
+                                $uniqueStudios = $franchise->entries->pluck('studio')->unique('id');
+                                @endphp
+
+                                Studios include @foreach ($uniqueStudios as $studio) <i>{{ $studio->name }}</i>@if($loop->remaining == 1) and @elseif(!$loop->last),@endif @endforeach
                             </div>
                         </div>
                     </div>
