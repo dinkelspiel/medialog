@@ -1,16 +1,20 @@
 <?php
 
-namespace App\Livewire\Dashboard\Add;
+namespace App\Livewire\Dashboard\Modify;
 
 use App\Models\Category;
 use App\Models\Entry;
 use App\Models\Franchise;
 use App\Models\Person;
 use App\Models\Studio;
+use Illuminate\Support\Facades\Request;
 use Livewire\Component;
 
-class AddFranchise extends Component
+class Edit extends Component
 {
+    public $franchiseId;
+    public $hasReadFranchise = false;
+
     public string $franchiseName = "";
     public string $franchiseCategory = "";
 
@@ -20,7 +24,7 @@ class AddFranchise extends Component
 
     public function addEntry()
     {
-        $this->entries[] = ['name' => '', 'studio' => '', 'cover_url' => '', 'producers' => []];
+        $this->entries[] = ['id' => null, 'name' => '', 'studio' => '', 'cover_url' => '', 'producers' => []];
     }
 
     public function removeEntry(int $index)
@@ -54,24 +58,61 @@ class AddFranchise extends Component
 
     public function save()
     {
-        if(Franchise::where('name', $this->franchiseName)->first() != null)
+        $franchise = Franchise::find($this->franchiseId);
+
+        if($this->franchiseName == "")
         {
-            session()->flash('error', 'Franchise with name already exists');
+            session()->flash('error', 'Franchise must have a name');
             return;
         }
 
-        $franchise = Franchise::create(['name' => $this->franchiseName, 'category_id' => Category::where('name', $this->franchiseCategory)->first()->id]);
+        $franchise->name = $this->franchiseName;
+        $franchise->category_id = Category::where('id', $this->franchiseCategory)->first()->id;
 
         foreach($this->entries as $entryRaw)
         {
-            $entry = new Entry;
+            if($entryRaw['name'] == "")
+            {
+                session()->flash('error', 'Entry must have a name');
+                return;
+            }
+
+            if($entryRaw['studio'] == "")
+            {
+                session()->flash('error', 'Entry must have a studio');
+                return;
+            }
+
+            if($entryRaw['cover_url'] == "")
+            {
+                session()->flash('error', 'Entry must have a cover_url');
+                return;
+            }
+
+            if(count($entryRaw['producers']) == 0)
+            {
+                session()->flash('error', 'Entry must have atleast one producer');
+                return;
+            }
+
+            if($entryRaw['id'] == null)
+            {
+                $entry = new Entry;
+            } else {
+                $entry = Entry::find($entryRaw['id']);
+            }
+
             $entry->franchise_id = $franchise->id;
             $entry->name = $entryRaw['name'];
             $entry->studio_id = Studio::where('name', $entryRaw['studio'])->first()->id;
             $entry->cover_url = $entryRaw['cover_url'];
 
-            $entry = $franchise->addEntry($entry);
+            if($entryRaw['id'] == null)
+            {
+                $entry = $franchise->addEntry($entry);
+            }
 
+            $entry->producers()->sync([]);
             foreach($entryRaw['producers'] as $producerRaw)
             {
                 $producer = Person::where('name', $producerRaw)->first();
@@ -82,6 +123,11 @@ class AddFranchise extends Component
                 }
 
                 $entry->producers()->attach(['person_id' => $producer->id]);
+            }
+
+            if($entryRaw['id'] != null)
+            {
+                $entry->save();
             }
         }
 
@@ -132,17 +178,32 @@ class AddFranchise extends Component
         session()->flash('message', 'Added studio successfully');
     }
 
-    public function mount()
-    {
-        $this->franchiseCategory = Category::first()->name;
-    }
-
     public function render()
     {
+        if(!$this->hasReadFranchise)
+        {
+            $franchise = Franchise::find($this->franchiseId);
+            $this->franchiseName = $franchise->name;
+            $this->franchiseCategory = $franchise->category->id;
+
+            foreach($franchise->entries as $entry)
+            {
+                $producers = [];
+
+                foreach($entry->producers as $producer)
+                {
+                    $producers[] = $producer->name;
+                }
+
+                $this->entries[] = ['id' => $entry->id, 'name' => $entry->name, 'studio' => $entry->studio->name, 'cover_url' => $entry->cover_url, 'producers' => $producers];
+            }
+            $this->hasReadFranchise = true;
+        }
+
         $studios = Studio::all();
         $studios->sort();
 
-        return view('livewire.dashboard.add.add-franchise')->layout('layouts.app', [
+        return view('livewire.dashboard.modify.edit')->layout('layouts.app', [
             'header' => 'dashboard'
         ]);
     }
