@@ -133,7 +133,7 @@ class Edit extends Component
 
         $franchise->save();
 
-        return redirect('/dashboard');
+        session()->flash('message', 'Updated successfully');
     }
 
     public function savePerson()
