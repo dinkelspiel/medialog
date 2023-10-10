@@ -20,9 +20,15 @@ use Illuminate\Support\Facades\Route;
 Route::middleware([VerifySession::class])->group(function() {
     Route::get('/dashboard', App\Livewire\Dashboard\Index::class);
 
-    Route::get('/dashboard/add', App\Livewire\Dashboard\Add\AddFranchise::class);
+    Route::get('/dashboard/add', App\Livewire\Dashboard\Modify\Add::class);
+    Route::get('/dashboard/edit/{franchiseId}', App\Livewire\Dashboard\Modify\Edit::class);
 
     Route::get('/profile', App\Livewire\Profile\Index::class);
+
+    Route::get('/admin', function() {
+        return redirect('/admin/entries');
+    });
+    Route::get('/admin/entries', App\Livewire\Admin\Entries::class);
 });
 
 Route::get('/', function() {
