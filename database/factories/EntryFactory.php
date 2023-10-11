@@ -22,7 +22,6 @@ class EntryFactory extends Factory
         return [
             'franchise_id' => Franchise::inRandomOrder()->first()->id,
             'name' => 'Season ' . fake()->word(),
-            'studio_id' => Studio::inRandomOrder()->first()->id,
             'cover_url' => fake()->imageUrl()
         ];
     }
