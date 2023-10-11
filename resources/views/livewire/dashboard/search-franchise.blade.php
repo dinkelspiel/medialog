@@ -13,7 +13,7 @@
     </select>
 
     <div class="grid grid-cols-1 w-full relative" x-data="{ open: true }">
-        <input class="input w-full @if(\App\Models\Studio::where('name', $searchStudio)->first() == null && $searchStudio != "") !border !border-red-400 @endif" placeholder="ABC Productions" wire:model.live="searchStudio" @focus="open = true">
+        <input class="input w-full @if(\App\Models\Studio::where('name', $searchStudio)->first() == null && $searchStudio != "") !border !border-red-400 @endif" placeholder="Production Studio" wire:model.live="searchStudio" @focus="open = true">
         @if($searchStudio != "" && \App\Models\Studio::where('name', $searchStudio)->first() == null)
             <div class="dropdown-container" x-show="open">
                 @foreach(\App\Models\Studio::where('name', 'LIKE', '%' . $searchStudio . '%')->orderBy('name')->get() as $studio)
@@ -26,7 +26,7 @@
     </div>
 
     <div class="grid grid-cols-1 w-full relative" x-data="{ open: true }">
-        <input class="input w-full @if(\App\Models\Person::where('name', $searchCreator)->first() == null && $searchCreator != "") !border !border-red-400 @endif" placeholder="John Smith" wire:model.live="searchCreator" @focus="open = true">
+        <input class="input w-full @if(\App\Models\Person::where('name', $searchCreator)->first() == null && $searchCreator != "") !border !border-red-400 @endif" placeholder="Director/Writer" wire:model.live="searchCreator" @focus="open = true">
         @if($searchCreator != "" && \App\Models\Person::where('name', $searchCreator)->first() == null)
             <div class="dropdown-container" x-show="open">
                 @foreach(\App\Models\Person::where('name', 'LIKE', '%' . $searchCreator . '%')->orderBy('name')->get() as $person)
