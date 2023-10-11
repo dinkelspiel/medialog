@@ -10,41 +10,10 @@ use App\Models\Studio;
 use Illuminate\Support\Facades\Request;
 use Livewire\Component;
 
-class Edit extends Component
+class Edit extends ModifyBase
 {
     public $franchiseId;
     public $hasReadFranchise = false;
-
-    public string $franchiseName = "";
-    public string $franchiseCategory = "";
-
-    public string $addStudioName = "", $addPersonName = "";
-
-    public array $entries = [];
-
-    public function addEntry()
-    {
-        $this->entries[] = ['id' => null, 'name' => '', 'studios' => [], 'cover_url' => '', 'creators' => []];
-    }
-
-    public function removeEntry(int $index)
-    {
-        unset($this->entries[$index]);
-    }
-
-    public function addMeta(string $metaTable, int $entryId, string $person)
-    {
-        array_push($this->entries[$entryId][$metaTable], $person);
-    }
-
-    public function removeMeta(string $metaTable, int $entryId, string $person)
-    {
-        $key = array_search($person, $this->entries[$entryId][$metaTable]);
-
-        if ($key !== null) {
-            unset($this->entries[$entryId][$metaTable][$key]);
-        }
-    }
 
     public function save()
     {
@@ -136,48 +105,6 @@ class Edit extends Component
         $franchise->save();
 
         session()->flash('message', 'Updated successfully');
-    }
-
-    public function savePerson()
-    {
-        if(strlen($this->addPersonName) == 0)
-        {
-            return;
-        }
-
-        if(Person::where('name', $this->addPersonName)->first() != null)
-        {
-            session()->flash('error', 'Person with name already exists');
-            return;
-        }
-
-        $person = new Person;
-        $person->name = $this->addPersonName;
-        $person->save();
-
-        $this->addPersonName = "";
-        session()->flash('message', 'Added person successfully');
-    }
-
-    public function saveStudio()
-    {
-        if(strlen($this->addStudioName) == 0)
-        {
-            return;
-        }
-
-        if(Studio::where('name', $this->addStudioName)->first() != null)
-        {
-            session()->flash('error', 'Studio with name already exists');
-            return;
-        }
-
-        $studio = new Studio;
-        $studio->name = $this->addStudioName;
-        $studio->save();
-
-        $this->addStudioName = "";
-        session()->flash('message', 'Added studio successfully');
     }
 
     public function render()
