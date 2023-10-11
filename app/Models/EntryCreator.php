@@ -6,10 +6,10 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class EntryProducer extends Model
+class EntryCreator extends Model
 {
     use HasFactory;
-    
+
     public function entry(): BelongsTo
     {
         return $this->belongsTo(Entry::class);

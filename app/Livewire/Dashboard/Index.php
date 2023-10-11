@@ -91,7 +91,7 @@ class Index extends Component
     public $filterTitle = "";
     public $filterSeason = "";
     public $filterStudio = "0";
-    public $filterProducer = "0";
+    public $filterCreator = "0";
     public $filterCategory = "0";
 
     public $page = "add";
@@ -156,12 +156,12 @@ class Index extends Component
                         $query->where('category_id', $filterCategory);
                     });
             }
-            if($this->filterProducer != "0")
+            if($this->filterCreator != "0")
             {
-                $producerId = $this->filterProducer;
+                $creatorId = $this->filterCreator;
                 $userEntry = $userEntry
-                    ->whereHas('entry.producers', function($query) use ($producerId) {
-                        $query->where('person_id', $producerId);
+                    ->whereHas('entry.creators', function($query) use ($creatorId) {
+                        $query->where('person_id', $creatorId);
                     });
             }
 
@@ -187,12 +187,12 @@ class Index extends Component
                             $query = $query->where('name', 'LIKE', '%' . $this->filterSeason . '%');
                         }
 
-                        if($this->filterProducer != "0")
+                        if($this->filterCreator != "0")
                         {
-                            $producerId = $this->filterProducer;
+                            $creatorId = $this->filterCreator;
                             $query = $query
-                                ->whereHas('producers', function($q) use ($producerId) {
-                                    $q->where('person_id', $producerId);
+                                ->whereHas('creators', function($q) use ($creatorId) {
+                                    $q->where('person_id', $creatorId);
                                 });
                         }
                     })
@@ -238,14 +238,14 @@ class Index extends Component
                     $franchise = $franchise
                         ->whereHas('franchise', function($query) use($filterCategory){
                             $query->where('category_id', $filterCategory);
-                        }); 
+                        });
                 }
-                if($this->filterProducer != "0")
+                if($this->filterCreator != "0")
                 {
-                    $producerId = $this->filterProducer;
+                    $creatorId = $this->filterCreator;
                     $franchise = $franchise
-                        ->whereHas('producers', function($query) use ($producerId) {
-                            $query->where('person_id', $producerId);
+                        ->whereHas('creators', function($query) use ($creatorId) {
+                            $query->where('person_id', $creatorId);
                         });
                 }
 
@@ -317,7 +317,7 @@ class Index extends Component
             case SortAfterEnum::AZ->value:
                 $userEntries = $userEntries->whereHas('entry.franchise', function($query) {
                     $query->orderBy('franchises.name');
-                }); 
+                });
                 break;
         }
 
@@ -350,12 +350,12 @@ class Index extends Component
                 $query->where('category_id', $filterCategory);
             });
         }
-        if($this->filterProducer != "0")
+        if($this->filterCreator != "0")
         {
-            $producerId = $this->filterProducer;
+            $creatorId = $this->filterCreator;
             $userEntries = $userEntries
-                ->whereHas('entry.producers', function($query) use ($producerId) {
-                    $query->where('person_id', $producerId);
+                ->whereHas('entry.creators', function($query) use ($creatorId) {
+                    $query->where('person_id', $creatorId);
                 });
         }
         $userEntries = $userEntries->get();

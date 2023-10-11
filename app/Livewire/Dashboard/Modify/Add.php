@@ -20,7 +20,7 @@ class Add extends Component
 
     public function addEntry()
     {
-        $this->entries[] = ['name' => '', 'studio' => '', 'cover_url' => '', 'producers' => []];
+        $this->entries[] = ['name' => '', 'studio' => '', 'cover_url' => '', 'creators' => []];
     }
 
     public function removeEntry(int $index)
@@ -91,9 +91,9 @@ class Add extends Component
                 return;
             }
 
-            if(count($entryRaw['producers']) == 0)
+            if(count($entryRaw['creators']) == 0)
             {
-                session()->flash('error', 'Entry must have atleast one producer');
+                session()->flash('error', 'Entry must have atleast one director/writer');
                 $franchise->delete();
                 return;
             }
@@ -106,16 +106,16 @@ class Add extends Component
 
             $entry = $franchise->addEntry($entry);
 
-            foreach($entryRaw['producers'] as $producerRaw)
+            foreach($entryRaw['creators'] as $creatorRaw)
             {
-                $producer = Person::where('name', $producerRaw)->first();
+                $creator = Person::where('name', $creatorRaw)->first();
 
-                if($producer == null)
+                if($creator == null)
                 {
                     continue;
                 }
 
-                $entry->producers()->attach(['person_id' => $producer->id]);
+                $entry->creators()->attach(['person_id' => $creator->id]);
             }
         }
 

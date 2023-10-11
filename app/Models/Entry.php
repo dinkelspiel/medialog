@@ -27,9 +27,9 @@ class Entry extends Model
         return $this->belongsTo(Studio::class);
     }
 
-    public function producers(): BelongsToMany
+    public function creators(): BelongsToMany
     {
-        return $this->belongsToMany(Person::class, 'entry_producers');
+        return $this->belongsToMany(Person::class, 'entry_creators');
     }
 
     public function userEntries(): HasMany
