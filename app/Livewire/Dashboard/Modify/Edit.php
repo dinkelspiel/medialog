@@ -24,7 +24,7 @@ class Edit extends Component
 
     public function addEntry()
     {
-        $this->entries[] = ['id' => null, 'name' => '', 'studio' => '', 'cover_url' => '', 'producers' => []];
+        $this->entries[] = ['id' => null, 'name' => '', 'studio' => '', 'cover_url' => '', 'creators' => []];
     }
 
     public function removeEntry(int $index)
@@ -89,9 +89,9 @@ class Edit extends Component
                 return;
             }
 
-            if(count($entryRaw['producers']) == 0)
+            if(count($entryRaw['creators']) == 0)
             {
-                session()->flash('error', 'Entry must have atleast one producer');
+                session()->flash('error', 'Entry must have atleast one director/writer');
                 return;
             }
 
@@ -112,17 +112,17 @@ class Edit extends Component
                 $entry = $franchise->addEntry($entry);
             }
 
-            $entry->producers()->sync([]);
-            foreach($entryRaw['producers'] as $producerRaw)
+            $entry->creators()->sync([]);
+            foreach($entryRaw['creators'] as $creatorRaw)
             {
-                $producer = Person::where('name', $producerRaw)->first();
+                $creator = Person::where('name', $creatorRaw)->first();
 
-                if($producer == null)
+                if($creator == null)
                 {
                     continue;
                 }
 
-                $entry->producers()->attach(['person_id' => $producer->id]);
+                $entry->creators()->attach(['person_id' => $creator->id]);
             }
 
             if($entryRaw['id'] != null)
@@ -188,14 +188,14 @@ class Edit extends Component
 
             foreach($franchise->entries as $entry)
             {
-                $producers = [];
+                $creators = [];
 
-                foreach($entry->producers as $producer)
+                foreach($entry->creators as $creator)
                 {
-                    $producers[] = $producer->name;
+                    $creators[] = $creator->name;
                 }
 
-                $this->entries[] = ['id' => $entry->id, 'name' => $entry->name, 'studio' => $entry->studio->name, 'cover_url' => $entry->cover_url, 'producers' => $producers];
+                $this->entries[] = ['id' => $entry->id, 'name' => $entry->name, 'studio' => $entry->studio->name, 'cover_url' => $entry->cover_url, 'creators' => $creators];
             }
             $this->hasReadFranchise = true;
         }

@@ -25,9 +25,9 @@
                         </option>
                     @endforeach
                 </select>
-                <select class="input" placeholder="Producer" wire:model.live="filterProducer">
+                <select class="input" placeholder="Creator" wire:model.live="filterCreator">
                     <option value="0">
-                        Select a Producer
+                        Select a director/writer
                     </option>
                     @foreach(\App\Models\Person::all() as $person)
                         <option value="{{ $person->id }}">
@@ -82,15 +82,15 @@
                             </div>
                             <div>
                                 A <i>{{ $franchise->category->name }}</i> directed/written by
-                                
+
                                 @php
-                                $uniqueProducers = $franchise->entries->flatMap(function ($entry) {
-                                    return $entry->producers;
+                                $uniquecreators = $franchise->entries->flatMap(function ($entry) {
+                                    return $entry->creators;
                                 })->unique('id');
                                 @endphp
 
-                                @foreach($uniqueProducers as $producer)
-                                    <i>{{ $producer->name }}</i>@if($loop->remaining == 1) and @elseif(!$loop->last),@endif
+                                @foreach($uniquecreators as $creator)
+                                    <i>{{ $creator->name }}</i>@if($loop->remaining == 1) and @elseif(!$loop->last),@endif
                                 @endforeach
                             </div>
                             <div>
@@ -197,7 +197,7 @@
                                         <button class="text-4xl cursor-pointer text-secondary" wire:click="setRating({{ ($i + 1) * 10 }})">
                                             @if(round($userEntry->rating / 10) >= $i + 1)
                                                 &#9733;
-                                            @else 
+                                            @else
                                                 &#9734;
                                             @endif
                                         </button>

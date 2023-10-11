@@ -1,6 +1,6 @@
 <div class="grid grid-cols-2 m-3 gap-2">
     <input wire:model.live="search" type="text" placeholder="Search franchise..." class="grid-item col-span-2 input"/>
-    
+
     <select class="col-span-2 input" wire:model.live="category">
         <option value="0">
             Select a Category
@@ -11,7 +11,7 @@
             </option>
         @endforeach
     </select>
-    
+
     <select class="input" wire:model.live="studio">
         <option value="0">
             Select a Studio
@@ -22,9 +22,9 @@
             </option>
         @endforeach
     </select>
-    <select class="input" wire:model.live="producer">
+    <select class="input" wire:model.live="creator">
         <option value="0">
-            Select a Producer
+            Select a director/writer
         </option>
         @foreach(\App\Models\Person::all() as $person)
             <option value="{{ $person->id }}">

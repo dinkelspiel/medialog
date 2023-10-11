@@ -49,25 +49,25 @@
                     </select>
                 </div>
                 <div>
-                    Producers
+                    creators
                 </div>
-                @foreach($this->entries[$loop->index]['producers'] as $producer)
+                @foreach($this->entries[$loop->index]['creators'] as $creator)
                     <div class="flex flex-row">
                         <div class="mr-auto">
-                            {{ $producer }}
+                            {{ $creator }}
                         </div>
-                        <div class="text-btn" wire:key="{{ $loop->index }}" wire:click="removeMeta('producers', {{ $loop->parent->index }}, '{{ $producer }}')">
+                        <div class="text-btn" wire:key="{{ $loop->index }}" wire:click="removeMeta('creators', {{ $loop->parent->index }}, '{{ $creator }}')">
                             Remove
                         </div>
                     </div>
                 @endforeach
                 <div class="flex flex-row gap-3 w-full">
-                    <select class="input w-full" placeholder="Producers" wire:change="addMeta('producers', {{ $loop->index }}, $event.target.value)">
+                    <select class="input w-full" placeholder="creators" wire:change="addMeta('creators', {{ $loop->index }}, $event.target.value)">
                         <option value="">
-                            Select a producer
+                            Select a director/writer
                         </option>
                         @foreach(\App\Models\Person::all()->pluck('name') as $person)
-                            @if(!in_array($person, $this->entries[$loop->parent->index]['producers']))
+                            @if(!in_array($person, $this->entries[$loop->parent->index]['creators']))
                                 <option>
                                     {{ $person }}
                                 </option>

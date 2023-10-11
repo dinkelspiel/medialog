@@ -14,7 +14,7 @@ class SearchFranchise extends Component
     public $search = '';
     public $studio = '0';
     public $category = '0';
-    public $producer = '0';
+    public $creator = '0';
 
     public function create(int $franchiseId, int $entryId)
     {
@@ -67,18 +67,18 @@ class SearchFranchise extends Component
         ->whereDoesntHave('userEntries', function ($query) use ($userId) {
             $query->where('user_entries.user_id', $userId);
         });
-        
-        $producer = $this->producer;
+
+        $creator = $this->creator;
         $category = $this->category;
-        
+
         if($this->studio != "0")
         {
             $entriesWithoutUserEntry->where('entries.studio_id', $this->studio);
         }
-        if($this->producer != "0")
+        if($this->creator != "0")
         {
-            $entriesWithoutUserEntry->whereHas('producers', function($q) use ($producer) {
-                $q->where('people.id', $producer);
+            $entriesWithoutUserEntry->whereHas('creators', function($q) use ($creator) {
+                $q->where('people.id', $creator);
             });
         }
         if($this->category != "0")
@@ -87,14 +87,14 @@ class SearchFranchise extends Component
                 $q->where('franchises.category_id', $category);
             });
         }
-        
+
         $entriesWithoutUserEntry = $entriesWithoutUserEntry->get();
 
         return view('livewire.dashboard.search-franchise', [
             'uid' => $userId,
             'entries' => $entriesWithoutUserEntry,
             'searchStudio' => $this->studio,
-            'searchProducer' => $this->producer,
+            'searchCreator' => $this->creator,
             'searchCategory' => $this->category
         ]);
     }

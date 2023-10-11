@@ -6,7 +6,7 @@
         <img src="/assets/house.svg">
     </a>
 
-    @if(auth()->user()->permission && auth()->user()->permission->permission == "admin")
+    @if(auth()->check() && auth()->user()->permission && auth()->user()->permission->permission == "admin")
         <a href="/admin" class="icon-btn-nav @if($page == 'admin') icon-btn-pink @else icon-btn-white @endif">
             <img src="/assets/admin.svg">
         </a>

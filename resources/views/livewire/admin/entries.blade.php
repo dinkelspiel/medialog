@@ -11,7 +11,7 @@
                     Entries
                 </div>
                 <div>
-                    Producers
+                    creators
                 </div>
                 <div>
 
@@ -26,7 +26,7 @@
                         {{ $franchise->entries->count() }}
                     </div>
                     <div>
-                        {{ \App\Models\Franchise::with('entries.producers')->find($franchise->id)->entries->pluck('producers')->flatten(1)->unique('id')->count() }}
+                        {{ \App\Models\Franchise::with('entries.creators')->find($franchise->id)->entries->pluck('creators')->flatten(1)->unique('id')->count() }}
                     </div>
                     <div>
                         <a class="small-btn" href="/dashboard/edit/{{ $franchise->id }}">
