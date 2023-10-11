@@ -22,9 +22,9 @@ class Entry extends Model
         return $this->belongsTo(Franchise::class);
     }
 
-    public function studio(): BelongsTo
+    public function studios(): BelongsToMany
     {
-        return $this->belongsTo(Studio::class);
+        return $this->belongsToMany(Studio::class, 'entry_studios');
     }
 
     public function creators(): BelongsToMany

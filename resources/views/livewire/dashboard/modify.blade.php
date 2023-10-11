@@ -39,15 +39,27 @@
                 <div>
                     Production Studio
                 </div>
-                <div class="flex flex-col gap-3 w-full">
-                    <select class="input" wire:model="entries.{{ $loop->index }}.studio">
+                @foreach($this->entries[$loop->index]['studios'] as $studio)
+                    <div class="flex flex-row">
+                        <div class="mr-auto">
+                            {{ $studio }}
+                        </div>
+                        <div class="text-btn" wire:key="{{ $loop->index }}" wire:click="removeMeta('studios', {{ $loop->parent->index }}, '{{ $studio }}')">
+                            Remove
+                        </div>
+                    </div>
+                @endforeach
+                <div class="flex flex-row gap-3 w-full">
+                    <select class="input w-full" placeholder="studios" wire:change="addMeta('studios', {{ $loop->index }}, $event.target.value)">
                         <option value="">
-                            Select a production studio
+                            Select a Production Studio
                         </option>
                         @foreach(\App\Models\Studio::all()->pluck('name') as $studio)
-                            <option>
-                                {{ $studio }}
-                            </option>
+                            @if(!in_array($studio, $this->entries[$loop->parent->index]['studios']))
+                                <option>
+                                    {{ $studio }}
+                                </option>
+                            @endif
                         @endforeach
                     </select>
                 </div>

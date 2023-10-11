@@ -1,6 +1,7 @@
 <?php
 
 use App\Models\Entry;
+use App\Models\EntryStudio;
 use App\Models\Studio;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
@@ -22,7 +23,10 @@ return new class extends Migration
 
         foreach(Entry::all() as $entry)
         {
-
+            $entryStudio = new EntryStudio;
+            $entryStudio->entry_id = $entry->id;
+            $entryStudio->studio_id = $entry->studio_id;
+            $entryStudio->save();
         }
     }
 

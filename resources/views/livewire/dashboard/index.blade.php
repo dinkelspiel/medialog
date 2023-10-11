@@ -95,7 +95,7 @@
                             </div>
                             <div>
                                 @php
-                                $uniqueStudios = $franchise->entries->pluck('studio')->unique('id');
+                                $uniqueStudios = \App\Models\Franchise::with('entries.studios')->find($franchise->id)->entries->pluck('studios')->collapse()->unique('id');
                                 @endphp
 
                                 Studios include @foreach ($uniqueStudios as $studio) <i>{{ $studio->name }}</i>@if($loop->remaining == 1) and @elseif(!$loop->last),@endif @endforeach
@@ -145,7 +145,7 @@
                                 {{ $browserEntry->entry->franchise->name }}
                             </div>
                             <div class="text-sm text-slate-800">
-                                {{ $browserEntry->entry->studio->name }}
+                                @foreach ($browserEntry->entry->studios()->distinct()->get() as $studio) <i>{{ $studio->name }}</i>@if($loop->remaining == 1) and @elseif(!$loop->last),@endif @endforeach
                             </div>
                         </div>
                     </button>
