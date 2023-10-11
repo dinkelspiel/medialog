@@ -203,7 +203,7 @@ class Edit extends Component
         $studios = Studio::all();
         $studios->sort();
 
-        return view('livewire.dashboard.modify.edit', [
+        return view('livewire.dashboard.modify', [
             'modifyMode' => "Edit"
         ])->layout('layouts.app', [
             'header' => 'dashboard'
