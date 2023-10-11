@@ -176,7 +176,9 @@ class Add extends Component
         $studios = Studio::all();
         $studios->sort();
 
-        return view('livewire.dashboard.modify.add')->layout('layouts.app', [
+        return view('livewire.dashboard.modify', [
+            'modifyMode' => "Add"
+        ])->layout('layouts.app', [
             'header' => 'dashboard'
         ]);
     }
