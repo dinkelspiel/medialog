@@ -54,7 +54,7 @@
                                 {{ $entry->franchise->name }}
                             </div>
                             <div class="text-sm text-slate-800">
-                                {{ $entry->studio->name }}
+                                @foreach ($entry->studios()->distinct()->get() as $studio) <i>{{ $studio->name }}</i>@if($loop->remaining == 1) and @elseif(!$loop->last),@endif @endforeach
                             </div>
                         </div>
                     </button>

@@ -69,12 +69,14 @@ class SearchFranchise extends Component
         });
 
         $creator = $this->creator;
+        $studio = $this->studio;
         $category = $this->category;
 
         if($this->studio != "0")
         {
-            $entriesWithoutUserEntry->where('entries.studio_id', $this->studio);
-        }
+            $entriesWithoutUserEntry->whereHas('studios', function($q) use ($studio) {
+                $q->where('studios.id', $studio);
+            });        }
         if($this->creator != "0")
         {
             $entriesWithoutUserEntry->whereHas('creators', function($q) use ($creator) {
