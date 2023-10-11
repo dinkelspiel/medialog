@@ -15,26 +15,33 @@
                 {{-- Filter Options --}}
                 <input class="input col-span-2" placeholder="Title" type="text" wire:model.live="filterTitle">
                 <input class="input col-span-2" placeholder="Season" type="text" wire:model.live="filterSeason">
-                <select class="input" placeholder="Studio" wire:model.live="filterStudio">
-                    <option value="0">
-                        Select a Studio
-                    </option>
-                    @foreach(\App\Models\Studio::all() as $studio)
-                        <option value="{{ $studio->id }}">
-                            {{ $studio->name }}
-                        </option>
-                    @endforeach
-                </select>
-                <select class="input" placeholder="Creator" wire:model.live="filterCreator">
-                    <option value="0">
-                        Select a director/writer
-                    </option>
-                    @foreach(\App\Models\Person::all() as $person)
-                        <option value="{{ $person->id }}">
-                            {{ $person->name }}
-                        </option>
-                    @endforeach
-                </select>
+
+                <div class="grid grid-cols-1 w-full relative" x-data="{ open: true }">
+                    <input class="input w-full @if(\App\Models\Studio::where('name', $filterSearchStudio)->first() == null && $filterSearchStudio != "") !border !border-red-400 @endif" placeholder="ABC Productions" wire:model.live="filterSearchStudio" @focus="open = true">
+                    @if($filterSearchStudio != "" && $filterStudio == "0")
+                        <div class="dropdown-container" x-show="open">
+                            @foreach(\App\Models\Studio::where('name', 'LIKE', '%' . $filterSearchStudio . '%')->orderBy('name')->get() as $studio)
+                                <button class="dropdown-button" wire:click="setFilterStudio('{{ $studio->name }}')" @click="open = false">
+                                    {{ $studio->name }}
+                                </button>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+
+                <div class="grid grid-cols-1 w-full relative" x-data="{ open: true }">
+                    <input class="input w-full @if(\App\Models\Person::where('name', $filterSearchCreator)->first() == null && $filterSearchCreator != "") !border !border-red-400 @endif" placeholder="John Smith" wire:model.live="filterSearchCreator" @focus="open = true">
+                    @if($filterSearchCreator != "" && $filterCreator == 0)
+                        <div class="dropdown-container" x-show="open">
+                            @foreach(\App\Models\Person::where('name', 'LIKE', '%' . $filterSearchCreator . '%')->orderBy('name')->get() as $person)
+                                <button class="dropdown-button" wire:click="setFilterCreator('{{ $person->name }}')" @click="open = false">
+                                    {{ $person->name }}
+                                </button>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+
                 <select class="input col-span-2" wire:model.live="filterCategory" placeholder="Category">
                     <option value="0">
                         Select a Category

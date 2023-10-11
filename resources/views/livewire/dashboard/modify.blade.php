@@ -51,15 +51,15 @@
                         <input class="input w-full @if($entries[$loop->index]['studioSearch'] != "") !rounded-bl-none !rounded-br-none @endif" placeholder="ABC Productions" wire:model.live="entries.{{ $loop->index }}.studioSearch">
                     </div>
                     @if($entries[$loop->index]['studioSearch'] != "")
-                        <div class="bg-card absolute w-full top-14 rounded-br-lg rounded-bl-lg border-outline !border-t-0 border shadow-lg p-3 flex flex-col gap-3 max-h-96 overflow-y-scroll z-10">
+                        <div class="dropdown-container">
                             @foreach(\App\Models\Studio::where('name', 'LIKE', '%' . $entries[$loop->index]['studioSearch'] . '%')->orderBy('name')->get() as $studio)
                                 @if(!in_array($studio->name, $this->entries[$loop->parent->index]['studios']))
-                                    <button class="cursor-pointer text-left" wire:click="addMeta('studios', {{ $loop->parent->index }}, '{{ $studio->name }}')">
+                                    <button class="dropdown-button" wire:click="addMeta('studios', {{ $loop->parent->index }}, '{{ $studio->name }}')">
                                         {{ $studio->name }}
                                     </button>
                                 @endif
                             @endforeach
-                            <button class="cursor-pointer text-left pt-3 border-t border-t-outline" wire:click="saveStudio({{ $loop->index }})">
+                            <button class="dropdown-button pt-3 border-t border-t-outline" wire:click="saveStudio({{ $loop->index }})">
                                 Add Studio
                             </button>
                         </div>
@@ -80,15 +80,15 @@
                         <input class="input w-full @if($entries[$loop->index]['creatorSearch'] != "") !rounded-bl-none !rounded-br-none @endif" placeholder="John Smith" wire:model.live="entries.{{ $loop->index }}.creatorSearch">
                     </div>
                     @if($entries[$loop->index]['creatorSearch'] != "")
-                        <div class="bg-card absolute w-full top-14 rounded-br-lg rounded-bl-lg border-outline !border-t-0 border shadow-lg p-3 flex flex-col gap-3 max-h-96 overflow-y-scroll z-10">
+                        <div class="dropdown-container">
                             @foreach(\App\Models\Person::where('name', 'LIKE', '%' . $entries[$loop->index]['creatorSearch'] . '%')->orderBy('name')->get() as $person)
                                 @if(!in_array($person->name, $this->entries[$loop->parent->index]['creators']))
-                                    <button class="cursor-pointer text-left" wire:click="addMeta('creators', {{ $loop->parent->index }}, '{{ $person->name }}')">
+                                    <button class="dropdown-button" wire:click="addMeta('creators', {{ $loop->parent->index }}, '{{ $person->name }}')">
                                         {{ $person->name }}
                                     </button>
                                 @endif
                             @endforeach
-                            <button class="cursor-pointer text-left pt-3 border-t border-t-outline" wire:click="savePerson({{ $loop->index }})">
+                            <button class="dropdown-button pt-3 border-t border-t-outline" wire:click="savePerson({{ $loop->index }})">
                                 Add Creator
                             </button>
                         </div>
