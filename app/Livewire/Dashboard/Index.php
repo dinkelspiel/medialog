@@ -5,6 +5,8 @@ namespace App\Livewire\Dashboard;
 use App\Enums\SortAfterEnum;
 use App\Models\Entry;
 use App\Models\Franchise;
+use App\Models\Person;
+use App\Models\Studio;
 use App\Models\UserEntry;
 use Carbon\Carbon;
 use Livewire\Component;
@@ -91,10 +93,22 @@ class Index extends Component
     public $filterTitle = "";
     public $filterSeason = "";
     public $filterStudio = "0";
+    public $filterSearchStudio = "";
     public $filterCreator = "0";
+    public $filterSearchCreator = "";
     public $filterCategory = "0";
 
     public $page = "add";
+
+    public function setFilterCreator($name)
+    {
+        $this->filterSearchCreator = $name;
+    }
+
+    public function setFilterStudio($name)
+    {
+        $this->filterSearchStudio = $name;
+    }
 
     public function setPage(string $page)
     {
@@ -295,6 +309,9 @@ class Index extends Component
         {
             $this->sortAfter = array_column(SortAfterEnum::cases(), 'value')[0];
         }
+
+        $this->filterCreator = Person::where('name', $this->filterSearchCreator)->first()->id ?? "0";
+        $this->filterStudio = Studio::where('name', $this->filterSearchStudio)->first()->id ?? "0";
 
         $filterTitle = $this->filterTitle;
         $userEntries = UserEntry::where('user_id', auth()->user()->id)->with([

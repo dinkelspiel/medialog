@@ -6,15 +6,27 @@ use App\Models\Category;
 use App\Models\Entry;
 use App\Models\Franchise;
 use App\Models\Person;
+use App\Models\Studio;
 use Illuminate\Support\Facades\Validator;
 use Livewire\Component;
 
 class SearchFranchise extends Component
 {
     public $search = '';
-    public $studio = '0';
     public $category = '0';
-    public $creator = '0';
+
+    public $searchStudio = '';
+    public $searchCreator = '';
+
+    public function setSearchStudio(string $studioName)
+    {
+        $this->searchStudio = $studioName;
+    }
+
+    public function setSearchCreator(string $creator)
+    {
+        $this->searchCreator = $creator;
+    }
 
     public function create(int $franchiseId, int $entryId)
     {
@@ -68,16 +80,16 @@ class SearchFranchise extends Component
             $query->where('user_entries.user_id', $userId);
         });
 
-        $creator = $this->creator;
-        $studio = $this->studio;
+        $creator = Person::where('name', $this->searchCreator)->first()->id ?? "0";
+        $studio = Studio::where('name', $this->searchStudio)->first()->id ?? "0";
         $category = $this->category;
 
-        if($this->studio != "0")
+        if($studio != "0")
         {
             $entriesWithoutUserEntry->whereHas('studios', function($q) use ($studio) {
                 $q->where('studios.id', $studio);
             });        }
-        if($this->creator != "0")
+        if($creator != "0")
         {
             $entriesWithoutUserEntry->whereHas('creators', function($q) use ($creator) {
                 $q->where('people.id', $creator);
@@ -95,8 +107,6 @@ class SearchFranchise extends Component
         return view('livewire.dashboard.search-franchise', [
             'uid' => $userId,
             'entries' => $entriesWithoutUserEntry,
-            'searchStudio' => $this->studio,
-            'searchCreator' => $this->creator,
             'searchCategory' => $this->category
         ]);
     }
