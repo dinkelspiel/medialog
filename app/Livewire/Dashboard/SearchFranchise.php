@@ -86,27 +86,30 @@ class SearchFranchise extends Component
 
         if($studio != "0")
         {
-            $entriesWithoutUserEntry->whereHas('studios', function($q) use ($studio) {
+            $entriesWithoutUserEntry = $entriesWithoutUserEntry->whereHas('studios', function($q) use ($studio) {
                 $q->where('studios.id', $studio);
-            });        }
+            });        
+        }
         if($creator != "0")
         {
-            $entriesWithoutUserEntry->whereHas('creators', function($q) use ($creator) {
-                $q->where('people.id', $creator);
+            $entriesWithoutUserEntry = $entriesWithoutUserEntry->whereHas('creators', function($q) use ($creator) {
+                $q->where('person_id', $creator);
             });
         }
         if($this->category != "0")
         {
-            $entriesWithoutUserEntry->whereHas('franchise', function($q) use ($category) {
+            $entriesWithoutUserEntry = $entriesWithoutUserEntry->whereHas('franchise', function($q) use ($category) {
                 $q->where('franchises.category_id', $category);
             });
         }
 
-        $entriesWithoutUserEntry = $entriesWithoutUserEntry->get();
+        $entrie = $entriesWithoutUserEntry->get();
 
         return view('livewire.dashboard.search-franchise', [
             'uid' => $userId,
-            'entries' => $entriesWithoutUserEntry,
+            'entries' => $entrie,
+            'creator' => $creator,
+            'sql' => $entriesWithoutUserEntry->toSql(),
             'searchCategory' => $this->category
         ]);
     }

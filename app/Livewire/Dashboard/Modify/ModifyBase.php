@@ -25,8 +25,8 @@ abstract class ModifyBase extends Component
 
     public function addMeta(string $metaTable, int $entryId, string $person)
     {
-        if($metaTable == "studios") $this->entries[$entryId]["studioSearch"] = "";
-        if($metaTable == "creators") $this->entries[$entryId]["creatorSearch"] = "";
+        if($metaTable == "studios") { $this->entries[$entryId]["studioSearch"] = ""; }
+        if($metaTable == "creators") { $this->entries[$entryId]["creatorSearch"] = ""; }
 
         array_push($this->entries[$entryId][$metaTable], $person);
     }
