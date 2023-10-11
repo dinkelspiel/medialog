@@ -131,7 +131,7 @@ class Edit extends ModifyBase
                     $studios[] = $studio->name;
                 }
 
-                $this->entries[] = ['id' => $entry->id, 'name' => $entry->name, 'studios' => $studios, 'cover_url' => $entry->cover_url, 'creators' => $creators];
+                $this->entries[] = ['id' => $entry->id, 'name' => $entry->name, 'studios' => $studios, 'cover_url' => $entry->cover_url, 'creators' => $creators, 'studioSearch' => '', 'creatorSearch' => ''];
             }
             $this->hasReadFranchise = true;
         }

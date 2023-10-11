@@ -38,7 +38,7 @@
         @endif
     </div>
 
-    @if($search != "" || ($searchStudio != "" && \App\Models\Studio::where('name', $searchStudio)->first() != null))
+    @if($search != "" || ($searchStudio != "" && \App\Models\Studio::where('name', $searchStudio)->first() != null) || ($searchCreator != "" && \App\Models\Person::where('name', $searchCreator)->first() != null))
         <ul class="grid-item col-span-2 flex flex-col overflow-y-scroll no-scrollbar" style="height: calc(100vh - 20rem)">
             @foreach($entries as $entry)
                 <li>
