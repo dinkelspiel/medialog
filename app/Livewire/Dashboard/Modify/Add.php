@@ -20,22 +20,12 @@ class Add extends Component
 
     public function addEntry()
     {
-        $this->entries[] = ['name' => '', 'studio' => '', 'cover_url' => '', 'creators' => []];
+        $this->entries[] = ['name' => '', 'studios' => [], 'cover_url' => '', 'creators' => []];
     }
 
     public function removeEntry(int $index)
     {
         unset($this->entries[$index]);
-    }
-
-    public function addCast(int $entryId, string $person)
-    {
-        $this->entries[$entryId]['cast'][$person] = "";
-    }
-
-    public function removeCast(int $entryId, $person)
-    {
-        unset($this->entries[$entryId]['cast'][$person]);
     }
 
     public function addMeta(string $metaTable, int $entryId, string $person)
@@ -77,9 +67,9 @@ class Add extends Component
                 return;
             }
 
-            if($entryRaw['studio'] == "")
+            if($entryRaw['studios'] == [])
             {
-                session()->flash('error', 'Entry must have a studio');
+                session()->flash('error', 'Entry must have atleast one studio');
                 $franchise->delete();
                 return;
             }
@@ -101,7 +91,6 @@ class Add extends Component
             $entry = new Entry;
             $entry->franchise_id = $franchise->id;
             $entry->name = $entryRaw['name'];
-            $entry->studio_id = Studio::where('name', $entryRaw['studio'])->first()->id;
             $entry->cover_url = $entryRaw['cover_url'];
 
             $entry = $franchise->addEntry($entry);
@@ -116,6 +105,18 @@ class Add extends Component
                 }
 
                 $entry->creators()->attach(['person_id' => $creator->id]);
+            }
+
+            foreach($entryRaw['studios'] as $studioRaw)
+            {
+                $studio = Studio::where('name', $studioRaw)->first();
+
+                if($studio == null)
+                {
+                    continue;
+                }
+
+                $entry->studios()->attach(['studio_id' => $studio->id]);
             }
         }
 
