@@ -142,10 +142,10 @@ class Index extends Component
             }
             if($this->filterStudio != "0")
             {
-                $filterStudio = $this->filterStudio;
+                $studioId = $this->filterStudio;
                 $userEntry = $userEntry
-                    ->whereHas('entry', function($query) use($filterStudio) {
-                        $query->where('studio_id', $filterStudio);
+                    ->whereHas('entry.studios', function($query) use ($studioId) {
+                        $query->where('studio_id', $studioId);
                     });
             }
             if($this->filterCategory != "0")
@@ -229,8 +229,11 @@ class Index extends Component
                 }
                 if($this->filterStudio != "0")
                 {
+                    $studioId = $this->filterStudio;
                     $franchise = $franchise
-                        ->where('studio_id', $this->filterStudio);
+                        ->whereHas('studios', function($query) use ($studioId) {
+                            $query->where('studio_id', $studioId);
+                        });
                 }
                 if($this->filterCategory != "0")
                 {
@@ -338,10 +341,11 @@ class Index extends Component
         }
         if($this->filterStudio != "0")
         {
-            $filterStudio = $this->filterStudio;
-            $userEntries = $userEntries->whereHas('entry', function($query) use($filterStudio) {
-                $query->where('studio_id', $filterStudio);
-            });
+            $studioId = $this->filterStudio;
+            $userEntries = $userEntries
+                ->whereHas('entry.studios', function($query) use ($studioId) {
+                    $query->where('studio_id', $studioId);
+                });
         }
         if($this->filterCategory != "0")
         {
