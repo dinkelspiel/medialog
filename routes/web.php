@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\UserEntryController;
 use App\Http\Middleware\Authenticate;
+use App\Http\Middleware\AuthorizeAdmin;
 use App\Http\Middleware\VerifySession;
 use App\Livewire\Auth\Auth;
 use Illuminate\Support\Facades\Route;
@@ -24,7 +25,9 @@ Route::middleware([VerifySession::class])->group(function() {
     Route::get('/dashboard/edit/{franchiseId}', App\Livewire\Dashboard\Modify\Edit::class);
 
     Route::get('/profile', App\Livewire\Profile\Index::class);
+});
 
+Route::middleware([VerifySession::class, AuthorizeAdmin::class])->group(function() {
     Route::get('/admin', function() {
         return redirect('/admin/entries');
     });
