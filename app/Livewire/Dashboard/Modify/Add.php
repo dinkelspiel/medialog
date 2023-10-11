@@ -9,39 +9,8 @@ use App\Models\Person;
 use App\Models\Studio;
 use Livewire\Component;
 
-class Add extends Component
+class Add extends ModifyBase
 {
-    public string $franchiseName = "";
-    public string $franchiseCategory = "";
-
-    public string $addStudioName = "", $addPersonName = "";
-
-    public array $entries = [];
-
-    public function addEntry()
-    {
-        $this->entries[] = ['name' => '', 'studios' => [], 'cover_url' => '', 'creators' => []];
-    }
-
-    public function removeEntry(int $index)
-    {
-        unset($this->entries[$index]);
-    }
-
-    public function addMeta(string $metaTable, int $entryId, string $person)
-    {
-        array_push($this->entries[$entryId][$metaTable], $person);
-    }
-
-    public function removeMeta(string $metaTable, int $entryId, string $person)
-    {
-        $key = array_search($person, $this->entries[$entryId][$metaTable]);
-
-        if ($key !== null) {
-            unset($this->entries[$entryId][$metaTable][$key]);
-        }
-    }
-
     public function save()
     {
         if(Franchise::where('name', $this->franchiseName)->first() != null)
@@ -56,7 +25,7 @@ class Add extends Component
             return;
         }
 
-        $franchise = Franchise::create(['name' => $this->franchiseName, 'category_id' => Category::where('name', $this->franchiseCategory)->first()->id]);
+        $franchise = Franchise::create(['name' => $this->franchiseName, 'category_id' => Category::where('id', $this->franchiseCategory)->first()->id]);
 
         foreach($this->entries as $entryRaw)
         {
@@ -123,53 +92,6 @@ class Add extends Component
         $franchise->save();
 
         return redirect('/dashboard');
-    }
-
-    public function savePerson()
-    {
-        if(strlen($this->addPersonName) == 0)
-        {
-            return;
-        }
-
-        if(Person::where('name', $this->addPersonName)->first() != null)
-        {
-            session()->flash('error', 'Person with name already exists');
-            return;
-        }
-
-        $person = new Person;
-        $person->name = $this->addPersonName;
-        $person->save();
-
-        $this->addPersonName = "";
-        session()->flash('message', 'Added person successfully');
-    }
-
-    public function saveStudio()
-    {
-        if(strlen($this->addStudioName) == 0)
-        {
-            return;
-        }
-
-        if(Studio::where('name', $this->addStudioName)->first() != null)
-        {
-            session()->flash('error', 'Studio with name already exists');
-            return;
-        }
-
-        $studio = new Studio;
-        $studio->name = $this->addStudioName;
-        $studio->save();
-
-        $this->addStudioName = "";
-        session()->flash('message', 'Added studio successfully');
-    }
-
-    public function mount()
-    {
-        $this->franchiseCategory = Category::first()->name;
     }
 
     public function render()

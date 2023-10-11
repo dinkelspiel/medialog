@@ -39,56 +39,60 @@
                 <div>
                     Production Studio
                 </div>
-                @foreach($this->entries[$loop->index]['studios'] as $studio)
-                    <div class="flex flex-row">
-                        <div class="mr-auto">
+                <div class="flex flex-row gap-2 flex-wrap">
+                    @foreach($this->entries[$loop->index]['studios'] as $studio)
+                        <button class="max-w-max flex flex-row gap-1 bg-secondary text-white rounded-full px-3" wire:click="removeMeta('studios', {{ $loop->parent->index }}, '{{ $studio }}')">
                             {{ $studio }}
-                        </div>
-                        <div class="text-btn" wire:key="{{ $loop->index }}" wire:click="removeMeta('studios', {{ $loop->parent->index }}, '{{ $studio }}')">
-                            Remove
-                        </div>
+                        </button>
+                    @endforeach
+                </div>
+                <div class="grid grid-cols-1 w-full relative">
+                    <div class="flex flex-row gap-3 max-w-full">
+                        <input class="input w-full @if($entries[$loop->index]['studioSearch'] != "") !rounded-bl-none !rounded-br-none @endif" placeholder="ABC Productions" wire:model.live="entries.{{ $loop->index }}.studioSearch">
                     </div>
-                @endforeach
-                <div class="flex flex-row gap-3 w-full">
-                    <select class="input w-full" placeholder="studios" wire:change="addMeta('studios', {{ $loop->index }}, $event.target.value)">
-                        <option value="">
-                            Select a Production Studio
-                        </option>
-                        @foreach(\App\Models\Studio::all()->pluck('name') as $studio)
-                            @if(!in_array($studio, $this->entries[$loop->parent->index]['studios']))
-                                <option>
-                                    {{ $studio }}
-                                </option>
-                            @endif
-                        @endforeach
-                    </select>
+                    @if($entries[$loop->index]['studioSearch'] != "")
+                        <div class="bg-card absolute w-full top-14 rounded-br-lg rounded-bl-lg border-outline !border-t-0 border shadow-lg p-3 flex flex-col gap-3 max-h-96 overflow-y-scroll z-10">
+                            @foreach(\App\Models\Studio::where('name', 'LIKE', '%' . $entries[$loop->index]['studioSearch'] . '%')->orderBy('name')->get() as $studio)
+                                @if(!in_array($studio->name, $this->entries[$loop->parent->index]['studios']))
+                                    <button class="cursor-pointer text-left" wire:click="addMeta('studios', {{ $loop->parent->index }}, '{{ $studio->name }}')">
+                                        {{ $studio->name }}
+                                    </button>
+                                @endif
+                            @endforeach
+                            <button class="cursor-pointer text-left pt-3 border-t border-t-outline" wire:click="saveStudio({{ $loop->index }})">
+                                Add Studio
+                            </button>
+                        </div>
+                    @endif
                 </div>
                 <div>
                     Directors/Writers
                 </div>
-                @foreach($this->entries[$loop->index]['creators'] as $creator)
-                    <div class="flex flex-row">
-                        <div class="mr-auto">
+                <div class="flex flex-row gap-2 flex-wrap">
+                    @foreach($this->entries[$loop->index]['creators'] as $creator)
+                        <button class="max-w-max flex flex-row gap-1 bg-secondary text-white rounded-full px-3" wire:click="removeMeta('creators', {{ $loop->parent->index }}, '{{ $creator }}')">
                             {{ $creator }}
-                        </div>
-                        <div class="text-btn" wire:key="{{ $loop->index }}" wire:click="removeMeta('creators', {{ $loop->parent->index }}, '{{ $creator }}')">
-                            Remove
-                        </div>
+                        </button>
+                    @endforeach
+                </div>
+                <div class="grid grid-cols-1 w-full relative">
+                    <div class="flex flex-row gap-3 max-w-full">
+                        <input class="input w-full @if($entries[$loop->index]['creatorSearch'] != "") !rounded-bl-none !rounded-br-none @endif" placeholder="John Smith" wire:model.live="entries.{{ $loop->index }}.creatorSearch">
                     </div>
-                @endforeach
-                <div class="flex flex-row gap-3 w-full">
-                    <select class="input w-full" placeholder="creators" wire:change="addMeta('creators', {{ $loop->index }}, $event.target.value)">
-                        <option value="">
-                            Select a director/writer
-                        </option>
-                        @foreach(\App\Models\Person::all()->pluck('name') as $person)
-                            @if(!in_array($person, $this->entries[$loop->parent->index]['creators']))
-                                <option>
-                                    {{ $person }}
-                                </option>
-                            @endif
-                        @endforeach
-                    </select>
+                    @if($entries[$loop->index]['creatorSearch'] != "")
+                        <div class="bg-card absolute w-full top-14 rounded-br-lg rounded-bl-lg border-outline !border-t-0 border shadow-lg p-3 flex flex-col gap-3 max-h-96 overflow-y-scroll z-10">
+                            @foreach(\App\Models\Person::where('name', 'LIKE', '%' . $entries[$loop->index]['creatorSearch'] . '%')->orderBy('name')->get() as $person)
+                                @if(!in_array($person->name, $this->entries[$loop->parent->index]['creators']))
+                                    <button class="cursor-pointer text-left" wire:click="addMeta('creators', {{ $loop->parent->index }}, '{{ $person->name }}')">
+                                        {{ $person->name }}
+                                    </button>
+                                @endif
+                            @endforeach
+                            <button class="cursor-pointer text-left pt-3 border-t border-t-outline" wire:click="savePerson({{ $loop->index }})">
+                                Add Creator
+                            </button>
+                        </div>
+                    @endif
                 </div>
                 <div>
                     Cover Image URL
@@ -106,40 +110,6 @@
         </div>
     @endif
 
-    <div class="grid grid-cols-2 gap-3 mt-6">
-        <div>
-            <div class="border-b border-stone-300 text-lg p-3 flex flex-row items-center">
-                <div class="mr-auto">
-                    Add Person
-                </div>
-            </div>
-            <div class="p-3 flex flex-col gap-3">
-                <div>
-                    Name
-                </div>
-                <input class="input" placeholder="Name" wire:model="addPersonName">
-            </div>
-            <button class="btn" wire:click="savePerson">
-                Save
-            </button>
-        </div>
-        <div>
-            <div class="border-b border-stone-300 text-lg p-3 flex flex-row items-center">
-                <div class="mr-auto">
-                    Add Production Studio
-                </div>
-            </div>
-            <div class="p-3 flex flex-col gap-3">
-                <div>
-                    Name
-                </div>
-                <input class="input" placeholder="Name" wire:model="addStudioName">
-            </div>
-            <button class="btn" wire:click="saveStudio">
-                Save
-            </button>
-        </div>
-    </div>
     @if(session()->has('message'))
         <div class="success mt-3">
             {{ session('message') }}
