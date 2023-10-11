@@ -30,12 +30,12 @@
         @foreach ($this->entries as $entry)
             <div wire:key="{{ $loop->index }}" class="flex flex-col gap-3 mb-3 ps-3 border-s border-secondary">
                 <div>
-                    Entry title
+                    Entry Title
                 </div>
                 <div class="text-left text-neutral-400 text-xs pt-2 col-span-2">
                     Standalone movies/books should have their name as the entry name and series should have "Season 1", "Season 2" if no name is given
                 </div>
-                <input class="input" placeholder="Entry title" wire:model="entries.{{ $loop->index }}.name">
+                <input class="input" placeholder="Title" wire:model="entries.{{ $loop->index }}.name">
                 <div>
                     Production Studio
                 </div>
