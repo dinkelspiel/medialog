@@ -1,14 +1,14 @@
 <div class="px-96 scrollable-grid-item !max-h-screen pb-12">
     <div class="border-b border-stone-300 text-lg p-3 flex flex-row items-center">
         <div class="mr-auto">
-            Edit Franchise
+            {{ $modifyMode }} Franchise
         </div>
     </div>
     <div class="p-3 flex flex-col gap-3">
         <div>
-            Name
+            Franchise Title
         </div>
-        <input class="input" placeholder="Name" wire:model="franchiseName">
+        <input class="input" placeholder="Title" wire:model="franchiseName">
         <div>
             Category
         </div>
@@ -30,16 +30,19 @@
         @foreach ($this->entries as $entry)
             <div wire:key="{{ $loop->index }}" class="flex flex-col gap-3 mb-3 ps-3 border-s border-secondary">
                 <div>
-                    Name
+                    Entry title
                 </div>
-                <input class="input" placeholder="Name" wire:model="entries.{{ $loop->index }}.name">
+                <div class="text-left text-neutral-400 text-xs pt-2 col-span-2">
+                    Standalone movies/books should have their name as the entry name and series should have "Season 1", "Season 2" if no name is given
+                </div>
+                <input class="input" placeholder="Entry title" wire:model="entries.{{ $loop->index }}.name">
                 <div>
-                    Studio
+                    Production Studio
                 </div>
                 <div class="flex flex-col gap-3 w-full">
                     <select class="input" wire:model="entries.{{ $loop->index }}.studio">
                         <option value="">
-                            Select a studio
+                            Select a production studio
                         </option>
                         @foreach(\App\Models\Studio::all()->pluck('name') as $studio)
                             <option>
@@ -49,7 +52,7 @@
                     </select>
                 </div>
                 <div>
-                    creators
+                    Directors/Writers
                 </div>
                 @foreach($this->entries[$loop->index]['creators'] as $creator)
                     <div class="flex flex-row">
