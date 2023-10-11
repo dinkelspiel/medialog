@@ -114,7 +114,7 @@
         <div>
             <div class="border-b border-stone-300 text-lg p-3 flex flex-row items-center">
                 <div class="mr-auto">
-                    Add Studio
+                    Add Production Studio
                 </div>
             </div>
             <div class="p-3 flex flex-col gap-3">
