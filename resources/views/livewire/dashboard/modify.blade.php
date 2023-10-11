@@ -48,7 +48,7 @@
                 </div>
                 <div class="grid grid-cols-1 w-full relative">
                     <div class="flex flex-row gap-3 max-w-full">
-                        <input class="input w-full @if($entries[$loop->index]['studioSearch'] != "") !rounded-bl-none !rounded-br-none @endif" placeholder="ABC Productions" wire:model.live="entries.{{ $loop->index }}.studioSearch">
+                        <input class="input w-full @if($entries[$loop->index]['studioSearch'] != "") !rounded-bl-none !rounded-br-none @endif" placeholder="Production Studio" wire:model.live="entries.{{ $loop->index }}.studioSearch">
                     </div>
                     @if($entries[$loop->index]['studioSearch'] != "")
                         <div class="dropdown-container">
@@ -77,7 +77,7 @@
                 </div>
                 <div class="grid grid-cols-1 w-full relative">
                     <div class="flex flex-row gap-3 max-w-full">
-                        <input class="input w-full @if($entries[$loop->index]['creatorSearch'] != "") !rounded-bl-none !rounded-br-none @endif" placeholder="John Smith" wire:model.live="entries.{{ $loop->index }}.creatorSearch">
+                        <input class="input w-full @if($entries[$loop->index]['creatorSearch'] != "") !rounded-bl-none !rounded-br-none @endif" placeholder="Director/Writer" wire:model.live="entries.{{ $loop->index }}.creatorSearch">
                     </div>
                     @if($entries[$loop->index]['creatorSearch'] != "")
                         <div class="dropdown-container">

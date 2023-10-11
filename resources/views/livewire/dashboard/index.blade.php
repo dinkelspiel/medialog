@@ -17,7 +17,7 @@
                 <input class="input col-span-2" placeholder="Season" type="text" wire:model.live="filterSeason">
 
                 <div class="grid grid-cols-1 w-full relative" x-data="{ open: true }">
-                    <input class="input w-full @if(\App\Models\Studio::where('name', $filterSearchStudio)->first() == null && $filterSearchStudio != "") !border !border-red-400 @endif" placeholder="ABC Productions" wire:model.live="filterSearchStudio" @focus="open = true">
+                    <input class="input w-full @if(\App\Models\Studio::where('name', $filterSearchStudio)->first() == null && $filterSearchStudio != "") !border !border-red-400 @endif" placeholder="Production Studio" wire:model.live="filterSearchStudio" @focus="open = true">
                     @if($filterSearchStudio != "" && $filterStudio == "0")
                         <div class="dropdown-container" x-show="open">
                             @foreach(\App\Models\Studio::where('name', 'LIKE', '%' . $filterSearchStudio . '%')->orderBy('name')->get() as $studio)
@@ -30,7 +30,7 @@
                 </div>
 
                 <div class="grid grid-cols-1 w-full relative" x-data="{ open: true }">
-                    <input class="input w-full @if(\App\Models\Person::where('name', $filterSearchCreator)->first() == null && $filterSearchCreator != "") !border !border-red-400 @endif" placeholder="John Smith" wire:model.live="filterSearchCreator" @focus="open = true">
+                    <input class="input w-full @if(\App\Models\Person::where('name', $filterSearchCreator)->first() == null && $filterSearchCreator != "") !border !border-red-400 @endif" placeholder="Director/Writer" wire:model.live="filterSearchCreator" @focus="open = true">
                     @if($filterSearchCreator != "" && $filterCreator == 0)
                         <div class="dropdown-container" x-show="open">
                             @foreach(\App\Models\Person::where('name', 'LIKE', '%' . $filterSearchCreator . '%')->orderBy('name')->get() as $person)
