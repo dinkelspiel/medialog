@@ -135,33 +135,10 @@
         <div>
             @foreach($userEntries as $browserEntry)
                 @if(!is_null($browserEntry->entry->franchise))
-                    <button wire:click="showUserEntry({{ $browserEntry->id }})" class="h-20 w-full text-left rounded-lg duration-200 border-color hover:bg-card-hover active:rounded-xl active:bg-card-active hover:border-secondary border-dashed border p-3 flex flex-row cursor-pointer">
-                        @if(count($browserEntry->entry->franchise->entries) > 0)
-                            <img src="{{ $browserEntry->entry->cover_url }}" class="rounded-lg h-full w-28 object-cover">
-                        @else
-                            <img src="/assets/noimg.png" class="rounded-lg h-full w-28 object-cover">
-                        @endif
-
-                        <div class="ms-3 flex flex-col justify-center" style="gap: -5px">
-                            @if(count($browserEntry->entry->franchise->entries) > 1)
-                                <div class="text-xs text-slate-800">
-                                    {{ $browserEntry->entry->name }}
-                                </div>
-                            @endif
-                            <div class="text-base">
-                                {{ $browserEntry->entry->franchise->name }}
-                            </div>
-                            <div class="text-sm text-slate-800">
-                                @switch(auth()->user()->subtext_style->value)
-                                    @case("studio")
-                                        @foreach ($browserEntry->entry->studios()->distinct()->get() as $studio) <i>{{ $studio->name }}</i>@if($loop->remaining == 1) and @elseif(!$loop->last),@endif @endforeach
-                                    @break
-                                    @case("creator")
-                                        @foreach ($browserEntry->entry->creators()->distinct()->get() as $creator) <i>{{ $creator->name }}</i>@if($loop->remaining == 1) and @elseif(!$loop->last),@endif @endforeach
-                                    @break
-                                @endswitch
-                            </div>
-                        </div>
+                    <button class="entry-container" wire:click="showUserEntry({{ $browserEntry->id }})">
+                        @include('includes.entry', [
+                            'entry' => $browserEntry->entry
+                        ]);
                     </button>
                 @endif
             @endforeach

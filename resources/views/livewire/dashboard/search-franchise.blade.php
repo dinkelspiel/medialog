@@ -42,26 +42,10 @@
         <ul class="grid-item col-span-2 flex flex-col overflow-y-scroll no-scrollbar" style="height: calc(100vh - 20rem)">
             @foreach($entries as $entry)
                 <li>
-                    <button wire:click="create({{ $entry->franchise->id }}, {{ $entry->id }})" class="h-20 w-full text-left rounded-lg duration-200 border-card hover:bg-card-hover active:rounded-xl active:bg-card-active hover:border-secondary border-dashed border p-3 flex flex-row cursor-pointer">
-                        @if(count($entry->franchise->entries) > 0)
-                            <img src="{{ $entry->cover_url }}" class="rounded-lg h-full w-28 object-cover">
-                        @else
-                            <img src="/assets/noimg.png" class="rounded-lg h-full w-28 object-cover">
-                        @endif
-
-                        <div class="ms-3 flex flex-col justify-center">
-                            @if(count($entry->franchise->entries) > 1)
-                                <div class="text-xs text-slate-800">
-                                    {{ $entry->name }}
-                                </div>
-                            @endif
-                            <div class="text-base">
-                                {{ $entry->franchise->name }}
-                            </div>
-                            <div class="text-sm text-slate-800">
-                                @foreach ($entry->studios()->distinct()->get() as $studio) <i>{{ $studio->name }}</i>@if($loop->remaining == 1) and @elseif(!$loop->last),@endif @endforeach
-                            </div>
-                        </div>
+                    <button class="entry-container" wire:click="create({{ $entry->franchise->id }}, {{ $entry->id }})">
+                        @include('includes.entry', [
+                            'entry' => $entry
+                        ]);
                     </button>
                 </li>
             @endforeach
