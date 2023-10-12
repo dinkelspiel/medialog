@@ -15,7 +15,7 @@ abstract class ModifyBase extends Component
 
     public function addEntry()
     {
-        $this->entries[] = ['name' => '', 'studioSearch' => '', 'studios' => [], 'cover_url' => '', 'creatorSearch' => '', 'creators' => []];
+        $this->entries[] = ['id' => null, 'name' => '', 'studioSearch' => '', 'studios' => [], 'cover_url' => '', 'creatorSearch' => '', 'creators' => []];
     }
 
     public function removeEntry(int $index)
