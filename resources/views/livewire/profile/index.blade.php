@@ -1,4 +1,4 @@
-<div class="px-96 py-3 flex flex-col gap-2">
+<div class="xl:mx-96 mx-0 py-3 flex flex-col gap-2">
     <div class="pt-3">
         Rating Style
     </div>
