@@ -1,10 +1,10 @@
 <div class="grid h-[calc(100dvh)] grid-cols-1 lg:grid-cols-[0.9fr,1.2fr,0.9fr] relative">
     <div class="grid-item my-3 rounded-lg bg-card scrollable-grid-item">
         <div class="grid h-16 border-b border-b-outline" style="grid-template-columns: 1fr 1fr">
-            <button wire:click="setPage('add')" class="@if($page == 'add') bg-outline @endif grid-item flex justify-center items-center text-lg font-medium cursor-pointer hover:bg-secondary-hover active:bg-secondary-active duration-100 rounded-tl-lg border-r border-r-outline">
+            <button wire:click="setPage(`add`)" class="@if($page == 'add') bg-outline @endif grid-item flex justify-center items-center text-lg font-medium cursor-pointer hover:bg-secondary-hover active:bg-secondary-active duration-100 rounded-tl-lg border-r border-r-outline">
                 Add
             </button>
-            <button wire:click="setPage('filter')" class="@if($page == 'filter') bg-outline @endif grid-item flex justify-center items-center text-lg font-medium cursor-pointer hover:bg-secondary-hover active:bg-secondary-active duration-100 rounded-tr-lg">
+            <button wire:click="setPage(`filter`)" class="@if($page == 'filter') bg-outline @endif grid-item flex justify-center items-center text-lg font-medium cursor-pointer hover:bg-secondary-hover active:bg-secondary-active duration-100 rounded-tr-lg">
                 Filter
             </button>
         </div>
@@ -21,7 +21,7 @@
                     @if($filterSearchStudio != "" && $filterStudio == "0")
                         <div class="dropdown-container" x-show="open">
                             @foreach(\App\Models\Studio::where('name', 'LIKE', '%' . $filterSearchStudio . '%')->orderBy('name')->get() as $studio)
-                                <button class="dropdown-button" wire:click="setFilterStudio('{{ $studio->name }}')" @click="open = false">
+                                <button class="dropdown-button" wire:click="setFilterStudio(`{{ $studio->name }}`)" @click="open = false">
                                     {{ $studio->name }}
                                 </button>
                             @endforeach
@@ -34,7 +34,7 @@
                     @if($filterSearchCreator != "" && $filterCreator == 0)
                         <div class="dropdown-container" x-show="open">
                             @foreach(\App\Models\Person::where('name', 'LIKE', '%' . $filterSearchCreator . '%')->orderBy('name')->get() as $person)
-                                <button class="dropdown-button" wire:click="setFilterCreator('{{ $person->name }}')" @click="open = false">
+                                <button class="dropdown-button" wire:click="setFilterCreator(`{{ $person->name }}`)" @click="open = false">
                                     {{ $person->name }}
                                 </button>
                             @endforeach

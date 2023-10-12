@@ -41,7 +41,7 @@
                 </div>
                 <div class="flex flex-row gap-2 flex-wrap">
                     @foreach($this->entries[$loop->index]['studios'] as $studio)
-                        <button class="max-w-max flex flex-row gap-1 bg-secondary text-white rounded-full px-3" wire:click="removeMeta('studios', {{ $loop->parent->index }}, '{{ $studio }}')">
+                        <button class="max-w-max flex flex-row gap-1 bg-secondary text-white rounded-full px-3" wire:click="removeMeta(`studios`, {{ $loop->parent->index }}, `{{ $studio }}`)">
                             {{ $studio }}
                         </button>
                     @endforeach
@@ -70,7 +70,7 @@
                 </div>
                 <div class="flex flex-row gap-2 flex-wrap">
                     @foreach($this->entries[$loop->index]['creators'] as $creator)
-                        <button class="max-w-max flex flex-row gap-1 bg-secondary text-white rounded-full px-3" wire:click="removeMeta('creators', {{ $loop->parent->index }}, '{{ $creator }}')">
+                        <button class="max-w-max flex flex-row gap-1 bg-secondary text-white rounded-full px-3" wire:click="removeMeta(`creators`, {{ $loop->parent->index }}, `{{ $creator }}`)">
                             {{ $creator }}
                         </button>
                     @endforeach
@@ -83,7 +83,7 @@
                         <div class="dropdown-container">
                             @foreach(\App\Models\Person::where('name', 'LIKE', '%' . $entries[$loop->index]['creatorSearch'] . '%')->orderBy('name')->get() as $person)
                                 @if(!in_array($person->name, $this->entries[$loop->parent->index]['creators']))
-                                    <button class="dropdown-button" wire:click="addMeta('creators', {{ $loop->parent->index }}, '{{ $person->name }}')">
+                                    <button class="dropdown-button" wire:click="addMeta('creators', {{ $loop->parent->index }}, `{{ $person->name }}`)">
                                         {{ $person->name }}
                                     </button>
                                 @endif
