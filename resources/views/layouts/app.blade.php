@@ -12,12 +12,12 @@
 </head>
 <body>
     <div class="grid absolute inset-0 bg-color mr-3" style="grid-template-columns: 5rem 1fr">
-        <div class="grid-item">
+        <div class="h-[calc(100dvh)]">
             @include('includes.header', [
                 'page' => $header
             ])
         </div>
-        <div class="max-h-full">
+        <div class="max-h-[calc(100dvh)]">
             @if(isset($slot))
                 {{ $slot }}
             @endif
