@@ -3,6 +3,7 @@
 namespace App\Livewire\Profile;
 
 use App\Enums\UserRatingStyleEnum;
+use App\Enums\UserSubtextStyleEnum;
 use App\Models\User;
 use Livewire\Component;
 
@@ -16,13 +17,24 @@ class Index extends Component
         if($ratingStyle == "range")
         {
             $user->rating_style = "range";
-            $this->ratingStyle = "b";
         } else {
             $user->rating_style = "stars";
-            $this->ratingStyle = "c";
         }
         $user->save();
-        $this->ratingStyle = $user;
+    }
+
+    public $subtextStyle;
+
+    public function setSubtextStyle(string $subtextStyle)
+    {
+        $user = User::where('id', auth()->user()->id)->first();
+        if($subtextStyle == "studio")
+        {
+            $user->subtext_style = UserSubtextStyleEnum::Studio;
+        } else {
+            $user->subtext_style = UserSubtextStyleEnum::Creator;
+        }
+        $user->save();
     }
 
     public function logout()
@@ -35,6 +47,7 @@ class Index extends Component
     public function render()
     {
         $this->ratingStyle = auth()->user()->rating_style->value;
+        $this->subtextStyle = auth()->user()->subtext_style->value;
 
         return view('livewire.profile.index', [
             'ratingStyle' => $this->ratingStyle

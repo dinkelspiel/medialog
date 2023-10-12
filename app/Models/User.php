@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Enums\UserRatingStyleEnum;
+use App\Enums\UserSubtextStyleEnum;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -13,12 +14,13 @@ class User extends Authenticatable
 {
     use HasFactory;
 
-    protected $fillable = ['username', 'email', 'rating_style'];
+    protected $fillable = ['username', 'email', 'rating_style', 'subtext_style'];
 
     protected $hidden = ['password'];
 
     protected $casts = [
-        'rating_style' => UserRatingStyleEnum::class
+        'rating_style' => UserRatingStyleEnum::class,
+        'subtext_style' => UserSubtextStyleEnum::class
     ];
 
     public function permission(): HasOne
