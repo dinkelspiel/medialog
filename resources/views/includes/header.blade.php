@@ -1,4 +1,4 @@
-<div class="flex flex-col py-3 h-screen items-center gap-2 justify-start">
+<div class="flex flex-col py-3 items-center gap-2 justify-start">
     <a href="/" class="icon-btn-nav @if($page == 'home') icon-btn-pink @else icon-btn-white @endif">
         <img src="/assets/logo.svg">
     </a>
