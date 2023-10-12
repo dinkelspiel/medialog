@@ -17,7 +17,7 @@
                 'page' => $header
             ])
         </div>
-        <div class="max-h-[calc(100dvh)]">
+        <div class="max-h-[calc(100dvh)] h-[calc(100dvh)]">
             @if(isset($slot))
                 {{ $slot }}
             @endif
