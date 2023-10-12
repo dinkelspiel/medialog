@@ -100,3 +100,7 @@ button[disabled]{
 .dropdown-button {
     @apply cursor-pointer text-left;
 }
+
+.entry-container {
+    @apply h-20 w-full text-left rounded-lg duration-200 border-color hover:bg-card-hover active:rounded-xl active:bg-card-active hover:border-secondary border-dashed border p-3 flex flex-row cursor-pointer;
+}
