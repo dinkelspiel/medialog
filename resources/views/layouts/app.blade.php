@@ -17,7 +17,7 @@
                 'page' => $header
             ])
         </div>
-        <div class="grid-item">
+        <div class="max-h-full">
             @if(isset($slot))
                 {{ $slot }}
             @endif
