@@ -11,7 +11,7 @@
     @livewireStyles
 </head>
 <body>
-    <div class="grid h-screen bg-color mr-3" style="grid-template-columns: 5rem 1fr">
+    <div class="grid absolute inset-0 bg-color mr-3" style="grid-template-columns: 5rem 1fr">
         <div class="grid-item">
             @include('includes.header', [
                 'page' => $header
@@ -21,7 +21,7 @@
             @if(isset($slot))
                 {{ $slot }}
             @endif
-            @yield('content')            
+            @yield('content')
         </div>
     </div>
 
