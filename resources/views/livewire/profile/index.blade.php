@@ -1,4 +1,4 @@
-<div class="xl:mx-96 mx-0 py-3 flex flex-col gap-2">
+<div class="xl:mx-96 mx-0 py-3 flex flex-col gap-2 h-[calc(100dvh)]">
     <div class="pt-3">
         Rating Style
     </div>
@@ -21,9 +21,9 @@
             Creator
         </option>
     </select>
-    <form wire:submit.prevent="logout">
+    <form wire:submit.prevent="logout" class="justify-end mt-auto">
         @csrf
-        <button class="btn w-full mt-96" type="submit">
+        <button class="btn w-full mt-auto" type="submit">
             Logout
         </button>
     </form>

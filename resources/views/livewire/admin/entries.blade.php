@@ -1,7 +1,7 @@
-<div class="scrollable-grid-item">
+<div class="scrollable-grid-item h-[calc(100dvh)]">
     @include("includes.admin.header")
 
-    <div class="mt-3">
+    <div class="mt-3 h-[calc(100dvh)]">
         <div class="flex flex-col gap-3 lg:mx-40 mx-0">
             <div class="grid grid-cols-5 items-center justify-center border-b border-b-slate-200 h-10 font-semibold">
                 <div>
