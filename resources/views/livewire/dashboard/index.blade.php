@@ -152,7 +152,14 @@
                                 {{ $browserEntry->entry->franchise->name }}
                             </div>
                             <div class="text-sm text-slate-800">
-                                @foreach ($browserEntry->entry->studios()->distinct()->get() as $studio) <i>{{ $studio->name }}</i>@if($loop->remaining == 1) and @elseif(!$loop->last),@endif @endforeach
+                                @switch(auth()->user()->subtext_style->value)
+                                    @case("studio")
+                                        @foreach ($browserEntry->entry->studios()->distinct()->get() as $studio) <i>{{ $studio->name }}</i>@if($loop->remaining == 1) and @elseif(!$loop->last),@endif @endforeach
+                                    @break
+                                    @case("creator")
+                                        @foreach ($browserEntry->entry->creators()->distinct()->get() as $creator) <i>{{ $creator->name }}</i>@if($loop->remaining == 1) and @elseif(!$loop->last),@endif @endforeach
+                                    @break
+                                @endswitch
                             </div>
                         </div>
                     </button>
