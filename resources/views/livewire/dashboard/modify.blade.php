@@ -1,4 +1,4 @@
-<div class="px-96 scrollable-grid-item !max-h-screen pb-12">
+<div class="xl:mx-96 mx-0 scrollable-grid-item !max-h-screen pb-12">
     <div class="border-b border-stone-300 text-lg p-3 flex flex-row items-center">
         <div class="mr-auto">
             {{ $modifyMode }} Franchise

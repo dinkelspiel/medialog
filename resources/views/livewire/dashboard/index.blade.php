@@ -1,4 +1,4 @@
-<div class="grid h-screen" style="grid-template-columns: 0.9fr 1.2fr 0.9fr">
+<div class="grid h-screen grid-cols-1 lg:grid-cols-[0.9fr,1.2fr,0.9fr] relative">
     <div class="grid-item my-3 rounded-lg bg-card">
         <div class="grid h-16 border-b border-b-outline" style="grid-template-columns: 1fr 1fr">
             <button wire:click="setPage('add')" class="@if($page == 'add') bg-outline @endif grid-item flex justify-center items-center text-lg font-medium cursor-pointer hover:bg-secondary-hover active:bg-secondary-active duration-100 rounded-tl-lg border-r border-r-outline">
@@ -168,7 +168,7 @@
         </div>
     </div>
     @if($userEntry)
-        <div class="grid-item my-3 rounded-lg bg-card p-3 flex flex-col">
+        <div class="my-3 rounded-lg bg-card p-3 flex flex-col absolute z-10 w-full lg:relative" style="height: 98%">
             @if(isset($error))
                 <div class="error">
                     {{ $error }}
