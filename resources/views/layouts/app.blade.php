@@ -11,7 +11,7 @@
     @livewireStyles
 </head>
 <body>
-    <div class="grid absolute inset-0 bg-color mr-3" style="grid-template-columns: 5rem 1fr">
+    <div class="grid absolute inset-0 bg-background dark:bg-dark-background mr-3 text-text dark:text-dark-text" style="grid-template-columns: 5rem 1fr">
         <div class="h-[calc(100dvh)]">
             @include('includes.header', [
                 'page' => $header

@@ -45,11 +45,11 @@
                     <button class="entry-container" wire:click="create({{ $entry->franchise->id }}, {{ $entry->id }})">
                         @include('includes.entry', [
                             'entry' => $entry
-                        ]);
+                        ])
                     </button>
                 </li>
             @endforeach
-            <a href="/dashboard/add" class="text-secondary hover:text-secondary-hover active:text-secondary-active duration-100  text-sm text-center col-span-2 mt-6 mb-3 cursor-pointer">
+            <a href="/dashboard/add" class="text-secondary dark:text-dark-secondary hover:text-secondary-hover dark:hover:text-dark-secondary-hover active:text-secondary-active dark:active:text-dark-secondary-active duration-100  text-sm text-center col-span-2 mt-6 mb-3 cursor-pointer">
                 Does your franchise not exist? Add it
             </a>
         </ul>
