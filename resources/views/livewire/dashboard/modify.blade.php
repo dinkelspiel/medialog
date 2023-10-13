@@ -1,5 +1,5 @@
 <div class="xl:mx-96 mx-0 scrollable-grid-item !max-h-[calc(100dvh)] pb-12">
-    <div class="border-b border-stone-300 text-lg p-3 flex flex-row items-center">
+    <div class="border-b border-stone-300 dark:border-dark-outline text-lg p-3 flex flex-row items-center">
         <div class="mr-auto">
             {{ $modifyMode }} Franchise
         </div>
@@ -28,7 +28,7 @@
             </button>
         </div>
         @foreach ($this->entries as $entry)
-            <div wire:key="{{ $loop->index }}" class="flex flex-col gap-3 mb-3 ps-3 border-s border-secondary">
+            <div wire:key="{{ $loop->index }}" class="flex flex-col gap-3 mb-3 ps-3 border-s border-secondary dark:border-dark-secondary">
                 <div>
                     Entry Title
                 </div>
@@ -41,7 +41,7 @@
                 </div>
                 <div class="flex flex-row gap-2 flex-wrap">
                     @foreach($this->entries[$loop->index]['studios'] as $studio)
-                        <button class="max-w-max flex flex-row gap-1 bg-secondary text-white rounded-full px-3" wire:click="removeMeta(`studios`, {{ $loop->parent->index }}, `{{ $studio }}`)">
+                        <button class="max-w-max flex flex-row gap-1 bg-secondary dark:bg-dark-secondary text-white rounded-full px-3" wire:click="removeMeta(`studios`, {{ $loop->parent->index }}, `{{ $studio }}`)">
                             {{ $studio }}
                         </button>
                     @endforeach
@@ -59,7 +59,7 @@
                                     </button>
                                 @endif
                             @endforeach
-                            <button class="dropdown-button pt-3 border-t border-t-outline" wire:click="saveStudio({{ $loop->index }})">
+                            <button class="dropdown-button pt-3 border-t border-t-outline dark:border-t-dark-outline" wire:click="saveStudio({{ $loop->index }})">
                                 Add Studio
                             </button>
                         </div>
@@ -70,7 +70,7 @@
                 </div>
                 <div class="flex flex-row gap-2 flex-wrap">
                     @foreach($this->entries[$loop->index]['creators'] as $creator)
-                        <button class="max-w-max flex flex-row gap-1 bg-secondary text-white rounded-full px-3" wire:click="removeMeta(`creators`, {{ $loop->parent->index }}, `{{ $creator }}`)">
+                        <button class="max-w-max flex flex-row gap-1 bg-secondary dark:bg-dark-secondary text-white rounded-full px-3" wire:click="removeMeta(`creators`, {{ $loop->parent->index }}, `{{ $creator }}`)">
                             {{ $creator }}
                         </button>
                     @endforeach
@@ -88,7 +88,7 @@
                                     </button>
                                 @endif
                             @endforeach
-                            <button class="dropdown-button pt-3 border-t border-t-outline" wire:click="savePerson({{ $loop->index }})">
+                            <button class="dropdown-button pt-3 border-t border-t-outline dark:border-t-dark-outline" wire:click="savePerson({{ $loop->index }})">
                                 Add Creator
                             </button>
                         </div>
