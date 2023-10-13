@@ -18,7 +18,7 @@ class RedirectIfAuthenticated
     public function handle(
         Request $request,
         Closure $next,
-        string ...$guards
+        string ...$guards,
     ): Response {
         $guards = empty($guards) ? [null] : $guards;
 

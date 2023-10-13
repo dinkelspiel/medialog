@@ -55,7 +55,7 @@ return [
             "secret" => env("AWS_SECRET_ACCESS_KEY"),
             "prefix" => env(
                 "SQS_PREFIX",
-                "https://sqs.us-east-1.amazonaws.com/your-account-id"
+                "https://sqs.us-east-1.amazonaws.com/your-account-id",
             ),
             "queue" => env("SQS_QUEUE", "default"),
             "suffix" => env("SQS_SUFFIX"),

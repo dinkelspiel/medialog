@@ -34,11 +34,11 @@ Route::middleware([VerifySession::class, AuthorizeAdmin::class])->group(
 
         Route::get(
             "/dashboard/edit/{franchiseId}",
-            App\Livewire\Dashboard\Modify\Edit::class
+            App\Livewire\Dashboard\Modify\Edit::class,
         );
 
         Route::get("/admin/entries", App\Livewire\Admin\Entries::class);
-    }
+    },
 );
 
 Route::get("/", function () {

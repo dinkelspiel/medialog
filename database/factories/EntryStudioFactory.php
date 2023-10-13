@@ -21,7 +21,7 @@ class EntryStudioFactory extends Factory
         return [
             "entry_id" => fake()->randomElement(Entry::pluck("id")->toArray()),
             "studio_id" => fake()->randomElement(
-                Studio::pluck("id")->toArray()
+                Studio::pluck("id")->toArray(),
             ),
         ];
     }

@@ -40,7 +40,7 @@ class SearchFranchise extends Component
             [
                 "franchise_id" => "required|numeric",
                 "entry_id" => "required|numeric",
-            ]
+            ],
         );
 
         if ($validator->fails()) {
@@ -54,7 +54,7 @@ class SearchFranchise extends Component
         if ($userEntry) {
             session()->flash(
                 "error",
-                "An entry of this id already exists for user"
+                "An entry of this id already exists for user",
             );
         }
 
@@ -75,13 +75,13 @@ class SearchFranchise extends Component
         $userId = auth()->user()->id;
 
         $entriesWithoutUserEntry = Entry::whereHas("franchise", function (
-            $query
+            $query,
         ) use ($searchString) {
             if ($searchString != "*" && $searchString != "") {
                 $query->where(
                     "franchises.name",
                     "LIKE",
-                    "%" . $searchString . "%"
+                    "%" . $searchString . "%",
                 );
             }
         })->whereDoesntHave("userEntries", function ($query) use ($userId) {
@@ -99,7 +99,7 @@ class SearchFranchise extends Component
                 "studios",
                 function ($q) use ($studio) {
                     $q->where("studios.id", $studio);
-                }
+                },
             );
         }
         if ($creator != "0") {
@@ -107,7 +107,7 @@ class SearchFranchise extends Component
                 "creators",
                 function ($q) use ($creator) {
                     $q->where("person_id", $creator);
-                }
+                },
             );
         }
         if ($this->category != "0") {
@@ -115,7 +115,7 @@ class SearchFranchise extends Component
                 "franchise",
                 function ($q) use ($category) {
                     $q->where("franchises.category_id", $category);
-                }
+                },
             );
         }
 
