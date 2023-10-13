@@ -54,7 +54,7 @@
                         <div class="dropdown-container">
                             @foreach(\App\Models\Studio::where('name', 'LIKE', '%' . $entries[$loop->index]['studioSearch'] . '%')->orderBy('name')->get() as $studio)
                                 @if(!in_array($studio->name, $this->entries[$loop->parent->index]['studios']))
-                                    <button class="dropdown-button" wire:click="addMeta('studios', {{ $loop->parent->index }}, '{{ $studio->name }}')">
+                                    <button class="dropdown-button" wire:click="addMeta('studios', {{ $loop->parent->index }}, `{{ $studio->name }}`)">
                                         {{ $studio->name }}
                                     </button>
                                 @endif
