@@ -145,7 +145,7 @@ class Index extends Component
             if ($this->includeAlreadyWatched) {
                 $userEntry = UserEntry::inRandomOrder()->where(
                     "user_id",
-                    $user->id
+                    $user->id,
                 );
             } else {
                 $userEntry = UserEntry::inRandomOrder()
@@ -155,19 +155,19 @@ class Index extends Component
 
             if ($this->filterTitle != "") {
                 $userEntry = $userEntry->whereHas("entry.franchise", function (
-                    $query
+                    $query,
                 ) {
                     $query->where(
                         "name",
                         "LIKE",
-                        "%" . $this->filterTitle . "%"
+                        "%" . $this->filterTitle . "%",
                     );
                 });
             }
             if ($this->filterSeason != "") {
                 $filterSeason = $this->filterSeason;
                 $userEntry = $userEntry->whereHas("entry", function (
-                    $query
+                    $query,
                 ) use ($filterSeason) {
                     $query->where("name", "LIKE", "%" . $filterSeason . "%");
                 });
@@ -175,7 +175,7 @@ class Index extends Component
             if ($this->filterStudio != "0") {
                 $studioId = $this->filterStudio;
                 $userEntry = $userEntry->whereHas("entry.studios", function (
-                    $query
+                    $query,
                 ) use ($studioId) {
                     $query->where("studio_id", $studioId);
                 });
@@ -183,7 +183,7 @@ class Index extends Component
             if ($this->filterCategory != "0") {
                 $filterCategory = $this->filterCategory;
                 $userEntry = $userEntry->whereHas("entry.franchise", function (
-                    $query
+                    $query,
                 ) use ($filterCategory) {
                     $query->where("category_id", $filterCategory);
                 });
@@ -191,7 +191,7 @@ class Index extends Component
             if ($this->filterCreator != "0") {
                 $creatorId = $this->filterCreator;
                 $userEntry = $userEntry->whereHas("entry.creators", function (
-                    $query
+                    $query,
                 ) use ($creatorId) {
                     $query->where("person_id", $creatorId);
                 });
@@ -211,21 +211,21 @@ class Index extends Component
                         if ($this->filterStudio != "0") {
                             $query = $query->where(
                                 "studio_id",
-                                $this->filterStudio
+                                $this->filterStudio,
                             );
                         }
                         if ($this->filterSeason != "") {
                             $query = $query->where(
                                 "name",
                                 "LIKE",
-                                "%" . $this->filterSeason . "%"
+                                "%" . $this->filterSeason . "%",
                             );
                         }
 
                         if ($this->filterCreator != "0") {
                             $creatorId = $this->filterCreator;
                             $query = $query->whereHas("creators", function (
-                                $q
+                                $q,
                             ) use ($creatorId) {
                                 $q->where("person_id", $creatorId);
                             });
@@ -237,13 +237,13 @@ class Index extends Component
                     $franchise = $franchise->where(
                         "franchises.name",
                         "LIKE",
-                        "%" . $this->filterTitle . "%"
+                        "%" . $this->filterTitle . "%",
                     );
                 }
                 if ($this->filterCategory != "0") {
                     $franchise = $franchise->where(
                         "franchises.category_id",
-                        $this->filterCategory
+                        $this->filterCategory,
                     );
                 }
                 $franchise = $franchise->inRandomOrder()->first();
@@ -254,13 +254,13 @@ class Index extends Component
                         $query
                             ->where("user_id", $user->id)
                             ->where("watched_at", "!=", null);
-                    }
+                    },
                 );
 
                 if ($this->filterTitle != "") {
                     $filterTitle = $this->filterTitle;
                     $franchise = $franchise->whereHas("franchise", function (
-                        $query
+                        $query,
                     ) use ($filterTitle) {
                         $query->where("name", "LIKE", "%" . $filterTitle . "%");
                     });
@@ -269,13 +269,13 @@ class Index extends Component
                     $franchise = $franchise->where(
                         "name",
                         "LIKE",
-                        "%" . $this->filterSeason . "%"
+                        "%" . $this->filterSeason . "%",
                     );
                 }
                 if ($this->filterStudio != "0") {
                     $studioId = $this->filterStudio;
                     $franchise = $franchise->whereHas("studios", function (
-                        $query
+                        $query,
                     ) use ($studioId) {
                         $query->where("studio_id", $studioId);
                     });
@@ -283,7 +283,7 @@ class Index extends Component
                 if ($this->filterCategory != "0") {
                     $filterCategory = $this->filterCategory;
                     $franchise = $franchise->whereHas("franchise", function (
-                        $query
+                        $query,
                     ) use ($filterCategory) {
                         $query->where("category_id", $filterCategory);
                     });
@@ -291,7 +291,7 @@ class Index extends Component
                 if ($this->filterCreator != "0") {
                     $creatorId = $this->filterCreator;
                     $franchise = $franchise->whereHas("creators", function (
-                        $query
+                        $query,
                     ) use ($creatorId) {
                         $query->where("person_id", $creatorId);
                     });
@@ -375,7 +375,7 @@ class Index extends Component
                     "entry.franchise",
                     function ($query) {
                         $query->orderBy("franchises.name");
-                    }
+                    },
                 );
                 break;
         }
@@ -383,7 +383,7 @@ class Index extends Component
         if ($this->filterTitle != "") {
             $filterTitle = $this->filterTitle;
             $userEntries = $userEntries->whereHas("entry.franchise", function (
-                $query
+                $query,
             ) use ($filterTitle) {
                 $query->where("name", "LIKE", "%" . $filterTitle . "%");
             });
@@ -391,7 +391,7 @@ class Index extends Component
         if ($this->filterSeason != "") {
             $filterSeason = $this->filterSeason;
             $userEntries = $userEntries->whereHas("entry", function (
-                $query
+                $query,
             ) use ($filterSeason) {
                 $query->where("name", "LIKE", "%" . $filterSeason . "%");
             });
@@ -399,7 +399,7 @@ class Index extends Component
         if ($this->filterStudio != "0") {
             $studioId = $this->filterStudio;
             $userEntries = $userEntries->whereHas("entry.studios", function (
-                $query
+                $query,
             ) use ($studioId) {
                 $query->where("studio_id", $studioId);
             });
@@ -407,7 +407,7 @@ class Index extends Component
         if ($this->filterCategory != "0") {
             $filterCategory = $this->filterCategory;
             $userEntries = $userEntries->whereHas("entry.franchise", function (
-                $query
+                $query,
             ) use ($filterCategory) {
                 $query->where("category_id", $filterCategory);
             });
@@ -415,7 +415,7 @@ class Index extends Component
         if ($this->filterCreator != "0") {
             $creatorId = $this->filterCreator;
             $userEntries = $userEntries->whereHas("entry.creators", function (
-                $query
+                $query,
             ) use ($creatorId) {
                 $query->where("person_id", $creatorId);
             });
@@ -427,7 +427,7 @@ class Index extends Component
         if ($this->sortAfterSelect === []) {
             $this->sortAfterSelect = array_column(
                 SortAfterEnum::cases(),
-                "value"
+                "value",
             );
         }
 

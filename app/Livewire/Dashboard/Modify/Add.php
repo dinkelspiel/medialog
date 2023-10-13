@@ -13,85 +13,83 @@ class Add extends ModifyBase
 {
     public function save()
     {
-        if(Franchise::where('name', $this->franchiseName)->first() != null)
-        {
-            session()->flash('error', 'Franchise with name already exists');
+        if (Franchise::where("name", $this->franchiseName)->first() != null) {
+            session()->flash("error", "Franchise with name already exists");
             return;
         }
 
-        if($this->franchiseName == "")
-        {
-            session()->flash('error', 'Franchise must have a name');
+        if ($this->franchiseName == "") {
+            session()->flash("error", "Franchise must have a name");
             return;
         }
 
-        $franchise = Franchise::create(['name' => $this->franchiseName, 'category_id' => Category::where('id', $this->franchiseCategory)->first()->id]);
+        $franchise = Franchise::create([
+            "name" => $this->franchiseName,
+            "category_id" => Category::where(
+                "id",
+                $this->franchiseCategory,
+            )->first()->id,
+        ]);
 
-        foreach($this->entries as $entryRaw)
-        {
-            if($entryRaw['name'] == "")
-            {
-                session()->flash('error', 'Entry must have a name');
+        foreach ($this->entries as $entryRaw) {
+            if ($entryRaw["name"] == "") {
+                session()->flash("error", "Entry must have a name");
                 $franchise->delete();
                 return;
             }
 
-            if($entryRaw['studios'] == [])
-            {
-                session()->flash('error', 'Entry must have atleast one studio');
+            if ($entryRaw["studios"] == []) {
+                session()->flash("error", "Entry must have atleast one studio");
                 $franchise->delete();
                 return;
             }
 
-            if($entryRaw['cover_url'] == "")
-            {
-                session()->flash('error', 'Entry must have a Cover URL');
+            if ($entryRaw["cover_url"] == "") {
+                session()->flash("error", "Entry must have a Cover URL");
                 $franchise->delete();
                 return;
             }
 
-            if(count($entryRaw['creators']) == 0)
-            {
-                session()->flash('error', 'Entry must have atleast one director/writer');
+            if (count($entryRaw["creators"]) == 0) {
+                session()->flash(
+                    "error",
+                    "Entry must have atleast one director/writer",
+                );
                 $franchise->delete();
                 return;
             }
 
-            $entry = new Entry;
+            $entry = new Entry();
             $entry->franchise_id = $franchise->id;
-            $entry->name = $entryRaw['name'];
-            $entry->cover_url = $entryRaw['cover_url'];
+            $entry->name = $entryRaw["name"];
+            $entry->cover_url = $entryRaw["cover_url"];
 
             $entry = $franchise->addEntry($entry);
 
-            foreach($entryRaw['creators'] as $creatorRaw)
-            {
-                $creator = Person::where('name', $creatorRaw)->first();
+            foreach ($entryRaw["creators"] as $creatorRaw) {
+                $creator = Person::where("name", $creatorRaw)->first();
 
-                if($creator == null)
-                {
+                if ($creator == null) {
                     continue;
                 }
 
-                $entry->creators()->attach(['person_id' => $creator->id]);
+                $entry->creators()->attach(["person_id" => $creator->id]);
             }
 
-            foreach($entryRaw['studios'] as $studioRaw)
-            {
-                $studio = Studio::where('name', $studioRaw)->first();
+            foreach ($entryRaw["studios"] as $studioRaw) {
+                $studio = Studio::where("name", $studioRaw)->first();
 
-                if($studio == null)
-                {
+                if ($studio == null) {
                     continue;
                 }
 
-                $entry->studios()->attach(['studio_id' => $studio->id]);
+                $entry->studios()->attach(["studio_id" => $studio->id]);
             }
         }
 
         $franchise->save();
 
-        return redirect('/dashboard');
+        return redirect("/dashboard");
     }
 
     public function render()
@@ -99,10 +97,10 @@ class Add extends ModifyBase
         $studios = Studio::all();
         $studios->sort();
 
-        return view('livewire.dashboard.modify', [
-            'modifyMode' => "Add"
-        ])->layout('layouts.app', [
-            'header' => 'dashboard'
+        return view("livewire.dashboard.modify", [
+            "modifyMode" => "Add",
+        ])->layout("layouts.app", [
+            "header" => "dashboard",
         ]);
     }
 }

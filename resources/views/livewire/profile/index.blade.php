@@ -3,10 +3,10 @@
         Rating Style
     </div>
     <select class="input w-full" wire:change="setRatingStyle($event.target.value)">
-        <option value="range" @if($ratingStyle == "range") selected @endif>
+        <option value="range" @if ($ratingStyle == 'range') selected @endif>
             Range
         </option>
-        <option value="stars" @if($ratingStyle == "stars") selected @endif>
+        <option value="stars" @if ($ratingStyle == 'stars') selected @endif>
             Stars
         </option>
     </select>
@@ -15,10 +15,10 @@
         BrowserEntry Subtext Style
     </div>
     <select class="input w-full" wire:change="setSubtextStyle($event.target.value)">
-        <option value="studio" @if($subtextStyle == "studio") selected @endif>
+        <option value="studio" @if ($subtextStyle == 'studio') selected @endif>
             Studio
         </option>
-        <option value="creator" @if($subtextStyle == "creator") selected @endif>
+        <option value="creator" @if ($subtextStyle == 'creator') selected @endif>
             Creator
         </option>
     </select>
@@ -27,13 +27,13 @@
         Color Scheme
     </div>
     <select class="input w-full" wire:change="setColorScheme($event.target.value)">
-        <option value="auto" @if($colorScheme == "auto") selected @endif>
+        <option value="auto" @if ($colorScheme == 'auto') selected @endif>
             Auto
         </option>
-        <option value="dark" @if($colorScheme == "dark") selected @endif>
+        <option value="dark" @if ($colorScheme == 'dark') selected @endif>
             Dark
         </option>
-        <option value="light" @if($colorScheme == "light") selected @endif>
+        <option value="light" @if ($colorScheme == 'light') selected @endif>
             Light
         </option>
     </select>

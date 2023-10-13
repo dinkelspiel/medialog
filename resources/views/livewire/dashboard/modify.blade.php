@@ -13,7 +13,7 @@
             Category
         </div>
         <select class="input" wire:model="franchiseCategory">
-            @foreach(\App\Models\Category::all() as $category)
+            @foreach (\App\Models\Category::all() as $category)
                 <option value="{{ $category->id }}">
                     {{ $category->name }}
                 </option>
@@ -28,38 +28,46 @@
             </button>
         </div>
         @foreach ($this->entries as $entry)
-            <div wire:key="{{ $loop->index }}" class="flex flex-col gap-3 mb-3 ps-3 border-s border-secondary dark:border-dark-secondary">
+            <div wire:key="{{ $loop->index }}"
+                class="flex flex-col gap-3 mb-3 ps-3 border-s border-secondary dark:border-dark-secondary">
                 <div>
                     Entry Title
                 </div>
                 <div class="text-left text-neutral-400 text-xs pt-2 col-span-2">
-                    Standalone movies/books should have their name as the entry name and series should have "Season 1", "Season 2" if no name is given
+                    Standalone movies/books should have their name as the entry name and series should have "Season 1",
+                    "Season 2" if no name is given
                 </div>
                 <input class="input" placeholder="Title" wire:model="entries.{{ $loop->index }}.name">
                 <div>
                     Production Studio
                 </div>
                 <div class="flex flex-row gap-2 flex-wrap">
-                    @foreach($this->entries[$loop->index]['studios'] as $studio)
-                        <button class="max-w-max flex flex-row gap-1 bg-secondary dark:bg-dark-secondary text-white rounded-full px-3" wire:click="removeMeta(`studios`, {{ $loop->parent->index }}, `{{ $studio }}`)">
+                    @foreach ($this->entries[$loop->index]['studios'] as $studio)
+                        <button
+                            class="max-w-max flex flex-row gap-1 bg-secondary dark:bg-dark-secondary text-white rounded-full px-3"
+                            wire:click="removeMeta(`studios`, {{ $loop->parent->index }}, `{{ $studio }}`)">
                             {{ $studio }}
                         </button>
                     @endforeach
                 </div>
                 <div class="grid grid-cols-1 w-full relative">
                     <div class="flex flex-row gap-3 max-w-full">
-                        <input class="input w-full @if($entries[$loop->index]['studioSearch'] != "") !rounded-bl-none !rounded-br-none @endif" placeholder="Production Studio" wire:model.live="entries.{{ $loop->index }}.studioSearch">
+                        <input
+                            class="input w-full @if ($entries[$loop->index]['studioSearch'] != '') !rounded-bl-none !rounded-br-none @endif"
+                            placeholder="Production Studio" wire:model.live="entries.{{ $loop->index }}.studioSearch">
                     </div>
-                    @if($entries[$loop->index]['studioSearch'] != "")
+                    @if ($entries[$loop->index]['studioSearch'] != '')
                         <div class="dropdown-container">
-                            @foreach(\App\Models\Studio::where('name', 'LIKE', '%' . $entries[$loop->index]['studioSearch'] . '%')->orderBy('name')->get() as $studio)
-                                @if(!in_array($studio->name, $this->entries[$loop->parent->index]['studios']))
-                                    <button class="dropdown-button" wire:click="addMeta('studios', {{ $loop->parent->index }}, `{{ $studio->name }}`)">
+                            @foreach (\App\Models\Studio::where('name', 'LIKE', '%' . $entries[$loop->index]['studioSearch'] . '%')->orderBy('name')->get() as $studio)
+                                @if (!in_array($studio->name, $this->entries[$loop->parent->index]['studios']))
+                                    <button class="dropdown-button"
+                                        wire:click="addMeta('studios', {{ $loop->parent->index }}, `{{ $studio->name }}`)">
                                         {{ $studio->name }}
                                     </button>
                                 @endif
                             @endforeach
-                            <button class="dropdown-button pt-3 border-t border-t-outline dark:border-t-dark-outline" wire:click="saveStudio({{ $loop->index }})">
+                            <button class="dropdown-button pt-3 border-t border-t-outline dark:border-t-dark-outline"
+                                wire:click="saveStudio({{ $loop->index }})">
                                 Add Studio
                             </button>
                         </div>
@@ -69,26 +77,32 @@
                     Directors/Writers
                 </div>
                 <div class="flex flex-row gap-2 flex-wrap">
-                    @foreach($this->entries[$loop->index]['creators'] as $creator)
-                        <button class="max-w-max flex flex-row gap-1 bg-secondary dark:bg-dark-secondary text-white rounded-full px-3" wire:click="removeMeta(`creators`, {{ $loop->parent->index }}, `{{ $creator }}`)">
+                    @foreach ($this->entries[$loop->index]['creators'] as $creator)
+                        <button
+                            class="max-w-max flex flex-row gap-1 bg-secondary dark:bg-dark-secondary text-white rounded-full px-3"
+                            wire:click="removeMeta(`creators`, {{ $loop->parent->index }}, `{{ $creator }}`)">
                             {{ $creator }}
                         </button>
                     @endforeach
                 </div>
                 <div class="grid grid-cols-1 w-full relative">
                     <div class="flex flex-row gap-3 max-w-full">
-                        <input class="input w-full @if($entries[$loop->index]['creatorSearch'] != "") !rounded-bl-none !rounded-br-none @endif" placeholder="Director/Writer" wire:model.live="entries.{{ $loop->index }}.creatorSearch">
+                        <input
+                            class="input w-full @if ($entries[$loop->index]['creatorSearch'] != '') !rounded-bl-none !rounded-br-none @endif"
+                            placeholder="Director/Writer" wire:model.live="entries.{{ $loop->index }}.creatorSearch">
                     </div>
-                    @if($entries[$loop->index]['creatorSearch'] != "")
+                    @if ($entries[$loop->index]['creatorSearch'] != '')
                         <div class="dropdown-container">
-                            @foreach(\App\Models\Person::where('name', 'LIKE', '%' . $entries[$loop->index]['creatorSearch'] . '%')->orderBy('name')->get() as $person)
-                                @if(!in_array($person->name, $this->entries[$loop->parent->index]['creators']))
-                                    <button class="dropdown-button" wire:click="addMeta('creators', {{ $loop->parent->index }}, `{{ $person->name }}`)">
+                            @foreach (\App\Models\Person::where('name', 'LIKE', '%' . $entries[$loop->index]['creatorSearch'] . '%')->orderBy('name')->get() as $person)
+                                @if (!in_array($person->name, $this->entries[$loop->parent->index]['creators']))
+                                    <button class="dropdown-button"
+                                        wire:click="addMeta('creators', {{ $loop->parent->index }}, `{{ $person->name }}`)">
                                         {{ $person->name }}
                                     </button>
                                 @endif
                             @endforeach
-                            <button class="dropdown-button pt-3 border-t border-t-outline dark:border-t-dark-outline" wire:click="savePerson({{ $loop->index }})">
+                            <button class="dropdown-button pt-3 border-t border-t-outline dark:border-t-dark-outline"
+                                wire:click="savePerson({{ $loop->index }})">
                                 Add Creator
                             </button>
                         </div>
@@ -97,25 +111,26 @@
                 <div>
                     Cover Image URL
                 </div>
-                <input class="input" placeholder="https://example.com/image.png" wire:model="entries.{{ $loop->index }}.cover_url">
+                <input class="input" placeholder="https://example.com/image.png"
+                    wire:model="entries.{{ $loop->index }}.cover_url">
             </div>
         @endforeach
     </div>
-    <button class="btn" @if(count($entries) == 0) disabled @endif wire:click="save">
+    <button class="btn" @if (count($entries) == 0) disabled @endif wire:click="save">
         Save
     </button>
-    @if(count($entries) == 0)
+    @if (count($entries) == 0)
         <div class="error mt-3">
             A franchise must have atleast one entry
         </div>
     @endif
 
-    @if(session()->has('message'))
+    @if (session()->has('message'))
         <div class="success mt-3">
             {{ session('message') }}
         </div>
     @endif
-    @if(session()->has('error'))
+    @if (session()->has('error'))
         <div class="error mt-3">
             {{ session('error') }}
         </div>

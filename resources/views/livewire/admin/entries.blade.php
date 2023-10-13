@@ -1,9 +1,10 @@
 <div class="scrollable-grid-item h-[calc(100dvh)]">
-    @include("includes.admin.header")
+    @include('includes.admin.header')
 
     <div class="mt-3 h-[calc(100dvh)]">
         <div class="flex flex-col gap-3 lg:mx-40 mx-0">
-            <div class="grid grid-cols-5 items-center justify-center border-b border-b-outline dark:border-b-dark-outline h-10 font-semibold">
+            <div
+                class="grid grid-cols-5 items-center justify-center border-b border-b-outline dark:border-b-dark-outline h-10 font-semibold">
                 <div>
                     Franchise (id)
                 </div>
@@ -20,8 +21,9 @@
 
                 </div>
             </div>
-            @foreach(\App\Models\Franchise::all() as $franchise)
-                <div class="grid grid-cols-5 items-center justify-center @if($loop->index % 2 != 0) bg-card dark:bg-dark-card @endif">
+            @foreach (\App\Models\Franchise::all() as $franchise)
+                <div
+                    class="grid grid-cols-5 items-center justify-center @if ($loop->index % 2 != 0) bg-card dark:bg-dark-card @endif">
                     <div>
                         {{ $franchise->name }} ({{ $franchise->id }})
                     </div>
