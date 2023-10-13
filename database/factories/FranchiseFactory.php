@@ -18,8 +18,12 @@ class FranchiseFactory extends Factory
     public function definition(): array
     {
         return [
-            'name' => 'The ' . ucfirst($this->faker->unique()->word) . ' ' . ucfirst($this->faker->unique()->word),        
-            'category_id' => Category::inRandomOrder()->first()->id
+            "name" =>
+                "The " .
+                ucfirst($this->faker->unique()->word) .
+                " " .
+                ucfirst($this->faker->unique()->word),
+            "category_id" => Category::inRandomOrder()->first()->id,
         ];
     }
 }

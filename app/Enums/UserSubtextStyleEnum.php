@@ -2,7 +2,8 @@
 
 namespace App\Enums;
 
-enum UserSubtextStyleEnum:string {
-    case Studio = 'studio';
-    case Creator = 'creator';
+enum UserSubtextStyleEnum: string
+{
+    case Studio = "studio";
+    case Creator = "creator";
 }

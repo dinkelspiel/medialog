@@ -21,7 +21,7 @@ class DatabaseSeeder extends Seeder
             StudioSeeder::class,
             PersonSeeder::class,
             FranchiseSeeder::class,
-            EntrySeeder::class
-        ]);    
+            EntrySeeder::class,
+        ]);
     }
 }

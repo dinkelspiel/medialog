@@ -15,7 +15,7 @@ class EntryStudioSeeder extends Seeder
     public function run(): void
     {
         Entry::all()->each(function ($entry) {
-            EntryStudio::factory()->create(['entry_id' => $entry->id]);
+            EntryStudio::factory()->create(["entry_id" => $entry->id]);
         });
     }
 }

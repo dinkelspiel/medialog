@@ -13,9 +13,7 @@ class Entry extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'studio', 'media', 'id'
-    ];
+    protected $fillable = ["studio", "media", "id"];
 
     public function franchise(): BelongsTo
     {
@@ -24,12 +22,12 @@ class Entry extends Model
 
     public function studios(): BelongsToMany
     {
-        return $this->belongsToMany(Studio::class, 'entry_studios');
+        return $this->belongsToMany(Studio::class, "entry_studios");
     }
 
     public function creators(): BelongsToMany
     {
-        return $this->belongsToMany(Person::class, 'entry_creators');
+        return $this->belongsToMany(Person::class, "entry_creators");
     }
 
     public function userEntries(): HasMany

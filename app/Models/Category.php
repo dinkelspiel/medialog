@@ -11,7 +11,5 @@ class Category extends Model
 
     // Name
 
-    protected $fillable = [
-        'name'
-    ];
+    protected $fillable = ["name"];
 }

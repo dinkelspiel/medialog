@@ -2,7 +2,8 @@
 
 namespace App\Enums;
 
-enum UserRatingStyleEnum:string {
-    case Range = 'range';
-    case Stars = 'stars';
+enum UserRatingStyleEnum: string
+{
+    case Range = "range";
+    case Stars = "stars";
 }

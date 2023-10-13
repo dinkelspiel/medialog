@@ -10,9 +10,7 @@ class EntryStudio extends Model
 {
     use HasFactory;
 
-    protected $fillable = [
-        'studio_id', 'entry_id', 'id'
-    ];
+    protected $fillable = ["studio_id", "entry_id", "id"];
 
     public function entry(): BelongsTo
     {

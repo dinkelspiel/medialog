@@ -14,13 +14,19 @@ class User extends Authenticatable
 {
     use HasFactory;
 
-    protected $fillable = ['username', 'email', 'rating_style', 'subtext_style', 'color_scheme'];
+    protected $fillable = [
+        "username",
+        "email",
+        "rating_style",
+        "subtext_style",
+        "color_scheme",
+    ];
 
-    protected $hidden = ['password'];
+    protected $hidden = ["password"];
 
     protected $casts = [
-        'rating_style' => UserRatingStyleEnum::class,
-        'subtext_style' => UserSubtextStyleEnum::class
+        "rating_style" => UserRatingStyleEnum::class,
+        "subtext_style" => UserSubtextStyleEnum::class,
     ];
 
     public function permission(): HasOne
