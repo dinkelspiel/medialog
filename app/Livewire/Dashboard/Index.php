@@ -31,6 +31,15 @@ class Index extends Component
 
     public function showUserEntry($id)
     {
+        if($this->userEntry)
+        {
+            if($this->userEntry->id == $id)
+            {
+                $this->userEntry = null;
+                return;
+            }
+        }
+
         $this->userEntry = UserEntry::where('id', $id)->where('user_id', auth()->user()->id)->first();
     }
 
