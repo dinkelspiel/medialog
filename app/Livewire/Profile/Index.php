@@ -13,9 +13,8 @@ class Index extends Component
 
     public function setRatingStyle(string $ratingStyle)
     {
-        $user = User::where('id', auth()->user()->id)->first();
-        if($ratingStyle == "range")
-        {
+        $user = User::where("id", auth()->user()->id)->first();
+        if ($ratingStyle == "range") {
             $user->rating_style = "range";
         } else {
             $user->rating_style = "stars";
@@ -27,9 +26,8 @@ class Index extends Component
 
     public function setSubtextStyle(string $subtextStyle)
     {
-        $user = User::where('id', auth()->user()->id)->first();
-        if($subtextStyle == "studio")
-        {
+        $user = User::where("id", auth()->user()->id)->first();
+        if ($subtextStyle == "studio") {
             $user->subtext_style = UserSubtextStyleEnum::Studio;
         } else {
             $user->subtext_style = UserSubtextStyleEnum::Creator;
@@ -41,27 +39,24 @@ class Index extends Component
 
     public function setColorScheme(string $colorScheme)
     {
-        $user = User::where('id', auth()->user()->id)->first();
-        if($colorScheme == "auto")
-        {
+        $user = User::where("id", auth()->user()->id)->first();
+        if ($colorScheme == "auto") {
             $user->color_scheme = "auto";
-        } else if($colorScheme == "dark")
-        {
+        } elseif ($colorScheme == "dark") {
             $user->color_scheme = "dark";
         } else {
             $user->color_scheme = "light";
         }
         $user->save();
 
-        return redirect('/profile');
+        return redirect("/profile");
     }
-
 
     public function logout()
     {
         auth()->logout();
 
-        return redirect('/login');
+        return redirect("/login");
     }
 
     public function render()
@@ -70,10 +65,10 @@ class Index extends Component
         $this->subtextStyle = auth()->user()->subtext_style->value;
         $this->colorScheme = auth()->user()->color_scheme;
 
-        return view('livewire.profile.index', [
-            'ratingStyle' => $this->ratingStyle
-        ])->layout('layouts.app', [
-            'header' => 'profile'
+        return view("livewire.profile.index", [
+            "ratingStyle" => $this->ratingStyle,
+        ])->layout("layouts.app", [
+            "header" => "profile",
         ]);
     }
 }

@@ -8,8 +8,8 @@ class Entries extends Component
 {
     public function render()
     {
-        return view('livewire.admin.entries')->layout('layouts.app', [
-            'header' => 'admin'
+        return view("livewire.admin.entries")->layout("layouts.app", [
+            "header" => "admin",
         ]);
     }
 }

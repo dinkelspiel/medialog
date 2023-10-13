@@ -15,11 +15,14 @@ class AuthorizeAdmin
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if(auth()->check() && auth()->user()->permission && auth()->user()->permission->permission == "admin")
-        {
+        if (
+            auth()->check() &&
+            auth()->user()->permission &&
+            auth()->user()->permission->permission == "admin"
+        ) {
             return $next($request);
         }
 
-        return redirect('/dashboard');
+        return redirect("/dashboard");
     }
 }

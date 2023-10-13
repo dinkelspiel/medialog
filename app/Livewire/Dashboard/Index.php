@@ -13,11 +13,14 @@ use Livewire\Component;
 
 class Index extends Component
 {
-    public $listeners = ['refreshUserEntries' => '$refresh', 'setSortAfter' => 'setSortAfter'];
+    public $listeners = [
+        "refreshUserEntries" => '$refresh',
+        "setSortAfter" => "setSortAfter",
+    ];
 
     protected $rules = [
-        'userEntry.rating' => 'required',
-        'userEntry.notes' => '',
+        "userEntry.rating" => "required",
+        "userEntry.notes" => "",
     ];
 
     public $userEntry = null;
@@ -31,16 +34,16 @@ class Index extends Component
 
     public function showUserEntry($id)
     {
-        if($this->userEntry)
-        {
-            if($this->userEntry->id == $id)
-            {
+        if ($this->userEntry) {
+            if ($this->userEntry->id == $id) {
                 $this->userEntry = null;
                 return;
             }
         }
 
-        $this->userEntry = UserEntry::where('id', $id)->where('user_id', auth()->user()->id)->first();
+        $this->userEntry = UserEntry::where("id", $id)
+            ->where("user_id", auth()->user()->id)
+            ->first();
     }
 
     public function closeUserEntry()
@@ -52,10 +55,11 @@ class Index extends Component
     {
         $user = auth()->user();
 
-        $userEntry = UserEntry::where('id', $entryId)->where('user_id', $user->id)->first();
+        $userEntry = UserEntry::where("id", $entryId)
+            ->where("user_id", $user->id)
+            ->first();
 
-        if(is_null($userEntry))
-        {
+        if (is_null($userEntry)) {
             return "No valid user entry found";
         }
 
@@ -75,8 +79,7 @@ class Index extends Component
     {
         $user = auth()->user();
 
-        if($this->userEntry->user_id != $user->id)
-        {
+        if ($this->userEntry->user_id != $user->id) {
             return "You cannot edit a user entry that is not yours.";
         }
 
@@ -138,145 +141,163 @@ class Index extends Component
     {
         $user = auth()->user();
 
-        if(!$this->includeAllFranchises)
-        {
-            if($this->includeAlreadyWatched)
-            {
-                $userEntry = UserEntry::inRandomOrder()->where('user_id', $user->id);
-            } else
-            {
-                $userEntry = UserEntry::inRandomOrder()->where('user_id', $user->id)->where('watched_at', null);
+        if (!$this->includeAllFranchises) {
+            if ($this->includeAlreadyWatched) {
+                $userEntry = UserEntry::inRandomOrder()->where(
+                    "user_id",
+                    $user->id
+                );
+            } else {
+                $userEntry = UserEntry::inRandomOrder()
+                    ->where("user_id", $user->id)
+                    ->where("watched_at", null);
             }
 
-            if($this->filterTitle != "")
-            {
-                $userEntry = $userEntry
-                    ->whereHas('entry.franchise', function($query) {
-                        $query->where('name', 'LIKE', '%' . $this->filterTitle . '%');
-                    });
+            if ($this->filterTitle != "") {
+                $userEntry = $userEntry->whereHas("entry.franchise", function (
+                    $query
+                ) {
+                    $query->where(
+                        "name",
+                        "LIKE",
+                        "%" . $this->filterTitle . "%"
+                    );
+                });
             }
-            if($this->filterSeason != "")
-            {
+            if ($this->filterSeason != "") {
                 $filterSeason = $this->filterSeason;
-                $userEntry = $userEntry
-                    ->whereHas('entry', function($query) use($filterSeason) {
-                        $query->where('name', 'LIKE', '%' . $filterSeason . '%');
-                    });
+                $userEntry = $userEntry->whereHas("entry", function (
+                    $query
+                ) use ($filterSeason) {
+                    $query->where("name", "LIKE", "%" . $filterSeason . "%");
+                });
             }
-            if($this->filterStudio != "0")
-            {
+            if ($this->filterStudio != "0") {
                 $studioId = $this->filterStudio;
-                $userEntry = $userEntry
-                    ->whereHas('entry.studios', function($query) use ($studioId) {
-                        $query->where('studio_id', $studioId);
-                    });
+                $userEntry = $userEntry->whereHas("entry.studios", function (
+                    $query
+                ) use ($studioId) {
+                    $query->where("studio_id", $studioId);
+                });
             }
-            if($this->filterCategory != "0")
-            {
+            if ($this->filterCategory != "0") {
                 $filterCategory = $this->filterCategory;
-                $userEntry = $userEntry
-                    ->whereHas('entry.franchise', function($query) use($filterCategory) {
-                        $query->where('category_id', $filterCategory);
-                    });
+                $userEntry = $userEntry->whereHas("entry.franchise", function (
+                    $query
+                ) use ($filterCategory) {
+                    $query->where("category_id", $filterCategory);
+                });
             }
-            if($this->filterCreator != "0")
-            {
+            if ($this->filterCreator != "0") {
                 $creatorId = $this->filterCreator;
-                $userEntry = $userEntry
-                    ->whereHas('entry.creators', function($query) use ($creatorId) {
-                        $query->where('person_id', $creatorId);
-                    });
+                $userEntry = $userEntry->whereHas("entry.creators", function (
+                    $query
+                ) use ($creatorId) {
+                    $query->where("person_id", $creatorId);
+                });
             }
 
             $userEntry = $userEntry->first();
 
-            if($userEntry != null)
-            {
+            if ($userEntry != null) {
                 $this->franchise = $userEntry->entry->franchise;
             } else {
                 $this->franchise = null;
             }
         } else {
-            if($this->includeAlreadyWatched)
-            {
+            if ($this->includeAlreadyWatched) {
                 $franchise = Franchise::inRandomOrder()
-                    ->whereHas('entries', function ($query) {
-                        if($this->filterStudio != "0")
-                        {
-                            $query = $query->where('studio_id', $this->filterStudio);
+                    ->whereHas("entries", function ($query) {
+                        if ($this->filterStudio != "0") {
+                            $query = $query->where(
+                                "studio_id",
+                                $this->filterStudio
+                            );
                         }
-                        if($this->filterSeason != "")
-                        {
-                            $query = $query->where('name', 'LIKE', '%' . $this->filterSeason . '%');
+                        if ($this->filterSeason != "") {
+                            $query = $query->where(
+                                "name",
+                                "LIKE",
+                                "%" . $this->filterSeason . "%"
+                            );
                         }
 
-                        if($this->filterCreator != "0")
-                        {
+                        if ($this->filterCreator != "0") {
                             $creatorId = $this->filterCreator;
-                            $query = $query
-                                ->whereHas('creators', function($q) use ($creatorId) {
-                                    $q->where('person_id', $creatorId);
-                                });
+                            $query = $query->whereHas("creators", function (
+                                $q
+                            ) use ($creatorId) {
+                                $q->where("person_id", $creatorId);
+                            });
                         }
                     })
-                    ->has('entries');
+                    ->has("entries");
 
-                if($this->filterTitle != "")
-                {
-                    $franchise = $franchise
-                        ->where('franchises.name', 'LIKE', '%' . $this->filterTitle . '%');
+                if ($this->filterTitle != "") {
+                    $franchise = $franchise->where(
+                        "franchises.name",
+                        "LIKE",
+                        "%" . $this->filterTitle . "%"
+                    );
                 }
-                if($this->filterCategory != "0")
-                {
-                    $franchise = $franchise
-                        ->where('franchises.category_id', $this->filterCategory);
+                if ($this->filterCategory != "0") {
+                    $franchise = $franchise->where(
+                        "franchises.category_id",
+                        $this->filterCategory
+                    );
                 }
                 $franchise = $franchise->inRandomOrder()->first();
-            } else
-            {
-                $franchise = Entry::inRandomOrder()->whereDoesntHave('userEntries', function ($query) use ($user) {
-                    $query->where('user_id', $user->id)->where('watched_at', '!=', null);
-                });
+            } else {
+                $franchise = Entry::inRandomOrder()->whereDoesntHave(
+                    "userEntries",
+                    function ($query) use ($user) {
+                        $query
+                            ->where("user_id", $user->id)
+                            ->where("watched_at", "!=", null);
+                    }
+                );
 
-                if($this->filterTitle != "")
-                {
+                if ($this->filterTitle != "") {
                     $filterTitle = $this->filterTitle;
-                    $franchise = $franchise->whereHas('franchise', function($query) use($filterTitle) {
-                        $query->where('name', 'LIKE', '%' . $filterTitle . '%');
+                    $franchise = $franchise->whereHas("franchise", function (
+                        $query
+                    ) use ($filterTitle) {
+                        $query->where("name", "LIKE", "%" . $filterTitle . "%");
                     });
                 }
-                if($this->filterSeason != "")
-                {
-                    $franchise = $franchise
-                        ->where('name', 'LIKE', '%' . $this->filterSeason . '%');
+                if ($this->filterSeason != "") {
+                    $franchise = $franchise->where(
+                        "name",
+                        "LIKE",
+                        "%" . $this->filterSeason . "%"
+                    );
                 }
-                if($this->filterStudio != "0")
-                {
+                if ($this->filterStudio != "0") {
                     $studioId = $this->filterStudio;
-                    $franchise = $franchise
-                        ->whereHas('studios', function($query) use ($studioId) {
-                            $query->where('studio_id', $studioId);
-                        });
+                    $franchise = $franchise->whereHas("studios", function (
+                        $query
+                    ) use ($studioId) {
+                        $query->where("studio_id", $studioId);
+                    });
                 }
-                if($this->filterCategory != "0")
-                {
+                if ($this->filterCategory != "0") {
                     $filterCategory = $this->filterCategory;
-                    $franchise = $franchise
-                        ->whereHas('franchise', function($query) use($filterCategory){
-                            $query->where('category_id', $filterCategory);
-                        });
+                    $franchise = $franchise->whereHas("franchise", function (
+                        $query
+                    ) use ($filterCategory) {
+                        $query->where("category_id", $filterCategory);
+                    });
                 }
-                if($this->filterCreator != "0")
-                {
+                if ($this->filterCreator != "0") {
                     $creatorId = $this->filterCreator;
-                    $franchise = $franchise
-                        ->whereHas('creators', function($query) use ($creatorId) {
-                            $query->where('person_id', $creatorId);
-                        });
+                    $franchise = $franchise->whereHas("creators", function (
+                        $query
+                    ) use ($creatorId) {
+                        $query->where("person_id", $creatorId);
+                    });
                 }
 
-                if($franchise->first() != null)
-                {
+                if ($franchise->first() != null) {
                     $this->franchise = $franchise->first()->franchise;
                 } else {
                     $this->franchise = null;
@@ -297,9 +318,8 @@ class Index extends Component
     public function addFranchise()
     {
         $user = auth()->user();
-        foreach($this->franchise->entries as $entry)
-        {
-            $userEntry = new UserEntry;
+        foreach ($this->franchise->entries as $entry) {
+            $userEntry = new UserEntry();
             $userEntry->entry_id = $entry->id;
             $userEntry->rating = 0;
             $userEntry->notes = "";
@@ -309,108 +329,122 @@ class Index extends Component
         $this->franchise = null;
 
         $userEntry->refresh();
-        $this->dispatch('refreshUserEntries');
+        $this->dispatch("refreshUserEntries");
     }
 
     public function render()
     {
-        if($this->sortAfter === "")
-        {
-            $this->sortAfter = array_column(SortAfterEnum::cases(), 'value')[0];
+        if ($this->sortAfter === "") {
+            $this->sortAfter = array_column(SortAfterEnum::cases(), "value")[0];
         }
 
-        $this->filterCreator = Person::where('name', $this->filterSearchCreator)->first()->id ?? "0";
-        $this->filterStudio = Studio::where('name', $this->filterSearchStudio)->first()->id ?? "0";
+        $this->filterCreator =
+            Person::where("name", $this->filterSearchCreator)->first()->id ??
+            "0";
+        $this->filterStudio =
+            Studio::where("name", $this->filterSearchStudio)->first()->id ??
+            "0";
 
         $filterTitle = $this->filterTitle;
-        $userEntries = UserEntry::where('user_id', auth()->user()->id)->with([
-            'entry.franchise' => function ($query) use ($filterTitle) {
-                if($filterTitle != "")
-                {
-                    $query->where('name', 'like', '%' . $filterTitle . '%');
+        $userEntries = UserEntry::where("user_id", auth()->user()->id)->with([
+            "entry.franchise" => function ($query) use ($filterTitle) {
+                if ($filterTitle != "") {
+                    $query->where("name", "like", "%" . $filterTitle . "%");
                 }
-            }
+            },
         ]);
 
-        switch($this->sortAfter)
-        {
+        switch ($this->sortAfter) {
             case SortAfterEnum::Watched->value:
-                $userEntries = $userEntries->orderBy('user_entries.watched_at', 'desc')->orderBy('user_entries.id', 'desc');
+                $userEntries = $userEntries
+                    ->orderBy("user_entries.watched_at", "desc")
+                    ->orderBy("user_entries.id", "desc");
                 break;
             case SortAfterEnum::Updated->value:
-                $userEntries = $userEntries->orderBy('user_entries.updated_at', 'desc')->orderBy('user_entries.id', 'desc');
+                $userEntries = $userEntries
+                    ->orderBy("user_entries.updated_at", "desc")
+                    ->orderBy("user_entries.id", "desc");
                 break;
             case SortAfterEnum::Rating->value:
-                $userEntries = $userEntries->orderBy('user_entries.rating', 'desc')->orderBy('user_entries.id', 'desc');
+                $userEntries = $userEntries
+                    ->orderBy("user_entries.rating", "desc")
+                    ->orderBy("user_entries.id", "desc");
                 break;
             case SortAfterEnum::AZ->value:
-                $userEntries = $userEntries->whereHas('entry.franchise', function($query) {
-                    $query->orderBy('franchises.name');
-                });
+                $userEntries = $userEntries->whereHas(
+                    "entry.franchise",
+                    function ($query) {
+                        $query->orderBy("franchises.name");
+                    }
+                );
                 break;
         }
 
-        if($this->filterTitle != "")
-        {
+        if ($this->filterTitle != "") {
             $filterTitle = $this->filterTitle;
-            $userEntries = $userEntries
-                ->whereHas('entry.franchise', function($query) use ($filterTitle) {
-                    $query->where('name', 'LIKE', '%' . $filterTitle . '%');
-                });
+            $userEntries = $userEntries->whereHas("entry.franchise", function (
+                $query
+            ) use ($filterTitle) {
+                $query->where("name", "LIKE", "%" . $filterTitle . "%");
+            });
         }
-        if($this->filterSeason != "")
-        {
+        if ($this->filterSeason != "") {
             $filterSeason = $this->filterSeason;
-            $userEntries = $userEntries->whereHas('entry', function($query) use($filterSeason) {
-                $query->where('name', 'LIKE', '%' . $filterSeason . '%');
+            $userEntries = $userEntries->whereHas("entry", function (
+                $query
+            ) use ($filterSeason) {
+                $query->where("name", "LIKE", "%" . $filterSeason . "%");
             });
         }
-        if($this->filterStudio != "0")
-        {
+        if ($this->filterStudio != "0") {
             $studioId = $this->filterStudio;
-            $userEntries = $userEntries
-                ->whereHas('entry.studios', function($query) use ($studioId) {
-                    $query->where('studio_id', $studioId);
-                });
-        }
-        if($this->filterCategory != "0")
-        {
-            $filterCategory = $this->filterCategory;
-            $userEntries = $userEntries->whereHas('entry.franchise', function($query) use($filterCategory) {
-                $query->where('category_id', $filterCategory);
+            $userEntries = $userEntries->whereHas("entry.studios", function (
+                $query
+            ) use ($studioId) {
+                $query->where("studio_id", $studioId);
             });
         }
-        if($this->filterCreator != "0")
-        {
+        if ($this->filterCategory != "0") {
+            $filterCategory = $this->filterCategory;
+            $userEntries = $userEntries->whereHas("entry.franchise", function (
+                $query
+            ) use ($filterCategory) {
+                $query->where("category_id", $filterCategory);
+            });
+        }
+        if ($this->filterCreator != "0") {
             $creatorId = $this->filterCreator;
-            $userEntries = $userEntries
-                ->whereHas('entry.creators', function($query) use ($creatorId) {
-                    $query->where('person_id', $creatorId);
-                });
+            $userEntries = $userEntries->whereHas("entry.creators", function (
+                $query
+            ) use ($creatorId) {
+                $query->where("person_id", $creatorId);
+            });
         }
         $userEntries = $userEntries->get();
 
         // Filter User Entries
 
-        if($this->sortAfterSelect === [])
-        {
-            $this->sortAfterSelect = array_column(SortAfterEnum::cases(), 'value');
+        if ($this->sortAfterSelect === []) {
+            $this->sortAfterSelect = array_column(
+                SortAfterEnum::cases(),
+                "value"
+            );
         }
 
-        return view('livewire.dashboard.index', [
-            'userEntry' => $this->userEntry,
-            'userEntries' => $userEntries,
-            'sortAfter' => $this->sortAfter,
-            'sortAfterArray' => $this->sortAfterSelect,
+        return view("livewire.dashboard.index", [
+            "userEntry" => $this->userEntry,
+            "userEntries" => $userEntries,
+            "sortAfter" => $this->sortAfter,
+            "sortAfterArray" => $this->sortAfterSelect,
 
-            'filterTitle' => $this->filterTitle,
+            "filterTitle" => $this->filterTitle,
 
-            'franchise' => $this->franchise,
-            'canGetRandom' => $this->canGetRandom(),
-            'includeAllFranchises' => $this->includeAllFranchises,
-            'includeAlreadyWatched' => $this->includeAlreadyWatched
-        ])->layout('layouts.app', [
-            'header' => 'dashboard'
+            "franchise" => $this->franchise,
+            "canGetRandom" => $this->canGetRandom(),
+            "includeAllFranchises" => $this->includeAllFranchises,
+            "includeAlreadyWatched" => $this->includeAlreadyWatched,
+        ])->layout("layouts.app", [
+            "header" => "dashboard",
         ]);
     }
 }

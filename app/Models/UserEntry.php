@@ -10,7 +10,7 @@ class UserEntry extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['rating', 'notes'];
+    protected $fillable = ["rating", "notes"];
 
     public function entry(): BelongsTo
     {

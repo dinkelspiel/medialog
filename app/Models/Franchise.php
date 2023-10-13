@@ -15,10 +15,7 @@ class Franchise extends Model
     // Name
     // Category
 
-    protected $fillable = [
-        'name',
-        'category_id'
-    ];
+    protected $fillable = ["name", "category_id"];
 
     public function category(): BelongsTo
     {

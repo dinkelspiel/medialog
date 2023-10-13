@@ -4,7 +4,7 @@ A self hosted solution for privately rating and reviewing different sorts of med
 
 ## Run
 
-*Copy the .env.example to .env and configure it to your liking*
+_Copy the .env.example to .env and configure it to your liking_
 
 `composer install` <br/>
 `pnpm install` <br/>

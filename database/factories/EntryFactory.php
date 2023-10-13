@@ -20,9 +20,9 @@ class EntryFactory extends Factory
     public function definition(): array
     {
         return [
-            'franchise_id' => Franchise::inRandomOrder()->first()->id,
-            'name' => 'Season ' . fake()->word(),
-            'cover_url' => fake()->imageUrl()
+            "franchise_id" => Franchise::inRandomOrder()->first()->id,
+            "name" => "Season " . fake()->word(),
+            "cover_url" => fake()->imageUrl(),
         ];
     }
 }

@@ -23,46 +23,45 @@ class Index extends Component
         $this->password = $this->regPassword;
 
         $this->validate([
-            'username' => 'required|unique:users',
-            'email' => 'required|email|unique:users',
-            'password' => 'required|min:6'
+            "username" => "required|unique:users",
+            "email" => "required|email|unique:users",
+            "password" => "required|min:6",
         ]);
 
-        $user = new User;
+        $user = new User();
         $user->username = $this->username;
         $user->email = $this->email;
         $user->password = Hash::make($this->password);
         $user->save();
 
-        session()->flash('message', 'Registration Successful.');
+        session()->flash("message", "Registration Successful.");
     }
-    
+
     public function login()
     {
         $this->email = $this->logEmail;
         $this->password = $this->logPassword;
 
         $credentials = $this->validate([
-            'email' => 'required|email',
-            'password' => 'required',
+            "email" => "required|email",
+            "password" => "required",
         ]);
 
-        if(auth()->attempt($credentials)) {
-            $this->redirect('/dashboard');
+        if (auth()->attempt($credentials)) {
+            $this->redirect("/dashboard");
         } else {
-            session()->flash('error', 'Invalid credentials');
+            session()->flash("error", "Invalid credentials");
         }
     }
 
     public function render()
     {
-        if(auth()->check())
-        {
-            $this->redirect('/dashboard');
+        if (auth()->check()) {
+            $this->redirect("/dashboard");
         }
 
-        return view('livewire.auth.index')->layout('layouts.app', [
-            'header' => 'home'
+        return view("livewire.auth.index")->layout("layouts.app", [
+            "header" => "home",
         ]);
     }
 }
