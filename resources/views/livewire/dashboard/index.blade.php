@@ -1,10 +1,10 @@
 <div class="grid h-[calc(100dvh)] grid-cols-1 lg:grid-cols-[0.9fr,1.2fr,0.9fr] relative">
     <div class="grid-item my-3 rounded-lg bg-card dark:bg-dark-card scrollable-grid-item">
         <div class="grid h-16 border-b border-b-outline dark:border-b-dark-outline" style="grid-template-columns: 1fr 1fr">
-            <button wire:click="setPage(`add`)" class="@if($page == 'add') bg-outline dark:bg-dark-outline @endif grid-item flex justify-center items-center text-lg font-medium cursor-pointer hover:bg-secondary-hover dark:hover:bg-dark-secondary-hover active:bg-secondary-active dark:active:bg-dark-secondary-active duration-100 rounded-tl-lg border-r border-r-outline dark:border-r-dark-outline">
+            <button wire:click.prefetch="setPage(`add`)" class="@if($page == 'add') bg-outline dark:bg-dark-outline @endif grid-item flex justify-center items-center text-lg font-medium cursor-pointer hover:bg-secondary-hover dark:hover:bg-dark-secondary-hover active:bg-secondary-active dark:active:bg-dark-secondary-active duration-100 rounded-tl-lg border-r border-r-outline dark:border-r-dark-outline">
                 Add
             </button>
-            <button wire:click="setPage(`filter`)" class="@if($page == 'filter') bg-outline dark:bg-dark-outline @endif grid-item flex justify-center items-center text-lg font-medium cursor-pointer hover:bg-secondary-hover dark:hover:bg-dark-secondary-hover active:bg-secondary-active dark:active:bg-dark-secondary-active duration-100 rounded-tr-lg">
+            <button wire:click.prefetch="setPage(`filter`)" class="@if($page == 'filter') bg-outline dark:bg-dark-outline @endif grid-item flex justify-center items-center text-lg font-medium cursor-pointer hover:bg-secondary-hover dark:hover:bg-dark-secondary-hover active:bg-secondary-active dark:active:bg-dark-secondary-active duration-100 rounded-tr-lg">
                 Filter
             </button>
         </div>
@@ -135,7 +135,7 @@
         <div>
             @foreach($userEntries as $browserEntry)
                 @if(!is_null($browserEntry->entry->franchise))
-                    <button class="entry-container" wire:click="showUserEntry({{ $browserEntry->id }})">
+                    <button class="entry-container" wire:click.prefetch="showUserEntry({{ $browserEntry->id }})">
                         @include('includes.entry', [
                             'entry' => $browserEntry->entry
                         ])
@@ -162,7 +162,7 @@
                             </div>
                         @endif
                     </div>
-                    <button wire:click="closeUserEntry" class="ms-auto text-secondary dark:text-dark-secondary hover:text-secondary-hover active:text-secondary-active duration-100 cursor-pointer">
+                    <button wire:click.prefetch="closeUserEntry" class="ms-auto text-secondary dark:text-dark-secondary hover:text-secondary-hover active:text-secondary-active duration-100 cursor-pointer">
                         X
                     </button>
                 </div>
