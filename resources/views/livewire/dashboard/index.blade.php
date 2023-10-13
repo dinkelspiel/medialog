@@ -135,7 +135,7 @@
         <div>
             @foreach($userEntries as $browserEntry)
                 @if(!is_null($browserEntry->entry->franchise))
-                    <button class="entry-container" wire:click.prefetch="showUserEntry({{ $browserEntry->id }})">
+                    <button class="entry-container" wire:click="showUserEntry({{ $browserEntry->id }})">
                         @include('includes.entry', [
                             'entry' => $browserEntry->entry
                         ])
@@ -145,7 +145,7 @@
         </div>
     </div>
     @if($userEntry)
-        <div wire:transition class="my-3 rounded-lg bg-card dark:bg-dark-card p-3 flex flex-col absolute z-10 w-full lg:relative" style="height: 98%">
+        <div class="my-3 rounded-lg bg-card dark:bg-dark-card p-3 flex flex-col absolute z-10 w-full lg:relative" style="height: 98%">
             @if(isset($error))
                 <div class="error">
                     {{ $error }}
@@ -162,7 +162,7 @@
                             </div>
                         @endif
                     </div>
-                    <button wire:click.prefetch="closeUserEntry" class="ms-auto text-secondary dark:text-dark-secondary hover:text-secondary-hover active:text-secondary-active duration-100 cursor-pointer">
+                    <button wire:click="closeUserEntry" class="ms-auto text-secondary dark:text-dark-secondary hover:text-secondary-hover active:text-secondary-active duration-100 cursor-pointer">
                         X
                     </button>
                 </div>
