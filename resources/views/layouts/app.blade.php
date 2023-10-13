@@ -8,7 +8,6 @@
     <link rel="icon" type="image/x-icon" href="/favicon.ico">
 
     @vite('resources/css/app.css')
-    @livewireStyles
 </head>
 <body class="bg-background dark:bg-dark-background text-text dark:text-dark-text">
     <div class="grid absolute inset-0 mr-3" style="grid-template-columns: 5rem 1fr">
@@ -24,7 +23,16 @@
             @yield('content')
         </div>
     </div>
+    <script>
 
-    @livewireScripts
+@if(auth()->check())
+    if ({{ auth()->user()->color_scheme == "dark" ? "true" : "false" }} || window.matchMedia('(prefers-color-scheme: dark)').matches) {
+        document.documentElement.classList.add('dark')
+    } else {
+        document.documentElement.classList.remove('dark')
+    }
+@endif
+
+    </script>
 </body>
 </html>

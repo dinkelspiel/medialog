@@ -10,6 +10,7 @@
             Stars
         </option>
     </select>
+
     <div class="pt-3">
         BrowserEntry Subtext Style
     </div>
@@ -21,6 +22,22 @@
             Creator
         </option>
     </select>
+
+    <div class="pt-3">
+        Color Scheme
+    </div>
+    <select class="input w-full" wire:change="setColorScheme($event.target.value)">
+        <option value="auto" @if($colorScheme == "auto") selected @endif>
+            Auto
+        </option>
+        <option value="dark" @if($colorScheme == "dark") selected @endif>
+            Dark
+        </option>
+        <option value="light" @if($colorScheme == "light") selected @endif>
+            Light
+        </option>
+    </select>
+
     <form wire:submit.prevent="logout" class="justify-end mt-auto">
         @csrf
         <button class="btn w-full mt-auto" type="submit">
