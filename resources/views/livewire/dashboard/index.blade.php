@@ -145,7 +145,7 @@
         </div>
     </div>
     @if($userEntry)
-        <div class="my-3 rounded-lg bg-card dark:bg-dark-card p-3 flex flex-col absolute z-10 w-full lg:relative" style="height: 98%">
+        <div wire:transition class="my-3 rounded-lg bg-card dark:bg-dark-card p-3 flex flex-col absolute z-10 w-full lg:relative" style="height: 98%">
             @if(isset($error))
                 <div class="error">
                     {{ $error }}
