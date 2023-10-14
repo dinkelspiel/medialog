@@ -106,3 +106,7 @@ button[disabled] {
 .entry-container {
     @apply h-20 w-full text-left rounded-lg duration-200 border-background dark:border-dark-background hover:bg-card-hover dark:hover:bg-dark-card-hover active:rounded-xl active:bg-card-active dark:active:bg-dark-card-active hover:border-secondary dark:hover:border-dark-secondary border-dashed border p-3 flex flex-row cursor-pointer;
 }
+
+option {
+    @apply text-text
+}
