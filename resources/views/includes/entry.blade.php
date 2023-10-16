@@ -1,7 +1,7 @@
 @if (count($entry->franchise->entries) > 0)
-    <img src="{{ $entry->cover_url }}" class="rounded-lg h-full h-full w-28 object-cover">
+    <img src="{{ $entry->cover_url }}" class="rounded-lg h-full w-28 object-cover">
 @else
-    <img src="/assets/noimg.png" class="rounded-lg h-full h-full w-28 object-cover">
+    <img src="/assets/noimg.png" class="rounded-lg h-full w-28 object-cover">
 @endif
 
 <div class="ms-3 flex flex-col justify-center" style="gap: -5px">
