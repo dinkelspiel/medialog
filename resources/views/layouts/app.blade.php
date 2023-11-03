@@ -29,6 +29,10 @@
     color: {{ auth()->user()->colorScheme->text ?? "var(--text)" }};
 }
 
+.c-fill-text {
+    fill: {{ auth()->user()->colorScheme->text ?? "var(--text)" }};
+}
+
 .option {
     color: {{ auth()->user()->colorScheme->text ?? "var(--text)" }};
 }
