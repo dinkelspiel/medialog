@@ -6,14 +6,14 @@
 
 <div class="ms-3 flex flex-col justify-center" style="gap: -5px">
     @if (count($entry->franchise->entries) > 1)
-        <div class="text-xs text-text dark:text-dark-text">
+        <div class="text-xs textcolor">
             {{ $entry->name }}
         </div>
     @endif
     <div class="text-base">
         {{ $entry->franchise->name }}
     </div>
-    <div class="text-sm text-text dark:text-dark-text">
+    <div class="text-sm textcolor">
         @switch(auth()->user()->subtext_style->value)
             @case('studio')
                 @foreach ($entry->studios()->distinct()->get() as $studio)
