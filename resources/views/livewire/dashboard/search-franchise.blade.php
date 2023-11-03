@@ -50,7 +50,7 @@
             style="height: calc(100vh - 20rem)">
             @foreach ($entries as $entry)
                 <li>
-                    <button class="entry-container"
+                    <button class="h-20 w-full text-left rounded-lg duration-200 c-border-background  c-hover-bg-card-hover  active:rounded-xl c-active-bg-card-active  c-hover-border-secondary  border-dashed border p-3 flex flex-row cursor-pointer"
                         wire:click="create({{ $entry->franchise->id }}, {{ $entry->id }})">
                         @include('includes.entry', [
                             'entry' => $entry,
@@ -59,7 +59,7 @@
                 </li>
             @endforeach
             <a href="/dashboard/add"
-                class="text-secondary dark:text-dark-secondary hover:text-secondary-hover dark:hover:text-dark-secondary-hover active:text-secondary-active dark:active:text-dark-secondary-active duration-100  text-sm text-center col-span-2 mt-6 mb-3 cursor-pointer">
+                class="c-text-secondary  c-hover-text-secondary-hover  c-active-text-secondary-active  duration-100  text-sm text-center col-span-2 mt-6 mb-3 cursor-pointer">
                 Does your franchise not exist? Add it
             </a>
         </ul>

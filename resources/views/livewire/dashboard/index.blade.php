@@ -1,13 +1,13 @@
 <div class="grid h-[calc(100dvh)] grid-cols-1 lg:grid-cols-[0.9fr,1.2fr,0.9fr] relative">
-    <div class="grid-item my-3 rounded-lg bg-card dark:bg-dark-card scrollable-grid-item">
-        <div class="grid h-16 border-b border-b-outline dark:border-b-dark-outline"
+    <div class="grid-item my-3 rounded-lg c-bg-card  scrollable-grid-item">
+        <div class="grid h-16 border-b c-border-b-outline "
             style="grid-template-columns: 1fr 1fr">
             <button wire:click.prefetch="setPage(`add`)"
-                class="@if ($page == 'add') bg-outline dark:bg-dark-outline @endif grid-item flex justify-center items-center text-lg font-medium cursor-pointer hover:bg-secondary-hover dark:hover:bg-dark-secondary-hover active:bg-secondary-active dark:active:bg-dark-secondary-active duration-100 rounded-tl-lg border-r border-r-outline dark:border-r-dark-outline">
+                class="@if ($page == 'add') c-bg-outline  @endif grid-item flex justify-center items-center text-lg font-medium cursor-pointer c-hover-bg-secondary-hover  c-active-bg-secondary-active  duration-100 rounded-tl-lg border-r c-border-r-outline ">
                 Add
             </button>
             <button wire:click.prefetch="setPage(`filter`)"
-                class="@if ($page == 'filter') bg-outline dark:bg-dark-outline @endif grid-item flex justify-center items-center text-lg font-medium cursor-pointer hover:bg-secondary-hover dark:hover:bg-dark-secondary-hover active:bg-secondary-active dark:active:bg-dark-secondary-active duration-100 rounded-tr-lg">
+                class="@if ($page == 'filter') c-bg-outline  @endif grid-item flex justify-center items-center text-lg font-medium cursor-pointer c-hover-bg-secondary-hover  c-active-bg-secondary-active  duration-100 rounded-tr-lg">
                 Filter
             </button>
         </div>
@@ -142,7 +142,7 @@
 
                 {{-- Sort After --}}
                 <div
-                    class="my-6 pt-6 border-t w-full border-t-outline dark:border-t-dark-outline border-dashed col-span-2">
+                    class="my-6 pt-6 border-t w-full border-t-outline  border-dashed col-span-2">
                     <div class="pb-1">
                         Sort After
                     </div>
@@ -166,7 +166,7 @@
         <div>
             @foreach ($userEntries as $browserEntry)
                 @if (!is_null($browserEntry->entry->franchise))
-                    <button class="entry-container" wire:click="showUserEntry({{ $browserEntry->id }})">
+                    <button class="h-20 w-full text-left rounded-lg duration-200 c-border-background  c-hover-bg-card-hover  active:rounded-xl c-active-bg-card-active  c-hover-border-secondary  border-dashed border p-3 flex flex-row cursor-pointer" wire:click="showUserEntry({{ $browserEntry->id }})">
                         @include('includes.entry', [
                             'entry' => $browserEntry->entry,
                         ])
@@ -176,7 +176,7 @@
         </div>
     </div>
     @if ($userEntry)
-        <div class="my-3 rounded-lg bg-card dark:bg-dark-card p-3 flex flex-col absolute z-10 w-full lg:relative"
+        <div class="my-3 rounded-lg c-bg-card  p-3 flex flex-col absolute z-10 w-full lg:relative"
             style="height: 98%">
             @if (isset($error))
                 <div class="error">
@@ -195,7 +195,7 @@
                         @endif
                     </div>
                     <button wire:click="closeUserEntry"
-                        class="ms-auto text-secondary dark:text-dark-secondary hover:text-secondary-hover active:text-secondary-active duration-100 cursor-pointer">
+                        class="ms-auto text-secondary  hover:text-secondary-hover active:text-secondary-active duration-100 cursor-pointer">
                         X
                     </button>
                 </div>
@@ -221,7 +221,7 @@
                             @case(\App\Enums\UserRatingStyleEnum::Stars)
                                 <div class="grid grid-cols-10">
                                     @for ($i = 0; $i < 10; $i++)
-                                        <button class="text-4xl cursor-pointer text-secondary dark:text-dark-secondary"
+                                        <button class="text-4xl cursor-pointer text-secondary "
                                             wire:click="setRating({{ ($i + 1) * 10 }})">
                                             @if (round($userEntry->rating / 10) >= $i + 1)
                                                 &#9733;

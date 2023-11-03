@@ -9,25 +9,25 @@
                         0 Entries
                     </div>
                     <input type="checkbox" wire:click="toggleShow0Entries"
-                        @if ($show0Entries) checked @endif>                
+                        @if ($show0Entries) checked @endif>
                 </div>
                 <div class="flex gap-2">
                     <div>
                         0 Creators
                     </div>
                     <input type="checkbox" wire:click="toggleShow0Creators"
-                        @if ($show0Creators) checked @endif>                
+                        @if ($show0Creators) checked @endif>
                 </div>
                 <div class="flex gap-2">
                     <div>
                         0 Studios
                     </div>
                     <input type="checkbox" wire:click="toggleShow0Studios"
-                        @if ($show0Studios) checked @endif>                
+                        @if ($show0Studios) checked @endif>
                 </div>
             </div>
             <div
-                class="grid grid-cols-5 items-center justify-center border-b border-b-outline dark:border-b-dark-outline h-10 font-semibold">
+                class="grid grid-cols-5 items-center justify-center border-b border-b-outline  h-10 font-semibold">
                 <div>
                     Franchise (id)
                 </div>
@@ -49,7 +49,7 @@
                     @if(\App\Models\Franchise::with('entries.creators')->find($franchise->id)->entries->pluck('creators')->flatten(1)->unique('id')->count() == 0 || !$show0Creators)
                         @if($franchise->entries->count() == 0 || !$show0Entries)
                             <div
-                                class="grid grid-cols-5 items-center justify-center @if ($loop->index % 2 != 0) bg-card dark:bg-dark-card @endif">
+                                class="grid grid-cols-5 items-center justify-center @if ($loop->index % 2 != 0) c-bg-card  @endif">
                                 <div>
                                     {{ $franchise->name }} ({{ $franchise->id }})
                                 </div>

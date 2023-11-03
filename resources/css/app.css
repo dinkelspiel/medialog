@@ -9,11 +9,16 @@
 }
 
 .input {
-    @apply max-w-full border-outline dark:border-dark-outline rounded-lg border h-14 justify-center leading-13 px-3 bg-transparent duration-75;
+    @apply max-w-full border-outline  rounded-lg border h-14 justify-center leading-13 px-3 bg-transparent duration-75;
 }
 
+.small-input {
+    @apply max-w-full border-outline  rounded-lg border h-12 justify-center leading-13 px-3 bg-transparent duration-75;
+}
+
+
 .btn {
-    @apply max-w-full w-full active:rounded-xl bg-secondary dark:bg-dark-secondary rounded-lg h-14 justify-center leading-13 text-center text-white hover:bg-secondary-hover cursor-pointer dark:hover:bg-dark-secondary-hover  active:bg-secondary-active dark:active:bg-dark-secondary-active duration-150;
+    @apply max-w-full w-full active:rounded-xl bg-secondary  rounded-lg h-14 justify-center leading-13 text-center text-white hover:bg-secondary-hover cursor-pointer   active:bg-secondary-active  duration-150;
 }
 
 button:disabled,
@@ -22,7 +27,7 @@ button[disabled] {
 }
 
 .small-btn {
-    @apply rounded-lg active:rounded-xl h-12 bg-secondary dark:bg-dark-secondary hover:bg-secondary-hover dark:hover:bg-dark-secondary-hover active:bg-secondary-active dark:active:bg-dark-secondary-active  duration-150 cursor-pointer text-white px-3 flex items-center justify-center text-center;
+    @apply rounded-lg active:rounded-xl h-12 bg-secondary  hover:bg-secondary-hover  active:bg-secondary-active   duration-150 cursor-pointer text-white px-3 flex items-center justify-center text-center;
 }
 
 .icon-btn {
@@ -30,7 +35,7 @@ button[disabled] {
 }
 
 .text-btn {
-    @apply text-secondary dark:text-dark-secondary hover:text-secondary-hover dark:hover:text-dark-secondary-hover active:text-secondary-active dark:active:text-dark-secondary-active duration-100 cursor-pointer;
+    @apply text-secondary  hover:text-secondary-hover  active:text-secondary-active  duration-100 cursor-pointer;
 }
 
 .icon-btn-nav {
@@ -39,18 +44,6 @@ button[disabled] {
 
 .icon-btn-mh {
     @apply icon-btn h-full aspect-square;
-}
-
-.icon-btn-white {
-    @apply icon-btn hover:bg-violet-100 dark:hover:bg-violet-400 active:bg-violet-50 dark:active:bg-violet-500;
-}
-
-.icon-btn-pink {
-    @apply icon-btn bg-violet-200 dark:bg-violet-600 hover:bg-violet-300 dark:hover:bg-violet-700 active:bg-violet-100 dark:active:bg-violet-500;
-}
-
-.icon-btn-green {
-    @apply icon-btn bg-lime-200 dark:bg-lime-600 hover:bg-lime-300 active:bg-lime-100;
 }
 
 .scrollable-grid-item {
@@ -80,33 +73,25 @@ button[disabled] {
 }
 
 .slider::-webkit-slider-thumb {
-    @apply w-6 h-6 rounded-lg hover:rounded-xl active:rounded-full bg-secondary dark:bg-dark-secondary cursor-pointer appearance-none hover:bg-secondary-hover dark:hover:bg-dark-secondary-hover active:bg-secondary-active dark:active:bg-dark-secondary-active duration-200;
+    @apply w-6 h-6 rounded-lg hover:rounded-xl active:rounded-full bg-secondary  cursor-pointer appearance-none hover:bg-secondary-hover  active:bg-secondary-active  duration-200;
 }
 
 .slider::-moz-range-thumb {
-    @apply w-6 h-6 rounded-lg hover:rounded-xl active:rounded-full bg-secondary dark:bg-dark-secondary cursor-pointer appearance-none hover:bg-secondary-hover dark:hover:bg-dark-secondary-hover active:bg-secondary-active dark:active:bg-dark-secondary-active duration-200;
+    @apply w-6 h-6 rounded-lg hover:rounded-xl active:rounded-full bg-secondary  cursor-pointer appearance-none hover:bg-secondary-hover  active:bg-secondary-active  duration-200;
 }
 
 .error {
-    @apply max-w-full bg-red-400 rounded-lg h-14 px-6 justify-center leading-13 text-center text-white dark:text-dark-text;
+    @apply max-w-full bg-red-400 rounded-lg h-14 px-6 justify-center leading-13 text-center text-white
 }
 
 .success {
-    @apply max-w-full bg-lime-500 rounded-lg h-14 px-6 justify-center leading-13 text-center text-white dark:text-dark-text;
+    @apply max-w-full bg-lime-500 rounded-lg h-14 px-6 justify-center leading-13 text-center text-white
 }
 
 .dropdown-container {
-    @apply bg-card dark:bg-dark-card absolute w-full top-14 rounded-br-lg rounded-bl-lg border-outline dark:border-dark-outline !border-t-0 border shadow-lg p-3 flex flex-col gap-3 max-h-96 overflow-y-scroll z-10;
+    @apply bg-card  absolute w-full top-14 rounded-br-lg rounded-bl-lg border-outline  !border-t-0 border shadow-lg p-3 flex flex-col gap-3 max-h-96 overflow-y-scroll z-10;
 }
 
 .dropdown-button {
     @apply cursor-pointer text-left;
-}
-
-.entry-container {
-    @apply h-20 w-full text-left rounded-lg duration-200 border-background dark:border-dark-background hover:bg-card-hover dark:hover:bg-dark-card-hover active:rounded-xl active:bg-card-active dark:active:bg-dark-card-active hover:border-secondary dark:hover:border-dark-secondary border-dashed border p-3 flex flex-row cursor-pointer;
-}
-
-option {
-    @apply text-text
 }

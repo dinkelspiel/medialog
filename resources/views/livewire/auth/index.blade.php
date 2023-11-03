@@ -1,7 +1,7 @@
 <div class="flex flex-col items-center h-[calc(100dvh)] justify-center gap-12">
     <div class="flex flex-col md:flex-row mx-auto w-max justify-center items-center">
         <form wire:submit.prevent="register"
-            class="border-secondary dark:border-dark-secondary border-b pb-6 md:border-b-0 md:pb-0 md:border-r border-dashed flex flex-col md:pr-10 gap-3 md:h-96 justify-center">
+            class="border-secondary  border-b pb-6 md:border-b-0 md:pb-0 md:border-r border-dashed flex flex-col md:pr-10 gap-3 md:h-96 justify-center">
             @csrf
             <input wire:model="regUsername" class="input" placeholder="Username" name="username" required>
             @error('username')
