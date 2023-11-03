@@ -31,7 +31,7 @@
             Browse Color Schemes
         </a>
     </div>
-    @if(!auth()->user()->colorScheme)
+    @if (!auth()->user()->colorScheme)
         <button class="btn btn-primary" wire:click="createCustomColorScheme">Create Custom Color Scheme</button>
     @else
         <div class="flex flex-col gap-3">
@@ -95,15 +95,15 @@
             </div>
         </div>
         <button class="btn btn-primary" wire:click="saveColorScheme">
-            @if(auth()->user()->colorScheme->creator_id != auth()->user()->id)
+            @if (auth()->user()->colorScheme->creator_id != auth()->user()->id)
                 Remix Color Scheme
             @else
                 Save
             @endif
         </button>
     @endif
-    @foreach(json_decode($errors) as $key => $value)
-        @foreach($value as $error)
+    @foreach (json_decode($errors) as $key => $value)
+        @foreach ($value as $error)
             <div>
                 <div>Error</div>
                 <div>

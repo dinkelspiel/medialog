@@ -12,20 +12,26 @@ class ColorSchemes extends Component
     {
         $colorScheme = ColorScheme::find($colorSchemeId);
 
-        if(auth()->user()->colorScheme && auth()->user()->colorScheme->id == $colorScheme->id)
-        {
-            auth()->user()->userColorScheme->delete();
-        } else if(auth()->user()->userColorScheme) {
+        if (
+            auth()->user()->colorScheme &&
+            auth()->user()->colorScheme->id == $colorScheme->id
+        ) {
+            auth()
+                ->user()
+                ->userColorScheme->delete();
+        } elseif (auth()->user()->userColorScheme) {
             auth()->user()->userColorScheme->color_scheme_id = $colorSchemeId;
-            auth()->user()->userColorScheme->save();
+            auth()
+                ->user()
+                ->userColorScheme->save();
         } else {
-            $userColorScheme = new UserColorScheme;
+            $userColorScheme = new UserColorScheme();
             $userColorScheme->user_id = auth()->user()->id;
             $userColorScheme->color_scheme_id = $colorScheme->id;
             $userColorScheme->save();
         }
 
-        $this->redirect('/color-schemes');
+        $this->redirect("/color-schemes");
     }
 
     public function render()

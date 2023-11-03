@@ -1,5 +1,6 @@
 <div class="grid grid-cols-2 m-3 gap-2">
-    <input wire:model.live="search" type="text" placeholder="Search franchise..." class="grid-item col-span-2 input input-primary" />
+    <input wire:model.live="search" type="text" placeholder="Search franchise..."
+        class="grid-item col-span-2 input input-primary" />
 
     <select class="col-span-2 input input-primary" wire:model.live="category">
         <option value="0">
@@ -50,7 +51,8 @@
             style="height: calc(100vh - 20rem)">
             @foreach ($entries as $entry)
                 <li>
-                    <button class="h-20 w-full text-left rounded-lg duration-200 c-border-background  c-hover-bg-card-hover  active:rounded-xl c-active-bg-card-active  c-hover-border-secondary  border-dashed border p-3 flex flex-row cursor-pointer"
+                    <button
+                        class="h-20 w-full text-left rounded-lg duration-200 c-border-background  c-hover-bg-card-hover  active:rounded-xl c-active-bg-card-active  c-hover-border-secondary  border-dashed border p-3 flex flex-row cursor-pointer"
                         wire:click="create({{ $entry->franchise->id }}, {{ $entry->id }})">
                         @include('includes.entry', [
                             'entry' => $entry,

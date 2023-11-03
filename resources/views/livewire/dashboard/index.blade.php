@@ -1,13 +1,12 @@
 <div class="grid h-[calc(100dvh)] grid-cols-1 lg:grid-cols-[0.9fr,1.2fr,0.9fr] relative">
     <div class="grid-item my-3 rounded-lg c-bg-card  scrollable-grid-item" x-data="{ page: 'add' }">
-        <div class="grid h-16 border-b c-border-b-outline "
-            style="grid-template-columns: 1fr 1fr">
+        <div class="grid h-16 border-b c-border-b-outline " style="grid-template-columns: 1fr 1fr">
             <button x-on:click='page = "add"'
-                class="@if ($page == 'add') c-bg-outline  @endif grid-item flex justify-center items-center text-lg font-medium cursor-pointer c-hover-bg-secondary-hover  c-active-bg-secondary-active  duration-100 rounded-tl-lg border-r c-border-r-outline ">
+                class="@if ($page == 'add') c-bg-outline @endif grid-item flex justify-center items-center text-lg font-medium cursor-pointer c-hover-bg-secondary-hover  c-active-bg-secondary-active  duration-100 rounded-tl-lg border-r c-border-r-outline ">
                 Add
             </button>
             <button x-on:click='page = "filter"'
-                class="@if ($page == 'filter') c-bg-outline  @endif grid-item flex justify-center items-center text-lg font-medium cursor-pointer c-hover-bg-secondary-hover  c-active-bg-secondary-active  duration-100 rounded-tr-lg">
+                class="@if ($page == 'filter') c-bg-outline @endif grid-item flex justify-center items-center text-lg font-medium cursor-pointer c-hover-bg-secondary-hover  c-active-bg-secondary-active  duration-100 rounded-tr-lg">
                 Filter
             </button>
         </div>
@@ -16,11 +15,14 @@
         </div>
         <div class="grid grid-cols-2 gap-2 p-3" x-show="page == 'filter'">
             {{-- Filter Options --}}
-            <input class="input input-primary col-span-2" placeholder="Title" type="text" wire:model.live="filterTitle">
-            <input class="input input-primary col-span-2" placeholder="Season" type="text" wire:model.live="filterSeason">
+            <input class="input input-primary col-span-2" placeholder="Title" type="text"
+                wire:model.live="filterTitle">
+            <input class="input input-primary col-span-2" placeholder="Season" type="text"
+                wire:model.live="filterSeason">
 
             <div class="grid grid-cols-1 w-full relative" x-data="{ open: true }">
-                <input class="input input-primary w-full @if (\App\Models\Studio::where('name', $filterSearchStudio)->first() == null && $filterSearchStudio != '') !border !border-red-400 @endif"
+                <input
+                    class="input input-primary w-full @if (\App\Models\Studio::where('name', $filterSearchStudio)->first() == null && $filterSearchStudio != '') !border !border-red-400 @endif"
                     placeholder="Production Studio" wire:model.live="filterSearchStudio" @focus="open = true">
                 @if ($filterSearchStudio != '' && $filterStudio == '0')
                     <div class="dropdown-container" x-show="open">
@@ -35,7 +37,8 @@
             </div>
 
             <div class="grid grid-cols-1 w-full relative" x-data="{ open: true }">
-                <input class="input input-primary w-full @if (\App\Models\Person::where('name', $filterSearchCreator)->first() == null && $filterSearchCreator != '') !border !border-red-400 @endif"
+                <input
+                    class="input input-primary w-full @if (\App\Models\Person::where('name', $filterSearchCreator)->first() == null && $filterSearchCreator != '') !border !border-red-400 @endif"
                     placeholder="Director/Writer" wire:model.live="filterSearchCreator" @focus="open = true">
                 @if ($filterSearchCreator != '' && $filterCreator == 0)
                     <div class="dropdown-container" x-show="open">
@@ -92,8 +95,7 @@
             @endif
             @if (!is_null($franchise))
                 <div class="pt-6 rounded-lg object-cover flex flex-row gap-3 col-span-2">
-                    <img src="{{ $franchise->entries->first()->cover_url }}"
-                        class="rounded-lg w-40 h-60 object-cover">
+                    <img src="{{ $franchise->entries->first()->cover_url }}" class="rounded-lg w-40 h-60 object-cover">
                     <div class="flex flex-col gap-3">
                         <div class="font-semibold">
                             <i>{{ $franchise->name }}</i>.
@@ -141,8 +143,7 @@
             @endif
 
             {{-- Sort After --}}
-            <div
-                class="my-6 pt-6 border-t w-full c-border-t-outline  border-dashed col-span-2">
+            <div class="my-6 pt-6 border-t w-full c-border-t-outline  border-dashed col-span-2">
                 <div class="pb-1">
                     Sort After
                 </div>
@@ -161,7 +162,9 @@
         <div>
             @foreach ($userEntries as $browserEntry)
                 @if (!is_null($browserEntry->entry->franchise))
-                    <button class="h-20 w-full text-left rounded-lg duration-200 c-border-background  c-hover-bg-card-hover  active:rounded-xl c-active-bg-card-active  c-hover-border-secondary  border-dashed border p-3 flex flex-row cursor-pointer" wire:click="showUserEntry({{ $browserEntry->id }})">
+                    <button
+                        class="h-20 w-full text-left rounded-lg duration-200 c-border-background  c-hover-bg-card-hover  active:rounded-xl c-active-bg-card-active  c-hover-border-secondary  border-dashed border p-3 flex flex-row cursor-pointer"
+                        wire:click="showUserEntry({{ $browserEntry->id }})">
                         @include('includes.entry', [
                             'entry' => $browserEntry->entry,
                         ])
@@ -171,8 +174,7 @@
         </div>
     </div>
     @if ($userEntry)
-        <div class="my-3 rounded-lg c-bg-card  p-3 flex flex-col absolute z-10 w-full lg:relative"
-            style="height: 98%">
+        <div class="my-3 rounded-lg c-bg-card  p-3 flex flex-col absolute z-10 w-full lg:relative" style="height: 98%">
             @if (isset($error))
                 <div class="error">
                     {{ $error }}

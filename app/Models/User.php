@@ -19,7 +19,7 @@ class User extends Authenticatable
         "username",
         "email",
         "rating_style",
-        "subtext_style"
+        "subtext_style",
     ];
 
     protected $hidden = ["password"];
@@ -44,10 +44,10 @@ class User extends Authenticatable
         return $this->hasOneThrough(
             ColorScheme::class,
             UserColorScheme::class,
-            'user_id',
-            'id',
-            'id',
-            'color_scheme_id'
+            "user_id",
+            "id",
+            "id",
+            "color_scheme_id",
         );
     }
 

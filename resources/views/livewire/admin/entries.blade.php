@@ -26,8 +26,7 @@
                         @if ($show0Studios) checked @endif>
                 </div>
             </div>
-            <div
-                class="grid grid-cols-5 items-center justify-center border-b border-b-outline  h-10 font-semibold">
+            <div class="grid grid-cols-5 items-center justify-center border-b border-b-outline  h-10 font-semibold">
                 <div>
                     Franchise (id)
                 </div>
@@ -45,11 +44,11 @@
                 </div>
             </div>
             @foreach (\App\Models\Franchise::all() as $franchise)
-                @if(\App\Models\Franchise::with('entries.studios')->find($franchise->id)->entries->pluck('studios')->flatten(1)->unique('id')->count() == 0 || !$show0Studios)
-                    @if(\App\Models\Franchise::with('entries.creators')->find($franchise->id)->entries->pluck('creators')->flatten(1)->unique('id')->count() == 0 || !$show0Creators)
-                        @if($franchise->entries->count() == 0 || !$show0Entries)
+                @if (\App\Models\Franchise::with('entries.studios')->find($franchise->id)->entries->pluck('studios')->flatten(1)->unique('id')->count() == 0 || !$show0Studios)
+                    @if (\App\Models\Franchise::with('entries.creators')->find($franchise->id)->entries->pluck('creators')->flatten(1)->unique('id')->count() == 0 || !$show0Creators)
+                        @if ($franchise->entries->count() == 0 || !$show0Entries)
                             <div
-                                class="grid grid-cols-5 items-center justify-center @if ($loop->index % 2 != 0) c-bg-card  @endif">
+                                class="grid grid-cols-5 items-center justify-center @if ($loop->index % 2 != 0) c-bg-card @endif">
                                 <div>
                                     {{ $franchise->name }} ({{ $franchise->id }})
                                 </div>
