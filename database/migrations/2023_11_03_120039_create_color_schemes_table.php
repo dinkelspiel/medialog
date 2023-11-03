@@ -28,6 +28,10 @@ return new class extends Migration
             $table->char('text_gray', 7)->default('#A3A3A3');
             $table->timestamps();
         });
+
+        Schema::table('users', function (Blueprint $table) {
+            $table->dropColumn('color_scheme');
+        });
     }
 
     /**
@@ -36,5 +40,11 @@ return new class extends Migration
     public function down(): void
     {
         Schema::dropIfExists('color_schemes');
+
+        Schema::table("users", function (Blueprint $table) {
+            $table
+                ->enum("color_scheme", ["auto", "dark", "light"])
+                ->default("auto");
+        });
     }
 };
