@@ -110,7 +110,6 @@ class Index extends Component
     public $filterSearchCreator = "";
     public $filterCategory = "0";
 
-    public $page = "add";
 
     public function setFilterCreator($name)
     {
@@ -120,11 +119,6 @@ class Index extends Component
     public function setFilterStudio($name)
     {
         $this->filterSearchStudio = $name;
-    }
-
-    public function setPage(string $page)
-    {
-        $this->page = $page;
     }
 
     public function toggleIncludeAllFranchises()
