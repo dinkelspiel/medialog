@@ -73,6 +73,10 @@
     border-bottom-color: {{ auth()->user()->colorScheme->outline ?? "var(--outline)" }};
 }
 
+.c-border-t-outline {
+    border-top-color: {{ auth()->user()->colorScheme->outline ?? "var(--outline)" }};
+}
+
 .c-border-outline {
     border-color: {{ auth()->user()->colorScheme->outline ?? "var(--outline)" }};
 }

@@ -142,7 +142,7 @@
 
                 {{-- Sort After --}}
                 <div
-                    class="my-6 pt-6 border-t w-full border-t-outline  border-dashed col-span-2">
+                    class="my-6 pt-6 border-t w-full c-border-t-outline  border-dashed col-span-2">
                     <div class="pb-1">
                         Sort After
                     </div>
