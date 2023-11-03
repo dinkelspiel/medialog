@@ -12,121 +12,137 @@
 
 <style>
 
-@if(auth()->user()->colorScheme)
-    .c-text-text {
-        color: {{ auth()->user()->colorScheme->text }};
-    }
+:root {
+    --background: #FFFBFE;
+    --card: #FAF1F0;
+    --card_hover: #F2DBD9;
+    --card_active: #EDCDC9;
+    --secondary: #d1857b;
+    --secondary_hover: #c6685d;
+    --secondary_active: #d6938a;
+    --outline: #E6BEB7;
+    --text: #1C1B1F;
+    --text_gray: #A3A3A3;
+}
 
-    .option {
-        color: {{ auth()->user()->colorScheme->text }};
-    }
+.c-text-text {
+    color: {{ auth()->user()->colorScheme->text ?? "var(--text)" }};
+}
 
-    .c-bg-background {
-        background: {{ auth()->user()->colorScheme->background }};
-    }
+.option {
+    color: {{ auth()->user()->colorScheme->text ?? "var(--text)" }};
+}
 
-    .c-border-background {
-        border-color: {{ auth()->user()->colorScheme->background }};
-    }
+.c-bg-background {
+    background: {{ auth()->user()->colorScheme->background ?? "var(--background)" }};
+}
 
-    .c-hover-bg-card-hover:hover {
-        background: {{ auth()->user()->colorScheme->background }};
-    }
+.c-border-background {
+    border-color: {{ auth()->user()->colorScheme->background ?? "var(--background)" }};
+}
 
-    .c-active-bg-card-active:active {
-        background: {{ auth()->user()->colorScheme->card_active }};
-    }
+.c-hover-bg-card-hover:hover {
+    background: {{ auth()->user()->colorScheme->background ?? "var(--background)" }};
+}
 
-    .c-hover-border-secondary:hover {
-        border-color: {{ auth()->user()->colorScheme->secondary }};
-    }
+.c-active-bg-card-active:active {
+    background: {{ auth()->user()->colorScheme->card_active ?? "var(--card_active)" }};
+}
 
-    .c-bg-card {
-        background: {{ auth()->user()->colorScheme->card }};
-    }
+.c-hover-border-secondary:hover {
+    border-color: {{ auth()->user()->colorScheme->secondary ?? "var(--secondary)" }};
+}
 
-    .c-bg-secondary {
-        background: {{ auth()->user()->colorScheme->secondary }};
-    }
+.c-bg-card {
+    background: {{ auth()->user()->colorScheme->card ?? "var(--card)" }};
+}
 
-    .c-c-bg-outline {
-        background: {{ auth()->user()->colorScheme->outline }};
-    }
+.c-bg-secondary {
+    background: {{ auth()->user()->colorScheme->secondary ?? "var(--secondary)" }};
+}
 
-    .c-border-b-outline {
-        border-bottom-color: {{ auth()->user()->colorScheme->outline }};
-    }
+.c-c-bg-outline {
+    background: {{ auth()->user()->colorScheme->outline ?? "var(--outline)" }};
+}
 
-    .c-hover-bg-secondary-hover:hover {
-        background: {{ auth()->user()->colorScheme->secondary_hover }};
-    }
+.c-border-b-outline {
+    border-bottom-color: {{ auth()->user()->colorScheme->outline ?? "var(--outline)" }};
+}
 
-    .c-active-bg-secondary-active:active {
-        background: {{ auth()->user()->colorScheme->secondary_active }};
-    }
+.c-hover-bg-secondary-hover:hover {
+    background: {{ auth()->user()->colorScheme->secondary_hover ?? "var(--secondary_hover)" }};
+}
 
-    .c-border-r-outline {
-        border-right-color: {{ auth()->user()->colorScheme->outline }};
-    }
+.c-active-bg-secondary-active:active {
+    background: {{ auth()->user()->colorScheme->secondary_active ?? "var(--secondary_active)" }};
+}
 
-    .c-text-secondary {
-        color: {{ auth()->user()->colorScheme->secondary }};
-    }
+.c-border-r-outline {
+    border-right-color: {{ auth()->user()->colorScheme->outline ?? "var(--outline)" }};
+}
 
-    .c-hover-text-secondary-hover:hover {
-        color: {{ auth()->user()->colorScheme->secondary_hover }};
-    }
+.c-text-secondary {
+    color: {{ auth()->user()->colorScheme->secondary ?? "var(--secondary)" }};
+}
 
-    .c-active-text-secondary-active:active {
-        color: {{ auth()->user()->colorScheme->secondary_active }};
-    }
+.c-hover-text-secondary-hover:hover {
+    color: {{ auth()->user()->colorScheme->secondary_hover ?? "var(--secondary_hover)" }};
+}
 
-    .text-btn {
-        color: {{ auth()->user()->colorScheme->secondary }};
-        transition-duration: 100ms;
-        cursor: pointer;
-    }
+.c-active-text-secondary-active:active {
+    color: {{ auth()->user()->colorScheme->secondary_active ?? "var(--secondary_active)" }};
+}
 
-    .text-btn:hover {
-        color: {{ auth()->user()->colorScheme->secondary_hover }};
-    }
+.text-btn {
+    color: {{ auth()->user()->colorScheme->secondary ?? "var(--secondary)" }};
+    transition-duration: 100ms;
+    cursor: pointer;
+}
 
-    .text-btn:active {
-        color: {{ auth()->user()->colorScheme->secondary_active }};
-    }
+.text-btn:hover {
+    color: {{ auth()->user()->colorScheme->secondary_hover ?? "var(--secondary_hover)" }};
+}
 
-    .icon-btn-white:hover {
-        background: {{ auth()->user()->colorScheme->secondary_hover }};
-    }
+.text-btn:active {
+    color: {{ auth()->user()->colorScheme->secondary_active ?? "var(--secondary_active)" }};
+}
 
-    .icon-btn-white:active {
-        background: {{ auth()->user()->colorScheme->secondary_active }};
-    }
+.icon-btn-white:hover {
+    background: {{ auth()->user()->colorScheme->secondary_hover ?? "var(--secondary_hover)" }};
+}
 
-    .icon-btn-pink {
-        background: {{ auth()->user()->colorScheme->secondary }};
-    }
+.icon-btn-white:active {
+    background: {{ auth()->user()->colorScheme->secondary_active ?? "var(--secondary_active)" }};
+}
 
-    .icon-btn-pink:hover {
-        background: {{ auth()->user()->colorScheme->secondary_hover }};
-    }
+.icon-btn-pink {
+    background: {{ auth()->user()->colorScheme->secondary ?? "var(--secondary)" }};
+}
 
-    .icon-btn-pink:active {
-        background: {{ auth()->user()->colorScheme->secondary_active }};
-    }
-@else
-    .color-text {
-        color: #1C1B1F;
-    }
+.icon-btn-pink:hover {
+    background: {{ auth()->user()->colorScheme->secondary_hover ?? "var(--secondary_hover)" }};
+}
 
-    .option {
-        color: #1C1B1F;
-    }
+.icon-btn-pink:active {
+    background: {{ auth()->user()->colorScheme->secondary_active ?? "var(--secondary_active)" }};
+}
 
-    .c-bg-background {
-        background: #FFFBFE;
-    }
-@endif
+.input-primary {
+    border-color: {{ auth()->user()->colorScheme->outline ?? "var(--outline)" }};
+}
+
+.btn-primary {
+    color: white;
+    background: {{ auth()->user()->colorScheme->secondary ?? "var(--secondary)" }};
+}
+
+.btn-primary:hover {
+    background: {{ auth()->user()->colorScheme->secondary_hover ?? "var(--secondary_hover)" }};
+}
+
+.btn-primary:active {
+    background: {{ auth()->user()->colorScheme->secondary_active ?? "var(--secondary_active)" }};
+}
 
 </style>
 </head>

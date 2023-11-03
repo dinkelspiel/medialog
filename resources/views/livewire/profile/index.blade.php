@@ -2,7 +2,7 @@
     <div class="pt-3">
         Rating Style
     </div>
-    <select class="input w-full" wire:change="setRatingStyle($event.target.value)">
+    <select class="input input-primary w-full" wire:change="setRatingStyle($event.target.value)">
         <option value="range" @if ($ratingStyle == 'range') selected @endif>
             Range
         </option>
@@ -14,7 +14,7 @@
     <div class="pt-3">
         BrowserEntry Subtext Style
     </div>
-    <select class="input w-full" wire:change="setSubtextStyle($event.target.value)">
+    <select class="input input-primary w-full" wire:change="setSubtextStyle($event.target.value)">
         <option value="studio" @if ($subtextStyle == 'studio') selected @endif>
             Studio
         </option>
@@ -27,7 +27,7 @@
         Color Scheme
     </div>
     @if(!auth()->user()->colorScheme)
-        <button class="btn" wire:click="createCustomColorScheme">Create Custom Color Scheme</button>
+        <button class="btn btn-primary" wire:click="createCustomColorScheme">Create Custom Color Scheme</button>
     @else
         <div class="flex flex-col gap-3">
             <div>Name</div>
@@ -89,7 +89,7 @@
                 <input class="small-input" placeholder="#AABBCC" wire:model.live="outline" />
             </div>
         </div>
-        <button class="btn" wire:click="saveColorScheme">Save</button>
+        <button class="btn btn-primary" wire:click="saveColorScheme">Save</button>
     @endif
     @foreach(json_decode($errors) as $key => $value)
         @foreach($value as $error)
@@ -103,7 +103,7 @@
     @endforeach
     <form wire:submit.prevent="logout" class="justify-end mt-auto">
         @csrf
-        <button class="btn w-full mt-auto" type="submit">
+        <button class="btn btn-primary w-full mt-auto" type="submit">
             Logout
         </button>
     </form>

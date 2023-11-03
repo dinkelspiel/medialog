@@ -8,11 +8,11 @@
         <div>
             Franchise Title
         </div>
-        <input class="input" placeholder="Title" wire:model="franchiseName">
+        <input class="input input-primary" placeholder="Title" wire:model="franchiseName">
         <div>
             Category
         </div>
-        <select class="input" wire:model="franchiseCategory">
+        <select class="input input-primary" wire:model="franchiseCategory">
             @foreach (\App\Models\Category::all() as $category)
                 <option value="{{ $category->id }}">
                     {{ $category->name }}
@@ -37,7 +37,7 @@
                     Standalone movies/books should have their name as the entry name and series should have "Season 1",
                     "Season 2" if no name is given
                 </div>
-                <input class="input" placeholder="Title" wire:model="entries.{{ $loop->index }}.name">
+                <input class="input input-primary" placeholder="Title" wire:model="entries.{{ $loop->index }}.name">
                 <div>
                     Production Studio
                 </div>
@@ -53,7 +53,7 @@
                 <div class="grid grid-cols-1 w-full relative">
                     <div class="flex flex-row gap-3 max-w-full">
                         <input
-                            class="input w-full @if ($entries[$loop->index]['studioSearch'] != '') !rounded-bl-none !rounded-br-none @endif"
+                            class="input input-primary w-full @if ($entries[$loop->index]['studioSearch'] != '') !rounded-bl-none !rounded-br-none @endif"
                             placeholder="Production Studio" wire:model.live="entries.{{ $loop->index }}.studioSearch">
                     </div>
                     @if ($entries[$loop->index]['studioSearch'] != '')
@@ -88,7 +88,7 @@
                 <div class="grid grid-cols-1 w-full relative">
                     <div class="flex flex-row gap-3 max-w-full">
                         <input
-                            class="input w-full @if ($entries[$loop->index]['creatorSearch'] != '') !rounded-bl-none !rounded-br-none @endif"
+                            class="input input-primary w-full @if ($entries[$loop->index]['creatorSearch'] != '') !rounded-bl-none !rounded-br-none @endif"
                             placeholder="Director/Writer" wire:model.live="entries.{{ $loop->index }}.creatorSearch">
                     </div>
                     @if ($entries[$loop->index]['creatorSearch'] != '')
@@ -111,12 +111,12 @@
                 <div>
                     Cover Image URL
                 </div>
-                <input class="input" placeholder="https://example.com/image.png"
+                <input class="input input-primary" placeholder="https://example.com/image.png"
                     wire:model="entries.{{ $loop->index }}.cover_url">
             </div>
         @endforeach
     </div>
-    <button class="btn" @if (count($entries) == 0) disabled @endif wire:click="save">
+    <button class="btn btn-primary" @if (count($entries) == 0) disabled @endif wire:click="save">
         Save
     </button>
     @if (count($entries) == 0)

@@ -16,11 +16,11 @@
         @elseif($page == 'filter')
             <div class="grid grid-cols-2 gap-2 p-3">
                 {{-- Filter Options --}}
-                <input class="input col-span-2" placeholder="Title" type="text" wire:model.live="filterTitle">
-                <input class="input col-span-2" placeholder="Season" type="text" wire:model.live="filterSeason">
+                <input class="input input-primary col-span-2" placeholder="Title" type="text" wire:model.live="filterTitle">
+                <input class="input input-primary col-span-2" placeholder="Season" type="text" wire:model.live="filterSeason">
 
                 <div class="grid grid-cols-1 w-full relative" x-data="{ open: true }">
-                    <input class="input w-full @if (\App\Models\Studio::where('name', $filterSearchStudio)->first() == null && $filterSearchStudio != '') !border !border-red-400 @endif"
+                    <input class="input input-primary w-full @if (\App\Models\Studio::where('name', $filterSearchStudio)->first() == null && $filterSearchStudio != '') !border !border-red-400 @endif"
                         placeholder="Production Studio" wire:model.live="filterSearchStudio" @focus="open = true">
                     @if ($filterSearchStudio != '' && $filterStudio == '0')
                         <div class="dropdown-container" x-show="open">
@@ -35,7 +35,7 @@
                 </div>
 
                 <div class="grid grid-cols-1 w-full relative" x-data="{ open: true }">
-                    <input class="input w-full @if (\App\Models\Person::where('name', $filterSearchCreator)->first() == null && $filterSearchCreator != '') !border !border-red-400 @endif"
+                    <input class="input input-primary w-full @if (\App\Models\Person::where('name', $filterSearchCreator)->first() == null && $filterSearchCreator != '') !border !border-red-400 @endif"
                         placeholder="Director/Writer" wire:model.live="filterSearchCreator" @focus="open = true">
                     @if ($filterSearchCreator != '' && $filterCreator == 0)
                         <div class="dropdown-container" x-show="open">
@@ -49,7 +49,7 @@
                     @endif
                 </div>
 
-                <select class="input col-span-2" wire:model.live="filterCategory" placeholder="Category">
+                <select class="input input-primary col-span-2" wire:model.live="filterCategory" placeholder="Category">
                     <option value="0">
                         Select a Category
                     </option>
@@ -61,7 +61,7 @@
                 </select>
 
                 {{-- I'm Feeling Lucky --}}
-                <button class="btn col-span-2 mt-3"
+                <button class="btn btn-primary col-span-2 mt-3"
                     @if (!$canGetRandom) disabled @else wire:click="getRandom" @endif>
                     I'm feeling lucky
                 </button>
@@ -146,7 +146,7 @@
                     <div class="pb-1">
                         Sort After
                     </div>
-                    <select class="input w-full" placeholder="Sort After"
+                    <select class="input input-primary w-full" placeholder="Sort After"
                         wire:change="setSortAfter($event.target.value)">
                         @foreach ($sortAfterArray as $sort)
                             <option>
@@ -221,7 +221,7 @@
                             @case(\App\Enums\UserRatingStyleEnum::Stars)
                                 <div class="grid grid-cols-10">
                                     @for ($i = 0; $i < 10; $i++)
-                                        <button class="text-4xl cursor-pointer text-secondary "
+                                        <button class="text-4xl cursor-pointer c-text-secondary "
                                             wire:click="setRating({{ ($i + 1) * 10 }})">
                                             @if (round($userEntry->rating / 10) >= $i + 1)
                                                 &#9733;
@@ -258,17 +258,17 @@
                             </div>
                         @endif
                         <div class="flex gap-3">
-                            <button wire:click="saveUserEntry" class="btn mt-auto">
+                            <button wire:click="saveUserEntry" class="btn btn-primary mt-auto">
                                 Save
                             </button>
-                            <button wire:click="deleteUserEntry" class="btn !w-max px-10">
+                            <button wire:click="deleteUserEntry" class="btn btn-primary !w-max px-10">
                                 Remove
                             </button>
                         </div>
                     </div>
         </div>
     @else
-        <button wire:click="markAsComplete({{ $userEntry->id }})" type="submit" class="btn my-auto">
+        <button wire:click="markAsComplete({{ $userEntry->id }})" type="submit" class="btn btn-primary my-auto">
             Mark as complete
         </button>
     @endif

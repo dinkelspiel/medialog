@@ -9,16 +9,16 @@
 }
 
 .input {
-    @apply max-w-full border-outline  rounded-lg border h-14 justify-center leading-13 px-3 bg-transparent duration-75;
+    @apply max-w-full  rounded-lg border h-14 justify-center leading-13 px-3 bg-transparent duration-75;
 }
 
 .small-input {
-    @apply max-w-full border-outline  rounded-lg border h-12 justify-center leading-13 px-3 bg-transparent duration-75;
+    @apply max-w-full  rounded-lg border h-12 justify-center leading-13 px-3 bg-transparent duration-75;
 }
 
 
 .btn {
-    @apply max-w-full w-full active:rounded-xl bg-secondary  rounded-lg h-14 justify-center leading-13 text-center text-white hover:bg-secondary-hover cursor-pointer   active:bg-secondary-active  duration-150;
+    @apply max-w-full w-full active:rounded-xl  rounded-lg h-14 justify-center leading-13 text-center cursor-pointer  duration-150;
 }
 
 button:disabled,
@@ -27,16 +27,13 @@ button[disabled] {
 }
 
 .small-btn {
-    @apply rounded-lg active:rounded-xl h-12 bg-secondary  hover:bg-secondary-hover  active:bg-secondary-active   duration-150 cursor-pointer text-white px-3 flex items-center justify-center text-center;
+    @apply rounded-lg active:rounded-xl h-12    duration-150 cursor-pointer px-3 flex items-center justify-center text-center;
 }
 
 .icon-btn {
     @apply rounded-lg justify-center items-center flex cursor-pointer transition-all duration-100 hover:rounded-2xl;
 }
 
-.text-btn {
-    @apply text-secondary  hover:text-secondary-hover  active:text-secondary-active  duration-100 cursor-pointer;
-}
 
 .icon-btn-nav {
     @apply icon-btn w-14 h-14;
