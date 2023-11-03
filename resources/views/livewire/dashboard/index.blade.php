@@ -1,12 +1,12 @@
 <div class="grid h-[calc(100dvh)] grid-cols-1 lg:grid-cols-[0.9fr,1.2fr,0.9fr] relative">
     <div class="grid-item my-3 rounded-lg c-bg-card  scrollable-grid-item" x-data="{ page: 'add' }">
         <div class="grid h-16 border-b c-border-b-outline " style="grid-template-columns: 1fr 1fr">
-            <button x-on:click='page = "add"'
-                class="@if ($page == 'add') c-bg-outline @endif grid-item flex justify-center items-center text-lg font-medium cursor-pointer c-hover-bg-secondary-hover  c-active-bg-secondary-active  duration-100 rounded-tl-lg border-r c-border-r-outline ">
+            <button x-on:click='page = "add"' :class="{ 'c-bg-outline': page === 'add' }"
+                class="grid-item flex justify-center items-center text-lg font-medium cursor-pointer c-hover-bg-secondary-hover  c-active-bg-secondary-active  duration-100 rounded-tl-lg border-r c-border-r-outline ">
                 Add
             </button>
-            <button x-on:click='page = "filter"'
-                class="@if ($page == 'filter') c-bg-outline @endif grid-item flex justify-center items-center text-lg font-medium cursor-pointer c-hover-bg-secondary-hover  c-active-bg-secondary-active  duration-100 rounded-tr-lg">
+            <button x-on:click='page = "filter"' :class="{ 'c-bg-outline': page === 'filter' }"
+                class=" grid-item flex justify-center items-center text-lg font-medium cursor-pointer c-hover-bg-secondary-hover  c-active-bg-secondary-active  duration-100 rounded-tr-lg">
                 Filter
             </button>
         </div>
