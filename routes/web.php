@@ -24,6 +24,8 @@ Route::middleware([VerifySession::class])->group(function () {
     Route::get("/dashboard/add", App\Livewire\Dashboard\Modify\Add::class);
 
     Route::get("/profile", App\Livewire\Profile\Index::class);
+
+    Route::get("/color-schemes", App\Livewire\ColorSchemes::class);
 });
 
 Route::middleware([VerifySession::class, AuthorizeAdmin::class])->group(
