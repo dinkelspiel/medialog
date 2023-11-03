@@ -34,6 +34,17 @@ class ColorSchemes extends Component
         $this->redirect("/color-schemes");
     }
 
+    public function deleteColorScheme(int $colorSchemeId)
+    {
+        $colorScheme = ColorScheme::find($colorSchemeId);
+        if($colorScheme->creator_id != auth()->user()->id)
+        {
+            return;
+        }
+
+        $colorScheme->delete();
+    }
+
     public function render()
     {
         return view("livewire.color-schemes")->layout("layouts.app", [

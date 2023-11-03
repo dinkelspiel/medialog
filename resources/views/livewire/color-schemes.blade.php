@@ -3,8 +3,15 @@
         @foreach (\App\Models\ColorScheme::all() as $colorScheme)
             <div class="border c-border-outline rounded-lg p-3 flex flex-col gap-3">
                 <div class="flex flex-col gap-1.5">
-                    <div>
-                        {{ $colorScheme->name }}
+                    <div class="flex flex-row justify-between">
+                        <div>
+                            {{ $colorScheme->name }}
+                        </div>
+                        @if($colorScheme->creator_id == auth()->user()->id)
+                            <button class="text-btn" wire:click="deleteColorScheme({{ $colorScheme->id }})">
+                                Remove
+                            </button>
+                        @endif
                     </div>
                     <div class="text-sm">
                         By {{ $colorScheme->creator->username }}
