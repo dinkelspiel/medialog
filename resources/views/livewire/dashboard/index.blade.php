@@ -1,166 +1,161 @@
 <div class="grid h-[calc(100dvh)] grid-cols-1 lg:grid-cols-[0.9fr,1.2fr,0.9fr] relative">
-    <div class="grid-item my-3 rounded-lg c-bg-card  scrollable-grid-item">
+    <div class="grid-item my-3 rounded-lg c-bg-card  scrollable-grid-item" x-data="{ page: 'add' }">
         <div class="grid h-16 border-b c-border-b-outline "
             style="grid-template-columns: 1fr 1fr">
-            <button wire:click.prefetch="setPage(`add`)"
+            <button x-on:click='page = "add"'
                 class="@if ($page == 'add') c-bg-outline  @endif grid-item flex justify-center items-center text-lg font-medium cursor-pointer c-hover-bg-secondary-hover  c-active-bg-secondary-active  duration-100 rounded-tl-lg border-r c-border-r-outline ">
                 Add
             </button>
-            <button wire:click.prefetch="setPage(`filter`)"
+            <button x-on:click='page = "filter"'
                 class="@if ($page == 'filter') c-bg-outline  @endif grid-item flex justify-center items-center text-lg font-medium cursor-pointer c-hover-bg-secondary-hover  c-active-bg-secondary-active  duration-100 rounded-tr-lg">
                 Filter
             </button>
         </div>
-        @if ($page == 'add')
+        <div x-show="page == 'add'">
             <livewire:dashboard.search-franchise />
-        @elseif($page == 'filter')
-            <div class="grid grid-cols-2 gap-2 p-3">
-                {{-- Filter Options --}}
-                <input class="input input-primary col-span-2" placeholder="Title" type="text" wire:model.live="filterTitle">
-                <input class="input input-primary col-span-2" placeholder="Season" type="text" wire:model.live="filterSeason">
+        </div>
+        <div class="grid grid-cols-2 gap-2 p-3" x-show="page == 'filter'">
+            {{-- Filter Options --}}
+            <input class="input input-primary col-span-2" placeholder="Title" type="text" wire:model.live="filterTitle">
+            <input class="input input-primary col-span-2" placeholder="Season" type="text" wire:model.live="filterSeason">
 
-                <div class="grid grid-cols-1 w-full relative" x-data="{ open: true }">
-                    <input class="input input-primary w-full @if (\App\Models\Studio::where('name', $filterSearchStudio)->first() == null && $filterSearchStudio != '') !border !border-red-400 @endif"
-                        placeholder="Production Studio" wire:model.live="filterSearchStudio" @focus="open = true">
-                    @if ($filterSearchStudio != '' && $filterStudio == '0')
-                        <div class="dropdown-container" x-show="open">
-                            @foreach (\App\Models\Studio::where('name', 'LIKE', '%' . $filterSearchStudio . '%')->orderBy('name')->get() as $studio)
-                                <button class="dropdown-button" wire:click="setFilterStudio(`{{ $studio->name }}`)"
-                                    @click="open = false">
-                                    {{ $studio->name }}
-                                </button>
-                            @endforeach
-                        </div>
-                    @endif
-                </div>
+            <div class="grid grid-cols-1 w-full relative" x-data="{ open: true }">
+                <input class="input input-primary w-full @if (\App\Models\Studio::where('name', $filterSearchStudio)->first() == null && $filterSearchStudio != '') !border !border-red-400 @endif"
+                    placeholder="Production Studio" wire:model.live="filterSearchStudio" @focus="open = true">
+                @if ($filterSearchStudio != '' && $filterStudio == '0')
+                    <div class="dropdown-container" x-show="open">
+                        @foreach (\App\Models\Studio::where('name', 'LIKE', '%' . $filterSearchStudio . '%')->orderBy('name')->get() as $studio)
+                            <button class="dropdown-button" wire:click="setFilterStudio(`{{ $studio->name }}`)"
+                                @click="open = false">
+                                {{ $studio->name }}
+                            </button>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
 
-                <div class="grid grid-cols-1 w-full relative" x-data="{ open: true }">
-                    <input class="input input-primary w-full @if (\App\Models\Person::where('name', $filterSearchCreator)->first() == null && $filterSearchCreator != '') !border !border-red-400 @endif"
-                        placeholder="Director/Writer" wire:model.live="filterSearchCreator" @focus="open = true">
-                    @if ($filterSearchCreator != '' && $filterCreator == 0)
-                        <div class="dropdown-container" x-show="open">
-                            @foreach (\App\Models\Person::where('name', 'LIKE', '%' . $filterSearchCreator . '%')->orderBy('name')->get() as $person)
-                                <button class="dropdown-button" wire:click="setFilterCreator(`{{ $person->name }}`)"
-                                    @click="open = false">
-                                    {{ $person->name }}
-                                </button>
-                            @endforeach
-                        </div>
-                    @endif
-                </div>
+            <div class="grid grid-cols-1 w-full relative" x-data="{ open: true }">
+                <input class="input input-primary w-full @if (\App\Models\Person::where('name', $filterSearchCreator)->first() == null && $filterSearchCreator != '') !border !border-red-400 @endif"
+                    placeholder="Director/Writer" wire:model.live="filterSearchCreator" @focus="open = true">
+                @if ($filterSearchCreator != '' && $filterCreator == 0)
+                    <div class="dropdown-container" x-show="open">
+                        @foreach (\App\Models\Person::where('name', 'LIKE', '%' . $filterSearchCreator . '%')->orderBy('name')->get() as $person)
+                            <button class="dropdown-button" wire:click="setFilterCreator(`{{ $person->name }}`)"
+                                @click="open = false">
+                                {{ $person->name }}
+                            </button>
+                        @endforeach
+                    </div>
+                @endif
+            </div>
 
-                <select class="input input-primary col-span-2" wire:model.live="filterCategory" placeholder="Category">
-                    <option value="0">
-                        Select a Category
+            <select class="input input-primary col-span-2" wire:model.live="filterCategory" placeholder="Category">
+                <option value="0">
+                    Select a Category
+                </option>
+                @foreach (\App\Models\Category::all() as $category)
+                    <option value="{{ $category->id }}">
+                        {{ $category->name }}
                     </option>
-                    @foreach (\App\Models\Category::all() as $category)
-                        <option value="{{ $category->id }}">
-                            {{ $category->name }}
+                @endforeach
+            </select>
+
+            {{-- I'm Feeling Lucky --}}
+            <button class="btn btn-primary col-span-2 mt-3"
+                @if (!$canGetRandom) disabled @else wire:click="getRandom" @endif>
+                I'm feeling lucky
+            </button>
+            <div class="text-left text-neutral-400 text-xs pt-2 col-span-2">
+                Get a random media from Medialog with the given parameters
+            </div>
+
+            <div class="flex flex-row gap-2">
+                <div>
+                    Include all franchises
+                </div>
+                <input type="checkbox" wire:click="toggleIncludeAllFranchises"
+                    @if ($includeAllFranchises) checked @endif>
+            </div>
+            <div class="flex flex-row gap-2">
+                <div>
+                    Include already watched
+                </div>
+                <input type="checkbox" wire:click="toggleIncludeAlreadyWatched"
+                    @if ($includeAlreadyWatched) checked @endif>
+            </div>
+
+            {{-- I'm Feeling Lucky Result --}}
+            @if (!$canGetRandom)
+                <div class="error mt-3 col-span-2">
+                    You must have atleast one un-completed franchise
+                </div>
+            @endif
+            @if (!is_null($franchise))
+                <div class="pt-6 rounded-lg object-cover flex flex-row gap-3 col-span-2">
+                    <img src="{{ $franchise->entries->first()->cover_url }}"
+                        class="rounded-lg w-40 h-60 object-cover">
+                    <div class="flex flex-col gap-3">
+                        <div class="font-semibold">
+                            <i>{{ $franchise->name }}</i>.
+                        </div>
+                        <div>
+                            A <i>{{ $franchise->category->name }}</i> directed/written by
+
+                            @php
+                                $uniquecreators = $franchise->entries
+                                    ->flatMap(function ($entry) {
+                                        return $entry->creators;
+                                    })
+                                    ->unique('id');
+                            @endphp
+
+                            @foreach ($uniquecreators as $creator)
+                                <i>{{ $creator->name }}</i>
+                                @if ($loop->remaining == 1)
+                                    and
+                                @elseif(!$loop->last)
+                                    ,
+                                @endif
+                            @endforeach
+                        </div>
+                        <div>
+                            @php
+                                $uniqueStudios = \App\Models\Franchise::with('entries.studios')
+                                    ->find($franchise->id)
+                                    ->entries->pluck('studios')
+                                    ->collapse()
+                                    ->unique('id');
+                            @endphp
+
+                            Studios include @foreach ($uniqueStudios as $studio)
+                                <i>{{ $studio->name }}</i>
+                                @if ($loop->remaining == 1)
+                                    and
+                                @elseif(!$loop->last)
+                                    ,
+                                @endif
+                            @endforeach
+                        </div>
+                    </div>
+                </div>
+            @endif
+
+            {{-- Sort After --}}
+            <div
+                class="my-6 pt-6 border-t w-full c-border-t-outline  border-dashed col-span-2">
+                <div class="pb-1">
+                    Sort After
+                </div>
+                <select class="input input-primary w-full" placeholder="Sort After"
+                    wire:change="setSortAfter($event.target.value)">
+                    @foreach ($sortAfterArray as $sort)
+                        <option>
+                            {{ $sort }}
                         </option>
                     @endforeach
                 </select>
-
-                {{-- I'm Feeling Lucky --}}
-                <button class="btn btn-primary col-span-2 mt-3"
-                    @if (!$canGetRandom) disabled @else wire:click="getRandom" @endif>
-                    I'm feeling lucky
-                </button>
-                <div class="text-left text-neutral-400 text-xs pt-2 col-span-2">
-                    Get a random media from Medialog with the given parameters
-                </div>
-
-                <div class="flex flex-row gap-2">
-                    <div>
-                        Include all franchises
-                    </div>
-                    <input type="checkbox" wire:click="toggleIncludeAllFranchises"
-                        @if ($includeAllFranchises) checked @endif>
-                </div>
-                <div class="flex flex-row gap-2">
-                    <div>
-                        Include already watched
-                    </div>
-                    <input type="checkbox" wire:click="toggleIncludeAlreadyWatched"
-                        @if ($includeAlreadyWatched) checked @endif>
-                </div>
-
-                {{-- I'm Feeling Lucky Result --}}
-                @if (!$canGetRandom)
-                    <div class="error mt-3 col-span-2">
-                        You must have atleast one un-completed franchise
-                    </div>
-                @endif
-                @if (!is_null($franchise))
-                    <div class="pt-6 rounded-lg object-cover flex flex-row gap-3 col-span-2">
-                        <img src="{{ $franchise->entries->first()->cover_url }}"
-                            class="rounded-lg w-40 h-60 object-cover">
-                        <div class="flex flex-col gap-3">
-                            <div class="font-semibold">
-                                <i>{{ $franchise->name }}</i>.
-                            </div>
-                            <div>
-                                A <i>{{ $franchise->category->name }}</i> directed/written by
-
-                                @php
-                                    $uniquecreators = $franchise->entries
-                                        ->flatMap(function ($entry) {
-                                            return $entry->creators;
-                                        })
-                                        ->unique('id');
-                                @endphp
-
-                                @foreach ($uniquecreators as $creator)
-                                    <i>{{ $creator->name }}</i>
-                                    @if ($loop->remaining == 1)
-                                        and
-                                    @elseif(!$loop->last)
-                                        ,
-                                    @endif
-                                @endforeach
-                            </div>
-                            <div>
-                                @php
-                                    $uniqueStudios = \App\Models\Franchise::with('entries.studios')
-                                        ->find($franchise->id)
-                                        ->entries->pluck('studios')
-                                        ->collapse()
-                                        ->unique('id');
-                                @endphp
-
-                                Studios include @foreach ($uniqueStudios as $studio)
-                                    <i>{{ $studio->name }}</i>
-                                    @if ($loop->remaining == 1)
-                                        and
-                                    @elseif(!$loop->last)
-                                        ,
-                                    @endif
-                                @endforeach
-                            </div>
-                        </div>
-                    </div>
-                @endif
-
-                {{-- Sort After --}}
-                <div
-                    class="my-6 pt-6 border-t w-full c-border-t-outline  border-dashed col-span-2">
-                    <div class="pb-1">
-                        Sort After
-                    </div>
-                    <select class="input input-primary w-full" placeholder="Sort After"
-                        wire:change="setSortAfter($event.target.value)">
-                        @foreach ($sortAfterArray as $sort)
-                            <option>
-                                {{ $sort }}
-                            </option>
-                        @endforeach
-                    </select>
-                </div>
             </div>
-        @else
-            <div>
-                Invalid page
-            </div>
-        @endif
+        </div>
     </div>
     <div class="grid-item m-3 flex flex-col scrollable-grid-item no-scrollbar">
         <div>
