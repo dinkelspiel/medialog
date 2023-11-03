@@ -101,6 +101,7 @@
                 Save
             @endif
         </button>
+        <button class="btn btn-primary" wire:click="createCustomColorScheme">Create new color scheme</button>
     @endif
     @foreach (json_decode($errors) as $key => $value)
         @foreach ($value as $error)

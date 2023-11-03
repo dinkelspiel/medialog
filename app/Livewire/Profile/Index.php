@@ -85,10 +85,18 @@ class Index extends Component
         $colorScheme->created_at = now();
         $colorScheme->save();
 
-        $userColorScheme = new UserColorScheme();
-        $userColorScheme->user_id = auth()->user()->id;
-        $userColorScheme->color_scheme_id = $colorScheme->id;
-        $userColorScheme->save();
+        if(!auth()->user()->userColorScheme)
+        {
+            $userColorScheme = new UserColorScheme();
+            $userColorScheme->user_id = auth()->user()->id;
+            $userColorScheme->color_scheme_id = $colorScheme->id;
+            $userColorScheme->save();
+        } else {
+            auth()->user()->userColorScheme->color_scheme_id = $colorScheme->id;
+            auth()->user()->userColorScheme->save();
+
+            $this->redirect('/profile');
+        }
     }
 
     public function saveColorScheme()
