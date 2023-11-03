@@ -23,19 +23,19 @@
                     <div style="background: {{ $colorScheme->text_gray }}"></div>
                 </div>
                 <div class="flex flex-row gap-3">
-                    @if($colorScheme->creator_id == auth()->user()->id)
+                    @if ($colorScheme->creator_id == auth()->user()->id)
                         <div class="w-full flex justify-center items-center h-6 c-bg-card rounded-lg">
                             Owner
                         </div>
                     @endif
-                    @if(auth()->user()->colorScheme && auth()->user()->colorScheme->id == $colorScheme->id)
+                    @if (auth()->user()->colorScheme && auth()->user()->colorScheme->id == $colorScheme->id)
                         <div class="w-full flex justify-center items-center h-6 c-bg-card rounded-lg">
                             Selected
                         </div>
                     @endif
                 </div>
                 <button class="small-btn btn-primary mt-auto" wire:click="pickColorScheme({{ $colorScheme->id }})">
-                    @if(auth()->user()->colorScheme && auth()->user()->colorScheme->id == $colorScheme->id)
+                    @if (auth()->user()->colorScheme && auth()->user()->colorScheme->id == $colorScheme->id)
                         Disable
                     @else
                         Enable

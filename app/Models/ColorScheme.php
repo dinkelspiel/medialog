@@ -12,23 +12,23 @@ class ColorScheme extends Model
     use HasFactory;
 
     protected $fillable = [
-        'name',
-        'creator_id',
-        'background',
-        'card',
-        'card_hover',
-        'card_active',
-        'secondary',
-        'secondary_hover',
-        'secondary_active',
-        'outline',
-        'text',
-        'text_gray'
+        "name",
+        "creator_id",
+        "background",
+        "card",
+        "card_hover",
+        "card_active",
+        "secondary",
+        "secondary_hover",
+        "secondary_active",
+        "outline",
+        "text",
+        "text_gray",
     ];
 
     public function creator(): BelongsTo
     {
-        return $this->belongsTo(User::class, 'creator_id');
+        return $this->belongsTo(User::class, "creator_id");
     }
 
     public function users(): HasManyThrough

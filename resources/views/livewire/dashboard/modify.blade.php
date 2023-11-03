@@ -28,8 +28,7 @@
             </button>
         </div>
         @foreach ($this->entries as $entry)
-            <div wire:key="{{ $loop->index }}"
-                class="flex flex-col gap-3 mb-3 ps-3 border-s border-secondary ">
+            <div wire:key="{{ $loop->index }}" class="flex flex-col gap-3 mb-3 ps-3 border-s border-secondary ">
                 <div>
                     Entry Title
                 </div>
@@ -43,8 +42,7 @@
                 </div>
                 <div class="flex flex-row gap-2 flex-wrap">
                     @foreach ($this->entries[$loop->index]['studios'] as $studio)
-                        <button
-                            class="max-w-max flex flex-row gap-1 c-bg-secondary  text-white rounded-full px-3"
+                        <button class="max-w-max flex flex-row gap-1 c-bg-secondary  text-white rounded-full px-3"
                             wire:click="removeMeta(`studios`, {{ $loop->parent->index }}, `{{ $studio }}`)">
                             {{ $studio }}
                         </button>
@@ -78,8 +76,7 @@
                 </div>
                 <div class="flex flex-row gap-2 flex-wrap">
                     @foreach ($this->entries[$loop->index]['creators'] as $creator)
-                        <button
-                            class="max-w-max flex flex-row gap-1 bg-secondary  text-white rounded-full px-3"
+                        <button class="max-w-max flex flex-row gap-1 bg-secondary  text-white rounded-full px-3"
                             wire:click="removeMeta(`creators`, {{ $loop->parent->index }}, `{{ $creator }}`)">
                             {{ $creator }}
                         </button>

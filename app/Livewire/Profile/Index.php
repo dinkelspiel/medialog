@@ -16,8 +16,7 @@ class Index extends Component
         $this->ratingStyle = auth()->user()->rating_style->value;
         $this->subtextStyle = auth()->user()->subtext_style->value;
 
-        if(auth()->user()->colorScheme)
-        {
+        if (auth()->user()->colorScheme) {
             $this->colorSchemeName = auth()->user()->colorScheme->name;
 
             $this->background = auth()->user()->colorScheme->background;
@@ -59,7 +58,16 @@ class Index extends Component
         $user->save();
     }
 
-    public string $background, $card, $cardHover, $cardActive, $secondary, $secondaryHover, $secondaryActive, $outline, $text, $textGray;
+    public string $background,
+        $card,
+        $cardHover,
+        $cardActive,
+        $secondary,
+        $secondaryHover,
+        $secondaryActive,
+        $outline,
+        $text,
+        $textGray;
     public string $colorSchemeName = "";
 
     public function logout()
@@ -71,13 +79,13 @@ class Index extends Component
 
     public function createCustomColorScheme()
     {
-        $colorScheme = new ColorScheme;
+        $colorScheme = new ColorScheme();
         $colorScheme->name = auth()->user()->username . "'s Color Scheme";
         $colorScheme->creator_id = auth()->user()->id;
         $colorScheme->created_at = now();
         $colorScheme->save();
 
-        $userColorScheme = new UserColorScheme;
+        $userColorScheme = new UserColorScheme();
         $userColorScheme->user_id = auth()->user()->id;
         $userColorScheme->color_scheme_id = $colorScheme->id;
         $userColorScheme->save();
@@ -86,31 +94,34 @@ class Index extends Component
     public function saveColorScheme()
     {
         $this->validate([
-            'colorSchemeName' => 'required',
-            'background' => 'required|regex:/^#([a-fA-F0-9]{6})$/',
-            'card' => 'required|regex:/^#([a-fA-F0-9]{6})$/',
-            'cardHover' => 'required|regex:/^#([a-fA-F0-9]{6})$/',
-            'cardActive' => 'required|regex:/^#([a-fA-F0-9]{6})$/',
-            'secondary' => 'required|regex:/^#([a-fA-F0-9]{6})$/',
-            'secondaryHover' => 'required|regex:/^#([a-fA-F0-9]{6})$/',
-            'secondaryActive' => 'required|regex:/^#([a-fA-F0-9]{6})$/',
-            'outline' => 'required|regex:/^#([a-fA-F0-9]{6})$/',
-            'text' => 'required|regex:/^#([a-fA-F0-9]{6})$/',
-            'textGray' => 'required|regex:/^#([a-fA-F0-9]{6})$/',
+            "colorSchemeName" => "required",
+            "background" => 'required|regex:/^#([a-fA-F0-9]{6})$/',
+            "card" => 'required|regex:/^#([a-fA-F0-9]{6})$/',
+            "cardHover" => 'required|regex:/^#([a-fA-F0-9]{6})$/',
+            "cardActive" => 'required|regex:/^#([a-fA-F0-9]{6})$/',
+            "secondary" => 'required|regex:/^#([a-fA-F0-9]{6})$/',
+            "secondaryHover" => 'required|regex:/^#([a-fA-F0-9]{6})$/',
+            "secondaryActive" => 'required|regex:/^#([a-fA-F0-9]{6})$/',
+            "outline" => 'required|regex:/^#([a-fA-F0-9]{6})$/',
+            "text" => 'required|regex:/^#([a-fA-F0-9]{6})$/',
+            "textGray" => 'required|regex:/^#([a-fA-F0-9]{6})$/',
         ]);
 
-        if(auth()->user()->colorScheme->creator_id == auth()->user()->id)
-        {
+        if (auth()->user()->colorScheme->creator_id == auth()->user()->id) {
             $colorScheme = ColorScheme::find(auth()->user()->colorScheme->id);
-            if(ColorScheme::where('name', $this->colorSchemeName)->exists() && ColorScheme::where('name', $this->colorSchemeName)->first()->id != auth()->user()->colorScheme->id)
-            {
+            if (
+                ColorScheme::where("name", $this->colorSchemeName)->exists() &&
+                ColorScheme::where("name", $this->colorSchemeName)->first()
+                    ->id != auth()->user()->colorScheme->id
+            ) {
                 return;
             } else {
                 $colorScheme->name = $this->colorSchemeName;
             }
         } else {
-            $colorScheme = new ColorScheme;
-            $colorScheme->name = auth()->user()->username . "'s " . $this->colorSchemeName;
+            $colorScheme = new ColorScheme();
+            $colorScheme->name =
+                auth()->user()->username . "'s " . $this->colorSchemeName;
             $colorScheme->creator_id = auth()->user()->id;
         }
         $colorScheme->background = $this->background;
@@ -126,9 +137,11 @@ class Index extends Component
         $colorScheme->save();
 
         auth()->user()->userColorScheme->color_scheme_id = $colorScheme->id;
-        auth()->user()->userColorScheme->save();
+        auth()
+            ->user()
+            ->userColorScheme->save();
 
-        $this->redirect('/profile');
+        $this->redirect("/profile");
     }
 
     public function render()

@@ -7,12 +7,13 @@
             @error('username')
                 <div> {{ $message }} </div>
             @enderror
-            <input wire:model="regEmail" class="input input-primary" placeholder="Email" type="email" name="email" required>
+            <input wire:model="regEmail" class="input input-primary" placeholder="Email" type="email" name="email"
+                required>
             @error('email')
                 <div> {{ $message }} </div>
             @enderror
-            <input wire:model="regPassword" class="input input-primary mb-3" placeholder="Password" type="password" name="password"
-                required>
+            <input wire:model="regPassword" class="input input-primary mb-3" placeholder="Password" type="password"
+                name="password" required>
             @error('password')
                 <div> {{ $message }} </div>
             @enderror
@@ -20,12 +21,13 @@
         </form>
         <form wire:submit.prevent="login" class="flex flex-col pt-6 md:pt-0 md:ps-10 gap-3">
             @csrf
-            <input wire:model="logEmail" class="input input-primary" placeholder="Email" name="email" type="email" required>
+            <input wire:model="logEmail" class="input input-primary" placeholder="Email" name="email" type="email"
+                required>
             @error('email')
                 <div> {{ $message }} </div>
             @enderror
-            <input wire:model="logPassword" class="input input-primary mb-3" placeholder="Password" name="password" type="password"
-                required>
+            <input wire:model="logPassword" class="input input-primary mb-3" placeholder="Password" name="password"
+                type="password" required>
             @error('password')
                 <div> {{ $message }} </div>
             @enderror
