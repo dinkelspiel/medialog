@@ -65,12 +65,16 @@
     background: {{ auth()->user()->colorScheme->secondary ?? "var(--secondary)" }};
 }
 
-.c-c-bg-outline {
+.c-bg-outline {
     background: {{ auth()->user()->colorScheme->outline ?? "var(--outline)" }};
 }
 
 .c-border-b-outline {
     border-bottom-color: {{ auth()->user()->colorScheme->outline ?? "var(--outline)" }};
+}
+
+.c-border-outline {
+    border-color: {{ auth()->user()->colorScheme->outline ?? "var(--outline)" }};
 }
 
 .c-hover-bg-secondary-hover:hover {

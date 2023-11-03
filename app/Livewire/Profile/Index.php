@@ -110,7 +110,8 @@ class Index extends Component
             }
         } else {
             $colorScheme = new ColorScheme;
-            $colorScheme->name = auth()->user()->username . "'s" . $this->colorSchemeName;
+            $colorScheme->name = auth()->user()->username . "'s " . $this->colorSchemeName;
+            $colorScheme->creator_id = auth()->user()->id;
         }
         $colorScheme->background = $this->background;
         $colorScheme->card = $this->card;

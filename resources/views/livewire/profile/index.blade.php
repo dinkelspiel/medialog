@@ -23,8 +23,13 @@
         </option>
     </select>
 
-    <div class="pt-3">
-        Color Scheme
+    <div class="pt-3 flex flex-row justify-between">
+        <div>
+            Color Scheme
+        </div>
+        <a class="text-btn" href="/color-schemes">
+            Browse Color Schemes
+        </a>
     </div>
     @if(!auth()->user()->colorScheme)
         <button class="btn btn-primary" wire:click="createCustomColorScheme">Create Custom Color Scheme</button>
@@ -80,7 +85,7 @@
 
             <div class="flex items-center gap-2">
                 <div class="me-auto">Background</div>
-                <div class="h-12 w-12 rounded-lg" style="background: {{ $background }}"></div>
+                <div class="h-12 w-12 rounded-lg style="background: {{ $background }}"></div>
                 <input class="small-input input-primary" placeholder="#AABBCC" wire:model.live="background" />
             </div>
             <div class="flex items-center gap-2">
@@ -89,7 +94,13 @@
                 <input class="small-input input-primary" placeholder="#AABBCC" wire:model.live="outline" />
             </div>
         </div>
-        <button class="btn btn-primary" wire:click="saveColorScheme">Save</button>
+        <button class="btn btn-primary" wire:click="saveColorScheme">
+            @if(auth()->user()->colorScheme->creator_id != auth()->user()->id)
+                Remix Color Scheme
+            @else
+                Save
+            @endif
+        </button>
     @endif
     @foreach(json_decode($errors) as $key => $value)
         @foreach($value as $error)
