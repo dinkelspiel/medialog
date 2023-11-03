@@ -2,8 +2,13 @@
     <div class="grid gap-3 grid-cols-3">
         @foreach (\App\Models\ColorScheme::all() as $colorScheme)
             <div class="border c-border-outline rounded-lg p-3 flex flex-col gap-3">
-                <div>
-                    {{ $colorScheme->name }}
+                <div class="flex flex-col gap-1.5">
+                    <div>
+                        {{ $colorScheme->name }}
+                    </div>
+                    <div class="text-sm">
+                        By {{ $colorScheme->creator->username }}
+                    </div>
                 </div>
                 <div class="grid grid-cols-2 h-40 rounded-lg">
                     <div style="background: {{ $colorScheme->background }}"></div>
