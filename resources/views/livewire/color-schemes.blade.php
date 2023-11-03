@@ -17,17 +17,17 @@
                         By {{ $colorScheme->creator->username }}
                     </div>
                 </div>
-                <div class="grid grid-cols-2 h-40 rounded-lg">
-                    <div style="background: {{ $colorScheme->background }}"></div>
-                    <div style="background: {{ $colorScheme->card }}"></div>
-                    <div style="background: {{ $colorScheme->card_hover }}"></div>
-                    <div style="background: {{ $colorScheme->card_active }}"></div>
-                    <div style="background: {{ $colorScheme->secondary }}"></div>
-                    <div style="background: {{ $colorScheme->secondary_hover }}"></div>
-                    <div style="background: {{ $colorScheme->secondary_active }}"></div>
-                    <div style="background: {{ $colorScheme->outline }}"></div>
-                    <div style="background: {{ $colorScheme->text }}"></div>
-                    <div style="background: {{ $colorScheme->text_gray }}"></div>
+                <div class="grid grid-cols-2 h-40 rounded-lg text-black">
+                    <div style="background: {{ $colorScheme->background }}" class="flex justify-center items-center">Background</div>
+                    <div style="background: {{ $colorScheme->card }}" class="flex justify-center items-center">Card</div>
+                    <div style="background: {{ $colorScheme->card_hover }}" class="flex justify-center items-center">Card Hover</div>
+                    <div style="background: {{ $colorScheme->card_active }}" class="flex justify-center items-center">Card Active</div>
+                    <div style="background: {{ $colorScheme->secondary }}" class="flex justify-center items-center">Secondary</div>
+                    <div style="background: {{ $colorScheme->secondary_hover }}" class="flex justify-center items-center">Secondary Hover</div>
+                    <div style="background: {{ $colorScheme->secondary_active }}" class="flex justify-center items-center">Secondary Active</div>
+                    <div style="background: {{ $colorScheme->outline }}" class="flex justify-center items-center">Outline</div>
+                    <div style="background: {{ $colorScheme->text }}" class="flex justify-center items-center">Text</div>
+                    <div style="background: {{ $colorScheme->text_gray }}" class="flex justify-center items-center">Text Gray</div>
                 </div>
                 <div class="flex flex-row gap-3">
                     @if ($colorScheme->creator_id == auth()->user()->id)
