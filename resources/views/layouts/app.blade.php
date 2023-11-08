@@ -45,7 +45,7 @@
         }
 
         .c-hover-bg-card-hover:hover {
-            background: {{ auth()->user()->colorScheme->background ?? 'var(--background)' }};
+            background: {{ auth()->user()->colorScheme->card_hover ?? 'var(--card_hover)' }};
         }
 
         .c-active-bg-card-active:active {
