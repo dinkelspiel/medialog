@@ -12,16 +12,16 @@
 
     <style>
         :root {
-            --background: #FFFBFE;
-            --card: #FAF1F0;
+            --background: #FFFFFF;
+            --card: #F5F5F5;
             --card_hover: #F2DBD9;
             --card_active: #EDCDC9;
-            --secondary: #d1857b;
+            --secondary: #E16449;
             --secondary_hover: #c6685d;
             --secondary_active: #d6938a;
-            --outline: #E6BEB7;
+            --outline: #D1D1D1;
             --text: #1C1B1F;
-            --text_gray: #A3A3A3;
+            --text_gray: #808080;
         }
 
         .c-text-text {
@@ -42,6 +42,14 @@
 
         .c-border-background {
             border-color: {{ auth()->user()->colorScheme->background ?? 'var(--background)' }};
+        }
+
+        .c-border-card {
+            border-color: {{ auth()->user()->colorScheme->card ?? 'var(--card)' }};
+        }
+
+        .c-ring-card {
+            --tw-ring-color: {{ auth()->user()->colorScheme->card ?? 'var(--card)' }};
         }
 
         .c-hover-bg-card-hover:hover {
@@ -104,6 +112,14 @@
             color: {{ auth()->user()->colorScheme->secondary_active ?? 'var(--secondary_active)' }};
         }
 
+        .c-ring-background {
+            --tw-ring-color: {{ auth()->user()->colorScheme->background ?? 'var(--background)' }};
+        }
+
+        .c-outline-card {
+            outline-color: {{ auth()->user()->colorScheme->card ?? 'var(--card)' }};
+        }
+
         .text-btn {
             color: {{ auth()->user()->colorScheme->secondary ?? 'var(--secondary)' }};
             transition-duration: 100ms;
@@ -112,30 +128,6 @@
 
         .text-btn:hover {
             color: {{ auth()->user()->colorScheme->secondary_hover ?? 'var(--secondary_hover)' }};
-        }
-
-        .text-btn:active {
-            color: {{ auth()->user()->colorScheme->secondary_active ?? 'var(--secondary_active)' }};
-        }
-
-        .icon-btn-white:hover {
-            background: {{ auth()->user()->colorScheme->secondary_hover ?? 'var(--secondary_hover)' }};
-        }
-
-        .icon-btn-white:active {
-            background: {{ auth()->user()->colorScheme->secondary_active ?? 'var(--secondary_active)' }};
-        }
-
-        .icon-btn-pink {
-            background: {{ auth()->user()->colorScheme->secondary ?? 'var(--secondary)' }};
-        }
-
-        .icon-btn-pink:hover {
-            background: {{ auth()->user()->colorScheme->secondary_hover ?? 'var(--secondary_hover)' }};
-        }
-
-        .icon-btn-pink:active {
-            background: {{ auth()->user()->colorScheme->secondary_active ?? 'var(--secondary_active)' }};
         }
 
         .input-primary {
@@ -159,12 +151,12 @@
 
 <body class="c-bg-background c-text-text">
     <div class="grid absolute inset-0 mr-3" style="grid-template-columns: 5rem 1fr">
-        <div class="h-[calc(100dvh)]">
+        <div>
             @include('includes.header', [
                 'page' => $header,
             ])
         </div>
-        <div class="max-h-[calc(100dvh)] h-[calc(100dvh)]">
+        <div>
             @if (isset($slot))
                 {{ $slot }}
             @endif

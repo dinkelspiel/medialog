@@ -1,25 +1,29 @@
-<div class="flex flex-col py-3 h-full items-center gap-2 justify-start">
-    <a href="/" wire:navigate
-        class="icon-btn-nav icon-btn @if ($page == 'home') icon-btn-pink @else icon-btn-white @endif">
-        @include('includes.images.logo')
+<div class="flex flex-col py-8 h-full items-center gap-3 justify-start">
+    <a href="/" wire:navigate>
+        <x-button.nav>
+            <x-icons.logo />
+        </x-button.nav>
     </a>
     @if (auth()->check())
-        <a href="/dashboard" wire:navigate
-            class="icon-btn-nav icon-btn @if ($page == 'dashboard') icon-btn-pink @else icon-btn-white @endif mb-auto">
-            @include('includes.images.house')
+        <a href="/dashboard" class="mb-auto" wire:navigate>
+            <x-button.nav.selected>
+                <x-icons.house />
+            </x-button.nav.selected>
         </a>
     @endif
 
     @if (auth()->check() && auth()->user()->permission && auth()->user()->permission->permission == 'admin')
-        <a href="/admin" wire:navigate
-            class="icon-btn-nav icon-btn @if ($page == 'admin') icon-btn-pink @else icon-btn-white @endif">
-            @include('includes.images.admin')
+        <a href="/admin" wire:navigate>
+            <x-button.nav>
+                <x-icons.admin />
+            </x-button.nav>
         </a>
     @endif
     @if (auth()->check())
-        <a href="/profile" wire:navigate
-            class="icon-btn-nav icon-btn @if ($page == 'profile') icon-btn-pink @else icon-btn-white @endif">
-            @include('includes.images.person')
+        <a href="/profile" wire:navigate>
+            <x-button.nav>
+                <x-icons.person />
+            </x-button.nav>
         </a>
     @endif
 </div>

@@ -348,6 +348,8 @@ class Index extends Component
             },
         ]);
 
+        $this->userEntry = UserEntry::where("user_id", auth()->user()->id)->first();
+
         switch ($this->sortAfter) {
             case SortAfterEnum::Watched->value:
                 $userEntries = $userEntries
