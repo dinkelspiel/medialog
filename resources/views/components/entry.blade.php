@@ -4,7 +4,7 @@
             'w-full p-3 text-left rounded-lg duration-200 c-border-background  c-hover-bg-card-hover  active:rounded-xl c-active-bg-card-active  c-hover-border-secondary  border-dashed border gap-4 flex flex-row cursor-pointer',
     ]) }}>
     @if (count($entry->franchise->entries) > 0)
-        <img src="{{ $entry->cover_url }}" class="rounded-lg w-24 object-cover aspect-[2/3]">
+        <img src="{{ $entry->cover_url }}" class="rounded-lg w-20 object-cover aspect-[2/3]">
     @endif
 
     <div class="flex flex-col justify-center my-auto gap-3">
