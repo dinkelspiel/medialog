@@ -37,7 +37,7 @@
                 </div>
             </div>
             <div x-show="open"
-                class="rounded-[32px] border-2 c-border-card c-shadow-card grid grid-cols-2 gap-2 p-[30px] relative">
+                class="rounded-[32px] border-2 c-border-card c-shadow-card grid grid-cols-2 gap-2 p-[30px] relative mb-8">
 
                 <div class="font-semibold text-xl text-center col-span-2">
                     Filter
@@ -54,14 +54,14 @@
                     <x-input showCaret class="w-full" placeholder="Production Studio"
                         wire:model.live="filterSearchStudio" @focus="open = true" />
                     @if ($filterSearchStudio != '' && $filterStudio == '0')
-                        <div class="dropdown-container" x-show="open">
+                        <x-dropdown.container x-show="open">
                             @foreach (\App\Models\Studio::where('name', 'LIKE', '%' . $filterSearchStudio . '%')->orderBy('name')->get() as $studio)
-                                <button class="dropdown-button" wire:click="setFilterStudio(`{{ $studio->name }}`)"
+                                <x-dropdown.button wire:click="setFilterStudio(`{{ $studio->name }}`)"
                                     @click="open = false">
                                     {{ $studio->name }}
-                                </button>
+                                </x-dropdown.button>
                             @endforeach
-                        </div>
+                        </x-dropdown.container>
                     @endif
                 </div>
 
@@ -69,14 +69,14 @@
                     <x-input showCaret class="w-full" placeholder="Director/Writer"
                         wire:model.live="filterSearchCreator" @focus="open = true" />
                     @if ($filterSearchCreator != '' && $filterCreator == 0)
-                        <div class="dropdown-container" x-show="open">
+                        <x-dropdown.container x-show="open">
                             @foreach (\App\Models\Person::where('name', 'LIKE', '%' . $filterSearchCreator . '%')->orderBy('name')->get() as $person)
-                                <button class="dropdown-button" wire:click="setFilterCreator(`{{ $person->name }}`)"
+                                <x-dropdown.button wire:click="setFilterCreator(`{{ $person->name }}`)"
                                     @click="open = false">
                                     {{ $person->name }}
-                                </button>
+                                </x-dropdown.button>
                             @endforeach
-                        </div>
+                        </x-dropdown.container>
                     @endif
                 </div>
 
@@ -95,20 +95,17 @@
         <div>
             @foreach ($userEntries as $browserEntry)
                 @if (!is_null($browserEntry->entry->franchise))
-                    <button
-                        class="h-20 w-full text-left rounded-lg duration-200 c-border-background  c-hover-bg-card-hover  active:rounded-xl c-active-bg-card-active  c-hover-border-secondary  border-dashed border p-3 flex flex-row cursor-pointer"
-                        wire:click="showUserEntry({{ $browserEntry->id }})">
-                        @include('includes.entry', [
-                            'entry' => $browserEntry->entry,
-                        ])
-                    </button>
+                    <x-entry :entry="$browserEntry->entry" :rating="$browserEntry->rating" wire:click="showUserEntry({{ $browserEntry->id }})" />
                 @endif
             @endforeach
         </div>
     </div>
     @if ($userEntry)
+        <div class="fixed z-5 top-0 left-0 w-[100dvw] h-[100dvh] bg-black opacity-50 lg:hidden">
+
+        </div>
         <div
-            class="rounded-[32px] c-bg-bg border-2 c-border-card c-shadow-card p-[30px] flex flex-col absolute z-10 w-full lg:relative">
+            class="rounded-[32px] c-bg-background border-2 c-border-card c-shadow-card p-[30px] flex flex-col absolute z-10 bottom-8 h-1/2 w-full lg:bottom-0 lg:relative lg:h-full">
             @if (isset($error))
                 <div class="error">
                     {{ $error }}
@@ -116,18 +113,20 @@
             @else
                 <div class="flex flex-row items-center gap-4">
                     <div class="flex flex-row w-full gap-3 justify-center text-xl">
-                        <div class="text-lg font-semibold">
-                            {{ $userEntry->entry->franchise->name }}
-                        </div>
-                        @if (count($userEntry->entry->franchise->entries) > 1)
-                            <div class="text-lg font-nsemiboldormal">
-                                {{ $userEntry->entry->name }}
+                        @if ($userEntry->entry)
+                            <div class="text-lg font-semibold">
+                                {{ $userEntry->entry->franchise->name }}
                             </div>
+                            @if (count($userEntry->entry->franchise->entries) > 1)
+                                <div class="text-lg font-semibold">
+                                    {{ $userEntry->entry->name }}
+                                </div>
+                            @endif
                         @endif
                     </div>
                     <button wire:click="closeUserEntry"
                         class="ms-auto text-secondary  hover:text-secondary-hover active:text-secondary-active duration-100 cursor-pointer">
-                        X
+                        <x-icons.xmark />
                     </button>
                 </div>
                 @if (!is_null($userEntry->watched_at))
@@ -167,7 +166,7 @@
                         <div>
                             Notes
                         </div>
-                        <textarea class="w-full appearance-none !h-full resize-none !text-base p-0" name="notes"
+                        <textarea class="w-full appearance-none c-bg-background !h-full resize-none !text-base p-0" name="notes"
                             placeholder="Write some notes..." wire:model="userEntry.notes">{{ $userEntry->notes }}</textarea>
                         <div class="grid grid-cols-2">
                             <div class="grid-item font-semibold">
@@ -208,7 +207,7 @@
 </div>
 @else
 <div class="p-4 h-full flex flex-col justify-center">
-    <x-button>
+    <x-button wire:click="imFeelingLucky">
         I'm feeling lucky
     </x-button>
 </div>

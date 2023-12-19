@@ -43,7 +43,5 @@ Route::middleware([VerifySession::class, AuthorizeAdmin::class])->group(
     },
 );
 
-Route::get("/", function () {
-    return redirect("/login");
-});
+Route::redirect("/", "/login");
 Route::get("/login", App\Livewire\Auth\Index::class)->name("login");

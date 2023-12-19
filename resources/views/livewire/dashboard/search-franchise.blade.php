@@ -1,4 +1,4 @@
-<div class="c-bg-card rounded-[32px] border-2 c-border-card min-h-full">
+<div class="c-bg-card rounded-[32px] border-2 c-border-card min-h-full no-scrollbar">
     <div class="grid grid-cols-2 gap-4 c-bg-background rounded-[32px] p-[30px]">
         <div class="font-semibold col-span-2 text-center text-xl">
             Add Media
@@ -22,28 +22,26 @@
         <div class="grid grid-cols-1 w-full relative" x-data="{ open: true }">
             <x-input placeholder="Production Studio" wire:model.live="searchStudio" @focus="open = true" />
             @if ($searchStudio != '' && \App\Models\Studio::where('name', $searchStudio)->first() == null)
-                <div class="dropdown-container" x-show="open">
+                <x-dropdown.container x-show="open">
                     @foreach (\App\Models\Studio::where('name', 'LIKE', '%' . $searchStudio . '%')->orderBy('name')->get() as $studio)
-                        <button class="dropdown-button" wire:click="setSearchStudio('{{ $studio->name }}')"
-                            @click="open = false">
+                        <x-dropdown.button wire:click="setSearchStudio('{{ $studio->name }}')" @click="open = false">
                             {{ $studio->name }}
-                        </button>
+                        </x-dropdown.button>
                     @endforeach
-                </div>
+                </x-dropdown.container>
             @endif
         </div>
 
         <div class="grid grid-cols-1 w-full relative" x-data="{ open: true }">
             <x-input placeholder="Director/Writer" wire:model.live="searchCreator" @focus="open = true" />
             @if ($searchCreator != '' && \App\Models\Person::where('name', $searchCreator)->first() == null)
-                <div class="dropdown-container" x-show="open">
+                <x-dropdown.container x-show="open">
                     @foreach (\App\Models\Person::where('name', 'LIKE', '%' . $searchCreator . '%')->orderBy('name')->get() as $person)
-                        <button class="dropdown-button" wire:click="setSearchCreator('{{ $person->name }}')"
-                            @click="open = false">
+                        <x-dropdown.button wire:click="setSearchCreator('{{ $person->name }}')" @click="open = false">
                             {{ $person->name }}
-                        </button>
+                        </x-dropdown.button>
                     @endforeach
-                </div>
+                </x-dropdown.container>
             @endif
         </div>
     </div>
@@ -55,13 +53,8 @@
             <ul>
                 @foreach ($entries as $entry)
                     <li>
-                        <button
-                            class="h-20 w-full text-left rounded-lg duration-200 c-border-background  c-hover-bg-card-hover  active:rounded-xl c-active-bg-card-active  c-hover-border-secondary  border-dashed border p-3 flex flex-row cursor-pointer"
-                            wire:click="create({{ $entry->franchise->id }}, {{ $entry->id }})">
-                            @include('includes.entry', [
-                                'entry' => $entry,
-                            ])
-                        </button>
+                        <x-entry :entry="$entry" wire:click="create({{ $entry->franchise->id }}, {{ $entry->id }})"
+                            class="c-border-card" />
                     </li>
                 @endforeach
                 <a href="/dashboard/add"

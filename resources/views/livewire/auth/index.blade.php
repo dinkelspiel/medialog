@@ -17,7 +17,7 @@
             @error('password')
                 <div> {{ $message }} </div>
             @enderror
-            <button class="btn btn-primary" type="submit">Sign up</button>
+            <x-button type="submit">Sign up</x-button>
         </form>
         <form wire:submit.prevent="login" class="flex flex-col pt-6 md:pt-0 md:ps-10 gap-3">
             @csrf
@@ -31,7 +31,7 @@
             @error('password')
                 <div> {{ $message }} </div>
             @enderror
-            <button class="btn btn-primary" type="submit">Log in</button>
+            <x-button type="submit">Log in</x-button>
     </div>
     @if (session()->has('error'))
         <div class="error">

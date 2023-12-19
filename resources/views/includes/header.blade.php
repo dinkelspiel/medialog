@@ -1,11 +1,11 @@
 <div class="flex flex-col py-8 h-full items-center gap-3 justify-start">
-    <a href="/" wire:navigate>
+    <a href="/">
         <x-button.nav>
             <x-icons.logo />
         </x-button.nav>
     </a>
     @if (auth()->check())
-        <a href="/dashboard" class="mb-auto" wire:navigate>
+        <a href="/dashboard" class="mb-auto">
             <x-button.nav.selected>
                 <x-icons.house />
             </x-button.nav.selected>
@@ -13,14 +13,14 @@
     @endif
 
     @if (auth()->check() && auth()->user()->permission && auth()->user()->permission->permission == 'admin')
-        <a href="/admin" wire:navigate>
+        <a href="/admin">
             <x-button.nav>
                 <x-icons.admin />
             </x-button.nav>
         </a>
     @endif
     @if (auth()->check())
-        <a href="/profile" wire:navigate>
+        <a href="/profile">
             <x-button.nav>
                 <x-icons.person />
             </x-button.nav>
