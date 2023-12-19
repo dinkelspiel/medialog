@@ -1,10 +1,10 @@
 <button
     {{ $attributes->merge([
         'class' =>
-            'w-full p-3 text-left rounded-lg duration-200 c-border-background  c-hover-bg-card-hover  active:rounded-xl c-active-bg-card-active  c-hover-border-secondary  border-dashed border gap-4 flex flex-row cursor-pointer',
+            'w-full p-3 text-left rounded-[24px] duration-200 c-ring-outline c-hover-bg-card active:rounded-[32px] c-hover-border-secondary hover:ring-2 gap-4 flex flex-row cursor-pointer',
     ]) }}>
     @if (count($entry->franchise->entries) > 0)
-        <img src="{{ $entry->cover_url }}" class="rounded-lg w-20 object-cover aspect-[2/3]">
+        <img src="{{ $entry->cover_url }}" class="rounded-[16px] w-20 object-cover aspect-[2/3]">
     @endif
 
     <div class="flex flex-col justify-center my-auto gap-3">
@@ -46,7 +46,7 @@
         </div>
         @isset($rating)
             <div class="w-full h-[2px] c-bg-outline">
-                
+
             </div>
             <div class="flex flex-row gap-3">
                 @for ($i = 0; $i < 10; $i++)
