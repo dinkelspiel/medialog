@@ -65,16 +65,12 @@ button[disabled] {
     }
 }
 
-.slider {
-    @apply w-full h-2 rounded-full bg-background outline-none opacity-70 duration-75 appearance-none;
-}
-
 .slider::-webkit-slider-thumb {
-    @apply w-6 h-6 rounded-lg hover:rounded-xl active:rounded-full bg-secondary  cursor-pointer appearance-none hover:bg-secondary-hover  active:bg-secondary-active  duration-200;
+    @apply w-6 h-6 rounded-lg hover:rounded-xl active:rounded-full  cursor-pointer appearance-none duration-200;
 }
 
 .slider::-moz-range-thumb {
-    @apply w-6 h-6 rounded-lg hover:rounded-xl active:rounded-full bg-secondary  cursor-pointer appearance-none hover:bg-secondary-hover  active:bg-secondary-active  duration-200;
+    @apply w-6 h-6 rounded-lg hover:rounded-xl active:rounded-full cursor-pointer appearance-none duration-200;
 }
 
 .error {

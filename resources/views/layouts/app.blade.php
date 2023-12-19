@@ -146,21 +146,32 @@
             color: {{ auth()->user()->colorScheme->secondary_hover ?? 'var(--secondary_hover)' }};
         }
 
-        .input-primary {
-            border-color: {{ auth()->user()->colorScheme->outline ?? 'var(--outline)' }};
+        .c-slider {
+            background-color: {{ auth()->user()->colorScheme->card ?? 'var(--card)' }};
         }
 
-        .btn-primary {
-            color: white;
-            background: {{ auth()->user()->colorScheme->secondary ?? 'var(--secondary)' }};
+        .c-slider::-webkit-slider-thumb {
+            background-color: {{ auth()->user()->colorScheme->secondary ?? 'var(--secondary)' }};
         }
 
-        .btn-primary:hover {
-            background: {{ auth()->user()->colorScheme->secondary_hover ?? 'var(--secondary_hover)' }};
+        .c-slider::-webkit-slider-thumb:hover {
+            background-color: {{ auth()->user()->colorScheme->secondary_hover ?? 'var(--secondary_hover)' }};
         }
 
-        .btn-primary:active {
-            background: {{ auth()->user()->colorScheme->secondary_active ?? 'var(--secondary_active)' }};
+        .c-slider::-webkit-slider-thumb:active {
+            background-color: {{ auth()->user()->colorScheme->secondary_active ?? 'var(--secondary_active)' }};
+        }
+
+        .c-slider::-moz-range-thumb {
+            background-color: {{ auth()->user()->colorScheme->secondary ?? 'var(--secondary)' }};
+        }
+
+        .c-slider::-moz-range-thumb:hover {
+            background-color: {{ auth()->user()->colorScheme->secondary_hover ?? 'var(--secondary_hover)' }};
+        }
+
+        .c-slider::-moz-range-thumb:active {
+            background-color: {{ auth()->user()->colorScheme->secondary_active ?? 'var(--secondary_active)' }};
         }
     </style>
 </head>

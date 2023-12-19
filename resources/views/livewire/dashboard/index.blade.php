@@ -118,7 +118,7 @@
                                 {{ $userEntry->entry->franchise->name }}
                             </div>
                             @if (count($userEntry->entry->franchise->entries) > 1)
-                                <div class="text-lg font-semibold">
+                                <div class="text-lg font-normal">
                                     {{ $userEntry->entry->name }}
                                 </div>
                             @endif
@@ -141,9 +141,8 @@
                         @switch(auth()->user()->rating_style)
                             @case(\App\Enums\UserRatingStyleEnum::Range)
                                 <div class="flex flex-row-reverse gap-3 items-center">
-                                    <input class="slider" id="rating" type="range" min="0" max="100"
-                                        name="rating" wire:model="userEntry.rating"
-                                        oninput="this.nextElementSibling.value = this.value">
+                                    <x-slider id="rating" type="range" min="0" max="100" name="rating"
+                                        wire:model="userEntry.rating" oninput="this.nextElementSibling.value = this.value" />
                                     <output class="w-5">{{ $userEntry->rating }}</output>
                                 </div>
                             @break

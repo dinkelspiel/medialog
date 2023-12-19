@@ -1,6 +1,6 @@
 <div {{ $attributes->merge(['class' => 'relative']) }}>
     <select
-        {{ $attributes->merge(['class' => 'appearance-none h-14 outline-2 c-outline-card rounded-full c-bg-background px-6 w-full flex flex-row text-left c-text-gray']) }}>
+        {{ $attributes->merge(['class' => 'appearance-none h-14 border-2 c-border-card rounded-full c-bg-background px-6 w-full flex flex-row text-left c-text-gray']) }}>
         {{ $slot }}
     </select>
     @if (!isset($showCaret))
