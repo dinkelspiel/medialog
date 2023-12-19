@@ -78,11 +78,11 @@ button[disabled] {
 }
 
 .error {
-    @apply max-w-full bg-red-400 rounded-lg h-14 px-6 justify-center leading-13 text-center text-white
+    @apply max-w-full bg-red-400 rounded-full h-14 px-6 justify-center leading-13 text-center text-white
 }
 
 .success {
-    @apply max-w-full bg-lime-500 rounded-lg h-14 px-6 justify-center leading-13 text-center text-white
+    @apply max-w-full bg-lime-500 rounded-full h-14 px-6 justify-center leading-13 text-center text-white
 }
 
 .dropdown-container {

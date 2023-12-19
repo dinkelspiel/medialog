@@ -27,9 +27,18 @@ class Index extends Component
 
     public string $sortAfter = "";
 
-    public function setSortAfter(string $sort)
+    public function cycleSortAfter()
     {
-        $this->sortAfter = $sort;
+        $sortAfterArray = array_column(SortAfterEnum::cases(), "value");
+        $index = array_search($this->sortAfter, $sortAfterArray);
+
+        $key = @$sortAfterArray[$index + 1];
+        if($key == null)
+        {
+            $key = $sortAfterArray[0];
+        }
+
+        $this->sortAfter = $key;
     }
 
     public function showUserEntry($id)
@@ -194,7 +203,7 @@ class Index extends Component
             $userEntry = $userEntry->first();
 
             if ($userEntry != null) {
-                $this->franchise = $userEntry->entry->franchise;
+                $this->userEntry = $userEntry->entry->franchise->entries->first();
             } else {
                 $this->franchise = null;
             }
@@ -292,9 +301,9 @@ class Index extends Component
                 }
 
                 if ($franchise->first() != null) {
-                    $this->franchise = $franchise->first()->franchise;
+                    $this->userEntry = $franchise->first()->franchise->entries->first();
                 } else {
-                    $this->franchise = null;
+                    $this->userEntry = null;
                 }
             }
         }
@@ -347,8 +356,6 @@ class Index extends Component
                 }
             },
         ]);
-
-        $this->userEntry = UserEntry::where("user_id", auth()->user()->id)->first();
 
         switch ($this->sortAfter) {
             case SortAfterEnum::Watched->value:

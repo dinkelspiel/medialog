@@ -120,6 +120,18 @@
             outline-color: {{ auth()->user()->colorScheme->card ?? 'var(--card)' }};
         }
 
+        .c-shadow-card {
+            box-shadow: 0px 4px 24px 0px rgba(170, 170, 170, 0.10);
+        }
+
+        .c-fill-secondary {
+            fill: {{ auth()->user()->colorScheme->secondary ?? 'var(--secondary)' }};
+        }
+
+        .c-fill-outline {
+            fill: {{ auth()->user()->colorScheme->outline ?? 'var(--outline)' }};
+        }
+
         .text-btn {
             color: {{ auth()->user()->colorScheme->secondary ?? 'var(--secondary)' }};
             transition-duration: 100ms;
