@@ -50,8 +50,7 @@
                 </div>
                 <div class="grid grid-cols-1 w-full relative">
                     <div class="flex flex-row gap-3 max-w-full">
-                        <x-input
-                            class="w-full @if ($entries[$loop->index]['studioSearch'] != '') !rounded-bl-none !rounded-br-none @endif"
+                        <x-input class="w-full @if ($entries[$loop->index]['studioSearch'] != '')  @endif"
                             placeholder="Production Studio"
                             wire:model.live="entries.{{ $loop->index }}.studioSearch" />
                     </div>
@@ -85,9 +84,7 @@
                 </div>
                 <div class="grid grid-cols-1 w-full relative">
                     <div class="flex flex-row gap-3 max-w-full">
-                        <x-input
-                            class="w-full @if ($entries[$loop->index]['creatorSearch'] != '') !rounded-bl-none !rounded-br-none @endif"
-                            placeholder="Director/Writer"
+                        <x-input class="w-full @if ($entries[$loop->index]['creatorSearch'] != '')  @endif" placeholder="Director/Writer"
                             wire:model.live="entries.{{ $loop->index }}.creatorSearch" />
                     </div>
                     @if ($entries[$loop->index]['creatorSearch'] != '')
