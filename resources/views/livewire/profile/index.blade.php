@@ -1,4 +1,4 @@
-<div class="xl:mx-96 mx-0 py-3 flex flex-col gap-2 h-[calc(100dvh)]">
+<div class="xl:mx-96 mx-0 py-3 flex flex-col gap-4 h-[calc(100dvh)]">
     <div class="pt-3">
         Rating Style
     </div>
@@ -32,7 +32,7 @@
         </a>
     </div>
     @if (!auth()->user()->colorScheme)
-        <button class="btn btn-primary" wire:click="createCustomColorScheme">Create Custom Color Scheme</button>
+        <x-button wire:click="createCustomColorScheme">Create Custom Color Scheme</x-button>
     @else
         <div class="flex flex-col gap-3">
             <div>Name</div>
@@ -95,14 +95,14 @@
                 <x-input placeholder="#AABBCC" wire:model.live="outline" />
             </div>
         </div>
-        <button class="btn btn-primary" wire:click="saveColorScheme">
+        <x-button wire:click="saveColorScheme">
             @if (auth()->user()->colorScheme->creator_id != auth()->user()->id)
                 Remix Color Scheme
             @else
                 Save
             @endif
-        </button>
-        <button class="btn btn-primary" wire:click="createCustomColorScheme">Create new color scheme</button>
+        </x-button>
+        <x-button wire:click="createCustomColorScheme">Create new color scheme</x-button>
     @endif
     @foreach (json_decode($errors) as $key => $value)
         @foreach ($value as $error)
@@ -116,8 +116,8 @@
     @endforeach
     <form wire:submit.prevent="logout" class="justify-end mt-auto">
         @csrf
-        <button class="btn btn-primary w-full mt-auto" type="submit">
+        <x-button class="w-full mt-auto" type="submit">
             Logout
-        </button>
+        </x-button>
     </form>
 </div>
