@@ -1,13 +1,95 @@
 <div class="grid h-[calc(100dvh)] grid-cols-1 lg:grid-cols-[0.9fr,1.2fr,0.9fr] gap-8 relative py-8">
-    <div class="rounded-[32px] scrollable-grid-item">
+    <div class="rounded-[32px] scrollable-grid-item c-shadow-card">
         <livewire:dashboard.search-franchise />
     </div>
     <div class="flex flex-col scrollable-grid-item no-scrollbar">
-        <div>
+        <div x-data="{ open: false }">
             <div class="font-semibold text-xl flex flex-row justify-between items-center py-4">
                 My Media
 
-                <x-icons.circle.sort />
+                <div class="flex row gap-4">
+                    <x-button.secondary class="!w-max px-8 flex flex-row items-center gap-3" wire:click="cycleSortAfter">
+                        @switch($sortAfter)
+                            @case('Watched')
+                                <x-icons.eye />
+                                Watched
+                            @break
+
+                            @case('Updated')
+                                <x-icons.clock />
+                                Updated
+                            @break
+
+                            @case('Rating')
+                                <x-icons.star />
+                                Rating
+                            @break
+
+                            @case('A-Z')
+                                <x-icons.az />
+                                A-Z
+                            @break
+
+                            @default
+                        @endswitch
+                    </x-button.secondary>
+                    <x-icons.circle.sort class="c-hover-bg-card-hover cursor-pointer" x-on:click="open = !open" />
+                </div>
+            </div>
+            <div x-show="open"
+                class="rounded-[32px] border-2 c-border-card c-shadow-card grid grid-cols-2 gap-2 p-[30px] relative">
+
+                <div class="font-semibold text-xl text-center col-span-2">
+                    Filter
+                </div>
+
+                {{-- Filter Options --}}
+                <div class="flex flex-row gap-4 items-center w-full col-span-2">
+                    <x-icons.circle.search />
+                    <x-input class="flex-grow" placeholder="Title" type="text" wire:model.live="filterTitle" />
+                </div>
+                <x-input class="col-span-2" placeholder="Season" type="text" wire:model.live="filterSeason" />
+
+                <div class="grid grid-cols-1 w-full relative" x-data="{ open: true }">
+                    <x-input showCaret class="w-full" placeholder="Production Studio"
+                        wire:model.live="filterSearchStudio" @focus="open = true" />
+                    @if ($filterSearchStudio != '' && $filterStudio == '0')
+                        <div class="dropdown-container" x-show="open">
+                            @foreach (\App\Models\Studio::where('name', 'LIKE', '%' . $filterSearchStudio . '%')->orderBy('name')->get() as $studio)
+                                <button class="dropdown-button" wire:click="setFilterStudio(`{{ $studio->name }}`)"
+                                    @click="open = false">
+                                    {{ $studio->name }}
+                                </button>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+
+                <div class="grid grid-cols-1 w-full relative" x-data="{ open: true }">
+                    <x-input showCaret class="w-full" placeholder="Director/Writer"
+                        wire:model.live="filterSearchCreator" @focus="open = true" />
+                    @if ($filterSearchCreator != '' && $filterCreator == 0)
+                        <div class="dropdown-container" x-show="open">
+                            @foreach (\App\Models\Person::where('name', 'LIKE', '%' . $filterSearchCreator . '%')->orderBy('name')->get() as $person)
+                                <button class="dropdown-button" wire:click="setFilterCreator(`{{ $person->name }}`)"
+                                    @click="open = false">
+                                    {{ $person->name }}
+                                </button>
+                            @endforeach
+                        </div>
+                    @endif
+                </div>
+
+                <x-select class="col-span-2" wire:model.live="filterCategory" placeholder="Category">
+                    <option value="0">
+                        Select a Category
+                    </option>
+                    @foreach (\App\Models\Category::all() as $category)
+                        <option value="{{ $category->id }}">
+                            {{ $category->name }}
+                        </option>
+                    @endforeach
+                </x-select>
             </div>
         </div>
         <div>
@@ -25,14 +107,15 @@
         </div>
     </div>
     @if ($userEntry)
-        <div class="rounded-[32px] c-bg-card p-8 flex flex-col absolute z-10 w-full lg:relative">
+        <div
+            class="rounded-[32px] c-bg-bg border-2 c-border-card c-shadow-card p-[30px] flex flex-col absolute z-10 w-full lg:relative">
             @if (isset($error))
                 <div class="error">
                     {{ $error }}
                 </div>
             @else
-                <div class="flex flex-row items-center gap-3">
-                    <div class="flex flex-row w-full gap-3 justify-center">
+                <div class="flex flex-row items-center gap-4">
+                    <div class="flex flex-row w-full gap-3 justify-center text-xl">
                         <div class="text-lg font-semibold">
                             {{ $userEntry->entry->franchise->name }}
                         </div>
@@ -53,7 +136,7 @@
                         @csrf
 
                         <input type="hidden" name="entry_id" value="{{ $userEntry->id }}">
-                        <div id="rating-label" class="font-semibold">
+                        <div id="rating-label">
                             Rating
                         </div>
                         @switch(auth()->user()->rating_style)
@@ -67,24 +150,25 @@
                             @break
 
                             @case(\App\Enums\UserRatingStyleEnum::Stars)
-                                <div class="grid grid-cols-10">
+                                <div class="flex items-center justify-center gap-[10px]">
                                     @for ($i = 0; $i < 10; $i++)
                                         <button class="text-4xl cursor-pointer c-text-secondary "
                                             wire:click="setRating({{ ($i + 1) * 10 }})">
                                             @if (round($userEntry->rating / 10) >= $i + 1)
-                                                &#9733;
+                                                <x-icons.star class="c-fill-secondary" />
                                             @else
-                                                &#9734;
+                                                <x-icons.star-outline class="c-fill-outline" />
                                             @endif
                                         </button>
                                     @endfor
                                 </div>
                             @break
                         @endswitch
-                        <div class="font-semibold">
+                        <div>
                             Notes
                         </div>
-                        <textarea class="w-full input !h-full resize-none !text-base p-3" name="notes" wire:model="userEntry.notes">{{ $userEntry->notes }}</textarea>
+                        <textarea class="w-full appearance-none !h-full resize-none !text-base p-0" name="notes"
+                            placeholder="Write some notes..." wire:model="userEntry.notes">{{ $userEntry->notes }}</textarea>
                         <div class="grid grid-cols-2">
                             <div class="grid-item font-semibold">
                                 Watched
@@ -106,21 +190,27 @@
                             </div>
                         @endif
                         <div class="flex gap-3">
-                            <button wire:click="saveUserEntry" class="btn btn-primary mt-auto">
+                            <x-button wire:click="saveUserEntry" class="mt-auto">
                                 Save
-                            </button>
-                            <button wire:click="deleteUserEntry" class="btn btn-primary !w-max px-10">
+                            </x-button>
+                            <x-button.secondary wire:click="deleteUserEntry" class="!w-max px-10">
                                 Remove
-                            </button>
+                            </x-button.secondary>
                         </div>
                     </div>
         </div>
     @else
-        <button wire:click="markAsComplete({{ $userEntry->id }})" type="submit" class="btn btn-primary my-auto">
+        <x-button wire:click="markAsComplete({{ $userEntry->id }})" type="submit" class="my-auto">
             Mark as complete
-        </button>
+        </x-button>
     @endif
     @endif
+</div>
+@else
+<div class="p-4 h-full flex flex-col justify-center">
+    <x-button>
+        I'm feeling lucky
+    </x-button>
 </div>
 @endif
 </div>
