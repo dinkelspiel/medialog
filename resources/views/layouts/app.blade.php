@@ -48,6 +48,10 @@
             border-color: {{ auth()->user()->colorScheme->card ?? 'var(--card)' }};
         }
 
+        .c-border-secondary {
+            border-color: {{ auth()->user()->colorScheme->secondary ?? 'var(--secondary)' }};
+        }
+
         .c-ring-card {
             --tw-ring-color: {{ auth()->user()->colorScheme->card ?? 'var(--card)' }};
         }
