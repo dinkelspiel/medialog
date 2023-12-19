@@ -17,8 +17,8 @@
             --card_hover: #F2DBD9;
             --card_active: #EDCDC9;
             --secondary: #E16449;
-            --secondary_hover: #c6685d;
-            --secondary_active: #d6938a;
+            --secondary_hover: #E4755D;
+            --secondary_active: #E98F7C;
             --outline: #D1D1D1;
             --text: #1C1B1F;
             --text_gray: #808080;
