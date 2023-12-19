@@ -1,7 +1,7 @@
 <div class="xl:mx-96 mx-0 py-3 flex flex-col gap-2 h-[calc(100dvh)]">
-    <div class="grid gap-3 grid-cols-3">
+    <div class="grid gap-3 grid-cols-3 px-4">
         @foreach (\App\Models\ColorScheme::all() as $colorScheme)
-            <div class="border c-border-outline rounded-[32px] p-[30px] flex flex-col gap-3">
+            <div class="border c-border-outline c-bg-card rounded-[32px] p-[30px] flex flex-col gap-3 c-shadow-card">
                 <div class="flex flex-col gap-1.5">
                     <div class="flex flex-row justify-between">
                         <div class="font-semibold">
@@ -42,12 +42,12 @@
                 </div>
                 <div class="flex flex-row gap-3">
                     @if ($colorScheme->creator_id == auth()->user()->id)
-                        <div class="w-full flex justify-center items-center h-6 c-bg-card rounded-bl-full">
+                        <div class="w-full flex justify-center items-center h-6 c-bg-background rounded-bl-full">
                             Owner
                         </div>
                     @endif
                     @if (auth()->user()->colorScheme && auth()->user()->colorScheme->id == $colorScheme->id)
-                        <div class="w-full flex justify-center items-center h-6 c-bg-card rounded-br-full">
+                        <div class="w-full flex justify-center items-center h-6 c-bg-background rounded-br-full">
                             Selected
                         </div>
                     @endif
