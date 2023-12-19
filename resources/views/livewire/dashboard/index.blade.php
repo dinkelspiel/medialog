@@ -2,7 +2,7 @@
     <div class="rounded-[32px] scrollable-grid-item c-shadow-card">
         <livewire:dashboard.search-franchise />
     </div>
-    <div class="flex flex-col scrollable-grid-item no-scrollbar">
+    <div class="flex flex-col scrollable-grid-item no-scrollbar px-2">
         <div x-data="{ open: false }">
             <div class="font-semibold text-xl flex flex-row justify-between items-center py-4">
                 My Media

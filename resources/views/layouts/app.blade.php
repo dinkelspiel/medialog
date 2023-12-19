@@ -56,8 +56,8 @@
             --tw-ring-color: {{ auth()->user()->colorScheme->card ?? 'var(--card)' }};
         }
 
-        .c-hover-bg-card-hover:hover {
-            background: {{ auth()->user()->colorScheme->card_hover ?? 'var(--card_hover)' }};
+        .c-hover-bg-card:hover {
+            background: {{ auth()->user()->colorScheme->card ?? 'var(--card)' }};
         }
 
         .c-active-bg-card-active:active {
@@ -118,6 +118,10 @@
 
         .c-ring-background {
             --tw-ring-color: {{ auth()->user()->colorScheme->background ?? 'var(--background)' }};
+        }
+
+        .c-ring-outline {
+            --tw-ring-color: {{ auth()->user()->colorScheme->outline ?? 'var(--outline)' }};
         }
 
         .c-outline-card {
