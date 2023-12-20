@@ -8,26 +8,35 @@
                 My Media
 
                 <div class="flex row gap-4">
-                    <x-button.secondary class="!w-max px-8 flex flex-row items-center gap-3" wire:click="cycleSortAfter">
+                    <x-button.secondary class="!w-max px-4 md:px-8 flex flex-row items-center gap-3"
+                        wire:click="cycleSortAfter">
                         @switch($sortAfter)
                             @case('Watched')
                                 <x-icons.eye />
-                                Watched
+                                <div class="hidden md:block">
+                                    Watched
+                                </div>
                             @break
 
                             @case('Updated')
                                 <x-icons.clock />
-                                Updated
+                                <div class="hidden md:block">
+                                    Updated
+                                </div>
                             @break
 
                             @case('Rating')
                                 <x-icons.star />
-                                Rating
+                                <div class="hidden md:block">
+                                    Rating
+                                </div>
                             @break
 
                             @case('A-Z')
                                 <x-icons.az />
-                                A-Z
+                                <div class="hidden md:block">
+                                    A-Z
+                                </div>
                             @break
 
                             @default
