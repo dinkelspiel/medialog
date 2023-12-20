@@ -1,34 +1,21 @@
-<div class="flex flex-col items-center h-[calc(100dvh)] justify-center gap-12">
-    <div class="flex flex-col md:flex-row mx-auto w-max justify-center items-center">
+<div>
+    <div class="flex flex-col-reverse md:flex-row justify-center items-center h-[100dvh]">
         <form wire:submit.prevent="register"
-            class="border-secondary  border-b pb-6 md:border-b-0 md:pb-0 md:border-r border-dashed flex flex-col md:pr-10 gap-3 md:h-96 justify-center">
-            @csrf
-            <x-input wire:model="regUsername" placeholder="Username" name="username" required />
-            @error('username')
-                <div> {{ $message }} </div>
-            @enderror
-            <x-input wire:model="regEmail" placeholder="Email" type="email" name="email" required />
-            @error('email')
-                <div> {{ $message }} </div>
-            @enderror
-            <x-input wire:model="regPassword" mb-3" placeholder="Password" type="password" name="password" required />
-            @error('password')
-                <div> {{ $message }} </div>
-            @enderror
-            <x-button type="submit">Sign up</x-button>
+            class="flex flex-col border-t-2 md:border-r-2 gap-4 c-border-r-outline md:pr-8 py-8">
+            <x-input wire:model="regUsername" placeholder="Username" />
+            <x-input wire:model="regEmail" placeholder="Email" />
+            <x-input wire:model="regPassword" placeholder="Password" type="password" />
+            <x-button type="submit">
+                Sign up
+            </x-button>
         </form>
-        <form wire:submit.prevent="login" class="flex flex-col pt-6 md:pt-0 md:ps-10 gap-3">
-            @csrf
-            <x-input wire:model="logEmail" placeholder="Email" name="email" type="email" required />
-            @error('email')
-                <div> {{ $message }} </div>
-            @enderror
-            <x-input wire:model="logPassword" class="mb-3" placeholder="Password" name="password" type="password"
-                required />
-            @error('password')
-                <div> {{ $message }} </div>
-            @enderror
-            <x-button type="submit">Log in</x-button>
+        <form wire:submit.prevent="login" class="flex flex-col gap-4 py-8 md:ps-8">
+            <x-input wire:model="logEmail" placeholder="Email" />
+            <x-input wire:model="logPassword" placeholder="Password" type="password" />
+            <x-button type="submit">
+                Log in
+            </x-button>
+        </form>
     </div>
     @if (session()->has('error'))
         <div class="error">
@@ -40,5 +27,4 @@
             {{ session('message') }}
         </div>
     @endif
-</div>
 </div>

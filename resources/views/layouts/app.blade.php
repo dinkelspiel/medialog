@@ -88,6 +88,14 @@
             border-top-color: {{ auth()->user()->colorScheme->outline ?? 'var(--outline)' }};
         }
 
+        .c-border-r-secondary {
+            border-right-color: {{ auth()->user()->colorScheme->secondary ?? 'var(--secondary)' }};
+        }
+
+        .c-border-r-outline {
+            border-right-color: {{ auth()->user()->colorScheme->outline ?? 'var(--outline)' }};
+        }
+
         .c-border-outline {
             border-color: {{ auth()->user()->colorScheme->outline ?? 'var(--outline)' }};
         }
