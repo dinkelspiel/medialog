@@ -37,6 +37,14 @@ class Index extends Component
         session()->flash("message", "Registration Successful.");
     }
 
+    public function mount()
+    {
+        if(auth()->check())
+        {
+            $this->redirect('/dashboard');
+        }
+    }
+
     public function login()
     {
         $this->email = $this->logEmail;
@@ -56,10 +64,6 @@ class Index extends Component
 
     public function render()
     {
-        if (auth()->check()) {
-            $this->redirect("/dashboard");
-        }
-
         return view("livewire.auth.index")->layout("layouts.app", [
             "header" => "home",
         ]);

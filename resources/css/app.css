@@ -9,16 +9,16 @@
 }
 
 .input {
-    @apply max-w-full  rounded-lg border h-14 justify-center leading-13 px-3 bg-transparent duration-75;
+    @apply max-w-full rounded-lg border h-14 justify-center leading-13 px-3 bg-transparent duration-75;
 }
 
 .small-input {
-    @apply max-w-full  rounded-lg border h-12 justify-center leading-13 px-3 bg-transparent duration-75;
+    @apply max-w-full rounded-lg border h-12 justify-center leading-13 px-3 bg-transparent duration-75;
 }
 
 
 .btn {
-    @apply max-w-full w-full active:rounded-xl  rounded-lg h-14 justify-center leading-13 text-center cursor-pointer  duration-150;
+    @apply max-w-full w-full active:rounded-xl rounded-lg h-14 justify-center leading-13 text-center cursor-pointer duration-150;
 }
 
 button:disabled,
@@ -27,7 +27,7 @@ button[disabled] {
 }
 
 .small-btn {
-    @apply rounded-lg active:rounded-xl h-12    duration-150 cursor-pointer px-3 flex items-center justify-center text-center;
+    @apply rounded-lg active:rounded-xl h-12 duration-150 cursor-pointer px-3 flex items-center justify-center text-center;
 }
 
 .icon-btn {
@@ -44,51 +44,36 @@ button[disabled] {
 }
 
 .scrollable-grid-item {
-    max-height: calc(
-        100vh - 1.5rem
-    ); /* Adjust as needed based on your layout */
+    max-height: calc(100vh - 1.5rem);
+    /* Adjust as needed based on your layout */
     overflow: auto;
 }
 
-@layer utilities {
-    @variants responsive {
-        /* Hide scrollbar for Chrome, Safari and Opera */
-        .no-scrollbar::-webkit-scrollbar {
-            display: none;
-        }
-
-        /* Hide scrollbar for IE, Edge and Firefox */
-        .no-scrollbar {
-            -ms-overflow-style: none; /* IE and Edge */
-            scrollbar-width: none; /* Firefox */
-        }
-    }
+/* Hide scrollbar for Chrome, Safari and Opera */
+.no-scrollbar::-webkit-scrollbar {
+    display: none;
 }
 
-.slider {
-    @apply w-full h-2 rounded-full bg-background outline-none opacity-70 duration-75 appearance-none;
+/* Hide scrollbar for IE, Edge and Firefox */
+.no-scrollbar {
+    -ms-overflow-style: none;
+    /* IE and Edge */
+    scrollbar-width: none;
+    /* Firefox */
 }
 
 .slider::-webkit-slider-thumb {
-    @apply w-6 h-6 rounded-lg hover:rounded-xl active:rounded-full bg-secondary  cursor-pointer appearance-none hover:bg-secondary-hover  active:bg-secondary-active  duration-200;
+    @apply w-6 h-6 rounded-lg hover:rounded-xl active:rounded-full cursor-pointer appearance-none duration-200;
 }
 
 .slider::-moz-range-thumb {
-    @apply w-6 h-6 rounded-lg hover:rounded-xl active:rounded-full bg-secondary  cursor-pointer appearance-none hover:bg-secondary-hover  active:bg-secondary-active  duration-200;
+    @apply w-6 h-6 rounded-lg hover:rounded-xl active:rounded-full cursor-pointer appearance-none duration-200;
 }
 
 .error {
-    @apply max-w-full bg-red-400 rounded-lg h-14 px-6 justify-center leading-13 text-center text-white
+    @apply max-w-full bg-red-400 rounded-full h-14 px-6 justify-center leading-13 text-center text-white
 }
 
 .success {
-    @apply max-w-full bg-lime-500 rounded-lg h-14 px-6 justify-center leading-13 text-center text-white
-}
-
-.dropdown-container {
-    @apply bg-card  absolute w-full top-14 rounded-br-lg rounded-bl-lg border-outline  !border-t-0 border shadow-lg p-3 flex flex-col gap-3 max-h-96 overflow-y-scroll z-10;
-}
-
-.dropdown-button {
-    @apply cursor-pointer text-left;
+    @apply max-w-full bg-lime-500 rounded-full h-14 px-6 justify-center leading-13 text-center text-white
 }
