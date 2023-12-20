@@ -8,7 +8,7 @@
     @endif
 
     <div class="flex flex-col justify-center my-auto gap-3">
-        <div class="flex flex-row items-center gap-2">
+        <div class="flex flex-col md:flex-row justify-center md:items-center md:justify-start gap-2">
             <div class="font-semibold">
                 {{ $entry->franchise->name }}
             </div>
@@ -48,7 +48,7 @@
             <div class="w-full h-[2px] c-bg-outline">
 
             </div>
-            <div class="flex flex-row gap-3">
+            <div class="flex-row gap-3 hidden md:flex">
                 @for ($i = 0; $i < 10; $i++)
                     @if (round($rating / 10) >= $i + 1)
                         <x-icons.star class="c-fill-secondary" />
@@ -56,6 +56,10 @@
                         <x-icons.star-outline class="c-fill-outline" />
                     @endif
                 @endfor
+            </div>
+            <div class="flex-row gap-3 flex md:hidden items-center">
+                <x-icons.star class="c-fill-secondary" />
+                {{ $rating }}
             </div>
         @endisset
     </div>
