@@ -1,7 +1,7 @@
 <div>
     <div class="flex flex-col-reverse md:flex-row justify-center items-center h-[100dvh]">
         <form wire:submit.prevent="register"
-            class="flex flex-col border-t-2 md:border-r-2 gap-4 c-border-r-outline md:pr-8 py-8">
+            class="flex flex-col border-t-2 md:border-r-2 md:border-t-0 gap-4 c-border-r-outline md:pr-8 py-8">
             <x-input wire:model="regUsername" placeholder="Username" />
             <x-input wire:model="regEmail" placeholder="Email" />
             <x-input wire:model="regPassword" placeholder="Password" type="password" />
