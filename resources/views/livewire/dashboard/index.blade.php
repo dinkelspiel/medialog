@@ -3,7 +3,7 @@
         <livewire:dashboard.search-franchise />
     </div>
     <div class="flex flex-col scrollable-grid-item no-scrollbar px-2">
-        <div x-data="{ open: false }">
+        <div x-data="{ open: false }" class="relative">
             <div class="font-semibold text-xl flex flex-row justify-between items-center py-4">
                 My Media
 
@@ -46,10 +46,20 @@
                 </div>
             </div>
             <div x-show="open"
-                class="rounded-[32px] border-2 c-border-card c-shadow-card grid grid-cols-2 gap-2 p-[30px] relative mb-8">
+                class="rounded-[32px] border-2 c-border-card c-shadow-card grid grid-cols-2 gap-4 p-[30px] mb-8 absolute z-5 w-full top-0 c-bg-background">
 
-                <div class="font-semibold text-xl text-center col-span-2">
-                    Filter
+                <div class="font-semibold text-xl text-center col-span-2 grid grid-cols-3">
+                    <div>
+                
+                    </div>
+                    <div>
+                        Filter
+                    </div>
+                    <div class="flex flex-row justify-end">
+                        <button x-on:click="open = false">
+                            <x-icons.xmark />
+                        </button>   
+                    </div>
                 </div>
 
                 {{-- Filter Options --}}
@@ -214,8 +224,8 @@
     @endif
 </div>
 @else
-<div class="p-4 h-full flex flex-col justify-center">
-    <x-button wire:click="imFeelingLucky">
+<div class="p-4 h-full">
+    <x-button wire:click="imFeelingLucky" class=" !h-[54px]">
         I'm feeling lucky
     </x-button>
 </div>
