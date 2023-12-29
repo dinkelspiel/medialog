@@ -1,17 +1,9 @@
-<div class="xl:mx-96 mx-0 scrollable-grid-item min-h-[100dvh] pb-12">
-    <div class="border-b c-border-outline  text-lg p-3 flex flex-row items-center">
-        <div class="mr-auto">
-            {{ $modifyMode }} Franchise
-        </div>
+<div class="xl:mx-96 mx-0 min-h-[100dvh] pb-12">
+    <div class="font-semibold text-xl flex flex-row mx-auto w-max items-center py-4">
+        {{ $modifyMode }} Franchise
     </div>
-    <div class="p-3 flex flex-col gap-3">
-        <div>
-            Franchise Title
-        </div>
-        <x-input placeholder="Title" wire:model="franchiseName" />
-        <div>
-            Category
-        </div>
+    <div class="p-3 flex flex-col gap-4">
+        <x-input placeholder="Franchise Title" wire:model="franchiseName" />
         <x-select wire:model="franchiseCategory">
             @foreach (\App\Models\Category::all() as $category)
                 <option value="{{ $category->id }}">
@@ -20,34 +12,30 @@
             @endforeach
         </x-select>
         <div class="flex items-center gap-3">
-            <div class="mr-auto">
+            <div class="mr-auto font-semibold text-xl">
                 Entries
             </div>
-            <button wire:click="addEntry" class="small-btn">
+            <x-button wire:click="addEntry" class="w-max px-24">
                 Add Entry
-            </button>
+            </x-button>
         </div>
         @foreach ($this->entries as $entry)
-            <div wire:key="{{ $loop->index }}" class="flex flex-col gap-3 mb-3 ps-3 border-s c-border-secondary ">
-                <div>
-                    Entry Title
-                </div>
+            <div wire:key="{{ $loop->index }}" class="flex flex-col gap-4 p-8 border-s-2 c-border-secondary ">
                 <div class="text-left text-neutral-400 text-xs pt-2 col-span-2">
-                    Standalone movies/books should have their name as the entry name and series should have "Season 1",
+                    Standalone movies/books should have their name as the entry title and series should have "Season 1",
                     "Season 2" if no name is given
                 </div>
-                <x-input placeholder="Title" wire:model="entries.{{ $loop->index }}.name" />
-                <div>
-                    Production Studio
-                </div>
-                <div class="flex flex-row gap-2 flex-wrap">
-                    @foreach ($this->entries[$loop->index]['studios'] as $studio)
-                        <button class="max-w-max flex flex-row gap-1 c-bg-secondary  text-white rounded-full px-3"
-                            wire:click="removeMeta(`studios`, {{ $loop->parent->index }}, `{{ $studio }}`)">
-                            {{ $studio }}
-                        </button>
-                    @endforeach
-                </div>
+                <x-input placeholder="Entry Title" wire:model="entries.{{ $loop->index }}.name" />
+                @if (count($this->entries[$loop->index]['studios']) > 0)
+                    <div class="flex flex-row gap-2 flex-wrap">
+                        @foreach ($this->entries[$loop->index]['studios'] as $studio)
+                            <button class="max-w-max flex flex-row gap-1 c-bg-secondary  text-white rounded-full px-3"
+                                wire:click="removeMeta(`studios`, {{ $loop->parent->index }}, `{{ $studio }}`)">
+                                {{ $studio }}
+                            </button>
+                        @endforeach
+                    </div>
+                @endif
                 <div class="grid grid-cols-1 w-full relative">
                     <div class="flex flex-row gap-3 max-w-full">
                         <x-input class="w-full @if ($entries[$loop->index]['studioSearch'] != '')  @endif"
@@ -64,25 +52,24 @@
                                     </x-dropdown.button>
                                 @endif
                             @endforeach
-                            <x-dropdown.button class="pt-3 border-t border-t-outline "
+                            <x-dropdown.button class="pt-3 border-t c-border-t-outline "
                                 wire:click="saveStudio({{ $loop->index }})">
                                 Add Studio
                             </x-dropdown.button>
                         </x-dropdown.container>
                     @endif
                 </div>
-                <div>
-                    Directors/Writers
-                </div>
-                <div class="flex flex-row gap-2 flex-wrap">
-                    @foreach ($this->entries[$loop->index]['creators'] as $creator)
-                        <button class="max-w-max flex flex-row gap-1 bg-secondary  text-white rounded-full px-3"
-                            wire:click="removeMeta(`creators`, {{ $loop->parent->index }}, `{{ $creator }}`)">
-                            {{ $creator }}
-                        </button>
-                    @endforeach
-                </div>
-                <div class="grid grid-cols-1 w-full relative">
+                @if (count($this->entries[$loop->index]['creators']) > 0)
+                    <div class="flex flex-row gap-2 flex-wrap">
+                        @foreach ($this->entries[$loop->index]['creators'] as $creator)
+                            <button class="max-w-max flex flex-row gap-1 c-bg-secondary text-white rounded-full px-3"
+                                wire:click="removeMeta(`creators`, {{ $loop->parent->index }}, `{{ $creator }}`)">
+                                {{ $creator }}
+                            </button>
+                        @endforeach
+                    </div>
+                @endif
+                <div class="w-full relative">
                     <div class="flex flex-row gap-3 max-w-full">
                         <x-input class="w-full @if ($entries[$loop->index]['creatorSearch'] != '')  @endif" placeholder="Director/Writer"
                             wire:model.live="entries.{{ $loop->index }}.creatorSearch" />
@@ -97,15 +84,12 @@
                                     </x-dropdown.button>
                                 @endif
                             @endforeach
-                            <x-dropdown.button class="pt-3 border-t border-t-outline "
+                            <x-dropdown.button class="pt-3 border-t c-border-t-outline "
                                 wire:click="savePerson({{ $loop->index }})">
                                 Add Creator
                             </x-dropdown.button>
                         </x-dropdown.container>
                     @endif
-                </div>
-                <div>
-                    Cover Image URL
                 </div>
                 <x-input placeholder="https://example.com/image.png"
                     wire:model="entries.{{ $loop->index }}.cover_url" />
