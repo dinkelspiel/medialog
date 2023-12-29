@@ -3,8 +3,8 @@
         {{ $modifyMode }} Franchise
     </div>
     <div class="p-3 flex flex-col gap-4">
-        <x-input placeholder="Franchise Title" wire:model="franchiseName" />
-        <x-select wire:model="franchiseCategory">
+        <x-input placeholder="Franchise Title" wire:model.live="franchiseName" />
+        <x-select wire:model.live="franchiseCategory">
             @foreach (\App\Models\Category::all() as $category)
                 <option value="{{ $category->id }}">
                     {{ $category->name }}
@@ -21,11 +21,14 @@
         </div>
         @foreach ($this->entries as $entry)
             <div wire:key="{{ $loop->index }}" class="flex flex-col gap-4 p-8 border-s-2 c-border-secondary ">
-                <div class="text-left text-neutral-400 text-xs pt-2 col-span-2">
-                    Standalone movies/books should have their name as the entry title and series should have "Season 1",
-                    "Season 2" if no name is given
+                <div class="flex flex-col gap-2">
+                    <div class="text-left text-neutral-400 text-xs pt-2 col-span-2 ps-[27px]">
+                        Standalone movies/books should have their name as the title and series should have "Season (1,
+                        2,
+                        ...)” if no name is given
+                    </div>
+                    <x-input placeholder="Entry Title" wire:model="entries.{{ $loop->index }}.name" />
                 </div>
-                <x-input placeholder="Entry Title" wire:model="entries.{{ $loop->index }}.name" />
                 @if (count($this->entries[$loop->index]['studios']) > 0)
                     <div class="flex flex-row gap-2 flex-wrap">
                         @foreach ($this->entries[$loop->index]['studios'] as $studio)
@@ -91,8 +94,34 @@
                         </x-dropdown.container>
                     @endif
                 </div>
-                <x-input placeholder="https://example.com/image.png"
-                    wire:model="entries.{{ $loop->index }}.cover_url" />
+                <div class="flex flex-col gap-2">
+                    <div class="text-left text-neutral-400 text-xs col-span-2 ps-[27px]">
+                        @switch($franchiseCategory)
+                            @case(1)
+                                Amount of pages
+                            @break
+
+                            @case(2)
+                                Amount of episodes
+                            @break
+
+                            @case(3)
+                                Length in minutes
+                            @break
+
+                            @default
+                                Invalid category {{ $franchiseCategory }}
+                        @endswitch
+                    </div>
+                    <x-input type="number" wire:model.live="entries.{{ $loop->index }}.length" />
+                </div>
+                <div class="flex flex-col gap-2">
+                    <div class="text-left text-neutral-400 text-xs col-span-2 ps-[27px]">
+                        Cover Url
+                    </div>
+                    <x-input placeholder="https://example.com/image.png"
+                        wire:model="entries.{{ $loop->index }}.cover_url" />
+                </div>
             </div>
         @endforeach
     </div>
