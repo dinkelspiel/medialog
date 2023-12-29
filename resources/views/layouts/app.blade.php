@@ -140,6 +140,16 @@
             box-shadow: 0px 4px 24px 0px rgba(170, 170, 170, 0.10);
         }
 
+        @media (min-width: 1024px) {
+            .c-lg\:shadow-none {
+                box-shadow: none;
+            }
+
+            .c-lg\:bg-background {
+                background: {{ auth()->user()->colorScheme->background ?? 'var(--background)' }};
+            }
+        }
+
         .c-fill-secondary {
             fill: {{ auth()->user()->colorScheme->secondary ?? 'var(--secondary)' }};
         }
@@ -188,8 +198,9 @@
     </style>
 </head>
 
-<body class="c-bg-background c-text-text">
-    <div class="grid absolute inset-0 mr-3" style="grid-template-columns: 5rem 1fr">
+<body class="c-bg-background c-text-text relative h-[100dvh]">
+    <div
+        class="grid absolute inset-0 ms-3 lg:ms-0 mr-3 grid-cols-1 h-[100dvh] lg:grid-cols-[5rem,1fr] grid-rows-[5rem,1fr] lg:grid-rows-1">
         <div>
             @include('includes.header', [
                 'page' => $header,

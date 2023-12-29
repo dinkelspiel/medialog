@@ -1,4 +1,5 @@
-<div class="grid h-[calc(100dvh)] grid-cols-1 lg:grid-cols-[0.9fr,1.2fr,0.9fr] gap-8 relative py-8">
+<div
+    class="grid h-[calc(100dvh-80px)] lg:h-[100dvh] grid-cols-1 lg:grid-cols-[0.9fr,1.2fr,0.9fr] gap-8 relative pb-8 pt-0 lg:pt-8">
     <div class="rounded-[32px] scrollable-grid-item c-shadow-card">
         <livewire:dashboard.search-franchise />
     </div>
@@ -50,7 +51,7 @@
 
                 <div class="font-semibold text-xl text-center col-span-2 grid grid-cols-3">
                     <div>
-                
+
                     </div>
                     <div>
                         Filter
@@ -58,7 +59,7 @@
                     <div class="flex flex-row justify-end">
                         <button x-on:click="open = false">
                             <x-icons.xmark />
-                        </button>   
+                        </button>
                     </div>
                 </div>
 
