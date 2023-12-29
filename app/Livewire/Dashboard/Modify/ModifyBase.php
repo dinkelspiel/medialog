@@ -23,6 +23,7 @@ abstract class ModifyBase extends Component
             "cover_url" => "",
             "creatorSearch" => "",
             "creators" => [],
+            "length" => 0
         ];
     }
 

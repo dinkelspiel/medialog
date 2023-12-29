@@ -46,6 +46,11 @@ class Edit extends ModifyBase
                 return;
             }
 
+            if ($entryRaw["length"] <= 0) {
+                session()->flash("error", "Entry can't have a length lesser or equal to 0");
+                return;
+            }
+
             if (count($entryRaw["creators"]) == 0) {
                 session()->flash(
                     "error",
@@ -63,6 +68,7 @@ class Edit extends ModifyBase
             $entry->franchise_id = $franchise->id;
             $entry->name = $entryRaw["name"];
             $entry->cover_url = $entryRaw["cover_url"];
+            $entry->length = $entryRaw['length'];
 
             if ($entryRaw["id"] == null) {
                 $entry = $franchise->addEntry($entry);
