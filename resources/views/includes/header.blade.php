@@ -1,4 +1,5 @@
-<div class="lg:hidden h-20 flex flex-row items-center justify-between px-6 c-fill-text" x-data="{ open: false }">
+<div class="lg:hidden h-20 flex flex-row items-center justify-between px-6 c-fill-text fixed w-[calc(100dvw-24px)] z-10 c-bg-background top-0"
+    x-data="{ open: false }">
     <x-icons.logo />
     <button class="cursor-pointer" x-on:click="open = !open">
         <svg class="w-5 h-5 hover:fill-slate-600 active:fill-slate-500 duration-100" xmlns="http://www.w3.org/2000/svg"
@@ -16,7 +17,7 @@
     </div>
 </div>
 <div id="sidebar" aria-label="Sidebar"
-    class="hidden lg:flex flex-row lg:flex-col h-20 lg:px-0 py-0 lg:py-8 lg:h-full items-center gap-3">
+    class="hidden lg:flex flex-row lg:flex-col h-20 lg:px-0 py-0 lg:py-8 lg:h-full items-center gap-3 fixed top-0">
     <div class="flex h-full flex-col overflow-y-auto c-bg-background px-3 py-4 gap-3">
         @include('includes.header.items')
     </div>
