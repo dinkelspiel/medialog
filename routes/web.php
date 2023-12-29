@@ -18,32 +18,30 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
-Route::middleware(['web'])->group(function() {
-    Route::middleware([VerifySession::class])->group(function () {
-        Route::get("/dashboard", App\Livewire\Dashboard\Index::class);
+Route::middleware([VerifySession::class])->group(function () {
+    Route::get("/dashboard", App\Livewire\Dashboard\Index::class);
 
-        Route::get("/dashboard/add", App\Livewire\Dashboard\Modify\Add::class);
+    Route::get("/dashboard/add", App\Livewire\Dashboard\Modify\Add::class);
 
-        Route::get("/profile", App\Livewire\Profile\Index::class);
+    Route::get("/profile", App\Livewire\Profile\Index::class);
 
-        Route::get("/color-schemes", App\Livewire\ColorSchemes::class);
-    });
-
-    Route::middleware([VerifySession::class, AuthorizeAdmin::class])->group(
-        function () {
-            Route::get("/admin", function () {
-                return redirect("/admin/entries");
-            });
-
-            Route::get(
-                "/dashboard/edit/{franchiseId}",
-                App\Livewire\Dashboard\Modify\Edit::class,
-            );
-
-            Route::get("/admin/entries", App\Livewire\Admin\Entries::class);
-        },
-    );
-
-    Route::redirect("/", "/login");
-    Route::get("/login", App\Livewire\Auth\Index::class)->name("login");
+    Route::get("/color-schemes", App\Livewire\ColorSchemes::class);
 });
+
+Route::middleware([VerifySession::class, AuthorizeAdmin::class])->group(
+    function () {
+        Route::get("/admin", function () {
+            return redirect("/admin/entries");
+        });
+
+        Route::get(
+            "/dashboard/edit/{franchiseId}",
+            App\Livewire\Dashboard\Modify\Edit::class,
+        );
+
+        Route::get("/admin/entries", App\Livewire\Admin\Entries::class);
+    },
+);
+
+Route::redirect("/", "/login");
+Route::get("/login", App\Livewire\Auth\Index::class)->name("login");
