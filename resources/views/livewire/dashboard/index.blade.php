@@ -119,7 +119,7 @@
         <div>
             @foreach ($userEntries as $browserEntry)
                 @if (!is_null($browserEntry->entry->franchise))
-                    <x-entry :entry="$browserEntry->entry" :rating="$browserEntry->rating" wire:click="showUserEntry({{ $browserEntry->id }})" />
+                    <x-entry :entry="$browserEntry->entry" :rating="$browserEntry->getLatestRating()" wire:click="showUserEntry({{ $browserEntry->id }})" />
                 @endif
             @endforeach
         </div>
@@ -155,10 +155,8 @@
                 </div>
                 @if ($userEntry->status === \App\Enums\UserEntryStatusEnum::Completed)
                     <div class="flex flex-col gap-3 h-full flex-1">
-                        @method('PATCH')
-                        @csrf
+                        <x-dashboard.rewatch-pills :entryId="$userEntry->entry->id" :currentUserEntryId="$userEntry->id" showAdd />
 
-                        <input type="hidden" name="entry_id" value="{{ $userEntry->id }}">
                         <div id="rating-label">
                             Rating
                         </div>
@@ -223,6 +221,8 @@
         </div>
     @else
         <div class="flex flex-col gap-4 h-full flex-1">
+            <x-dashboard.rewatch-pills :entryId="$userEntry->entry->id" :currentUserEntryId="$userEntry->id" />
+
             <x-dashboard.status label="Planning" icon="bookmark" wire:click="setUserEntryStatus('planning')"
                 :selected="$userEntry->status === \App\Enums\UserEntryStatusEnum::Planning" />
             <x-dashboard.status :label="$userEntry->entry->franchise->category->name == 'Book' ? 'Reading' : 'Watching'" icon="eye" wire:click="setUserEntryStatus('watching')"

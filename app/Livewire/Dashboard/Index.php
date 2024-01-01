@@ -43,7 +43,7 @@ class Index extends Component
         $this->sortAfter = $key;
     }
 
-    public function showUserEntry($id)
+    public function showUserEntry(int $id, bool $overrideToLatest = true)
     {
         if ($this->userEntry) {
             if ($this->userEntry->id == $id) {
@@ -52,14 +52,44 @@ class Index extends Component
             }
         }
 
-        $this->userEntry = UserEntry::where("id", $id)
-            ->where("user_id", auth()->user()->id)
-            ->first();
+        if (!$overrideToLatest) {
+            $this->userEntry = UserEntry::where("id", $id)
+                ->where("user_id", auth()->user()->id)
+                ->first();
+        } else {
+            $userEntry = UserEntry::where("id", $id)
+                ->where("user_id", auth()->user()->id)
+                ->first();
+
+            if (is_null($userEntry)) {
+                return;
+            }
+
+            $this->userEntry = UserEntry::where(
+                "entry_id",
+                $userEntry->entry_id,
+            )
+                ->where("user_id", auth()->user()->id)
+                ->orderBy("created_at", "DESC")
+                ->first();
+        }
     }
 
     public function closeUserEntry()
     {
         $this->userEntry = null;
+    }
+
+    public function addRewatchToUserEntry()
+    {
+        $userEntry = new UserEntry();
+        $userEntry->entry_id = $this->userEntry->entry->id;
+        $userEntry->user_id = auth()->user()->id;
+        $userEntry->rating = 0;
+        $userEntry->notes = "";
+        $userEntry->status = UserEntryStatusEnum::Watching;
+        $userEntry->created_at = Carbon::now();
+        $userEntry->save();
     }
 
     public function setUserEntryStatus(string $status)
@@ -85,6 +115,7 @@ class Index extends Component
         }
 
         if ($progress == $this->userEntry->entry->length) {
+            $this->userEntry->watched_at = Carbon::now();
             $this->userEntry->status = UserEntryStatusEnum::Completed;
         }
 
@@ -264,9 +295,7 @@ class Index extends Component
                 $query->where("person_id", $creatorId);
             });
         }
-        $userEntries = $userEntries->get();
-
-        // Filter User Entries
+        $userEntries = $userEntries->groupBy("entry_id")->get(); // Filter User Entries
 
         if ($this->sortAfterSelect === []) {
             $this->sortAfterSelect = array_column(
