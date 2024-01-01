@@ -1,4 +1,4 @@
-<div class="lg:hidden h-20 flex flex-row items-center justify-between px-6 c-fill-text fixed w-[calc(100dvw-24px)] z-10 c-bg-background top-0"
+<div class="lg:hidden h-20 flex flex-row items-center justify-between px-6 c-fill-text fixed w-[calc(100dvw-24px)] z-5 c-bg-background top-0"
     x-data="{ open: false }">
     <x-icons.logo />
     <button class="cursor-pointer" x-on:click="open = !open">
