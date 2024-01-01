@@ -26,4 +26,12 @@ class UserEntry extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function getLatestRating(): int
+    {
+        return UserEntry::where("entry_id", $this->entry_id)
+            ->where("status", "completed")
+            ->orderBy("watched_at", "DESC")
+            ->first()->rating ?? 0;
+    }
 }
