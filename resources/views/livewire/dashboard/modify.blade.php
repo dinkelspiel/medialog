@@ -22,7 +22,7 @@
         @foreach ($this->entries as $entry)
             <div wire:key="{{ $loop->index }}" class="flex flex-col gap-4 p-8 border-s-2 c-border-secondary ">
                 <div class="flex flex-col gap-2">
-                    <div class="text-left text-neutral-400 text-xs pt-2 col-span-2 ps-[27px]">
+                    <div class="text-left c-text-textgray text-xs pt-2 col-span-2 ps-[27px]">
                         Standalone movies/books should have their name as the title and series should have "Season (1,
                         2,
                         ...)” if no name is given
@@ -95,7 +95,7 @@
                     @endif
                 </div>
                 <div class="flex flex-col gap-2">
-                    <div class="text-left text-neutral-400 text-xs col-span-2 ps-[27px]">
+                    <div class="text-left c-text-textgray text-xs col-span-2 ps-[27px]">
                         @switch($franchiseCategory)
                             @case(1)
                                 Amount of pages
@@ -116,7 +116,7 @@
                     <x-input type="number" wire:model.live="entries.{{ $loop->index }}.length" />
                 </div>
                 <div class="flex flex-col gap-2">
-                    <div class="text-left text-neutral-400 text-xs col-span-2 ps-[27px]">
+                    <div class="text-left c-text-textgray text-xs col-span-2 ps-[27px]">
                         Cover Url
                     </div>
                     <x-input placeholder="https://example.com/image.png"

@@ -37,7 +37,7 @@
     </a>
 @endif
 @if (auth()->check())
-    <a href="/profile">
+    <a href="/user/{{ auth()->user()->id }}">
         @if ($page == 'profile')
             <x-button.nav.selected label="Profile">
                 <x-icons.person />
