@@ -215,8 +215,8 @@
                             <x-button wire:click="saveUserEntry" class="mt-auto">
                                 Save
                             </x-button>
-                            <x-button.secondary wire:click="setUserEntryStatus('watching')" class="!w-max px-10">
-                                Watching
+                            <x-button.secondary wire:click="deleteUserEntry" class="!w-max px-10">
+                                Remove
                             </x-button.secondary>
                         </div>
                     </div>
@@ -225,12 +225,22 @@
         <div class="flex flex-col gap-4 h-full flex-1">
             <x-dashboard.status label="Planning" icon="bookmark" wire:click="setUserEntryStatus('planning')"
                 :selected="$userEntry->status === \App\Enums\UserEntryStatusEnum::Planning" />
-            <x-dashboard.status label="Watching" icon="eye" wire:click="setUserEntryStatus('watching')"
+            <x-dashboard.status :label="$userEntry->entry->franchise->category->name == 'Book' ? 'Reading' : 'Watching'" icon="eye" wire:click="setUserEntryStatus('watching')"
                 :selected="$userEntry->status === \App\Enums\UserEntryStatusEnum::Watching" />
+            @if ($userEntry->status === \App\Enums\UserEntryStatusEnum::Watching)
+                <x-dashboard.user-entry-data :userEntry="$userEntry" canChange
+                    wire:change="updateUserEntryProgress(event.target.value)" />
+            @endif
             <x-dashboard.status label="Paused" icon="pause" wire:click="setUserEntryStatus('paused')"
                 :selected="$userEntry->status === \App\Enums\UserEntryStatusEnum::Paused" />
+            @if ($userEntry->status === \App\Enums\UserEntryStatusEnum::Paused)
+                <x-dashboard.user-entry-data :userEntry="$userEntry" />
+            @endif
             <x-dashboard.status label="Did not finish" icon="xmark" wire:click="setUserEntryStatus('dnf')"
                 :selected="$userEntry->status === \App\Enums\UserEntryStatusEnum::DNF" />
+            @if ($userEntry->status === \App\Enums\UserEntryStatusEnum::DNF)
+                <x-dashboard.user-entry-data :userEntry="$userEntry" />
+            @endif
             <x-dashboard.status label="Completed" icon="flag-checkered" wire:click="setUserEntryStatus('completed')"
                 :selected="$userEntry->status === \App\Enums\UserEntryStatusEnum::Completed" />
             <x-button.secondary class="mt-auto" wire:click="deleteUserEntry">

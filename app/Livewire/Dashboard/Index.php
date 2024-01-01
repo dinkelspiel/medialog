@@ -68,8 +68,27 @@ class Index extends Component
 
         if ($status == "completed") {
             $this->userEntry->watched_at = Carbon::now();
+            $this->userEntry->progress = $this->userEntry->entry->length;
         }
 
+        $this->userEntry->save();
+    }
+
+    public function updateUserEntryProgress(int $progress)
+    {
+        if ($progress < 0) {
+            $progress = 0;
+        }
+
+        if ($progress > $this->userEntry->entry->length) {
+            $progress = $this->userEntry->entry->length;
+        }
+
+        if ($progress == $this->userEntry->entry->length) {
+            $this->userEntry->status = UserEntryStatusEnum::Completed;
+        }
+
+        $this->userEntry->progress = $progress;
         $this->userEntry->save();
     }
 
