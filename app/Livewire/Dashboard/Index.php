@@ -3,6 +3,7 @@
 namespace App\Livewire\Dashboard;
 
 use App\Enums\SortAfterEnum;
+use App\Enums\UserEntryStatusEnum;
 use App\Models\Entry;
 use App\Models\Franchise;
 use App\Models\Person;
@@ -34,8 +35,7 @@ class Index extends Component
         $index = array_search($this->sortAfter, $sortAfterArray);
 
         $key = @$sortAfterArray[$index + 1];
-        if($key == null)
-        {
+        if ($key == null) {
             $this->sortAfter = $sortAfterArray[0];
             return;
         }
@@ -62,28 +62,20 @@ class Index extends Component
         $this->userEntry = null;
     }
 
-    public function markAsComplete(int $entryId)
+    public function setUserEntryStatus(string $status)
     {
-        $user = auth()->user();
+        $this->userEntry->status = $status;
 
-        $userEntry = UserEntry::where("id", $entryId)
-            ->where("user_id", $user->id)
-            ->first();
-
-        if (is_null($userEntry)) {
-            return "No valid user entry found";
+        if ($status == "completed") {
+            $this->userEntry->watched_at = Carbon::now();
         }
 
-        $userEntry->watched_at = Carbon::now();
-        $userEntry->save();
-
-        $this->userEntry = $userEntry;
+        $this->userEntry->save();
     }
 
     public function setRating(int $rating)
     {
         $this->userEntry->rating = $rating;
-        $this->userEntry->save();
     }
 
     public function saveUserEntry()
@@ -121,7 +113,6 @@ class Index extends Component
     public $filterSearchCreator = "";
     public $filterCategory = "0";
 
-
     public function setFilterCreator($name)
     {
         $this->filterSearchCreator = $name;
@@ -144,7 +135,9 @@ class Index extends Component
 
     public function imFeelingLucky()
     {
-        $this->userEntry = UserEntry::where('user_id', auth()->user()->id)->orderByRaw("RAND()")->first();
+        $this->userEntry = UserEntry::where("user_id", auth()->user()->id)
+            ->orderByRaw("RAND()")
+            ->first();
     }
 
     public function addFranchise()
@@ -264,7 +257,7 @@ class Index extends Component
         }
 
         return view("livewire.dashboard.index", [
-            "userEntries" => $userEntries
+            "userEntries" => $userEntries,
         ])->layout("layouts.app", [
             "header" => "dashboard",
         ]);

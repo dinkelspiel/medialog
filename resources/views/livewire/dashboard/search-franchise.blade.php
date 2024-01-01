@@ -4,7 +4,9 @@
             Add Media
         </div>
         <div class="flex flex-row gap-4 items-center w-full col-span-2">
-            <x-icons.circle.search />
+            <x-icons.circle>
+                <x-icons.search />
+            </x-icons.circle>
             <x-input wire:model.live="search" type="text" placeholder="Search franchise..." class="flex-grow" />
         </div>
 
@@ -58,7 +60,7 @@
                     </li>
                 @endforeach
                 <a href="/dashboard/add"
-                    class="c-text-secondary  c-hover-text-secondary-hover  c-active-text-secondary-active  duration-100  text-sm text-center col-span-2 mt-6 mb-3 cursor-pointer">
+                    class="c-text-secondary  c-active:text-secondary-hover  c-active:text-secondary-active  duration-100  text-sm text-center col-span-2 mt-6 mb-3 cursor-pointer">
                     Does your franchise not exist? Add it
                 </a>
             </ul>

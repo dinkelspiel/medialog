@@ -32,6 +32,10 @@
             fill: {{ auth()->user()->colorScheme->text ?? 'var(--text)' }};
         }
 
+        .c-fill-background {
+            fill: {{ auth()->user()->colorScheme->background ?? 'var(--background)' }};
+        }
+
         .option {
             color: {{ auth()->user()->colorScheme->text ?? 'var(--text)' }};
         }
@@ -56,15 +60,15 @@
             --tw-ring-color: {{ auth()->user()->colorScheme->card ?? 'var(--card)' }};
         }
 
-        .c-hover-bg-card:hover {
+        .c-hover\:bg-card:hover {
             background: {{ auth()->user()->colorScheme->card ?? 'var(--card)' }};
         }
 
-        .c-active-bg-card-active:active {
+        .c-active\:bg-card-active:active {
             background: {{ auth()->user()->colorScheme->card_active ?? 'var(--card_active)' }};
         }
 
-        .c-hover-border-secondary:hover {
+        .c-hover\:border-secondary:hover {
             border-color: {{ auth()->user()->colorScheme->secondary ?? 'var(--secondary)' }};
         }
 
@@ -100,11 +104,11 @@
             border-color: {{ auth()->user()->colorScheme->outline ?? 'var(--outline)' }};
         }
 
-        .c-hover-bg-secondary-hover:hover {
+        .c-hover\:bg-secondary-hover:hover {
             background: {{ auth()->user()->colorScheme->secondary_hover ?? 'var(--secondary_hover)' }};
         }
 
-        .c-active-bg-secondary-active:active {
+        .c-active\:bg-secondary-active:active {
             background: {{ auth()->user()->colorScheme->secondary_active ?? 'var(--secondary_active)' }};
         }
 
@@ -116,11 +120,11 @@
             color: {{ auth()->user()->colorScheme->secondary ?? 'var(--secondary)' }};
         }
 
-        .c-hover-text-secondary-hover:hover {
+        .c-hover\:text-secondary-hover:hover {
             color: {{ auth()->user()->colorScheme->secondary_hover ?? 'var(--secondary_hover)' }};
         }
 
-        .c-active-text-secondary-active:active {
+        .c-active\:text-secondary-active:active {
             color: {{ auth()->user()->colorScheme->secondary_active ?? 'var(--secondary_active)' }};
         }
 

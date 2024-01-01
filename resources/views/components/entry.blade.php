@@ -1,7 +1,7 @@
 <button
     {{ $attributes->merge([
         'class' =>
-            'w-full p-3 text-left rounded-[24px] duration-200 c-ring-outline c-hover-bg-card active:rounded-[32px] c-hover-border-secondary hover:ring-2 gap-4 flex flex-row cursor-pointer',
+            'w-full p-3 text-left rounded-[24px] duration-200 c-ring-outline c-active:bg-card active:rounded-[32px] c-active:border-secondary hover:ring-2 gap-4 flex flex-row cursor-pointer',
     ]) }}>
     @if (count($entry->franchise->entries) > 0)
         <img src="{{ $entry->cover_url }}" class="rounded-[16px] w-20 object-cover aspect-[2/3]">
