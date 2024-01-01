@@ -129,7 +129,7 @@
 
         </div>
         <div
-            class="rounded-[32px] c-bg-background border-2 c-border-card c-shadow-card p-[30px] flex flex-col gap-4 absolute z-10 bottom-8 h-1/2 w-full lg:bottom-0 lg:relative lg:h-full">
+            class="rounded-[32px] c-bg-background border-2 c-border-card c-shadow-card p-[30px] flex flex-col gap-4 absolute z-10 bottom-8 h-max min-h-[60dvh] w-full lg:bottom-0 lg:relative lg:h-full">
             @if (isset($error))
                 <div class="error">
                     {{ $error }}
@@ -154,7 +154,7 @@
                     </button>
                 </div>
                 @if ($userEntry->status === \App\Enums\UserEntryStatusEnum::Completed)
-                    <div class="flex flex-col gap-3 h-full">
+                    <div class="flex flex-col gap-3 h-full flex-1">
                         @method('PATCH')
                         @csrf
 
@@ -189,7 +189,7 @@
                         <div>
                             Notes
                         </div>
-                        <textarea class="w-full appearance-none c-bg-background !h-full resize-none !text-base p-0" name="notes"
+                        <textarea class="w-full appearance-none c-bg-background !h-full resize-none !text-base p-0 flex-1" name="notes"
                             placeholder="Write some notes..." wire:model="userEntry.notes">{{ $userEntry->notes }}</textarea>
                         <div class="grid grid-cols-2">
                             <div class="grid-item font-semibold">
@@ -222,7 +222,7 @@
                     </div>
         </div>
     @else
-        <div class="flex flex-col gap-4 h-full">
+        <div class="flex flex-col gap-4 h-full flex-1">
             <x-dashboard.status label="Planning" icon="bookmark" wire:click="setUserEntryStatus('planning')"
                 :selected="$userEntry->status === \App\Enums\UserEntryStatusEnum::Planning" />
             <x-dashboard.status label="Watching" icon="eye" wire:click="setUserEntryStatus('watching')"
