@@ -43,7 +43,9 @@
                             @default
                         @endswitch
                     </x-button.secondary>
-                    <x-icons.circle.sort class="c-hover-bg-card-hover cursor-pointer" x-on:click="open = !open" />
+                    <x-icons.circle class="c-active:bg-card-hover cursor-pointer" x-on:click="open = !open">
+                        <x-icons.sort />
+                    </x-icons.circle>
                 </div>
             </div>
             <div x-show="open"
@@ -65,7 +67,9 @@
 
                 {{-- Filter Options --}}
                 <div class="flex flex-row gap-4 items-center w-full col-span-2">
-                    <x-icons.circle.search />
+                    <x-icons.circle>
+                        <x-icons.search />
+                    </x-icons.circle>
                     <x-input class="flex-grow" placeholder="Title" type="text" wire:model.live="filterTitle" />
                 </div>
                 <x-input class="col-span-2" placeholder="Season" type="text" wire:model.live="filterSeason" />
@@ -125,7 +129,7 @@
 
         </div>
         <div
-            class="rounded-[32px] c-bg-background border-2 c-border-card c-shadow-card p-[30px] flex flex-col absolute z-10 bottom-8 h-1/2 w-full lg:bottom-0 lg:relative lg:h-full">
+            class="rounded-[32px] c-bg-background border-2 c-border-card c-shadow-card p-[30px] flex flex-col gap-4 absolute z-10 bottom-8 h-1/2 w-full lg:bottom-0 lg:relative lg:h-full">
             @if (isset($error))
                 <div class="error">
                     {{ $error }}
@@ -149,7 +153,7 @@
                         <x-icons.xmark />
                     </button>
                 </div>
-                @if (!is_null($userEntry->watched_at))
+                @if ($userEntry->status === \App\Enums\UserEntryStatusEnum::Completed)
                     <div class="flex flex-col gap-3 h-full">
                         @method('PATCH')
                         @csrf
@@ -211,16 +215,28 @@
                             <x-button wire:click="saveUserEntry" class="mt-auto">
                                 Save
                             </x-button>
-                            <x-button.secondary wire:click="deleteUserEntry" class="!w-max px-10">
-                                Remove
+                            <x-button.secondary wire:click="setUserEntryStatus('watching')" class="!w-max px-10">
+                                Watching
                             </x-button.secondary>
                         </div>
                     </div>
         </div>
     @else
-        <x-button wire:click="markAsComplete({{ $userEntry->id }})" type="submit" class="my-auto">
-            Mark as complete
-        </x-button>
+        <div class="flex flex-col gap-4 h-full">
+            <x-dashboard.status label="Planning" icon="bookmark" wire:click="setUserEntryStatus('planning')"
+                :selected="$userEntry->status === \App\Enums\UserEntryStatusEnum::Planning" />
+            <x-dashboard.status label="Watching" icon="eye" wire:click="setUserEntryStatus('watching')"
+                :selected="$userEntry->status === \App\Enums\UserEntryStatusEnum::Watching" />
+            <x-dashboard.status label="Paused" icon="pause" wire:click="setUserEntryStatus('paused')"
+                :selected="$userEntry->status === \App\Enums\UserEntryStatusEnum::Paused" />
+            <x-dashboard.status label="Did not finish" icon="xmark" wire:click="setUserEntryStatus('dnf')"
+                :selected="$userEntry->status === \App\Enums\UserEntryStatusEnum::DNF" />
+            <x-dashboard.status label="Completed" icon="flag-checkered" wire:click="setUserEntryStatus('completed')"
+                :selected="$userEntry->status === \App\Enums\UserEntryStatusEnum::Completed" />
+            <x-button.secondary class="mt-auto" wire:click="deleteUserEntry">
+                Remove
+            </x-button.secondary>
+        </div>
     @endif
     @endif
 </div>
