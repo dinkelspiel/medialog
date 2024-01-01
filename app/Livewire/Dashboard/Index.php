@@ -2,8 +2,10 @@
 
 namespace App\Livewire\Dashboard;
 
+use App\Enums\ActivityTypeEnum;
 use App\Enums\SortAfterEnum;
 use App\Enums\UserEntryStatusEnum;
+use App\Models\Activity;
 use App\Models\Entry;
 use App\Models\Franchise;
 use App\Models\Person;
@@ -90,6 +92,16 @@ class Index extends Component
         $userEntry->status = UserEntryStatusEnum::Watching;
         $userEntry->created_at = Carbon::now();
         $userEntry->save();
+
+        Activity::create([
+            "user_id" => auth()->user()->id,
+            "entry_id" => $userEntry->entry->id,
+            "type" => ActivityTypeEnum::Rewatch,
+            "additional_data" =>
+                UserEntry::where("entry_id", $userEntry->entry->id)
+                    ->where("user_id", auth()->user()->id)
+                    ->count() - 1,
+        ]);
     }
 
     public function setUserEntryStatus(string $status)
@@ -100,6 +112,19 @@ class Index extends Component
             $this->userEntry->watched_at = Carbon::now();
             $this->userEntry->progress = $this->userEntry->entry->length;
         }
+
+        Activity::create([
+            "user_id" => auth()->user()->id,
+            "entry_id" => $this->userEntry->entry->id,
+            "type" => ActivityTypeEnum::StatusUpdate,
+            "additional_data" =>
+                $status .
+                "|" .
+                UserEntry::where("entry_id", $this->userEntry->entry->id)
+                    ->where("user_id", auth()->user()->id)
+                    ->count() -
+                1,
+        ]);
 
         $this->userEntry->save();
     }
@@ -117,6 +142,27 @@ class Index extends Component
         if ($progress == $this->userEntry->entry->length) {
             $this->userEntry->watched_at = Carbon::now();
             $this->userEntry->status = UserEntryStatusEnum::Completed;
+
+            $additionalData =
+                "completed|" .
+                UserEntry::where("entry_id", $this->userEntry->entry->id)
+                    ->where("user_id", auth()->user()->id)
+                    ->count() -
+                1;
+
+            if (
+                !Activity::where("user_id", auth()->user()->id)
+                    ->where("entry_id", $this->userEntry->entry->id)
+                    ->where("additional_data", $additionalData)
+                    ->exists()
+            ) {
+                Activity::create([
+                    "user_id" => auth()->user()->id,
+                    "entry_id" => $this->userEntry->entry->id,
+                    "type" => ActivityTypeEnum::StatusUpdate,
+                    "additional_data" => $additionalData,
+                ]);
+            }
         }
 
         $this->userEntry->progress = $progress;
@@ -137,6 +183,16 @@ class Index extends Component
         }
 
         $this->userEntry->save();
+
+        Activity::create([
+            "user_id" => auth()->user()->id,
+            "entry_id" => $this->userEntry->entry->id,
+            "type" => ActivityTypeEnum::Reviewed,
+            "additional_data" =>
+                UserEntry::where("entry_id", $this->userEntry->entry->id)
+                    ->where("user_id", auth()->user()->id)
+                    ->count() - 1,
+        ]);
 
         session()->flash("userEntryMessage", "Update successful");
     }
