@@ -18,12 +18,14 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get("/user/{userId}", App\Livewire\Profile\Index::class);
+
 Route::middleware([VerifySession::class])->group(function () {
     Route::get("/dashboard", App\Livewire\Dashboard\Index::class);
 
     Route::get("/dashboard/add", App\Livewire\Dashboard\Modify\Add::class);
 
-    Route::get("/profile", App\Livewire\Profile\Index::class);
+    Route::get("/settings", App\Livewire\Profile\Settings::class);
 
     Route::get("/color-schemes", App\Livewire\ColorSchemes::class);
 });

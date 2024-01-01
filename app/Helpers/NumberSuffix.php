@@ -3,7 +3,7 @@
 namespace App\Helpers;
 
 if (!function_exists("numberSuffix")) {
-    function numberSuffix($number)
+    function numberSuffix(int $number)
     {
         if (!in_array($number % 100, [11, 12, 13])) {
             switch ($number % 10) {

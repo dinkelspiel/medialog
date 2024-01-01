@@ -1,5 +1,5 @@
 <div class="flex flex-col gap-2 p-8 border-s-2 c-border-secondary ms-[27px]">
-    <div class="text-left text-neutral-400 text-xs col-span-2 {{ isset($canChange) ? 'ps-[27px]' : '' }}">
+    <div class="text-left c-text-textgray text-xs col-span-2 {{ isset($canChange) ? 'ps-[27px]' : '' }}">
         @switch($userEntry->entry->franchise->category->id)
             @case(1)
                 Amount of pages read

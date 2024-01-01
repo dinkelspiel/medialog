@@ -28,6 +28,10 @@
             color: {{ auth()->user()->colorScheme->text ?? 'var(--text)' }};
         }
 
+        .c-text-textgray {
+            color: {{ auth()->user()->colorScheme->text_gray ?? 'var(--text_gray)' }};
+        }
+
         .c-text-background {
             color: {{ auth()->user()->colorScheme->background ?? 'var(--background)' }};
         }
