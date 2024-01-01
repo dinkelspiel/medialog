@@ -58,8 +58,13 @@
                 @endfor
             </div>
             <div class="flex-row gap-3 flex md:hidden items-center">
-                <x-icons.star class="c-fill-secondary" />
-                {{ $rating }}
+                @for ($i = 0; $i < 5; $i++)
+                    @if (round($rating / 20) >= $i + 1)
+                        <x-icons.star class="c-fill-secondary" />
+                    @else
+                        <x-icons.star-outline class="c-fill-outline" />
+                    @endif
+                @endfor
             </div>
         @endisset
     </div>
