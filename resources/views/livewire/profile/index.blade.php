@@ -1,10 +1,12 @@
 <div class="xl:mx-80 mx-0 min-h-[100dvh] py-4">
     <div class="grid grid-cols-1 lg:grid-cols-[1fr,0.4fr] gap-8">
         <div class="lg:scrollable-grid-item no-scrollbar lg:!h-[calc(100dvh-32px)] flex flex-col gap-8">
-            <div class="flex flex-row w-full items-center h-[56px] gap-4">
-                <x-profile-picture.large :label="$user->username[0]" />
-                <div class="font-semibold text-xl">
-                    {{ $user->username }}'s Profile
+            <div class="flex flex-col lg:flex-row w-full items-center h-max lg:h-[56px] gap-4">
+                <div class="flex flex-row items-center gap-4">
+                    <x-profile-picture.large :label="$user->username[0]" />
+                    <div class="font-semibold text-xl">
+                        {{ $user->username }}'s Profile
+                    </div>
                 </div>
                 @if (auth()->check() && auth()->user()->id != $user->id)
                     @php
@@ -22,7 +24,7 @@
                         </x-button.secondary>
                     @endif
                 @elseif(auth()->check() && auth()->user()->id == $user->id)
-                    <x-button.secondary class="ms-auto w-max px-16" wire:click="logout">
+                    <x-button.secondary class="w-full ms-auto lg:w-max px-16 whitespace-nowrap" wire:click="logout">
                         Log out
                     </x-button.secondary>
                 @endif
@@ -32,7 +34,7 @@
                     <div class="font-semibold text-xl w-full">
                         Stats
                     </div>
-                    <div class="grid grid-cols-2 gap-4">
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-4">
                         <div class="rounded-[32px] border-2 c-border-card flex flex-row gap-4 items-center py-4 px-8">
                             <x-icons.fire class="c-fill-secondary" />
                             <div class="flex flex-col">
