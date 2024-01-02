@@ -11,7 +11,7 @@
                 <x-input class="w-full" placeholder="Username" wire:model.live="query" />
             </div>
         </div>
-        <div class="grid grid-cols-[1fr,0.4fr] gap-8">
+        <div class="grid grid-cols-1 lg:grid-cols-[1fr,0.4fr] gap-8">
             <div class="flex flex-col gap-8">
                 <div class="font-semibold text-xl">
                     @php
