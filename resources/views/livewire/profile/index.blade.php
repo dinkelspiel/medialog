@@ -209,10 +209,12 @@
                         </div>
                     </div>
                     <div class="flex flex-col gap-4 pb-8 px-8">
-                        <x-button.secondary>
-                            <x-icons.search />
-                            Find Friends
-                        </x-button.secondary>
+                        <a href="/friend-search">
+                            <x-button.secondary>
+                                <x-icons.search />
+                                Find Friends
+                            </x-button.secondary>
+                        </a>
                         <x-button.secondary>
                             <x-icons.envelope />
                             Invite Friends

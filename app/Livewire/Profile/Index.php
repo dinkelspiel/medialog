@@ -20,24 +20,7 @@ class Index extends Component
             return;
         }
 
-        if (auth()->user()->id == $this->user->id) {
-            return;
-        }
-
-        $follow = UserFollow::where("user_id", auth()->user()->id)
-            ->where("follow_id", $this->user->id)
-            ->first();
-
-        if (is_null($follow)) {
-            UserFollow::create([
-                "user_id" => auth()->user()->id,
-                "follow_id" => $this->user->id,
-                "is_following" => true,
-            ]);
-        } else {
-            $follow->is_following = !$follow->is_following;
-            $follow->save();
-        }
+        UserFollow::toggleFollow(auth()->user()->id, $this->user->id);
     }
 
     public function mount(int $userId)
