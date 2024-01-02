@@ -63,7 +63,7 @@
                     <div class="font-semibold text-xl w-full">
                         Activity
                     </div>
-                    @foreach (\App\Models\Activity::where('user_id', $user->id)->limit(10)->get() as $activity)
+                    @foreach (\App\Models\Activity::where('user_id', $user->id)->limit(10)->orderBy('id', 'DESC')->get() as $activity)
                         <div class="flex flex-col gap-4">
                             <div class="flex flex-row gap-2 items-center">
                                 <x-profile-picture :label="$user->username[0]" />
