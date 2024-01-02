@@ -5,6 +5,8 @@ use App\Http\Middleware\Authenticate;
 use App\Http\Middleware\AuthorizeAdmin;
 use App\Http\Middleware\VerifySession;
 use App\Livewire\Auth\Auth;
+use App\Models\User;
+use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Facades\Route;
 
 /*
@@ -18,6 +20,16 @@ use Illuminate\Support\Facades\Route;
 |
 */
 
+Route::get("/user/@{username}", function (Request $request, string $username) {
+    $user = User::where("username", $username)->first();
+
+    if (is_null($user)) {
+        abort(403, "Unauthorized action.");
+        return;
+    }
+
+    return redirect("/user/$user->id");
+});
 Route::get("/user/{userId}", App\Livewire\Profile\Index::class);
 Route::get("/invite/{userId}", App\Livewire\Community\Invite::class);
 
