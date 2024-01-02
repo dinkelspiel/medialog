@@ -6,7 +6,7 @@
                 <div class="font-semibold text-xl">
                     {{ $user->username }}'s Profile
                 </div>
-                @if (auth()->user()->id != $user->id)
+                @if (auth()->check() && auth()->user()->id != $user->id)
                     <x-button class="ms-auto w-max px-16">
                         Follow
                     </x-button>
@@ -137,7 +137,7 @@
                 </div>
             </div>
         </div>
-        <div class="grid grid-rows-[1fr,0.3fr] gap-8">
+        <div class="grid @if (auth()->check() && auth()->user()->id == $user->id) grid-rows-[1fr,0.3fr] @else grid-rows-1 @endif gap-8">
             <div class="rounded-[32px] border-2 c-border-card c-shadow-card cursor-pointer" x-data="{ page: 'following' }">
                 <div class="flex flex-row h-[70px] items-center text-center font-semibold">
                     <div class="h-full flex items-center w-full border-b-2"
@@ -167,7 +167,7 @@
                     // Todo
                 </div>
             </div>
-            @if (auth()->user()->id == $user->id)
+            @if (auth()->check() && auth()->user()->id == $user->id)
                 <div class="rounded-[32px] border-2 c-border-card c-shadow-card c-text-text">
                     <div class="flex flex-row h-[70px] items-center text-center font-semibold">
                         <div class="h-full flex items-center w-full">
