@@ -2,7 +2,7 @@
     <x-button.nav.base class="c-active:bg-secondary-hover">
         {{ $slot }}
     </x-button.nav.base>
-    <div>
+    <div class="block lg:hidden">
         {{ $label ?? 'Label' }}
     </div>
 </div>
