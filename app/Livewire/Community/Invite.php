@@ -1,21 +1,27 @@
 <?php
 
-namespace App\Livewire\Auth;
+namespace App\Livewire\Community;
 
 use App\Models\User;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
-use Illuminate\Support\Facades\Session;
-use Illuminate\Support\Facades\Validator;
 use Livewire\Component;
 
-class Index extends Component
+class Invite extends Component
 {
     public $regEmail, $regPassword, $regUsername;
-    public $logEmail, $logPassword;
-
     public $username, $email, $password;
+
+    public User $user;
+
+    public function mount(int $userId)
+    {
+        $this->user = User::where("id", $userId)->first();
+
+        if (auth()->check()) {
+            $this->redirect("/dashboard");
+        }
+    }
 
     public function register()
     {
@@ -33,6 +39,7 @@ class Index extends Component
         $user->username = $this->username;
         $user->email = $this->email;
         $user->password = Hash::make($this->password);
+        $user->invited_by = $this->user->id;
         $user->save();
 
         session()->flash("message", "Registration Successful.");
@@ -41,33 +48,9 @@ class Index extends Component
         $this->redirect("/dashboard");
     }
 
-    public function mount()
-    {
-        if (auth()->check()) {
-            $this->redirect("/dashboard");
-        }
-    }
-
-    public function login()
-    {
-        $this->email = $this->logEmail;
-        $this->password = $this->logPassword;
-
-        $credentials = $this->validate([
-            "email" => "required|email",
-            "password" => "required",
-        ]);
-
-        if (Auth::attempt($credentials, true)) {
-            $this->redirect("/dashboard");
-        } else {
-            session()->flash("error", "Invalid credentials");
-        }
-    }
-
     public function render()
     {
-        return view("livewire.auth.index")->layout("layouts.app", [
+        return view("livewire.community.invite")->layout("layouts.app", [
             "header" => "home",
         ]);
     }

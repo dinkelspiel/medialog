@@ -8,11 +8,17 @@ use App\Models\ColorScheme;
 use App\Models\User;
 use App\Models\UserColorScheme;
 use App\Models\UserFollow;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class Index extends Component
 {
     public User $user;
+
+    public function logout()
+    {
+        Auth::logout();
+    }
 
     public function toggleFollow()
     {

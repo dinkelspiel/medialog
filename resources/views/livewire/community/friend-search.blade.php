@@ -50,10 +50,7 @@
                 <div class="font-semibold text-xl">
                     Other ways to connect
                 </div>
-                <x-button.secondary>
-                    <x-icons.envelope />
-                    Invite Friends
-                </x-button.secondary>
+                <x-button.invite />
             </div>
         </div>
     </div>

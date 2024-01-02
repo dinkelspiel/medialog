@@ -21,6 +21,10 @@
                             Unfollow
                         </x-button.secondary>
                     @endif
+                @elseif(auth()->check() && auth()->user()->id == $user->id)
+                    <x-button.secondary class="ms-auto w-max px-16" wire:click="logout">
+                        Log out
+                    </x-button.secondary>
                 @endif
             </div>
             <div class="flex flex-col gap-8">
@@ -215,10 +219,7 @@
                                 Find Friends
                             </x-button.secondary>
                         </a>
-                        <x-button.secondary>
-                            <x-icons.envelope />
-                            Invite Friends
-                        </x-button.secondary>
+                        <x-button.invite />
                     </div>
                 </div>
             @endif
