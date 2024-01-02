@@ -49,6 +49,14 @@ button[disabled] {
     overflow: auto;
 }
 
+@media (min-width: 1024px) {
+    .lg\:scrollable-grid-item {
+        max-height: calc(100vh - 1.5rem);
+        /* Adjust as needed based on your layout */
+        overflow: auto;
+    }
+}
+
 /* Hide scrollbar for Chrome, Safari and Opera */
 .no-scrollbar::-webkit-scrollbar {
     display: none;
