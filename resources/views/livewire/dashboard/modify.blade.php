@@ -120,7 +120,7 @@
                         Cover Url
                     </div>
                     <x-input placeholder="https://example.com/image.png"
-                        wire:model="entries.{{ $loop->index }}.cover_url" />
+                        wire:model.live="entries.{{ $loop->index }}.cover_url" />
                 </div>
             </div>
         @endforeach
