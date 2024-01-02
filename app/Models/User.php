@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Enums\UserRatingStyleEnum;
 use App\Enums\UserSubtextStyleEnum;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
@@ -20,6 +21,9 @@ class User extends Authenticatable
         "email",
         "rating_style",
         "subtext_style",
+        "daily_streak_continued",
+        "daily_streak_length",
+        "daily_streak_longest",
     ];
 
     protected $hidden = ["password"];
@@ -54,5 +58,49 @@ class User extends Authenticatable
     public function userColorScheme(): HasOne
     {
         return $this->hasOne(UserColorScheme::class);
+    }
+
+    public function getDailyStreak(): int
+    {
+        if (
+            Carbon::parse($this->daily_streak_updated)
+                ->startOfDay()
+                ->diffInMinutes(Carbon::now()->endOfDay(), false) > 2880
+        ) {
+            if ($this->daily_streak_length > $this->daily_streak_longest) {
+                $this->daily_streak_longest = $this->daily_streak_length;
+            }
+            $this->daily_streak_length = 0;
+            $this->save();
+            return 0;
+        }
+
+        $this->daily_streak_length =
+            Carbon::parse($this->daily_streak_started)
+                ->startOfDay()
+                ->diffInDays(
+                    Carbon::parse($this->daily_streak_updated)->startOfDay(),
+                ) + 1;
+        if ($this->daily_streak_length > $this->daily_streak_longest) {
+            $this->daily_streak_longest = $this->daily_streak_length;
+        }
+        $this->save();
+        return $this->daily_streak_length;
+    }
+
+    public function pushDailyStreak()
+    {
+        $this->getDailyStreak();
+
+        if ($this->daily_streak_length == 0) {
+            $this->daily_streak_started = Carbon::now();
+            $this->daily_streak_updated = Carbon::now();
+
+            $this->save();
+            return;
+        }
+
+        $this->daily_streak_updated = Carbon::now();
+        $this->save();
     }
 }

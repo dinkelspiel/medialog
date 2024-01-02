@@ -10,6 +10,7 @@ use App\Models\Entry;
 use App\Models\Franchise;
 use App\Models\Person;
 use App\Models\Studio;
+use App\Models\User;
 use App\Models\UserEntry;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Log;
@@ -126,6 +127,10 @@ class Index extends Component
                 1,
         ]);
 
+        User::where("id", auth()->user()->id)
+            ->first()
+            ->pushDailyStreak();
+
         $this->userEntry->save();
     }
 
@@ -138,6 +143,10 @@ class Index extends Component
         if ($progress > $this->userEntry->entry->length) {
             $progress = $this->userEntry->entry->length;
         }
+
+        User::where("id", auth()->user()->id)
+            ->first()
+            ->pushDailyStreak();
 
         if ($progress == $this->userEntry->entry->length) {
             $this->userEntry->watched_at = Carbon::now();
@@ -193,6 +202,10 @@ class Index extends Component
                     ->where("user_id", auth()->user()->id)
                     ->count() - 1,
         ]);
+
+        User::where("id", auth()->user()->id)
+            ->first()
+            ->pushDailyStreak();
 
         session()->flash("userEntryMessage", "Update successful");
     }
