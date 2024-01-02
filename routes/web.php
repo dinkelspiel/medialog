@@ -19,6 +19,7 @@ use Illuminate\Support\Facades\Route;
 */
 
 Route::get("/user/{userId}", App\Livewire\Profile\Index::class);
+Route::get("/invite/{userId}", App\Livewire\Community\Invite::class);
 
 Route::middleware([VerifySession::class])->group(function () {
     Route::get("/dashboard", App\Livewire\Dashboard\Index::class);

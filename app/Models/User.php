@@ -24,6 +24,7 @@ class User extends Authenticatable
         "daily_streak_continued",
         "daily_streak_length",
         "daily_streak_longest",
+        "invited_by",
     ];
 
     protected $hidden = ["password"];

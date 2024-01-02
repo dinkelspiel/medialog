@@ -9,6 +9,7 @@
     <link rel="icon" type="image/x-icon" href="/favicon.svg">
 
     @vite('resources/css/app.css')
+    @vite('resources/js/app.js')
 
     <style>
         :root {
