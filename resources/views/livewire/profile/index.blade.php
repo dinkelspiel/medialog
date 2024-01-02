@@ -1,6 +1,6 @@
 <div class="xl:mx-80 mx-0 min-h-[100dvh] py-4">
-    <div class="grid grid-cols-[1fr,0.4fr] gap-8">
-        <div class="scrollable-grid-item no-scrollbar !h-[calc(100dvh-32px)] flex flex-col gap-8">
+    <div class="grid grid-cols-1 lg:grid-cols-[1fr,0.4fr] gap-8">
+        <div class="lg:scrollable-grid-item no-scrollbar lg:!h-[calc(100dvh-32px)] flex flex-col gap-8">
             <div class="flex flex-row w-full items-center h-[56px] gap-4">
                 <x-profile-picture.large :label="$user->username[0]" />
                 <div class="font-semibold text-xl">

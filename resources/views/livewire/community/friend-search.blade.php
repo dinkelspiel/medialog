@@ -23,12 +23,12 @@
                 </div>
                 <div class="grid grid-cols-[1fr,0.4fr] gap-4">
                     @foreach (\App\Models\User::where('username', 'LIKE', '%' . $query . '%')->limit(10)->get() as $user)
-                        <div class="flex flex-row items-center gap-4">
+                        <a class="flex flex-row items-center gap-4" href="/user/{{ $user->id }}">
                             <x-profile-picture :label="$user->username[0]" />
                             <div class="font-semibold">
                                 {{ $user->username }}
                             </div>
-                        </div>
+                        </a>
                         @php
                             $follow = \App\Models\UserFollow::where('user_id', auth()->user()->id)
                                 ->where('follow_id', $user->id)
