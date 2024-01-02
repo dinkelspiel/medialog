@@ -28,6 +28,8 @@ Route::middleware([VerifySession::class])->group(function () {
     Route::get("/settings", App\Livewire\Profile\Settings::class);
 
     Route::get("/color-schemes", App\Livewire\ColorSchemes::class);
+
+    Route::get("/friend-search", App\Livewire\Community\FriendSearch::class);
 });
 
 Route::middleware([VerifySession::class, AuthorizeAdmin::class])->group(

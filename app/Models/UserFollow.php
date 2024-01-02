@@ -33,4 +33,26 @@ class UserFollow extends Model
                 ->where("is_following", true)
                 ->exists();
     }
+
+    public static function toggleFollow(int $userId, int $followId)
+    {
+        if ($userId == $followId) {
+            return;
+        }
+
+        $follow = UserFollow::where("user_id", $userId)
+            ->where("follow_id", $followId)
+            ->first();
+
+        if (is_null($follow)) {
+            UserFollow::create([
+                "user_id" => $userId,
+                "follow_id" => $followId,
+                "is_following" => true,
+            ]);
+        } else {
+            $follow->is_following = !$follow->is_following;
+            $follow->save();
+        }
+    }
 }
