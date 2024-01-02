@@ -22,7 +22,7 @@
                             <x-icons.fire class="c-fill-secondary" />
                             <div class="flex flex-col">
                                 <div class="text-xl font-semibold">
-                                    // Todo
+                                    {{ $user->getDailyStreak() }}
                                 </div>
                                 <div class="c-text-textgray">
                                     Day Streak
