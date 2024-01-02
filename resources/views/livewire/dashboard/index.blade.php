@@ -124,6 +124,16 @@
             @endforeach
         </div>
     </div>
+    <div wire:loading.delay.shorter wire:target="showUserEntry"
+        class="rounded-[32px] c-bg-background border-2 c-border-card
+        c-shadow-card p-[30px] flex flex-col gap-4 absolute z-10 bottom-8 h-max min-h-[60dvh] w-full lg:bottom-0
+        lg:relative lg:h-full">
+        <div class="flex flex-row w-full gap-3 justify-center text-xl">
+            <div class="text-lg font-semibold font-flowCircular">
+                Example title
+            </div>
+        </div>
+    </div>
     @if ($userEntry)
         <div class="fixed z-5 top-0 left-0 w-[100dvw] h-[100dvh] bg-black opacity-50 lg:hidden">
 
@@ -252,7 +262,8 @@
 </div>
 @else
 <div class="p-4 h-full">
-    <x-button wire:click="imFeelingLucky" class=" !h-[54px]">
+    <x-button wire:loading.delay.shorter wire:loading.class="hidden" wire:target="showUserEntry"
+        wire:click="imFeelingLucky" class=" !h-[54px]">
         I'm feeling lucky
     </x-button>
 </div>
