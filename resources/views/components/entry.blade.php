@@ -19,7 +19,7 @@
             @endif
         </div>
         <div class="c-text-text">
-            @switch(auth()->user()->subtext_style->value)
+            @switch(auth()->check() ? auth()->user()->subtext_style->value : "studio")
                 @case('studio')
                     @foreach ($entry->studios()->distinct()->get() as $studio)
                         <i>{{ $studio->name }}</i>
