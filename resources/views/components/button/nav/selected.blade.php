@@ -7,7 +7,7 @@
         </div>
         {{ $slot }}
     </x-button.nav.base>
-    <div>
+    <div class="block lg:hidden">
         {{ $label ?? 'Label' }}
     </div>
 </div>
