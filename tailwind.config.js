@@ -7,9 +7,6 @@ export default {
     ],
     darkMode: "class",
     theme: {
-        fontFamily: {
-            flowCircular: ["Flow Circular", "sans-serif"]
-        },
         extend: {
             colors: {
                 background: "#FFFBFE",
