@@ -7,9 +7,20 @@
                     {{ $user->username }}'s Profile
                 </div>
                 @if (auth()->check() && auth()->user()->id != $user->id)
-                    <x-button class="ms-auto w-max px-16">
-                        Follow
-                    </x-button>
+                    @php
+                        $follow = \App\Models\UserFollow::where('user_id', auth()->user()->id)
+                            ->where('follow_id', $this->user->id)
+                            ->first();
+                    @endphp
+                    @if (is_null($follow) || !$follow->is_following)
+                        <x-button class="ms-auto w-max px-16" wire:click="toggleFollow">
+                            Follow
+                        </x-button>
+                    @else
+                        <x-button.secondary class="ms-auto w-max px-16" wire:click="toggleFollow">
+                            Unfollow
+                        </x-button.secondary>
+                    @endif
                 @endif
             </div>
             <div class="flex flex-col gap-8">
@@ -164,7 +175,28 @@
                     </div>
                 </div>
                 <div class="p-8">
-                    // Todo
+                    <div x-show="page == 'following'" class="flex flex-col gap-4">
+                        @foreach (\App\Models\UserFollow::where('user_id', $user->id)->where('is_following', true)->get() as $follow)
+                            <a class="flex flex-row gap-4 items-center" href="/user/{{ $follow->follow->id }}">
+                                <x-profile-picture :label="$follow->follow->username[0]" />
+                                {{ $follow->follow->username }}
+                                @if (\App\Models\UserFollow::isMututal($user->id, $follow->follow->id))
+                                    <x-icons.heart class="c-fill-secondary" />
+                                @endif
+                            </a>
+                        @endforeach
+                    </div>
+                    <div x-show="page == 'followers'" class="flex flex-col gap-4">
+                        @foreach (\App\Models\UserFollow::where('follow_id', $user->id)->where('is_following', true)->get() as $follow)
+                            <a class="flex flex-row gap-4 items-center" href="/user/{{ $follow->user->id }}">
+                                <x-profile-picture :label="$follow->user->username[0]" />
+                                {{ $follow->user->username }}
+                                @if (\App\Models\UserFollow::isMututal($user->id, $follow->user->id))
+                                    <x-icons.heart class="c-fill-secondary" />
+                                @endif
+                            </a>
+                        @endforeach
+                    </div>
                 </div>
             </div>
             @if (auth()->check() && auth()->user()->id == $user->id)
