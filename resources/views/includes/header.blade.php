@@ -1,4 +1,4 @@
-<div class="lg:hidden h-20 flex flex-row items-center justify-between px-6 c-fill-text fixed w-[calc(100dvw-24px)] z-5 c-bg-background relative top-0"
+<div class="lg:hidden h-20 flex flex-row items-center justify-between px-6 c-fill-text fixed w-[calc(100dvw-24px)] z-20 c-bg-background top-0"
     x-data="{ open: false }">
     <x-icons.logo />
     <button class="cursor-pointer" x-on:click="open = !open">
@@ -11,8 +11,8 @@
     <div x-show="open" x-transition:enter="transition transform duration-300" x-transition:enter-start="translate-x-full"
         x-transition:enter-end="translate-x-0" x-transition:leave="transition transform duration-300"
         x-transition:leave-start="translate-x-0" x-transition:leave-end="translate-x-full"
-        style="height: calc(100vh - 5rem);"
-        class="w-[100dvw] duration-100 absolute top-20 -left-[15px] z-10 c-bg-background p-6 flex flex-col justify-start">
+        style="height: calc(100dvh - 80px);"
+        class="w-[100dvw] duration-100 fixed top-20 -left-[15px] z-10 c-bg-background p-6 flex flex-col justify-start">
         @include('includes.header.items')
     </div>
 </div>
