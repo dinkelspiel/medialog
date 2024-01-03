@@ -30,6 +30,7 @@ class UserEntry extends Model
     public function getLatestRating(): int
     {
         return UserEntry::where("entry_id", $this->entry_id)
+            ->where("user_id", $this->user_id)
             ->where("status", "completed")
             ->orderBy("watched_at", "DESC")
             ->first()->rating ?? 0;
