@@ -148,7 +148,7 @@
 
         </div>
         <div
-            class="rounded-[32px] scrollable-grid-item flex flex-col gap-4 fixed z-40 bottom-3 h-max min-h-[97dvh] w-[calc(100dvw-26px)] lg:bottom-0 lg:relative lg:h-full c-bg-background border-2 c-border-card c-shadow-card p-[30px]">
+            class="rounded-[32px] scrollable-grid-item flex flex-col gap-4 fixed z-40 bottom-3 h-max min-h-[97dvh] lg:min-h-0 w-[calc(100dvw-26px)] lg:w-full lg:bottom-0 lg:relative lg:h-full c-bg-background border-2 c-border-card c-shadow-card p-[30px]">
             @if (isset($error))
                 <div class="error">
                     {{ $error }}
