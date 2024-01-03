@@ -1,9 +1,28 @@
 <div
-    class="grid h-[calc(100dvh-80px)] lg:h-[100dvh] grid-cols-1 lg:grid-cols-[0.9fr,1.2fr,0.9fr] gap-8 relative pb-8 pt-0 lg:pt-8">
-    <div class="rounded-[32px] scrollable-grid-item c-shadow-card">
+    class="grid h-[calc(100dvh-80px)] lg:h-[100dvh] grid-cols-1 lg:grid-cols-[0.9fr,1.2fr,0.9fr] gap-0 lg:gap-8 relative pb-8 pt-0 lg:pt-8">
+    <div class="rounded-[32px] scrollable-grid-item c-shadow-card hidden lg:block">
         <livewire:dashboard.search-franchise />
     </div>
-    <div class="flex flex-col scrollable-grid-item no-scrollbar px-2">
+    <div x-data="{ open: false }" class="block lg:hidden">
+        <button x-on:click="open = true"
+            class="rounded-full h-[54px] w-[54px] c-bg-secondary flex items-center justify-center fixed bottom-12 right-[20px] c-shadow-card">
+            <x-icons.plus class="c-fill-background" />
+        </button>
+        <div x-show="open">
+            <div class="fixed z-30 top-0 left-0 w-[100dvw] h-[100dvh] bg-black opacity-50 lg:hidden">
+
+            </div>
+            <div
+                class="rounded-[32px] scrollable-grid-item c-bg-card flex flex-col gap-4 fixed z-40 bottom-3 h-max min-h-[97dvh] w-[calc(100dvw-26px)] lg:bottom-0 lg:relative lg:h-full">
+                <livewire:dashboard.search-franchise />
+                <button x-on:click="open = false"
+                    class="right-12 top-12 fixed text-secondary  hover:text-secondary-hover active:text-secondary-active duration-100 cursor-pointer">
+                    <x-icons.xmark />
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="flex flex-col lg:scrollable-grid-item no-scrollbar pb-8 px-2">
         <div x-data="{ open: false }" class="relative">
             <div class="font-semibold text-xl flex flex-row justify-between items-center py-4">
                 My Media
@@ -125,11 +144,11 @@
         </div>
     </div>
     @if ($userEntry)
-        <div class="fixed z-5 top-0 left-0 w-[100dvw] h-[100dvh] bg-black opacity-50 lg:hidden">
+        <div class="fixed z-30 top-0 left-0 w-[100dvw] h-[100dvh] bg-black opacity-50 lg:hidden">
 
         </div>
         <div
-            class="rounded-[32px] c-bg-background border-2 c-border-card c-shadow-card p-[30px] flex flex-col gap-4 absolute z-10 bottom-8 h-max min-h-[60dvh] w-full lg:bottom-0 lg:relative lg:h-full">
+            class="rounded-[32px] scrollable-grid-item flex flex-col gap-4 fixed z-40 bottom-3 h-max min-h-[97dvh] w-[calc(100dvw-26px)] lg:bottom-0 lg:relative lg:h-full c-bg-background border-2 c-border-card c-shadow-card p-[30px]">
             @if (isset($error))
                 <div class="error">
                     {{ $error }}
@@ -251,7 +270,7 @@
     @endif
 </div>
 @else
-<div class="p-4 h-full">
+<div class="p-4 h-full hidden lg:block">
     <x-button wire:click="imFeelingLucky" class=" !h-[54px]">
         I'm feeling lucky
     </x-button>
