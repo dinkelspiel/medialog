@@ -2,11 +2,14 @@
 
 namespace App\Livewire\Dashboard;
 
+use App\Enums\ActivityTypeEnum;
+use App\Models\Activity;
 use App\Models\Category;
 use App\Models\Entry;
 use App\Models\Franchise;
 use App\Models\Person;
 use App\Models\Studio;
+use App\Models\UserEntry;
 use Illuminate\Support\Facades\Validator;
 use Livewire\Component;
 
@@ -47,7 +50,7 @@ class SearchFranchise extends Component
             session()->flash("error", "Invalid input");
         }
 
-        $userEntry = \App\Models\UserEntry::where("entry_id", $entryId)
+        $userEntry = UserEntry::where("entry_id", $entryId)
             ->where("user_id", $user->id)
             ->first();
 
@@ -58,7 +61,14 @@ class SearchFranchise extends Component
             );
         }
 
-        $userEntry = new \App\Models\UserEntry();
+        Activity::create([
+            "user_id" => auth()->user()->id,
+            "entry_id" => $this->userEntry->entry->id,
+            "type" => ActivityTypeEnum::StatusUpdate,
+            "additional_data" => "planning|0",
+        ]);
+
+        $userEntry = new UserEntry();
         $userEntry->rating = 0;
         $userEntry->notes = "";
         $userEntry->user_id = $user->id;
