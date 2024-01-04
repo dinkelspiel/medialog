@@ -24,9 +24,18 @@
                         </x-button.secondary>
                     @endif
                 @elseif(auth()->check() && auth()->user()->id == $user->id)
-                    <x-button.secondary class="w-full ms-auto lg:w-max px-16 whitespace-nowrap" wire:click="logout">
-                        Log out
-                    </x-button.secondary>
+                    <div class="flex flex-col w-full lg:w-max lg:flex-row gap-4 ms-auto">
+                        <a href="/settings">
+                            <x-button.secondary class="w-full ms-auto lg:w-max px-12 whitespace-nowrap">
+                                <x-icons.gear />
+                                Settings
+                            </x-button.secondary>
+                        </a>
+                        <x-button.secondary class="w-full ms-auto lg:w-max px-12 whitespace-nowrap" wire:click="logout">
+                            <x-icons.door-open />
+                            Log out
+                        </x-button.secondary>
+                    </div>
                 @endif
             </div>
             <div class="flex flex-col gap-8">

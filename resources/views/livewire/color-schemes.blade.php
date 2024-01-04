@@ -1,5 +1,17 @@
 <div class="xl:mx-96 mx-0 py-3 flex flex-col gap-2 h-[calc(100dvh)]">
-    <div class="grid gap-3 grid-cols-3 px-4">
+    <div class="grid grid-cols-[20px,1fr] lg:grid-cols-3 items-center px-4">
+        <a class="flex flex-row gap-4 items-center" href="/settings">
+            <x-icons.chevron-left class="c-fill-text" />
+            <div class="hidden lg:block">
+                Back to settings
+            </div>
+        </a>
+        <div class="font-semibold text-xl flex flex-row mx-auto w-max items-center py-4">
+            Color Scheme Browser
+        </div>
+        <div></div>
+    </div>
+    <div class="grid gap-4 grid-cols-1 lg:grid-cols-3 px-4">
         @foreach (\App\Models\ColorScheme::all() as $colorScheme)
             <div class="border c-border-outline c-bg-card rounded-[32px] p-[30px] flex flex-col gap-3 c-shadow-card">
                 <div class="flex flex-col gap-1.5">

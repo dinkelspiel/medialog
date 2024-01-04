@@ -1,5 +1,8 @@
 <div class="xl:mx-96 mx-0 py-3 flex flex-col gap-4 h-[calc(100dvh)]">
-    <div class="pt-3">
+    <div class="font-semibold text-xl flex flex-row mx-auto w-max items-center py-4">
+        Settings
+    </div>
+    <div class="pt-3 font-semibold text-xl">
         Rating Style
     </div>
     <x-select class="w-full" wire:change="setRatingStyle($event.target.value)">
@@ -11,7 +14,7 @@
         </option>
     </x-select>
 
-    <div class="pt-3">
+    <div class="pt-3 font-semibold text-xl">
         Show Studio or Director/Writer under entries
     </div>
     <x-select class="w-full" wire:change="setSubtextStyle($event.target.value)">
@@ -24,7 +27,7 @@
     </x-select>
 
     <div class="pt-3 flex flex-row justify-between">
-        <div>
+        <div class="font-semibold text-xl">
             Color Scheme
         </div>
         <a class="text-btn" href="/color-schemes">
@@ -38,7 +41,7 @@
             <div>Name</div>
             <x-input class="w-full" wire:model.live="colorSchemeName" />
         </div>
-        <div class="grid grid-cols-2 gap-3">
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-3">
             <div class="flex items-center gap-2">
                 <div class="me-auto">Card</div>
                 <div class="h-12 w-12 rounded-full" style="background: {{ $card }}"></div>
@@ -102,7 +105,7 @@
                 Save
             @endif
         </x-button>
-        <x-button wire:click="createCustomColorScheme">Create new color scheme</x-button>
+        <x-button.secondary wire:click="createCustomColorScheme">Create new color scheme</x-button.secondary>
     @endif
     @foreach (json_decode($errors) as $key => $value)
         @foreach ($value as $error)
@@ -114,7 +117,7 @@
             </div>
         @endforeach
     @endforeach
-    <form wire:submit.prevent="logout" class="justify-end mt-auto">
+    <form wire:submit.prevent="logout" class="justify-end mt-auto pb-16">
         @csrf
         <x-button class="w-full mt-auto" type="submit">
             Logout
