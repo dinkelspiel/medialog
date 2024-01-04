@@ -15,14 +15,16 @@
             <div class="flex flex-col gap-8">
                 <div class="font-semibold text-xl">
                     @php
-                        $count = \App\Models\User::where('username', 'LIKE', '%' . $query . '%')->count();
+                        $count = \App\Models\User::where('username', 'LIKE', '%' . $query . '%')
+                            ->where('id', '!=', auth()->user()->id)
+                            ->count();
                     @endphp
                     {{ $count }} Results @if ($count > 10)
                         (10 Shown)
                     @endif
                 </div>
                 <div class="grid grid-cols-[1fr,0.4fr] gap-4">
-                    @foreach (\App\Models\User::where('username', 'LIKE', '%' . $query . '%')->limit(10)->get() as $user)
+                    @foreach (\App\Models\User::where('username', 'LIKE', '%' . $query . '%')->where('id', '!=', auth()->user()->id)->limit(10)->get() as $user)
                         <a class="flex flex-row items-center gap-4" href="/user/{{ $user->id }}">
                             <x-profile-picture :label="$user->username[0]" />
                             <div class="font-semibold">
