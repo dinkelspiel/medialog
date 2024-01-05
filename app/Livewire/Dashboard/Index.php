@@ -279,7 +279,7 @@ class Index extends Component
     public function render()
     {
         if ($this->sortAfter === "") {
-            $this->sortAfter = array_column(SortAfterEnum::cases(), "value")[0];
+            $this->sortAfter = array_column(SortAfterEnum::cases(), "value")[2];
         }
 
         $this->filterCreator =
