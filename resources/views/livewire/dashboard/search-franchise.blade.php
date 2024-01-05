@@ -4,9 +4,9 @@
             Add Media
         </div>
         <div class="flex flex-row gap-4 items-center w-full col-span-2">
-            <x-icons.circle>
+            <div class="px-2">
                 <x-icons.search />
-            </x-icons.circle>
+            </div>
             <x-input wire:model.live="search" type="text" placeholder="Search franchise..." class="flex-grow" />
         </div>
 

@@ -86,9 +86,9 @@
 
                 {{-- Filter Options --}}
                 <div class="flex flex-row gap-4 items-center w-full col-span-2">
-                    <x-icons.circle>
+                    <div class="px-2">
                         <x-icons.search />
-                    </x-icons.circle>
+                    </div>
                     <x-input class="flex-grow" placeholder="Title" type="text" wire:model.live="filterTitle" />
                 </div>
                 <x-input class="col-span-2" placeholder="Season" type="text" wire:model.live="filterSeason" />
