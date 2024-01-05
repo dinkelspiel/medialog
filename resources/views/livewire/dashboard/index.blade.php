@@ -176,7 +176,7 @@
                     <div class="flex flex-col gap-3 h-full flex-1">
                         <x-dashboard.rewatch-pills :entryId="$userEntry->entry->id" :currentUserEntryId="$userEntry->id" showAdd />
 
-                        <div id="rating-label">
+                        <div id="rating-label" class="font-semibold">
                             Rating
                         </div>
                         @switch(auth()->user()->rating_style)
@@ -203,7 +203,7 @@
                                 </div>
                             @break
                         @endswitch
-                        <div>
+                        <div class="font-semibold">
                             Notes
                         </div>
                         <textarea class="w-full appearance-none c-bg-background !h-full resize-none !text-base p-0 flex-1" name="notes"
