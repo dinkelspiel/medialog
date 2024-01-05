@@ -7,10 +7,10 @@
         <img src="{{ $entry->cover_url }}" class="rounded-[16px] w-20 object-cover aspect-[2/3]">
     @endif
 
-    <div class="flex flex-col justify-center my-auto gap-3">
+    <div class="flex flex-col justify-center my-auto gap-3 w-full">
         <div class="flex flex-col md:flex-row justify-center md:items-center md:justify-start gap-2">
             <div class="font-semibold">
-                {{ $entry->franchise->name }}
+                {{ $entry->franchise->name }}asd
             </div>
             @if (count($entry->franchise->entries) > 1)
                 <div class="c-text-text">
@@ -45,26 +45,23 @@
             @endswitch
         </div>
         @isset($rating)
-            <div class="w-full h-[2px] c-bg-outline">
+            <div class="w-[50%] h-[2px] c-bg-outline">
 
             </div>
-            <div class="flex-row gap-3 hidden md:flex">
-                @for ($i = 0; $i < 10; $i++)
-                    @if (round($rating / 10) >= $i + 1)
-                        <x-icons.star class="c-fill-secondary" />
-                    @else
-                        <x-icons.star-outline class="c-fill-outline" />
-                    @endif
-                @endfor
-            </div>
-            <div class="flex-row gap-3 flex md:hidden items-center">
+            <div class="flex-row gap-3 flex items-center">
                 @for ($i = 0; $i < 5; $i++)
                     @if (round($rating / 20) >= $i + 1)
                         <x-icons.star class="c-fill-secondary" />
-                    @else
-                        <x-icons.star-outline class="c-fill-outline" />
                     @endif
                 @endfor
+                @php
+                    $fraction = $rating / 10 - floor($rating / 10);
+
+                    $showHalf = $fraction >= 0.3 && $fraction <= 0.7;
+                @endphp
+                @if ($showHalf)
+                    <x-icons.star-half class="c-fill-secondary" />
+                @endif
             </div>
         @endisset
     </div>
