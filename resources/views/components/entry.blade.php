@@ -10,7 +10,7 @@
     <div class="flex flex-col justify-center my-auto gap-3 w-full">
         <div class="flex flex-col md:flex-row justify-center md:items-center md:justify-start gap-2">
             <div class="font-semibold">
-                {{ $entry->franchise->name }}asd
+                {{ $entry->franchise->name }}
             </div>
             @if (count($entry->franchise->entries) > 1)
                 <div class="c-text-text">
@@ -66,7 +66,6 @@
                 @if ($showFull)
                     <x-icons.star class="c-fill-secondary" />
                 @endif
-                {{ $rating / 20 }}
             </div>
         @endisset
     </div>
