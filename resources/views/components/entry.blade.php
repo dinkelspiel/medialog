@@ -50,18 +50,23 @@
             </div>
             <div class="flex-row gap-3 flex items-center">
                 @for ($i = 0; $i < 5; $i++)
-                    @if (round($rating / 20) >= $i + 1)
+                    @if (floor($rating / 20) >= $i + 1)
                         <x-icons.star class="c-fill-secondary" />
                     @endif
                 @endfor
                 @php
-                    $fraction = $rating / 10 - floor($rating / 10);
+                    $fraction = $rating / 20 - floor($rating / 20);
 
                     $showHalf = $fraction >= 0.3 && $fraction <= 0.7;
+                    $showFull = $fraction > 0.7;
                 @endphp
                 @if ($showHalf)
                     <x-icons.star-half class="c-fill-secondary" />
                 @endif
+                @if ($showFull)
+                    <x-icons.star class="c-fill-secondary" />
+                @endif
+                {{ $rating / 20 }}
             </div>
         @endisset
     </div>
