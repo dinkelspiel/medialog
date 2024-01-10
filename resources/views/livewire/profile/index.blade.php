@@ -96,7 +96,12 @@
 
                                             @case('watching')
                                                 @if ($rewatch == 0)
-                                                    is watching
+                                                    is
+                                                    @if ($activity->entry->franchise->category->name == 'Book')
+                                                        reading
+                                                    @else
+                                                        watching
+                                                    @endif
                                                 @else
                                                     is for the {{ \App\Helpers\numberSuffix($rewatch + 1) }} time watching
                                                 @endif

@@ -96,21 +96,21 @@
                 </div>
                 <div class="flex flex-col gap-2">
                     <div class="text-left c-text-textgray text-xs col-span-2 ps-[27px]">
-                        @switch($franchiseCategory)
-                            @case(1)
+                        @switch(\App\Models\Category::where('id', $franchiseCategory)->first()->name)
+                            @case('Book')
                                 Amount of pages
                             @break
 
-                            @case(2)
+                            @case('Series')
                                 Amount of episodes
                             @break
 
-                            @case(3)
+                            @case('Movie')
                                 Length in minutes
                             @break
 
                             @default
-                                Invalid category {{ $franchiseCategory }}
+                                Length of {{ \App\Models\Category::where('id', $franchiseCategory)->first()->name }}
                         @endswitch
                     </div>
                     <x-input type="number" wire:model.live="entries.{{ $loop->index }}.length" />
