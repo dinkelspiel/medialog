@@ -106,7 +106,7 @@
                                                 @if ($rewatch == 0)
                                                     did not finish
                                                 @else
-                                                    did not finish their {{ \App\Helpers\numberSuffix($rewatch + 1) }} rewatch of
+                                                    did not finish their {{ \App\Helpers\numberSuffix($rewatch) }} rewatch of
                                                 @endif
                                             @break
 
@@ -114,7 +114,7 @@
                                                 @if ($rewatch == 0)
                                                     paused
                                                 @else
-                                                    paused their {{ \App\Helpers\numberSuffix($rewatch + 1) }} rewatch of
+                                                    paused their {{ \App\Helpers\numberSuffix($rewatch) }} rewatch of
                                                 @endif
                                             @break
 
@@ -122,7 +122,7 @@
                                                 @if ($rewatch == 0)
                                                     completed
                                                 @else
-                                                    completed their {{ \App\Helpers\numberSuffix($rewatch + 1) }} rewatch of
+                                                    completed their {{ \App\Helpers\numberSuffix($rewatch) }} rewatch of
                                                 @endif
                                             @break
 
@@ -143,6 +143,16 @@
                                         started their {{ \App\Helpers\numberSuffix($activity->additional_data) }} rewatch of
                                     @break
 
+                                    @case(\App\Enums\ActivityTypeEnum::CompleteReview)
+                                        @if ($activity->additional_data == 0)
+                                            completed and reviewed
+                                        @else
+                                            completed and reviewed their
+                                            {{ \App\Helpers\numberSuffix($activity->additional_data) }} rewatch
+                                            of
+                                        @endif
+                                    @break
+
                                     @default
                                 @endswitch
 
@@ -150,7 +160,9 @@
                                     {{ Carbon\Carbon::parse($activity->created_at)->diffForHumans() }}
                                 </div>
                             </div>
-                            @if ($activity->type != \App\Enums\ActivityTypeEnum::Reviewed)
+                            @if (
+                                $activity->type != \App\Enums\ActivityTypeEnum::Reviewed &&
+                                    $activity->type != \App\Enums\ActivityTypeEnum::CompleteReview)
                                 <x-entry :entry="$activity->entry" />
                             @else
                                 <x-entry :entry="$activity->entry" :rating="\App\Models\UserEntry::where('user_id', $activity->user_id)

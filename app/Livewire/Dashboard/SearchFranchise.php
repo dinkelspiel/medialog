@@ -61,19 +61,19 @@ class SearchFranchise extends Component
             );
         }
 
-        Activity::create([
-            "user_id" => auth()->user()->id,
-            "entry_id" => $this->userEntry->entry->id,
-            "type" => ActivityTypeEnum::StatusUpdate,
-            "additional_data" => "planning|0",
-        ]);
-
         $userEntry = new UserEntry();
         $userEntry->rating = 0;
         $userEntry->notes = "";
         $userEntry->user_id = $user->id;
         $userEntry->entry_id = $entryId;
         $userEntry->save();
+
+        Activity::create([
+            "user_id" => auth()->user()->id,
+            "entry_id" => $userEntry->entry->id,
+            "type" => ActivityTypeEnum::StatusUpdate,
+            "additional_data" => "planning|0",
+        ]);
 
         $userEntry->refresh();
         $this->dispatch("refreshUserEntries");

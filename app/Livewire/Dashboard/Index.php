@@ -191,17 +191,61 @@ class Index extends Component
             return "You cannot edit a user entry that is not yours.";
         }
 
-        $this->userEntry->save();
+        $lastActivity = Activity::where("user_id", auth()->user()->id)
+            ->where("type", "!=", "review")
+            ->orderBy("id", "DESC")
+            ->first();
 
-        Activity::create([
-            "user_id" => auth()->user()->id,
-            "entry_id" => $this->userEntry->entry->id,
-            "type" => ActivityTypeEnum::Reviewed,
-            "additional_data" =>
-                UserEntry::where("entry_id", $this->userEntry->entry->id)
-                    ->where("user_id", auth()->user()->id)
-                    ->count() - 1,
-        ]);
+        Log::info($lastActivity);
+        Log::info(
+            str_contains($lastActivity->additional_data, "completed")
+                ? "true"
+                : "false",
+        );
+        Log::info(
+            $lastActivity->type == ActivityTypeEnum::StatusUpdate
+                ? "true"
+                : "false",
+        );
+
+        Log::info(
+            $lastActivity &&
+            str_contains($lastActivity->additional_data, "completed") &&
+            $lastActivity->type == ActivityTypeEnum::StatusUpdate
+                ? "true"
+                : "false",
+        );
+
+        if (
+            $lastActivity &&
+            str_contains($lastActivity->additional_data, "completed") &&
+            $lastActivity->type == ActivityTypeEnum::StatusUpdate
+        ) {
+            $lastActivity->delete();
+            Activity::create([
+                "user_id" => auth()->user()->id,
+                "entry_id" => $this->userEntry->entry->id,
+                "type" => ActivityTypeEnum::CompleteReview,
+                "additional_data" =>
+                    UserEntry::where("entry_id", $this->userEntry->entry->id)
+                        ->where("user_id", auth()->user()->id)
+                        ->count() - 1,
+            ]);
+        } elseif (
+            UserEntry::where("id", $this->userEntry->id)->first()->rating === 0
+        ) {
+            Activity::create([
+                "user_id" => auth()->user()->id,
+                "entry_id" => $this->userEntry->entry->id,
+                "type" => ActivityTypeEnum::Reviewed,
+                "additional_data" =>
+                    UserEntry::where("entry_id", $this->userEntry->entry->id)
+                        ->where("user_id", auth()->user()->id)
+                        ->count() - 1,
+            ]);
+        }
+
+        $this->userEntry->save();
 
         User::where("id", auth()->user()->id)
             ->first()
