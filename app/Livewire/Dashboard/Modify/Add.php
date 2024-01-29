@@ -13,8 +13,8 @@ class Add extends ModifyBase
 {
     public function save()
     {
-        if (Franchise::where("name", $this->franchiseName)->first() != null) {
-            session()->flash("error", "Franchise with name already exists");
+        if (Franchise::where("name", $this->franchiseName)->where("category_id", $this->franchiseCategory)->first() != null) {
+            session()->flash("error", "Franchise with name and category already exists");
             return;
         }
 
