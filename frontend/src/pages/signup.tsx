@@ -14,7 +14,7 @@ interface LoginResponse {
   error?: string;
 }
 
-const Login = () => {
+const SignUp = () => {
   let [pendingLoginResult, setPendingLoginResult] = useState<boolean>(false);
   let [error, setError] = useState<string | undefined>(undefined);
   let [email, setEmail] = useState("");
@@ -64,9 +64,9 @@ const Login = () => {
         </div>
       </div>
       <div className="relative flex items-center">
-        <a href="/signup">
+        <a href="/login">
           <Button className="absolute right-8 top-8" variant="ghost">
-            Sign up
+            Log in
           </Button>
         </a>
         <form
@@ -74,8 +74,16 @@ const Login = () => {
           onSubmit={(e) => attemptLogin(e)}
         >
           <h2 className="pb-1.5 text-2xl font-semibold tracking-tight">
-            Login to your account
+            Create an account
           </h2>
+          <div className="flex w-full flex-col space-y-1.5">
+            <Label htmlFor="email">Username</Label>
+            <Input
+              name="email"
+              onChange={(e) => setEmail(e.target.value)}
+              placeholder="username"
+            />
+          </div>
           <div className="flex w-full flex-col space-y-1.5">
             <Label htmlFor="email">Email</Label>
             <Input
@@ -110,7 +118,7 @@ const Login = () => {
                 <path d="M21 12a9 9 0 1 1-6.219-8.56"></path>
               </svg>
             )}
-            Sign in with email
+            Create your account
           </Button>
         </form>
       </div>
@@ -118,4 +126,4 @@ const Login = () => {
   );
 };
 
-export default Login;
+export default SignUp;

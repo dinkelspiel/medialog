@@ -1,6 +1,4 @@
-# Medialog
-
-A self hosted solution for privately rating and reviewing different sorts of media
+# Medialog Backend
 
 ## Run
 
