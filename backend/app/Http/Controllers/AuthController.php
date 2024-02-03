@@ -12,6 +12,13 @@ class AuthController extends Controller
 {
     public function login(Request $request)
     {
+        if (!User::where("email", $request->json("email"))->exists()) {
+            return response()->json(
+                ["error" => "User with this email doesn't exist"],
+                401,
+            );
+        }
+
         if (Auth::attempt($request->only("email", "password"))) {
             $user = Auth::user();
             $token = Str::random(64);

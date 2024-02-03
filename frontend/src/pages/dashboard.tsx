@@ -41,12 +41,15 @@ export default function Home() {
 
   useEffect(() => {
     const fetchEntries = async () => {
-      const response = await fetch("http://localhost/api/users/41/entries", {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_API_URL + "/users/41/entries",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
         },
-      });
+      );
 
       response.json().then(
         (
