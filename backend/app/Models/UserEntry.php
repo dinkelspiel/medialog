@@ -11,7 +11,7 @@ class UserEntry extends Model
 {
     use HasFactory;
 
-    protected $fillable = ["rating", "notes"];
+    protected $fillable = ["rating", "notes", "user_id", "entry_id", "watched_at", "status", "progress"];
 
     protected $casts = [
         "status" => UserEntryStatusEnum::class,
