@@ -1,3 +1,4 @@
+import AddMedia from "@/components/addMedia";
 import Entry from "@/components/entry";
 import Az from "@/components/icons/az";
 import Eye from "@/components/icons/eye";
@@ -16,17 +17,29 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
+import { User } from "@/interfaces/user";
 import Head from "next/head";
 import Link from "next/link";
+import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 
 type UserEntryStatus = "planning" | "watching" | "dnf" | "paused" | "completed";
 
 interface UserEntry {
+  id: number;
   franchiseName: string;
   entryName: string;
   coverUrl: string;
@@ -35,14 +48,74 @@ interface UserEntry {
   status: UserEntryStatus;
 }
 
+interface UserEntryData {
+  id: number;
+  franchiseName: string;
+  entryName: string;
+  releaseYear: number;
+  rating: number;
+  notes: string;
+}
+
 export default function Home() {
-  let [showFilters, setShowFilters] = useState<boolean>(false);
-  let [userEntries, setUserEntries] = useState<UserEntry[]>([]);
+  const [showFilters, setShowFilters] = useState<boolean>(false);
+  const [userEntries, setUserEntries] = useState<UserEntry[]>([]);
+  const [sortBy, setSortBy] = useState<"rating" | "az" | "updated" | "watched">(
+    "rating",
+  );
+  const [user, setUser] = useState<User>({ id: 0, username: "", email: "" });
+  const [pendingUserEntryData, setPendingDataFetch] = useState(false);
+  const [userEntryData, setUserEntryData] = useState<UserEntryData | undefined>(
+    undefined,
+  );
+  const router = useRouter();
+
+  const fetchEntries = async (userId: number) => {
+    const response = await fetch(
+      process.env.NEXT_PUBLIC_API_URL + `/users/${userId}/entries`,
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    );
+
+    response.json().then(
+      (
+        data: {
+          id: number;
+          franchiseName: string;
+          entryName: string;
+          coverUrl: string;
+          updatedAt: string;
+          rating: number;
+          status: UserEntryStatus;
+        }[],
+      ) => {
+        setUserEntries(
+          data.map((userEntry) => {
+            return {
+              id: userEntry.id,
+              franchiseName: userEntry.franchiseName,
+              entryName: userEntry.entryName,
+              coverUrl: userEntry.coverUrl,
+              updatedAt: userEntry.updatedAt,
+              rating: userEntry.rating,
+              status: userEntry.status,
+            } as UserEntry;
+          }),
+        );
+      },
+    );
+  };
 
   useEffect(() => {
-    const fetchEntries = async () => {
+    const getLoggedInUser = async () => {
       const response = await fetch(
-        process.env.NEXT_PUBLIC_API_URL + "/users/41/entries",
+        process.env.NEXT_PUBLIC_API_URL +
+          "/auth/validate?sessionToken=" +
+          localStorage.getItem("sessionToken"),
         {
           method: "GET",
           headers: {
@@ -51,35 +124,43 @@ export default function Home() {
         },
       );
 
-      response.json().then(
-        (
-          data: {
-            franchise_name: string;
-            entry_name: string;
-            cover_url: string;
-            updated_at: string;
-            rating: number;
-            status: UserEntryStatus;
-          }[],
-        ) => {
-          setUserEntries(
-            data.map((userEntry) => {
-              return {
-                franchiseName: userEntry.franchise_name,
-                entryName: userEntry.entry_name,
-                coverUrl: userEntry.cover_url,
-                updatedAt: userEntry.updated_at,
-                rating: userEntry.rating,
-                status: userEntry.status,
-              } as UserEntry;
-            }),
-          );
-        },
-      );
+      if (response.status == 401) {
+        router.push("/login");
+        return;
+      }
+
+      response.json().then((data: User) => {
+        setUser(data);
+        fetchEntries(data.id);
+      });
     };
 
-    fetchEntries();
+    getLoggedInUser();
   }, []);
+
+  const getUserEntryData = async (userEntryId: number) => {
+    let timeout = setTimeout(() => {
+      setPendingDataFetch(true);
+    }, 200);
+
+    const response = await fetch(
+      process.env.NEXT_PUBLIC_API_URL +
+        `/users/${user.id}/entries/${userEntryId}?sessionToken=` +
+        localStorage.getItem("sessionToken"),
+      {
+        method: "GET",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      },
+    );
+
+    response.json().then((data: UserEntryData) => {
+      setUserEntryData(data);
+      clearTimeout(timeout);
+      setPendingDataFetch(false);
+    });
+  };
 
   return (
     <>
@@ -103,16 +184,32 @@ export default function Home() {
                 <div className="flex w-full justify-end gap-3">
                   <Tabs defaultValue="rating">
                     <TabsList>
-                      <TabsTrigger value="rating" className="gap-3">
+                      <TabsTrigger
+                        value="rating"
+                        className="gap-3"
+                        onClick={() => setSortBy("rating")}
+                      >
                         <Star /> Rating
                       </TabsTrigger>
-                      <TabsTrigger value="az" className="gap-3">
+                      <TabsTrigger
+                        value="az"
+                        className="gap-3"
+                        onClick={() => setSortBy("az")}
+                      >
                         <Az /> A-Z
                       </TabsTrigger>
-                      <TabsTrigger value="watched" className="gap-3">
+                      <TabsTrigger
+                        value="watched"
+                        className="gap-3"
+                        onClick={() => setSortBy("watched")}
+                      >
                         <Eye /> Watched
                       </TabsTrigger>
-                      <TabsTrigger value="updated" className="gap-3">
+                      <TabsTrigger
+                        value="updated"
+                        className="gap-3"
+                        onClick={() => setSortBy("updated")}
+                      >
                         <Pen /> Updated
                       </TabsTrigger>
                     </TabsList>
@@ -150,57 +247,143 @@ export default function Home() {
             <div className="flex flex-row flex-wrap gap-4 pt-4">
               {userEntries
                 .sort((a, b) => {
-                  return b.rating - a.rating;
+                  switch (sortBy) {
+                    case "rating":
+                      return b.rating - a.rating;
+                    case "az":
+                      return a.franchiseName.localeCompare(b.franchiseName);
+                    case "updated":
+                      return 0;
+                    case "watched":
+                      return 0;
+                  }
                 })
                 .map((userEntry: UserEntry) => {
                   return (
                     <Entry
-                      title={userEntry.franchiseName}
+                      key={userEntry.id}
+                      title={`${userEntry.franchiseName}: ${userEntry.entryName}`}
                       releaseYear={2023}
                       rating={userEntry.rating}
                       coverUrl={userEntry.coverUrl}
+                      onClick={() => {
+                        getUserEntryData(userEntry.id);
+                      }}
                     />
                   );
                 })}
+              <Dialog>
+                <DialogTrigger asChild>
+                  <div className="relative flex h-[255px] w-[170px] cursor-pointer items-center justify-center rounded-md border border-slate-200 text-lg font-medium duration-100 hover:bg-slate-100">
+                    Add Media
+                  </div>
+                </DialogTrigger>
+                <AddMedia
+                  fetchEntries={() => fetchEntries(user.id)}
+                  userId={user.id}
+                />
+              </Dialog>
             </div>
           </div>
-          <Card className="grid w-[600px] grid-rows-[80px,1fr,60px]">
-            <CardHeader className="flex flex-row gap-3">
-              <h2 className="text-2xl font-semibold">The Last of Us</h2>
-              <div className="text-slate-500">2023</div>
-              <div className="ms-auto flex h-full items-start">
-                <button>
-                  <Xmark />
-                </button>
-              </div>
-            </CardHeader>
-            <CardContent className="flex-1">
-              <div className="flex h-full w-full flex-col items-center gap-4">
-                <div className="flex w-full flex-col space-y-1.5">
-                  <Label htmlFor="name">Rating</Label>
-                  <div className="flex flex-row justify-center gap-2">
-                    <Star className="h-[22px] w-[22px]" />
-                    <Star className="h-[22px] w-[22px]" />
-                    <Star className="h-[22px] w-[22px]" />
-                    <StarOutline className="h-[22px] w-[22px]" />
-                    <StarOutline className="h-[22px] w-[22px]" />
+          {(pendingUserEntryData || userEntryData) && (
+            <Card className="grid w-[600px] grid-rows-[max-content,1fr,60px]">
+              <CardHeader className="flex flex-row items-end gap-3">
+                {pendingUserEntryData ? (
+                  <>
+                    <Skeleton className="h-8 w-[60%]" />
+                  </>
+                ) : userEntryData ? (
+                  <>
+                    <h2 className="text-2xl font-semibold">
+                      {userEntryData.franchiseName}: {userEntryData.entryName}
+                    </h2>
+                    <div className="text-slate-500">
+                      {userEntryData.releaseYear}
+                    </div>
+                  </>
+                ) : (
+                  ""
+                )}
+                <div className="ms-auto flex h-full items-start">
+                  <button onClick={() => setUserEntryData(undefined)}>
+                    <Xmark />
+                  </button>
+                </div>
+              </CardHeader>
+              <CardContent className="flex-1">
+                <div className="flex h-full w-full flex-col items-center gap-3">
+                  <div className="flex w-full flex-col space-y-1.5">
+                    {pendingUserEntryData ? (
+                      <Skeleton className="h-[14px] w-[45px]" />
+                    ) : userEntryData ? (
+                      <Label htmlFor="name">Rating</Label>
+                    ) : (
+                      ""
+                    )}
+                    <div className="flex flex-row justify-center gap-2">
+                      {pendingUserEntryData ? (
+                        <>
+                          <Skeleton className="h-[22px] w-[150px]" />
+                        </>
+                      ) : userEntryData ? (
+                        <>
+                          <Star className="h-[22px] w-[22px]" />
+                          <Star className="h-[22px] w-[22px]" />
+                          <Star className="h-[22px] w-[22px]" />
+                          <StarOutline className="h-[22px] w-[22px]" />
+                          <StarOutline className="h-[22px] w-[22px]" />
+                        </>
+                      ) : (
+                        ""
+                      )}
+                    </div>
+                  </div>
+                  <div className="flex h-full w-full flex-col space-y-1.5">
+                    {pendingUserEntryData ? (
+                      <Skeleton className="h-[14px] w-[40px]" />
+                    ) : userEntryData ? (
+                      <Label htmlFor="name">Notes</Label>
+                    ) : (
+                      ""
+                    )}
+                    {pendingUserEntryData ? (
+                      <Skeleton className="h-full w-full" />
+                    ) : userEntryData ? (
+                      <Textarea
+                        id="name"
+                        placeholder="Name of your project"
+                        className="h-full w-full resize-none"
+                        value={userEntryData.notes}
+                        onChange={(e) => {
+                          setUserEntryData({
+                            ...userEntryData,
+                            notes: e.target.value,
+                          });
+                        }}
+                      />
+                    ) : (
+                      ""
+                    )}
                   </div>
                 </div>
-                <div className="flex h-full w-full flex-col space-y-1.5">
-                  <Label htmlFor="framework">Notes</Label>
-                  <Textarea
-                    id="name"
-                    placeholder="Name of your project"
-                    className="h-full w-full resize-none"
-                  />
-                </div>
-              </div>
-            </CardContent>
-            <CardFooter className="flex justify-between">
-              <Button variant="outline">Remove</Button>
-              <Button>Save Changes</Button>
-            </CardFooter>
-          </Card>
+              </CardContent>
+              <CardFooter className="flex justify-between">
+                {pendingUserEntryData ? (
+                  <>
+                    <Skeleton className="h-[36px] w-[85px]" />
+                    <Skeleton className="h-[36px] w-[120px]" />
+                  </>
+                ) : userEntryData ? (
+                  <>
+                    <Button variant="outline">Remove</Button>
+                    <Button>Save Changes</Button>
+                  </>
+                ) : (
+                  ""
+                )}
+              </CardFooter>
+            </Card>
+          )}
         </div>
       </main>
     </>

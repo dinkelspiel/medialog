@@ -2,9 +2,12 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Enums\UserEntryStatusEnum;
 use App\Http\Controllers\Controller;
 use App\Models\Entry;
+use App\Models\User;
 use App\Models\UserEntry;
+use App\Models\UserSession;
 use Illuminate\Http\Request;
 
 class UserEntryController extends Controller
@@ -14,8 +17,9 @@ class UserEntryController extends Controller
      */
     public function index(int $userId)
     {
-        $userEntries = UserEntry::where("user_id", 41)
+        $userEntries = UserEntry::where("user_id", $userId)
             ->with([
+                "user",
                 "entry.franchise",
                 "entry" => function ($query) {
                     $query->select(
@@ -27,14 +31,17 @@ class UserEntryController extends Controller
                     );
                 },
             ])
-            ->get(["rating", "status", "entry_id"])
+            ->orderBy("user_entries.rating", "desc")
+            ->groupBy("entry_id")
+            ->get(["id", "rating", "status", "entry_id", "user_id"])
             ->map(function ($userEntry) {
                 return [
-                    "franchise_name" => $userEntry->entry->franchise->name,
-                    "enty_name" => $userEntry->entry->name,
-                    "cover_url" => $userEntry->entry->cover_url,
-                    "updated_at" => $userEntry->entry->updated_at->toDateTimeString(),
-                    "rating" => $userEntry->rating,
+                    "id" => $userEntry->id,
+                    "franchiseName" => $userEntry->entry->franchise->name,
+                    "entryName" => $userEntry->entry->name,
+                    "coverUrl" => $userEntry->entry->cover_url,
+                    "updatedAt" => $userEntry->entry->updated_at->toDateTimeString(),
+                    "rating" => UserEntry::where('entry_id', $userEntry->entry->id)->where('user_id', $userEntry->user->id)->first()->rating,
                     "status" => $userEntry->status,
                 ];
             });
@@ -45,17 +52,49 @@ class UserEntryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request)
+    public function store(Request $request, int $userId)
     {
-        //
+        if(!Entry::where('id', $request->json('entryId'))->exists())
+        {
+            return response()->json(['error' => 'No entry with id exists'], 401);
+        }
+
+        if(UserSession::where('session', $request->get('sessionToken'))->first()->user->id != $userId)
+        {
+            return response()->json(['error' => 'You do not have permission to add user entries to this user'], 401);
+        }
+
+        UserEntry::create([
+            'entryId' => $request->json('entryId'),
+            'userId' => $userId,
+            'rating' => $request->json('rating'),
+            'notes' => $request->json('notes') ?? "",
+            'watchedAt' => now(),
+            'status' => UserEntryStatusEnum::Completed
+        ]);
+
+        return response()->json(['message' => 'Successfully created user entry']);
     }
 
     /**
      * Display the specified resource.
      */
-    public function show(UserEntry $userEntry)
+    public function show(Request $request, User $user, UserEntry $userEntry)
     {
-        //
+        if(UserSession::where('session', $request->get('sessionToken'))->first()->user->id != $user->id)
+        {
+            return response()->json(['error' => 'You do not have permission to add user entries to this user'], 401);
+        }
+
+        $userEntry = $userEntry->with(['entry', 'entry.franchise'])->where('id', $userEntry->id)->first();
+        return [
+            "id" => $userEntry->id,
+            "franchiseName" => $userEntry->entry->franchise->name,
+            "entryName" => $userEntry->entry->name,
+            "releaseYear" => 2023,
+            "rating" => $userEntry->rating,
+            "notes" => $userEntry->notes 
+        ];
     }
 
     /**

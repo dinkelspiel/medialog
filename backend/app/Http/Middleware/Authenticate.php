@@ -2,16 +2,30 @@
 
 namespace App\Http\Middleware;
 
-use Illuminate\Auth\Middleware\Authenticate as Middleware;
+use App\Models\UserSession;
+use Closure;
 use Illuminate\Http\Request;
+use Symfony\Component\HttpFoundation\Response;
 
-class Authenticate extends Middleware
+class Authenticate
 {
     /**
-     * Get the path the user should be redirected to when they are not authenticated.
+     * Handle an incoming request.
+     *
+     * @param  \Closure(\Illuminate\Http\Request): (\Symfony\Component\HttpFoundation\Response)  $next
      */
-    protected function redirectTo(Request $request): ?string
+    public function handle(Request $request, Closure $next): Response
     {
-        return $request->expectsJson() ? null : route("login");
+        if($request->json('sessionToken') === null && $request->get('sessionToken') === null)
+        {
+            return response()->json(["error" => "No session token provided"], 401);
+        }
+
+        if(!UserSession::where('session', $request->json('sessionToken') ?? $request->get('sessionToken'))->exists())
+        {
+            return response()->json(["error" => "No session exists with token"], 401);
+        }
+
+        return $next($request);;
     }
 }

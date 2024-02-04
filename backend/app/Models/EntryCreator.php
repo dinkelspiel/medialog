@@ -10,6 +10,9 @@ class EntryCreator extends Model
 {
     use HasFactory;
 
+    protected $fillable = ["person_id", "entry_id", "id"];
+
+
     public function entry(): BelongsTo
     {
         return $this->belongsTo(Entry::class);

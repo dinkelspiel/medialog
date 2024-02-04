@@ -17,11 +17,13 @@ const Entry = ({
   rating,
   onClick,
 }: EntryProps) => {
-  const getRatingAsStars = () => {
+  const getRatingAsStars = (rating: number) => {
     let stars = [];
     for (var i = 0; i < 5; i++) {
-      if (Math.floor((rating ?? 0) / 20) > i + 1) {
-        stars.push(<Star className="fill-primary h-[16px] w-[16.5px]" />);
+      if (Math.floor((rating ?? 0) / 20) >= i + 1) {
+        stars.push(
+          <Star key={i} className="h-[16px] w-[16.5px] fill-primary" />,
+        );
       }
     }
 
@@ -31,11 +33,13 @@ const Entry = ({
     let showFull = fraction > 0.7;
 
     if (showHalf) {
-      stars.push(<StarHalf className="fill-primary h-[16px] w-[16.5px]" />);
+      stars.push(
+        <StarHalf key={6} className="h-[16px] w-[16.5px] fill-primary" />,
+      );
     }
 
     if (showFull) {
-      stars.push(<Star className="fill-primary h-[16px] w-[16.5px]" />);
+      stars.push(<Star key={7} className="h-[16px] w-[16.5px] fill-primary" />);
     }
 
     return stars;
@@ -54,7 +58,7 @@ const Entry = ({
           </div>
           <div className="grid grid-cols-2">
             <div className="text-sm text-slate-400">{releaseYear}</div>
-            <div className="flex flex-row">{getRatingAsStars()}</div>
+            <div className="flex flex-row">{getRatingAsStars(rating)}</div>
           </div>
         </div>
       </div>
