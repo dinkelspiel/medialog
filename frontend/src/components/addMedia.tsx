@@ -21,6 +21,7 @@ import { Textarea } from "./ui/textarea";
 import { ChevronLeft, LucideStarHalf, StarHalfIcon } from "lucide-react";
 import StarHalf from "./icons/starHalf";
 import { Entry } from "@/interfaces/entry";
+import RatingSelector from "./ratingSelector";
 
 const AddMedia = ({
   fetchEntries,
@@ -277,51 +278,13 @@ const AddMedia = ({
                         {rating / 20}
                       </div>
                     </div>
-                    <div className="flex flex-row justify-center gap-2">
-                      {[...Array(5)].map((x, i) => (
-                        <div className="flex flex-row" key={i}>
-                          <StarHalf
-                            variant={
-                              hoverRating >= (i + 1) * 20 - 10
-                                ? "fill"
-                                : "outline"
-                            }
-                            style={{
-                              height:
-                                hoverRating >= (i + 1) * 20 - 10 ? 22 : 19.5,
-                            }}
-                            className={cn(
-                              "w-[11px]",
-                              rating >= (i + 1) * 20 - 10 ? "fill-primary" : "",
-                            )}
-                            onClick={() => {
-                              setRating((i + 1) * 20 - 10);
-                            }}
-                            onMouseEnter={() => {
-                              setHoverRating((i + 1) * 20 - 10);
-                            }}
-                          />
-                          <StarHalf
-                            variant={
-                              hoverRating >= (i + 1) * 20 ? "fill" : "outline"
-                            }
-                            style={{
-                              height: hoverRating >= (i + 1) * 20 ? 22 : 19.5,
-                            }}
-                            className={cn(
-                              "ms-[-2px] w-[11px] scale-x-[-1]",
-                              rating >= (i + 1) * 20 ? "fill-primary" : "",
-                            )}
-                            onClick={() => {
-                              setRating((i + 1) * 20);
-                            }}
-                            onMouseEnter={() => {
-                              setHoverRating((i + 1) * 20);
-                            }}
-                          />
-                        </div>
-                      ))}
-                    </div>
+                    <RatingSelector
+                      userEntryId={selectedEntry.id}
+                      rating={rating}
+                      setRating={(rating) => {
+                        setRating(rating);
+                      }}
+                    />
                   </div>
                   <div className="flex h-full w-full flex-col space-y-1.5">
                     <Label htmlFor="framework">Notes</Label>

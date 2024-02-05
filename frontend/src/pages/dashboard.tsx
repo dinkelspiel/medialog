@@ -5,8 +5,10 @@ import Eye from "@/components/icons/eye";
 import Pen from "@/components/icons/pen";
 import Sort from "@/components/icons/sort";
 import Star from "@/components/icons/star";
+import StarHalf from "@/components/icons/starHalf";
 import StarOutline from "@/components/icons/starOutline";
 import Xmark from "@/components/icons/xmark";
+import RatingSelector from "@/components/ratingSelector";
 import Sidebar from "@/components/sidebar";
 import { Button } from "@/components/ui/button";
 import {
@@ -31,6 +33,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Textarea } from "@/components/ui/textarea";
 import { User } from "@/interfaces/user";
+import { cn } from "@/lib/utils";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
@@ -69,6 +72,7 @@ export default function Home() {
   const [userEntryData, setUserEntryData] = useState<UserEntryData | undefined>(
     undefined,
   );
+  const [userEntryHoverRating, setUserEntryHoverRating] = useState(0);
   const router = useRouter();
 
   const fetchEntries = async (userId: number) => {
@@ -297,7 +301,12 @@ export default function Home() {
                     {pendingUserEntryData ? (
                       <Skeleton className="h-[14px] w-[45px]" />
                     ) : userEntryData ? (
-                      <Label htmlFor="name">Rating</Label>
+                      <div className="flex flex-row">
+                        <Label htmlFor="name">Rating</Label>
+                        <div className="ms-auto text-sm leading-none text-slate-500">
+                          {userEntryData.rating / 20}
+                        </div>
+                      </div>
                     ) : (
                       ""
                     )}
@@ -307,13 +316,16 @@ export default function Home() {
                           <Skeleton className="h-[22px] w-[150px]" />
                         </>
                       ) : userEntryData ? (
-                        <>
-                          <Star className="h-[22px] w-[22px]" />
-                          <Star className="h-[22px] w-[22px]" />
-                          <Star className="h-[22px] w-[22px]" />
-                          <StarOutline className="h-[22px] w-[22px]" />
-                          <StarOutline className="h-[22px] w-[22px]" />
-                        </>
+                        <RatingSelector
+                          userEntryId={userEntryData.id}
+                          rating={userEntryData.rating}
+                          setRating={(rating) => {
+                            setUserEntryData({
+                              ...userEntryData,
+                              rating: rating,
+                            });
+                          }}
+                        />
                       ) : (
                         ""
                       )}
