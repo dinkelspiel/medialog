@@ -111,6 +111,7 @@ const AddMedia = ({
     );
 
     response.json().then((data) => {
+      console.log(data);
       fetchEntries();
       setSelectedEntry(undefined);
       setExpandNotes(false);

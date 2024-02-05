@@ -43,6 +43,7 @@ interface UserEntry {
   franchiseName: string;
   entryName: string;
   coverUrl: string;
+  entries: number;
   updatedAt: string;
   rating: number;
   status: UserEntryStatus;
@@ -81,33 +82,9 @@ export default function Home() {
       },
     );
 
-    response.json().then(
-      (
-        data: {
-          id: number;
-          franchiseName: string;
-          entryName: string;
-          coverUrl: string;
-          updatedAt: string;
-          rating: number;
-          status: UserEntryStatus;
-        }[],
-      ) => {
-        setUserEntries(
-          data.map((userEntry) => {
-            return {
-              id: userEntry.id,
-              franchiseName: userEntry.franchiseName,
-              entryName: userEntry.entryName,
-              coverUrl: userEntry.coverUrl,
-              updatedAt: userEntry.updatedAt,
-              rating: userEntry.rating,
-              status: userEntry.status,
-            } as UserEntry;
-          }),
-        );
-      },
-    );
+    response.json().then((data: UserEntry[]) => {
+      setUserEntries(data);
+    });
   };
 
   useEffect(() => {
@@ -262,7 +239,11 @@ export default function Home() {
                   return (
                     <Entry
                       key={userEntry.id}
-                      title={`${userEntry.franchiseName}: ${userEntry.entryName}`}
+                      title={
+                        userEntry.entries > 1
+                          ? `${userEntry.franchiseName}: ${userEntry.entryName}`
+                          : userEntry.franchiseName
+                      }
                       releaseYear={2023}
                       rating={userEntry.rating}
                       coverUrl={userEntry.coverUrl}

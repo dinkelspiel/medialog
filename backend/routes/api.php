@@ -38,7 +38,7 @@ Route::prefix("/auth")->group(function () {
 Route::post("/users", [UserController::class, "store"]);
 Route::get("/users/{user}", [UserController::class, "show"]);
 
-Route::prefix("/users/{user}")->group(function () {
+Route::prefix("/users/{userId}")->group(function () {
     Route::get("/entries", [UserEntryController::class, "index"]);
     Route::middleware([Authenticate::class])->group(function() {
         Route::put("/entries", [UserEntryController::class, "store"]);
