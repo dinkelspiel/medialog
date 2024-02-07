@@ -353,6 +353,17 @@ export default function Home() {
               )}
             </div>
             <div className="flex flex-row flex-wrap gap-4 pt-4">
+              <Dialog>
+                <DialogTrigger asChild>
+                  <div className="relative flex h-[255px] w-[170px] cursor-pointer items-center justify-center rounded-md border border-slate-200 text-lg font-medium duration-100 hover:bg-slate-100">
+                    Add Media
+                  </div>
+                </DialogTrigger>
+                <AddMedia
+                  fetchEntries={() => fetchEntries(user.id)}
+                  userId={user.id}
+                />
+              </Dialog>
               {userEntries
                 .sort((a, b) => {
                   switch (sortBy) {
@@ -385,17 +396,6 @@ export default function Home() {
                     />
                   );
                 })}
-              <Dialog>
-                <DialogTrigger asChild>
-                  <div className="relative flex h-[255px] w-[170px] cursor-pointer items-center justify-center rounded-md border border-slate-200 text-lg font-medium duration-100 hover:bg-slate-100">
-                    Add Media
-                  </div>
-                </DialogTrigger>
-                <AddMedia
-                  fetchEntries={() => fetchEntries(user.id)}
-                  userId={user.id}
-                />
-              </Dialog>
             </div>
           </div>
         </div>
