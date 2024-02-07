@@ -133,8 +133,6 @@ const AddMedia = ({
         body: JSON.stringify({
           entryId: selectedEntry.id,
           sessionToken: localStorage.getItem("sessionToken"),
-          rating: rating,
-          notes: notes,
         }),
       },
     );

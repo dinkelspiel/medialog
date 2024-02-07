@@ -34,6 +34,12 @@ class UserController extends Controller
             return response()->json(["error" => "User already exists with username"], 401);
         }
 
+        $request->validate([
+            'username' => 'required|unique:users',
+            'email' => 'required|email|unique:users',
+            'password' => 'required'
+        ]);
+
         User::create([
             'username' => $request->json('username'),
             'email' => $request->json('email'),

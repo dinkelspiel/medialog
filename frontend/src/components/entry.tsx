@@ -3,6 +3,7 @@ import Star from "./icons/star";
 import StarHalf from "./icons/starHalf";
 
 interface EntryProps {
+  id: number;
   title: string;
   coverUrl: string;
   releaseYear: number;
@@ -11,6 +12,7 @@ interface EntryProps {
 }
 
 const Entry = ({
+  id,
   title,
   coverUrl,
   releaseYear,

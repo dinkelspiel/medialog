@@ -173,7 +173,7 @@
                                 <x-entry :entry="$activity->entry" :rating="\App\Models\UserEntry::where('user_id', $activity->user_id)
                                     ->where('entry_id', $activity->entry_id)
                                     ->first()
-                                    ->getLatestRating()" />
+                                    ->getLatestCompleted()->rating" />
                             @endif
                         </div>
                     @endforeach
