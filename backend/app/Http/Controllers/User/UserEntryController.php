@@ -41,8 +41,8 @@ class UserEntryController extends Controller
                     "coverUrl" => $userEntry->entry->cover_url,
                     "entries" => $userEntry->entry->franchise->entries->count(),
                     "updatedAt" => $userEntry->entry->updated_at->toDateTimeString(),
-                    "rating" => $userEntry->getLatestCompleted()->rating,
-                    "watchedAt" => $userEntry->getLatestCompleted()->watched_at,
+                    "rating" => $userEntry->getLatestCompleted() ? $userEntry->getLatestCompleted()->rating : 0,
+                    "watchedAt" => $userEntry->getLatestCompleted() ? $userEntry->getLatestCompleted()->watched_at : null,
                     "status" => $userEntry->status,
                 ];
             });
@@ -66,11 +66,16 @@ class UserEntryController extends Controller
 
         if($request->json('notes') === null && $request->json("rating") === null)
         {
-            $userEntry = UserEntry::create([
-                'entry_id' => $request->json('entryId'),
-                'user_id' => $userId,
-                'status' => UserEntryStatusEnum::Planning
-            ]);
+            if(UserEntry::where('watched_at', null)->exists())
+            {
+                $userEntry = UserEntry::where('watched_at', null)->first();
+            } else {
+                $userEntry = UserEntry::create([
+                    'entry_id' => $request->json('entryId'),
+                    'user_id' => $userId,
+                    'status' => UserEntryStatusEnum::Planning
+                ]);
+            }
 
             return response()->json(['message' => 'Successfully created planning user entry', 'id' => $userEntry->id]);
         }

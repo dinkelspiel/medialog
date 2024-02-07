@@ -28,21 +28,21 @@ class UserEntry extends Model
         return $this->belongsTo(User::class);
     }
 
-    public function getLatestCompleted(): UserEntry
+    public function getLatestCompleted(): ?UserEntry
     {
         return UserEntry::where("entry_id", $this->entry_id)
             ->where("user_id", $this->user_id)
             ->where("status", "completed")
             ->orderBy("watched_at", "DESC")
-            ->first() ?? null;
+            ->first();
     }
 
-    public function getLatest(): UserEntry
+    public function getLatest(): ?UserEntry
     {
         return UserEntry::where("entry_id", $this->entry_id)
             ->where("user_id", $this->user_id)
             ->orderBy(DB::raw('ISNULL(watched_at)'), 'desc')
             ->orderBy("watched_at", "DESC")
-            ->first() ?? null;
+            ->first();
     }
 }
