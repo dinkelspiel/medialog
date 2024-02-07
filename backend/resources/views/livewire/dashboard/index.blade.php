@@ -138,7 +138,7 @@
         <div>
             @foreach ($userEntries as $browserEntry)
                 @if (!is_null($browserEntry->entry->franchise))
-                    <x-entry :entry="$browserEntry->entry" :rating="$browserEntry->getLatestRating()" wire:click="showUserEntry({{ $browserEntry->id }})" />
+                    <x-entry :entry="$browserEntry->entry" :rating="$browserEntry->getLatestCompleted()->rating" wire:click="showUserEntry({{ $browserEntry->id }})" />
                 @endif
             @endforeach
         </div>

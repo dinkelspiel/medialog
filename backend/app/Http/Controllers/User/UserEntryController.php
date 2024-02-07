@@ -31,18 +31,18 @@ class UserEntryController extends Controller
                     );
                 },
             ])
-            ->orderBy("user_entries.rating", "desc")
             ->groupBy("entry_id")
             ->get(["id", "rating", "status", "entry_id", "user_id"])
             ->map(function ($userEntry) {
                 return [
-                    "id" => $userEntry->id,
+                    "id" => $userEntry->getLatest()->id,
                     "franchiseName" => $userEntry->entry->franchise->name,
                     "entryName" => $userEntry->entry->name,
                     "coverUrl" => $userEntry->entry->cover_url,
                     "entries" => $userEntry->entry->franchise->entries->count(),
                     "updatedAt" => $userEntry->entry->updated_at->toDateTimeString(),
-                    "rating" => UserEntry::where('entry_id', $userEntry->entry->id)->where('user_id', $userEntry->user->id)->first()->rating,
+                    "rating" => $userEntry->getLatestCompleted()->rating,
+                    "watchedAt" => $userEntry->getLatestCompleted()->watched_at,
                     "status" => $userEntry->status,
                 ];
             });
@@ -55,17 +55,32 @@ class UserEntryController extends Controller
      */
     public function store(Request $request, string $userId)
     {
-        if(!Entry::where('id', $request->json('entryId'))->exists())
-        {
-            return response()->json(['error' => 'No entry with id exists'], 401);
-        }
-
         if(UserSession::where('session', $request->get('sessionToken'))->first()->user->id != $userId)
         {
             return response()->json(['error' => 'You do not have permission to add user entries to this user'], 401);
         }
 
-        UserEntry::create([
+        $request->validate([
+            'entryId' => 'required|exists:entries,id',
+        ]);
+
+        if($request->json('notes') === null && $request->json("rating") === null)
+        {
+            $userEntry = UserEntry::create([
+                'entry_id' => $request->json('entryId'),
+                'user_id' => $userId,
+                'status' => UserEntryStatusEnum::Planning
+            ]);
+
+            return response()->json(['message' => 'Successfully created planning user entry', 'id' => $userEntry->id]);
+        }
+
+        $request->validate([
+            'rating' => 'required|numeric|min:0|max:100',
+            'notes' => 'nullable|string'
+        ]);
+
+        $userEntry = UserEntry::create([
             'entry_id' => $request->json('entryId'),
             'user_id' => $userId,
             'rating' => $request->json('rating'),
@@ -74,7 +89,7 @@ class UserEntryController extends Controller
             'status' => UserEntryStatusEnum::Completed
         ]);
 
-        return response()->json(['message' => 'Successfully created user entry']);
+        return response()->json(['message' => 'Successfully created completed user entry', 'id' => $userEntry->id]);
     }
 
     /**
@@ -84,26 +99,78 @@ class UserEntryController extends Controller
     {
         if(UserSession::where('session', $request->get('sessionToken'))->first()->user->id != $userId)
         {
-            return response()->json(['error' => 'You do not have permission to add user entries to this user'], 401);
+            return response()->json(['error' => 'You do not have permission to show user entries by this user'], 401);
         }
 
         $userEntry = $userEntry->with(['entry', 'entry.franchise'])->where('id', $userEntry->id)->first();
         return [
             "id" => $userEntry->id,
             "franchiseName" => $userEntry->entry->franchise->name,
+            "entryId" => $userEntry->entry->id,
             "entryName" => $userEntry->entry->name,
+            "entryLength" => $userEntry->entry->length,
             "releaseYear" => 2023,
+            "entries" => $userEntry->entry->franchise->entries->count(),
+            "userEntries" => $userEntry->entry->userEntries->map(function($userEntry) {return ["id" => $userEntry->id, "rating" => $userEntry->rating, "watchedAt" => $userEntry->watched_at];}),
             "rating" => $userEntry->rating,
-            "notes" => $userEntry->notes
+            "notes" => $userEntry->notes,
+            "status" => $userEntry->status,
+            "progress" => $userEntry->progress,
+            "watchedAt" => $userEntry->watched_at
         ];
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, UserEntry $userEntry)
+    public function update(Request $request, string $userId, UserEntry $userEntry)
     {
-        //
+        $request->validate([
+            'sessionToken' => 'required',
+            'rating' => 'nullable|numeric|min:0|max:100',
+            'notes' => 'nullable|string',
+            'status' => 'nullable|in:planning,watching,paused,dnf,completed',
+            'progress' => 'nullable|numeric|min:0'
+        ]);
+
+        if(UserSession::where('session', $request->get('sessionToken'))->first()->user->id != $userId)
+        {
+            return response()->json(['error' => 'You do not have permission to add user entries to this user'], 401);
+        }
+
+        if($request->json('rating') !== null)
+        {
+            $userEntry->rating = $request->json('rating');
+        }
+        if($request->json('notes') !== null)
+        {
+            $userEntry->notes = $request->json('notes');
+        }
+        if($request->json('status') !== null)
+        {
+            $userEntry->status = $request->json('status');
+            if($request->json('status') === 'completed')
+            {
+                $userEntry->watched_at = now();
+                $userEntry->progress = $userEntry->entry->length;
+            }
+        }
+        if($request->json('progress') !== null)
+        {
+            $userEntry->progress = $request->json('progress');
+            if($userEntry->progress >= $userEntry->entry->length)
+            {
+                $userEntry->status = 'completed';
+                $userEntry->watched_at = now();
+            }
+            if($userEntry->progress < 0)
+            {
+                $userEntry->progress = 0;
+            }
+        }
+        $userEntry->save();
+
+        return response()->json(['message' => 'Successfully updated user entry']);
     }
 
     /**

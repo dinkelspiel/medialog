@@ -43,5 +43,6 @@ Route::prefix("/users/{userId}")->group(function () {
     Route::middleware([Authenticate::class])->group(function() {
         Route::put("/entries", [UserEntryController::class, "store"]);
         Route::get("/entries/{userEntry}", [UserEntryController::class, "show"]);
+        Route::patch("/entries/{userEntry}", [UserEntryController::class, "update"]);
     });
 });
