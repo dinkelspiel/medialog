@@ -728,6 +728,7 @@ export default function Home() {
                       )}
                     {userEntryData &&
                       userEntryData.userEntries.length === 1 &&
+                      userEntryData.status === "completed" &&
                       !pendingUserEntryData && (
                         <Button
                           className="w-full"
