@@ -100,7 +100,7 @@ class UserEntryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Request $request, string $userId, UserEntry $userEntry)
+    public function show(Request $request, int $userId, UserEntry $userEntry)
     {
         if(UserSession::where('session', $request->get('sessionToken'))->first()->user->id != $userId)
         {
@@ -108,6 +108,12 @@ class UserEntryController extends Controller
         }
 
         $userEntry = $userEntry->with(['entry', 'entry.franchise'])->where('id', $userEntry->id)->first();
+
+        if($userEntry->user_id !== $userId)
+        {
+            return response()->json(['error' => 'You do not have permission to show user entries by this user'], 401);
+        }
+
         return [
             "id" => $userEntry->id,
             "franchiseName" => $userEntry->entry->franchise->name,
@@ -116,7 +122,17 @@ class UserEntryController extends Controller
             "entryLength" => $userEntry->entry->length,
             "releaseYear" => 2023,
             "entries" => $userEntry->entry->franchise->entries->count(),
-            "userEntries" => $userEntry->entry->userEntries->map(function($userEntry) {return ["id" => $userEntry->id, "rating" => $userEntry->rating, "watchedAt" => $userEntry->watched_at];}),
+            "userEntries" => $userEntry->entry->userEntries->map(function($userEntry) use($userId) {
+                if($userEntry->user_id != $userId) {
+                    return;
+                }
+
+                return [
+                    "id" => $userEntry->id,
+                    "rating" => $userEntry->rating,
+                    "watchedAt" => $userEntry->watched_at
+                ];
+            })->filter(fn($userEntry, $key) => $userEntry !== null),
             "rating" => $userEntry->rating,
             "notes" => $userEntry->notes,
             "status" => $userEntry->status,
