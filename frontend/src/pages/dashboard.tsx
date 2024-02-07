@@ -401,7 +401,7 @@ export default function Home() {
         </div>
         {(pendingUserEntryData || userEntryData) && (
           <div className="h-full py-6 pr-8">
-            <Card className="grid h-full w-[450px] grid-rows-[max-content,1fr,60px]">
+            <Card className="grid h-full w-[23vw] grid-rows-[max-content,1fr,60px]">
               <CardHeader className="flex flex-row items-end gap-3">
                 {pendingUserEntryData ? (
                   <>
