@@ -190,7 +190,7 @@ const ModifyUserEntryContent = ({
         ) : (
           ""
         )}
-        <div className="ms-auto flex hidden h-full items-start lg:block">
+        <div className="ms-auto hidden h-full items-start lg:flex">
           <button onClick={() => setUserEntryData(undefined)}>
             <Xmark />
           </button>
