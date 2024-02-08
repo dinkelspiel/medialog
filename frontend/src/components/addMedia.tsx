@@ -1,13 +1,15 @@
-import React, { useEffect, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import {
+  Dialog,
   DialogClose,
   DialogContent,
   DialogHeader,
   DialogTitle,
+  DialogTrigger,
 } from "./ui/dialog";
 import { Label } from "./ui/label";
 import { Input } from "./ui/input";
-import { Card } from "./ui/card";
+import { Card, CardContent } from "./ui/card";
 
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -22,14 +24,76 @@ import { ChevronLeft, LucideStarHalf, StarHalfIcon } from "lucide-react";
 import StarHalf from "./icons/starHalf";
 import { Entry } from "@/interfaces/entry";
 import RatingSelector from "./ratingSelector";
+import { useMediaQuery } from "usehooks-ts";
+import { Drawer, DrawerContent } from "./ui/drawer";
+import { Separator } from "./ui/separator";
 
-const AddMedia = ({
-  fetchEntries,
-  userId,
-}: {
+interface AddMediaProps {
   fetchEntries: () => void;
   userId: number;
-}) => {
+}
+
+const AddMedia = (props: AddMediaProps) => {
+  const [open, setOpen] = useState(false);
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
+  const [expandNotes, setExpandNotes] = useState(false);
+
+  return (
+    <>
+      <button
+        onClick={() => setOpen(true)}
+        className="relative flex cursor-pointer items-center justify-center rounded-md border border-slate-200 text-base font-medium duration-100 hover:bg-slate-100 lg:h-[255px] lg:w-[170px] lg:text-lg"
+      >
+        Add Media
+      </button>
+      {isDesktop ? (
+        <Dialog open={open}>
+          <DialogContent
+            className={cn(expandNotes ? "w-full max-w-[30dvw]" : "")}
+          >
+            <AddMediaContent
+              {...{
+                ...props,
+                setExpandNotes,
+                expandNotes,
+                setDrawerOpen: setOpen,
+              }}
+            />
+          </DialogContent>
+        </Dialog>
+      ) : (
+        <Drawer open={open} onClose={() => setOpen(false)}>
+          <DrawerContent className="h-[90dvh]">
+            <CardContent className="h-full space-y-4">
+              <AddMediaContent
+                {...{
+                  ...props,
+                  setExpandNotes,
+                  expandNotes,
+                  setDrawerOpen: setOpen,
+                }}
+              />
+            </CardContent>
+          </DrawerContent>
+        </Drawer>
+      )}
+    </>
+  );
+};
+
+interface AddMediaContentProps extends AddMediaProps {
+  setExpandNotes: Dispatch<SetStateAction<boolean>>;
+  expandNotes: boolean;
+  setDrawerOpen: Dispatch<SetStateAction<boolean>>;
+}
+
+const AddMediaContent = ({
+  fetchEntries,
+  userId,
+  setExpandNotes,
+  expandNotes,
+  setDrawerOpen,
+}: AddMediaContentProps) => {
   const [open, setOpen] = useState(false);
   const [searchValue, setSearchValue] = useState("");
   const [searchEntries, setSearchEntries] = useState<Entry[]>([]);
@@ -39,7 +103,6 @@ const AddMedia = ({
   const [pendingDataFetch, setPendingDataFetch] = useState(false);
   const [hasSearched, setHasSearched] = useState(false);
 
-  const [expandNotes, setExpandNotes] = useState(false);
   const [watchedNow, setWatchedNow] = useState(true);
   const [rating, setRating] = useState(0);
   const [hoverRating, setHoverRating] = useState(0);
@@ -119,6 +182,7 @@ const AddMedia = ({
       setNotes("");
       setRating(0);
       setSearchValue("");
+      setDrawerOpen(false);
     });
   };
 
@@ -144,6 +208,7 @@ const AddMedia = ({
       setNotes("");
       setRating(0);
       setSearchValue("");
+      setOpen(false);
     });
   };
 
@@ -161,7 +226,7 @@ const AddMedia = ({
   };
 
   return (
-    <DialogContent className={cn(expandNotes ? "w-full max-w-[30dvw]" : "")}>
+    <>
       {/* Select media */}
       {selectedEntry === undefined && (
         <>
@@ -183,7 +248,7 @@ const AddMedia = ({
             <div className="relative">
               <Card
                 className={cn(
-                  "absolute flex w-full flex-col space-y-1.5 p-1",
+                  "static flex w-full flex-col space-y-1.5 border-none p-0 shadow-none lg:absolute lg:border lg:p-1 lg:shadow",
                   !open ||
                     (searchEntries.length === 0 && !hasSearched) ||
                     (searchValue === "" &&
@@ -203,24 +268,27 @@ const AddMedia = ({
                   }
 
                   return (
-                    <Button
-                      key={entry.id}
-                      onClick={() => {
-                        setSelectedEntry(entry);
-                      }}
-                      className="w-full justify-start"
-                      variant="ghost"
-                    >
-                      {entry.name} (2023)
-                      <span className="text-xs font-normal text-slate-500">
-                        {entry.creators.map((creator, idx) => (
-                          <span key={creator}>
-                            {creator}
-                            {entry.creators.length - 1 !== idx ? ", " : ""}
-                          </span>
-                        ))}
-                      </span>
-                    </Button>
+                    <>
+                      <Button
+                        key={entry.id}
+                        onClick={() => {
+                          setSelectedEntry(entry);
+                        }}
+                        className="w-full justify-start !px-0 lg:!px-4"
+                        variant="ghost"
+                      >
+                        {entry.name} (2023)
+                        <span className="text-xs font-normal text-slate-500">
+                          {entry.creators.map((creator, idx) => (
+                            <span key={creator}>
+                              {creator}
+                              {entry.creators.length - 1 !== idx ? ", " : ""}
+                            </span>
+                          ))}
+                        </span>
+                      </Button>
+                      <Separator className="block lg:hidden" />
+                    </>
                   );
                 })}
                 {hasSearched && searchEntries.length === 0 && (
@@ -233,7 +301,6 @@ const AddMedia = ({
           </div>
         </>
       )}
-
       {/* Personalize media */}
       {selectedEntry !== undefined && (
         <>
@@ -299,7 +366,7 @@ const AddMedia = ({
                   </div>
                 </>
               )}
-              <DialogClose asChild>
+              <DialogClose asChild className="hidden lg:block">
                 <Button
                   className="ms-auto w-full"
                   onClick={() => saveChanges()}
@@ -309,9 +376,14 @@ const AddMedia = ({
               </DialogClose>
             </div>
           </div>
+          <DialogClose asChild>
+            <Button className="ms-auto w-full" onClick={() => saveChanges()}>
+              {watchedNow ? "Save" : "Add"}
+            </Button>
+          </DialogClose>
         </>
       )}
-    </DialogContent>
+    </>
   );
 };
 

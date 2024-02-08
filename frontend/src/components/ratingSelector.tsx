@@ -25,11 +25,8 @@ const RatingSelector = ({
         <div className="flex flex-row" key={i}>
           <StarHalf
             variant={hoverRating >= (i + 1) * 20 - 10 ? "fill" : "outline"}
-            style={{
-              height: hoverRating >= (i + 1) * 20 - 10 ? 22 : 19.5,
-            }}
             className={cn(
-              "w-[11px]",
+              "h-[44px] w-[22px] lg:h-[22px] lg:w-[11px]",
               rating >= (i + 1) * 20 - 10 ? "fill-primary" : "",
             )}
             onClick={() => {
@@ -41,11 +38,8 @@ const RatingSelector = ({
           />
           <StarHalf
             variant={hoverRating >= (i + 1) * 20 ? "fill" : "outline"}
-            style={{
-              height: hoverRating >= (i + 1) * 20 ? 22 : 19.5,
-            }}
             className={cn(
-              "ms-[-2px] w-[11px] scale-x-[-1]",
+              "ms-[-4px] h-[44px] w-[22px] scale-x-[-1] lg:ms-[-2px] lg:h-[22px] lg:w-[11px]",
               rating >= (i + 1) * 20 ? "fill-primary" : "",
             )}
             onClick={() => {
