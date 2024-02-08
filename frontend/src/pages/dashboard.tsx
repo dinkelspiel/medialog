@@ -1,5 +1,6 @@
 import AddMedia from "@/components/addMedia";
 import ModifyUserEntry from "@/components/dashboard/modifyUserEntry";
+import SortBy from "@/components/dashboard/sortBy";
 import Entry from "@/components/entry";
 import Az from "@/components/icons/az";
 import Bookmark from "@/components/icons/bookmark";
@@ -62,7 +63,7 @@ import { Check, ChevronsDown, ChevronsUpDown } from "lucide-react";
 import Head from "next/head";
 import Link from "next/link";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { SetStateAction, useEffect, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
 
 interface UserEntry {
@@ -293,6 +294,9 @@ export default function Home() {
                           <Input placeholder="Studio Name" />
                         </div>
                       </div>
+                      {!isDesktop && (
+                        <SortBy setSortBy={setSortBy} sortBy={sortBy} />
+                      )}
                     </div>
                   )}
                 </div>
