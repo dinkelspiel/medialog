@@ -208,7 +208,7 @@ const AddMediaContent = ({
       setNotes("");
       setRating(0);
       setSearchValue("");
-      setOpen(false);
+      setDrawerOpen(false);
     });
   };
 
@@ -268,9 +268,8 @@ const AddMediaContent = ({
                   }
 
                   return (
-                    <>
+                    <div key={entry.id}>
                       <Button
-                        key={entry.id}
                         onClick={() => {
                           setSelectedEntry(entry);
                         }}
@@ -288,7 +287,7 @@ const AddMediaContent = ({
                         </span>
                       </Button>
                       <Separator className="block lg:hidden" />
-                    </>
+                    </div>
                   );
                 })}
                 {hasSearched && searchEntries.length === 0 && (
@@ -376,7 +375,7 @@ const AddMediaContent = ({
               </DialogClose>
             </div>
           </div>
-          <DialogClose asChild>
+          <DialogClose asChild className="block lg:hidden">
             <Button className="ms-auto w-full" onClick={() => saveChanges()}>
               {watchedNow ? "Save" : "Add"}
             </Button>
