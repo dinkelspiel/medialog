@@ -66,9 +66,9 @@ class UserEntryController extends Controller
 
         if($request->json('notes') === null && $request->json("rating") === null)
         {
-            if(UserEntry::where('watched_at', null)->exists())
+            if(UserEntry::where('watched_at', null)->where('entry_id', $request->json('entryId'))->exists())
             {
-                $userEntry = UserEntry::where('watched_at', null)->first();
+                $userEntry = UserEntry::where('watched_at', null)->where('entry_id', $request->json('entryId'))->first();
             } else {
                 $userEntry = UserEntry::create([
                     'entry_id' => $request->json('entryId'),
