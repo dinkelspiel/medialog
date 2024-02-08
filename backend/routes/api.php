@@ -26,7 +26,13 @@ use Illuminate\Support\Facades\Route;
 // });
 
 Route::get("/franchises", [FranchiseController::class, "index"]);
+
 Route::get("/entries", [EntryController::class, "index"]);
+Route::prefix("/entries")->group(function () {
+    Route::middleware([Authenticate::class])->group(function() {
+        Route::patch("/{entry}", [EntryController::class, "update"]);
+    });
+});
 
 Route::prefix("/auth")->group(function () {
     Route::post("/login", [AuthController::class, "login"]);

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Entry;
 use App\Models\Franchise;
+use App\Models\UserSession;
 use Illuminate\Http\Request;
 
 class EntryController extends Controller
@@ -61,7 +62,28 @@ class EntryController extends Controller
      */
     public function update(Request $request, Entry $entry)
     {
-        //
+        $request->validate([
+            'sessionToken' => 'required',
+            'franchiseName' => 'required',
+            'name' => 'required',
+            'length' => 'required|numeric|min:0',
+            'coverUrl' => 'required|url'
+        ]);
+
+        if(!UserSession::where('session', $request->get('sessionToken'))->exists())
+        {
+            return response()->json(['error' => 'You have to provide a session token to update an entry'], 401);
+        }
+
+        $entry->franchise->name = $request->json('franchiseName');
+        $entry->name = $request->json('name');
+        $entry->length = $request->json('length');
+        $entry->cover_url = $request->json('coverUrl');
+
+        $entry->franchise->save();
+        $entry->save();
+        
+        return response()->json(['message' => 'Successfully updated entry']);
     }
 
     /**

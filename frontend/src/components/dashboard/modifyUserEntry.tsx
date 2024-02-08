@@ -13,7 +13,7 @@ import Xmark from "../icons/xmark";
 import FlagCheckered from "../icons/flagCheckered";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { Button } from "../ui/button";
-import { Check, ChevronsUpDown } from "lucide-react";
+import { AlertTriangle, Check, ChevronsUpDown } from "lucide-react";
 import {
   Command,
   CommandEmpty,
@@ -26,7 +26,14 @@ import { User } from "@/interfaces/user";
 import UserEntryStatus from "@/interfaces/userEntryStatus";
 import Eye from "../icons/eye";
 import { cn } from "@/lib/utils";
-import { DialogContent, DialogFooter, DialogHeader } from "../ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "../ui/dialog";
 import {
   Drawer,
   DrawerContent,
@@ -47,13 +54,116 @@ interface ModifyUserEntryProps {
   user: User;
 }
 
+const UpdateInformation = ({
+  userEntryData,
+  setUserEntryData,
+}: {
+  userEntryData: UserEntryData;
+  setUserEntryData: Dispatch<SetStateAction<UserEntryData>>;
+}) => {
+  const [open, setOpen] = useState(false);
+
+  const saveChanges = async () => {
+    const response = await fetch(
+      process.env.NEXT_PUBLIC_API_URL + `/entries/${userEntryData.entryId}`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          sessionToken: localStorage.getItem("sessionToken"),
+          franchiseName: userEntryData.franchiseName,
+          name: userEntryData.entryName,
+          length: userEntryData.entryLength,
+          coverUrl: userEntryData.entryCoverUrl,
+        }),
+      },
+    );
+
+    response.json().then((data) => {
+      setOpen(false);
+    });
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogTrigger asChild>
+        <Button variant="outline" className="w-full">
+          <AlertTriangle className="h-[15px] w-[15px]" />
+          Update incorrect information
+        </Button>
+      </DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>
+            Update {userEntryData.franchiseName}: {userEntryData.entryName}
+          </DialogTitle>
+        </DialogHeader>
+        <div className="flex flex-row gap-3">
+          <div className="flex h-full w-full flex-col space-y-1.5">
+            <Label htmlFor="name">Franchise Name</Label>
+            <Input
+              value={userEntryData.franchiseName}
+              onChange={(e) =>
+                setUserEntryData({
+                  ...userEntryData,
+                  franchiseName: e.target.value,
+                })
+              }
+            />
+          </div>
+          <div className="flex h-full w-full flex-col space-y-1.5">
+            <Label htmlFor="name">Entry Name</Label>
+            <Input
+              value={userEntryData.entryName}
+              onChange={(e) =>
+                setUserEntryData({
+                  ...userEntryData,
+                  entryName: e.target.value,
+                })
+              }
+            />
+          </div>
+        </div>
+        <div className="flex h-full w-full flex-col space-y-1.5">
+          <Label htmlFor="name">Length</Label>
+          <Input
+            type="number"
+            value={userEntryData.entryLength}
+            onChange={(e) =>
+              setUserEntryData({
+                ...userEntryData,
+                entryLength: parseInt(e.target.value),
+              })
+            }
+          />
+        </div>
+        <div className="flex h-full w-full flex-col space-y-1.5">
+          <Label htmlFor="name">Cover Url</Label>
+          <Input
+            value={userEntryData.entryCoverUrl}
+            onChange={(e) =>
+              setUserEntryData({
+                ...userEntryData,
+                entryCoverUrl: e.target.value,
+              })
+            }
+          />
+        </div>
+        <Button onClick={() => saveChanges()}>Save Changes</Button>
+      </DialogContent>
+    </Dialog>
+  );
+};
+
 const ModifyUserContent = (props: ModifyUserEntryProps) => {
   const isDesktop = useMediaQuery("(min-width: 1024px)");
 
   return (
     <>
       {isDesktop ? (
-        <Card className="hidden h-full w-[23vw] grid-rows-[max-content,1fr,60px] lg:grid">
+        <Card className="hidden h-full w-[23vw] grid-rows-[max-content,1fr,max-content] lg:grid">
           <ModifyUserEntryContent {...props} />
         </Card>
       ) : (
@@ -250,7 +360,7 @@ const ModifyUserEntryContent = ({
                   <Textarea
                     id="name"
                     placeholder={`I absolutely loved ${userEntryData.franchiseName}...`}
-                    className="h-full min-h-[300px] w-full resize-none"
+                    className="h-full min-h-[100px] w-full resize-none"
                     value={userEntryData.notes}
                     onChange={(e) => {
                       setUserEntryData({
@@ -480,17 +590,27 @@ const ModifyUserEntryContent = ({
           </div>
         </div>
       </CardContent>
-      <CardFooter className="flex justify-between">
+
+      <CardFooter className="flex h-full flex-col gap-3">
+        <UpdateInformation {...{ userEntryData, setUserEntryData }} />
+
         {pendingUserEntryData ? (
           <>
             <Skeleton className="h-[36px] w-[85px]" />
             <Skeleton className="h-[36px] w-[120px]" />
           </>
         ) : userEntryData ? (
-          <>
-            <Button variant="outline">Remove</Button>
-            <Button onClick={() => saveUserEntryData()}>Save Changes</Button>
-          </>
+          <div className="flex w-full flex-col justify-between gap-3 xl:flex-row">
+            <Button variant="outline" className="w-full xl:w-max">
+              Remove
+            </Button>
+            <Button
+              className="w-full xl:w-max"
+              onClick={() => saveUserEntryData()}
+            >
+              Save Changes
+            </Button>
+          </div>
         ) : (
           ""
         )}
