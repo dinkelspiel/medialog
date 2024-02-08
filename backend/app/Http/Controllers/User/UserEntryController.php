@@ -120,6 +120,7 @@ class UserEntryController extends Controller
             "entryId" => $userEntry->entry->id,
             "entryName" => $userEntry->entry->name,
             "entryLength" => $userEntry->entry->length,
+            "entryCoverUrl" => $userEntry->entry->cover_url,
             "releaseYear" => 2023,
             "entries" => $userEntry->entry->franchise->entries->count(),
             "userEntries" => $userEntry->entry->userEntries->map(function($userEntry) use($userId) {

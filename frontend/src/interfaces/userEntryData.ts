@@ -4,6 +4,7 @@ interface UserEntryData {
     id: number;
     franchiseName: string;
     entryName: string;
+    entryCoverUrl: string,
     releaseYear: number;
     entries: number;
     userEntries: { id: number; rating: number; watchedAt?: string }[];
