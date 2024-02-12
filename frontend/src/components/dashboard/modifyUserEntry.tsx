@@ -95,63 +95,66 @@ const UpdateInformation = ({
         </Button>
       </DialogTrigger>
       <DialogContent>
-        <DialogHeader>
-          <DialogTitle>
-            Update {userEntryData.franchiseName}: {userEntryData.entryName}
-          </DialogTitle>
-        </DialogHeader>
-        <div className="flex flex-row gap-3">
+        { userEntryData && <>
+          <DialogHeader>
+            <DialogTitle>
+              Update {userEntryData.franchiseName}: {userEntryData.entryName}
+            </DialogTitle>
+          </DialogHeader>
+          <div className="flex flex-row gap-3">
+            <div className="flex h-full w-full flex-col space-y-1.5">
+              <Label htmlFor="name">Franchise Name</Label>
+              <Input
+                value={userEntryData.franchiseName}
+                onChange={(e) =>
+                  setUserEntryData({
+                    ...userEntryData,
+                    franchiseName: e.target.value,
+                  })
+                }
+              />
+            </div>
+            <div className="flex h-full w-full flex-col space-y-1.5">
+              <Label htmlFor="name">Entry Name</Label>
+              <Input
+                value={userEntryData.entryName}
+                onChange={(e) =>
+                  setUserEntryData({
+                    ...userEntryData,
+                    entryName: e.target.value,
+                  })
+                }
+              />
+            </div>
+          </div>
           <div className="flex h-full w-full flex-col space-y-1.5">
-            <Label htmlFor="name">Franchise Name</Label>
+            <Label htmlFor="name">Length</Label>
             <Input
-              value={userEntryData.franchiseName}
+              type="number"
+              value={userEntryData.entryLength}
               onChange={(e) =>
                 setUserEntryData({
                   ...userEntryData,
-                  franchiseName: e.target.value,
+                  entryLength: parseInt(e.target.value),
                 })
               }
             />
           </div>
           <div className="flex h-full w-full flex-col space-y-1.5">
-            <Label htmlFor="name">Entry Name</Label>
+            <Label htmlFor="name">Cover Url</Label>
             <Input
-              value={userEntryData.entryName}
+              value={userEntryData.entryCoverUrl}
               onChange={(e) =>
                 setUserEntryData({
                   ...userEntryData,
-                  entryName: e.target.value,
+                  entryCoverUrl: e.target.value,
                 })
               }
             />
           </div>
-        </div>
-        <div className="flex h-full w-full flex-col space-y-1.5">
-          <Label htmlFor="name">Length</Label>
-          <Input
-            type="number"
-            value={userEntryData.entryLength}
-            onChange={(e) =>
-              setUserEntryData({
-                ...userEntryData,
-                entryLength: parseInt(e.target.value),
-              })
-            }
-          />
-        </div>
-        <div className="flex h-full w-full flex-col space-y-1.5">
-          <Label htmlFor="name">Cover Url</Label>
-          <Input
-            value={userEntryData.entryCoverUrl}
-            onChange={(e) =>
-              setUserEntryData({
-                ...userEntryData,
-                entryCoverUrl: e.target.value,
-              })
-            }
-          />
-        </div>
-        <Button onClick={() => saveChanges()}>Save Changes</Button>
+          <Button onClick={() => saveChanges()}>Save Changes</Button> 
+        </> 
+      }
       </DialogContent>
     </Dialog>
   );
