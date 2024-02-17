@@ -15,6 +15,7 @@ import Xmark from "@/components/icons/xmark";
 import Rating from "@/components/rating";
 import RatingSelector from "@/components/ratingSelector";
 import Sidebar from "@/components/sidebar";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Button } from "@/components/ui/button";
 import {
   Card,
@@ -78,6 +79,7 @@ interface UserEntry {
 export default function Home() {
   const [showFilters, setShowFilters] = useState<boolean>(false);
   const [userEntries, setUserEntries] = useState<UserEntry[]>([]);
+  const [pendingUserEntries, setPendingUserEntries] = useState(false);
   const [sortBy, setSortBy] = useState<"rating" | "az" | "updated" | "watched">(
     "rating",
   );
@@ -90,7 +92,16 @@ export default function Home() {
 
   const router = useRouter();
 
-  const fetchEntries = async (userId: number) => {
+  const fetchEntries = async (
+    userId: number,
+    timeout: NodeJS.Timeout | undefined = undefined,
+  ) => {
+    if (timeout === undefined) {
+      timeout = setTimeout(() => {
+        setPendingUserEntries(true);
+      }, 200);
+    }
+
     const response = await fetch(
       process.env.NEXT_PUBLIC_API_URL + `/users/${userId}/entries`,
       {
@@ -103,10 +114,16 @@ export default function Home() {
 
     response.json().then((data: UserEntry[]) => {
       setUserEntries(data);
+      setPendingUserEntries(false);
+      clearTimeout(timeout);
     });
   };
 
   useEffect(() => {
+    let timeout = setTimeout(() => {
+      setPendingUserEntries(true);
+    }, 200);
+
     const getLoggedInUser = async () => {
       const response = await fetch(
         process.env.NEXT_PUBLIC_API_URL +
@@ -127,7 +144,7 @@ export default function Home() {
 
       response.json().then((data: User) => {
         setUser(data);
-        fetchEntries(data.id);
+        fetchEntries(data.id, timeout);
       });
     };
 
@@ -267,38 +284,56 @@ export default function Home() {
                       userId: user.id,
                     }}
                   />
-                  {userEntries
-                    .sort((a, b) => {
-                      switch (sortBy) {
-                        case "rating":
-                          return b.rating - a.rating;
-                        case "az":
-                          return a.franchiseName.localeCompare(b.franchiseName);
-                        case "updated":
-                          return 0;
-                        case "watched":
-                          return 0;
-                      }
-                    })
-                    .map((userEntry: UserEntry) => {
-                      return (
-                        <Entry
-                          key={userEntry.id}
-                          id={userEntry.id}
-                          title={
-                            userEntry.entries > 1
-                              ? `${userEntry.franchiseName}: ${userEntry.entryName}`
-                              : userEntry.franchiseName
+                  {!pendingUserEntries
+                    ? userEntries
+                        .sort((a, b) => {
+                          switch (sortBy) {
+                            case "rating":
+                              return b.rating - a.rating;
+                            case "az":
+                              return a.franchiseName.localeCompare(
+                                b.franchiseName,
+                              );
+                            case "updated":
+                              return 0;
+                            case "watched":
+                              return 0;
                           }
-                          releaseYear={2023}
-                          rating={userEntry.rating}
-                          coverUrl={userEntry.coverUrl}
-                          onClick={() => {
-                            getUserEntryData(userEntry.id);
-                          }}
-                        />
-                      );
-                    })}
+                        })
+                        .map((userEntry: UserEntry) => {
+                          return (
+                            <Entry
+                              key={userEntry.id}
+                              id={userEntry.id}
+                              title={
+                                userEntry.entries > 1
+                                  ? `${userEntry.franchiseName}: ${userEntry.entryName}`
+                                  : userEntry.franchiseName
+                              }
+                              releaseYear={2023}
+                              rating={userEntry.rating}
+                              coverUrl={userEntry.coverUrl}
+                              onClick={() => {
+                                getUserEntryData(userEntry.id);
+                              }}
+                            />
+                          );
+                        })
+                    : isDesktop
+                      ? [...Array(2)].map((_, i) => (
+                          <Skeleton
+                            key={`desk${i}`}
+                            className="relative h-[255px] w-[170px] cursor-pointer"
+                          />
+                        ))
+                      : [...Array(2)].map((_, i) => (
+                          <Skeleton key={`mob${i}`}>
+                            <AspectRatio
+                              ratio={2 / 3}
+                              className="cursor-pointer"
+                            ></AspectRatio>
+                          </Skeleton>
+                        ))}
                 </div>
               </div>
             </div>
