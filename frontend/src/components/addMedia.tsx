@@ -27,6 +27,7 @@ import RatingSelector from "./ratingSelector";
 import { useMediaQuery } from "usehooks-ts";
 import { Drawer, DrawerContent } from "./ui/drawer";
 import { Separator } from "./ui/separator";
+import { toast } from "sonner";
 
 interface AddMediaProps {
   fetchEntries: () => void;
@@ -158,7 +159,7 @@ const AddMediaContent = ({
   };
 
   const addMediaWithReview = async () => {
-    const response = await fetch(
+    const response = fetch(
       process.env.NEXT_PUBLIC_API_URL + `/users/${userId}/entries`,
       {
         method: "PUT",
@@ -174,20 +175,24 @@ const AddMediaContent = ({
       },
     );
 
-    response.json().then((data) => {
-      console.log(data);
-      fetchEntries();
-      setSelectedEntry(undefined);
-      setExpandNotes(false);
-      setNotes("");
-      setRating(0);
-      setSearchValue("");
-      setDrawerOpen(false);
+    toast.promise(response, {
+      loading: "Loading...",
+      success: () => {
+        fetchEntries();
+        setSelectedEntry(undefined);
+        setExpandNotes(false);
+        setNotes("");
+        setRating(0);
+        setSearchValue("");
+        setDrawerOpen(false);
+        return `Successfully added entry`;
+      },
+      error: "Error",
     });
   };
 
   const addMediaWithoutReview = async () => {
-    const response = await fetch(
+    const response = fetch(
       process.env.NEXT_PUBLIC_API_URL + `/users/${userId}/entries`,
       {
         method: "PUT",
@@ -201,14 +206,19 @@ const AddMediaContent = ({
       },
     );
 
-    response.json().then((data) => {
-      fetchEntries();
-      setSelectedEntry(undefined);
-      setExpandNotes(false);
-      setNotes("");
-      setRating(0);
-      setSearchValue("");
-      setDrawerOpen(false);
+    toast.promise(response, {
+      loading: "Loading...",
+      success: () => {
+        fetchEntries();
+        setSelectedEntry(undefined);
+        setExpandNotes(false);
+        setNotes("");
+        setRating(0);
+        setSearchValue("");
+        setDrawerOpen(false);
+        return `Successfully added entry`;
+      },
+      error: "Error",
     });
   };
 

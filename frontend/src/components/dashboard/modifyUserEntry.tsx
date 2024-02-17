@@ -41,6 +41,7 @@ import {
   DrawerHeader,
 } from "../ui/drawer";
 import { useMediaQuery } from "usehooks-ts";
+import { toast } from "sonner";
 
 interface ModifyUserEntryProps {
   pendingUserEntryData: boolean;
@@ -64,7 +65,7 @@ const UpdateInformation = ({
   const [open, setOpen] = useState(false);
 
   const saveChanges = async () => {
-    const response = await fetch(
+    const response = fetch(
       process.env.NEXT_PUBLIC_API_URL + `/entries/${userEntryData.entryId}`,
       {
         method: "PATCH",
@@ -81,8 +82,13 @@ const UpdateInformation = ({
       },
     );
 
-    response.json().then((data) => {
-      setOpen(false);
+    toast.promise(response, {
+      loading: "Loading...",
+      success: () => {
+        setOpen(false);
+        return `Successfully saved changes for entry ${userEntryData.franchiseName}: ${userEntryData.entryName}`;
+      },
+      error: "Error",
     });
   };
 
@@ -95,66 +101,67 @@ const UpdateInformation = ({
         </Button>
       </DialogTrigger>
       <DialogContent>
-        { userEntryData && <>
-          <DialogHeader>
-            <DialogTitle>
-              Update {userEntryData.franchiseName}: {userEntryData.entryName}
-            </DialogTitle>
-          </DialogHeader>
-          <div className="flex flex-row gap-3">
+        {userEntryData && (
+          <>
+            <DialogHeader>
+              <DialogTitle>
+                Update {userEntryData.franchiseName}: {userEntryData.entryName}
+              </DialogTitle>
+            </DialogHeader>
+            <div className="flex flex-row gap-3">
+              <div className="flex h-full w-full flex-col space-y-1.5">
+                <Label htmlFor="name">Franchise Name</Label>
+                <Input
+                  value={userEntryData.franchiseName}
+                  onChange={(e) =>
+                    setUserEntryData({
+                      ...userEntryData,
+                      franchiseName: e.target.value,
+                    })
+                  }
+                />
+              </div>
+              <div className="flex h-full w-full flex-col space-y-1.5">
+                <Label htmlFor="name">Entry Name</Label>
+                <Input
+                  value={userEntryData.entryName}
+                  onChange={(e) =>
+                    setUserEntryData({
+                      ...userEntryData,
+                      entryName: e.target.value,
+                    })
+                  }
+                />
+              </div>
+            </div>
             <div className="flex h-full w-full flex-col space-y-1.5">
-              <Label htmlFor="name">Franchise Name</Label>
+              <Label htmlFor="name">Length</Label>
               <Input
-                value={userEntryData.franchiseName}
+                type="number"
+                value={userEntryData.entryLength}
                 onChange={(e) =>
                   setUserEntryData({
                     ...userEntryData,
-                    franchiseName: e.target.value,
+                    entryLength: parseInt(e.target.value),
                   })
                 }
               />
             </div>
             <div className="flex h-full w-full flex-col space-y-1.5">
-              <Label htmlFor="name">Entry Name</Label>
+              <Label htmlFor="name">Cover Url</Label>
               <Input
-                value={userEntryData.entryName}
+                value={userEntryData.entryCoverUrl}
                 onChange={(e) =>
                   setUserEntryData({
                     ...userEntryData,
-                    entryName: e.target.value,
+                    entryCoverUrl: e.target.value,
                   })
                 }
               />
             </div>
-          </div>
-          <div className="flex h-full w-full flex-col space-y-1.5">
-            <Label htmlFor="name">Length</Label>
-            <Input
-              type="number"
-              value={userEntryData.entryLength}
-              onChange={(e) =>
-                setUserEntryData({
-                  ...userEntryData,
-                  entryLength: parseInt(e.target.value),
-                })
-              }
-            />
-          </div>
-          <div className="flex h-full w-full flex-col space-y-1.5">
-            <Label htmlFor="name">Cover Url</Label>
-            <Input
-              value={userEntryData.entryCoverUrl}
-              onChange={(e) =>
-                setUserEntryData({
-                  ...userEntryData,
-                  entryCoverUrl: e.target.value,
-                })
-              }
-            />
-          </div>
-          <Button onClick={() => saveChanges()}>Save Changes</Button> 
-        </> 
-      }
+            <Button onClick={() => saveChanges()}>Save Changes</Button>
+          </>
+        )}
       </DialogContent>
     </Dialog>
   );
@@ -197,7 +204,7 @@ const ModifyUserEntryContent = ({
   const isDesktop = useMediaQuery("(min-width: 1024px)");
 
   const saveUserEntryData = async () => {
-    const response = await fetch(
+    const response = fetch(
       process.env.NEXT_PUBLIC_API_URL +
         `/users/${user.id}/entries/${userEntryData.id}`,
       {
@@ -213,9 +220,14 @@ const ModifyUserEntryContent = ({
       },
     );
 
-    response.json().then((data) => {
-      fetchEntries(user.id);
-      getUserEntryData(userEntryData.id, true);
+    toast.promise(response, {
+      loading: "Loading...",
+      success: () => {
+        fetchEntries(user.id);
+        getUserEntryData(userEntryData.id, true);
+        return `Successfully saved changes for entry ${userEntryData.franchiseName}: ${userEntryData.entryName}`;
+      },
+      error: "Error",
     });
   };
 
