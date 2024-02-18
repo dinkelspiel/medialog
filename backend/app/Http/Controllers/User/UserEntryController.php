@@ -32,7 +32,7 @@ class UserEntryController extends Controller
                 },
             ])
             ->groupBy("entry_id")
-            ->get(["id", "rating", "status", "entry_id", "user_id"])
+            ->get(["id", "rating", "status", "entry_id", "user_id", "watched_at", "updated_at"])
             ->map(function ($userEntry) {
                 return [
                     "id" => $userEntry->getLatest()->id,
@@ -40,7 +40,7 @@ class UserEntryController extends Controller
                     "entryName" => $userEntry->entry->name,
                     "coverUrl" => $userEntry->entry->cover_url,
                     "entries" => $userEntry->entry->franchise->entries->count(),
-                    "updatedAt" => $userEntry->entry->updated_at->toDateTimeString(),
+                    "updatedAt" => $userEntry->updated_at->toDateTimeString(),
                     "rating" => $userEntry->getLatestCompleted() ? $userEntry->getLatestCompleted()->rating : 0,
                     "watchedAt" => $userEntry->getLatestCompleted() ? $userEntry->getLatestCompleted()->watched_at : null,
                     "status" => $userEntry->status,
@@ -190,6 +190,7 @@ class UserEntryController extends Controller
                 $userEntry->progress = 0;
             }
         }
+        $userEntry->updated_at = now();
         $userEntry->save();
 
         return response()->json(['message' => 'Successfully updated user entry']);
