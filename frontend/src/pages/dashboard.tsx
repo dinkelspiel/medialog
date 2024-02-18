@@ -77,13 +77,13 @@ interface UserEntry {
   status: UserEntryStatus;
 }
 
+type sortByType = "rating" | "az" | "updated" | "watched";
+
 export default function Home() {
   const [showFilters, setShowFilters] = useState<boolean>(false);
   const [userEntries, setUserEntries] = useState<UserEntry[]>([]);
   const [pendingUserEntries, setPendingUserEntries] = useState(false);
-  const [sortBy, setSortBy] = useState<"rating" | "az" | "updated" | "watched">(
-    "rating",
-  );
+  const [sortBy, setSortByValue] = useState<sortByType>("rating");
   const [user, setUser] = useState<User>({ id: 0, username: "", email: "" });
   const [pendingUserEntryData, setPendingDataFetch] = useState(false);
   const [userEntryData, setUserEntryData] = useState<UserEntryData | undefined>(
@@ -149,8 +149,17 @@ export default function Home() {
       });
     };
 
+    if (localStorage.getItem("sortBy") !== null) {
+      setSortByValue(localStorage.getItem("sortBy") as sortByType);
+    }
+
     getLoggedInUser();
   }, []);
+
+  const setSortBy = (value: sortByType) => {
+    localStorage.setItem("sortBy", value);
+    setSortByValue(value);
+  };
 
   const getUserEntryData = async (
     userEntryId: number,
@@ -213,7 +222,11 @@ export default function Home() {
                     </div>
                     <div className="flex w-full justify-end gap-3">
                       {isDesktop ? (
-                        <Tabs defaultValue="rating">
+                        <Tabs
+                          defaultValue={
+                            localStorage.getItem("sortBy") ?? "rating"
+                          }
+                        >
                           <TabsList>
                             <TabsTrigger
                               value="rating"
