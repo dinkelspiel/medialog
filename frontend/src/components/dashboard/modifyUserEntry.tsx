@@ -42,6 +42,7 @@ import {
 } from "../ui/drawer";
 import { useMediaQuery } from "usehooks-ts";
 import { toast } from "sonner";
+import { Slider } from "../ui/slider";
 
 interface ModifyUserEntryProps {
   pendingUserEntryData: boolean;
@@ -346,16 +347,28 @@ const ModifyUserEntryContent = ({
                       <Skeleton className="h-[22px] w-[150px]" />
                     </>
                   ) : userEntryData ? (
-                    <RatingSelector
-                      userEntryId={userEntryData.id}
-                      rating={userEntryData.rating}
-                      setRating={(rating) => {
-                        setUserEntryData({
-                          ...userEntryData,
-                          rating: rating,
-                        });
-                      }}
-                    />
+                    user.ratingStyle === "stars" ? (
+                      <RatingSelector
+                        userEntryId={userEntryData.id}
+                        rating={userEntryData.rating}
+                        setRating={(rating) => {
+                          setUserEntryData({
+                            ...userEntryData,
+                            rating: rating,
+                          });
+                        }}
+                      />
+                    ) : (
+                      <Slider
+                        defaultValue={[userEntryData.rating]}
+                        onValueChange={(e) =>
+                          setUserEntryData({
+                            ...userEntryData,
+                            rating: e[0],
+                          })
+                        }
+                      />
+                    )
                   ) : (
                     ""
                   )}

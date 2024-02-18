@@ -84,7 +84,12 @@ export default function Home() {
   const [userEntries, setUserEntries] = useState<UserEntry[]>([]);
   const [pendingUserEntries, setPendingUserEntries] = useState(false);
   const [sortBy, setSortByValue] = useState<sortByType>("rating");
-  const [user, setUser] = useState<User>({ id: 0, username: "", email: "" });
+  const [user, setUser] = useState<User>({
+    id: 0,
+    username: "",
+    email: "",
+    ratingStyle: "stars",
+  });
   const [pendingUserEntryData, setPendingDataFetch] = useState(false);
   const [userEntryData, setUserEntryData] = useState<UserEntryData | undefined>(
     undefined,
