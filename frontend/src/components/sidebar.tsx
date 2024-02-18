@@ -4,9 +4,34 @@ import House from "./icons/house";
 import UserGroup from "./icons/userGroup";
 import { useMediaQuery } from "usehooks-ts";
 import Logo from "./icons/logo";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuShortcut,
+  DropdownMenuTrigger,
+} from "./ui/dropdown-menu";
+import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
+import UserIcon from "./icons/user";
+import { User } from "@/interfaces/user";
+import { useRouter } from "next/router";
 
-const Sidebar = () => {
+interface SidebarProps {
+  user: User;
+}
+
+const Sidebar = ({ user }: SidebarProps) => {
   const isDesktop = useMediaQuery("(min-width: 1024px)");
+
+  const router = useRouter();
+
+  const logOut = () => {
+    localStorage.removeItem("sessionToken");
+    router.push("/login");
+  };
 
   return (
     <>
@@ -21,6 +46,46 @@ const Sidebar = () => {
             <UserGroup />
             Community
           </Button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button className="mt-auto w-full justify-start" variant="ghost">
+                <UserIcon />
+                {user.username}
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent className="w-56" align="end" forceMount>
+              <DropdownMenuLabel className="font-normal">
+                <div className="flex flex-col space-y-1">
+                  <p className="text-sm font-medium leading-none">
+                    {user.username}
+                  </p>
+                  <p className="text-xs leading-none text-muted-foreground">
+                    {user.email}
+                  </p>
+                </div>
+              </DropdownMenuLabel>
+              <DropdownMenuSeparator />
+              <DropdownMenuGroup>
+                <a href="/profile">
+                  <DropdownMenuItem className="cursor-pointer">
+                    Profile
+                  </DropdownMenuItem>
+                </a>
+                <a href="/settings">
+                  <DropdownMenuItem className="cursor-pointer">
+                    Settings
+                  </DropdownMenuItem>
+                </a>
+              </DropdownMenuGroup>
+              <DropdownMenuSeparator />
+              <DropdownMenuItem
+                className="cursor-pointer"
+                onClick={() => logOut()}
+              >
+                Log out
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
       ) : (
         <div className="flex cursor-pointer items-center justify-between border-b border-slate-200 px-8">
