@@ -55,7 +55,10 @@ class UserController extends Controller
      */
     public function show(User $user): JsonResponse
     {
-        return response()->json($user->only('id', 'username', 'email'));
+        $data = $user->only('id', 'username', 'email', 'rating_style');
+        $data['ratingStyle'] = $data['rating_style'];
+        unset($data['rating_style']); 
+        return response()->json($data);
     }
 
     /**
