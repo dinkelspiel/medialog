@@ -360,7 +360,7 @@ const ModifyUserEntryContent = ({
                       />
                     ) : (
                       <Slider
-                        defaultValue={[userEntryData.rating]}
+                        value={[userEntryData.rating]}
                         onValueChange={(e) =>
                           setUserEntryData({
                             ...userEntryData,
