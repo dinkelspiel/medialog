@@ -2,8 +2,11 @@
 
 namespace App\Http\Controllers\User;
 
+use App\Enums\ActivityTypeEnum;
 use App\Enums\UserEntryStatusEnum;
 use App\Http\Controllers\Controller;
+use Illuminate\Support\Facades\Log;
+use App\Models\Activity;
 use App\Models\Entry;
 use App\Models\User;
 use App\Models\UserEntry;
@@ -60,6 +63,8 @@ class UserEntryController extends Controller
             return response()->json(['error' => 'You do not have permission to add user entries to this user'], 401);
         }
 
+        $user = UserSession::where('session', $request->get('sessionToken'))->first()->user;
+
         $request->validate([
             'entryId' => 'required|exists:entries,id',
         ]);
@@ -70,6 +75,30 @@ class UserEntryController extends Controller
             {
                 $userEntry = UserEntry::where('watched_at', null)->where('entry_id', $request->json('entryId'))->first();
             } else {
+                if(UserEntry::where('entry_id', $request->json('entryId'))->where('user_id', $user->id)->exists())
+                {
+                    Activity::create([
+                        "user_id" => $user->id,
+                        "entry_id" => $request->json('entryId'),
+                        "type" => ActivityTypeEnum::Rewatch,
+                        "additional_data" =>
+                            UserEntry::where("entry_id", $request->json('entryId'))
+                                ->where("user_id", $user->id)
+                                ->count() - 1,
+                    ]);
+                } else {
+                    Activity::create([
+                        "user_id" => $user->id,
+                        "entry_id" => $request->json('entryId'),
+                        "type" => ActivityTypeEnum::StatusUpdate,
+                        "additional_data" => "watching|0",
+                    ]);
+                }
+
+                User::where("id", $user->id)
+                    ->first()
+                    ->pushDailyStreak();
+
                 $userEntry = UserEntry::create([
                     'entry_id' => $request->json('entryId'),
                     'user_id' => $userId,
@@ -93,6 +122,44 @@ class UserEntryController extends Controller
             'watched_at' => now(),
             'status' => UserEntryStatusEnum::Completed
         ]);
+
+        if($request->json('rating') != null || $request->json('notes') != null)
+        {
+            Activity::create([
+                "user_id" => $user->id,
+                "entry_id" => $userEntry->entry->id,
+                "type" => ActivityTypeEnum::CompleteReview,
+                "additional_data" =>
+                    UserEntry::where("entry_id", $userEntry->entry->id)
+                        ->where("user_id", $user->id)
+                        ->count() - 1,
+            ]);
+        } else {
+            $additionalData =
+            "completed|" .
+            UserEntry::where("entry_id", $userEntry->entry->id)
+                ->where("user_id", $user->id)
+                ->count() -
+            1;
+
+            if (
+                !Activity::where("user_id", $user->id)
+                    ->where("entry_id", $userEntry->entry->id)
+                    ->where("additional_data", $additionalData)
+                    ->exists()
+            ) {
+                Activity::create([
+                    "user_id" => $user->id,
+                    "entry_id" => $userEntry->entry->id,
+                    "type" => ActivityTypeEnum::StatusUpdate,
+                    "additional_data" => $additionalData,
+                ]);
+            }
+        }
+
+        User::where("id", $user->id)
+            ->first()
+            ->pushDailyStreak();
 
         return response()->json(['message' => 'Successfully created completed user entry', 'id' => $userEntry->id]);
     }
@@ -160,6 +227,8 @@ class UserEntryController extends Controller
             return response()->json(['error' => 'You do not have permission to add user entries to this user'], 401);
         }
 
+        $user = UserSession::where('session', $request->get('sessionToken'))->first()->user;
+
         if($request->json('rating') !== null)
         {
             $userEntry->rating = $request->json('rating');
@@ -176,6 +245,19 @@ class UserEntryController extends Controller
                 $userEntry->watched_at = now();
                 $userEntry->progress = $userEntry->entry->length;
             }
+
+            Activity::create([
+                "user_id" => $user->id,
+                "entry_id" => $userEntry->entry->id,
+                "type" => ActivityTypeEnum::StatusUpdate,
+                "additional_data" =>
+                    $userEntry->status->value .
+                    "|" .
+                    UserEntry::where("entry_id", $userEntry->entry->id)
+                        ->where("user_id", $user->id)
+                        ->count() -
+                    1,
+            ]);
         }
         if($request->json('progress') !== null)
         {
@@ -184,12 +266,75 @@ class UserEntryController extends Controller
             {
                 $userEntry->status = 'completed';
                 $userEntry->watched_at = now();
+
+                $additionalData =
+                "completed|" .
+                UserEntry::where("entry_id", $userEntry->entry->id)
+                    ->where("user_id", $user->id)
+                    ->count() -
+                1;
+
+                if (
+                    !Activity::where("user_id", $user->id)
+                        ->where("entry_id", $userEntry->entry->id)
+                        ->where("additional_data", $additionalData)
+                        ->exists()
+                ) {
+                    Activity::create([
+                        "user_id" => $user->id,
+                        "entry_id" => $userEntry->entry->id,
+                        "type" => ActivityTypeEnum::StatusUpdate,
+                        "additional_data" => $additionalData,
+                    ]);
+                }
             }
             if($userEntry->progress < 0)
             {
                 $userEntry->progress = 0;
             }
         }
+
+        if($request->json('notes')  !== null || $request->json('rating')  !== null)
+        {
+            $lastActivity = Activity::where("user_id", $user->id)
+                ->where("type", "!=", "review")
+                ->orderBy("id", "DESC")
+                ->first();
+
+            if (
+                $lastActivity &&
+                str_contains($lastActivity->additional_data, "completed") &&
+                $lastActivity->type == ActivityTypeEnum::StatusUpdate
+            ) {
+                $lastActivity->delete();
+                Activity::create([
+                    "user_id" => $user->id,
+                    "entry_id" => $userEntry->entry->id,
+                    "type" => ActivityTypeEnum::CompleteReview,
+                    "additional_data" =>
+                        UserEntry::where("entry_id", $userEntry->entry->id)
+                            ->where("user_id", $user->id)
+                            ->count() - 1,
+                ]);
+            } elseif (
+                UserEntry::where("id", $userEntry->id)->first()->rating === 0
+            ) {
+                Activity::create([
+                    "user_id" => $user->id,
+                    "entry_id" => $userEntry->entry->id,
+                    "type" => ActivityTypeEnum::Reviewed,
+                    "additional_data" =>
+                        UserEntry::where("entry_id", $userEntry->entry->id)
+                            ->where("user_id", $user->id)
+                            ->count() - 1,
+                ]);
+            }
+        }
+
+        User::where("id", $user->id)
+            ->first()
+            ->pushDailyStreak();
+
         $userEntry->updated_at = now();
         $userEntry->save();
 
