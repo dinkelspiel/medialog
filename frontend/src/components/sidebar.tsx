@@ -50,7 +50,14 @@ const Sidebar = ({ user }: SidebarProps) => {
             <DropdownMenuTrigger asChild>
               <Button className="mt-auto w-full justify-start" variant="ghost">
                 <UserIcon />
-                {user.username}
+                <div className="flex flex-col items-start space-y-1">
+                  <p className="text-sm font-medium leading-none">
+                    {user.username}
+                  </p>
+                  <p className="text-xs leading-none text-muted-foreground">
+                    {user.email}
+                  </p>
+                </div>
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent className="w-56" align="end" forceMount>
