@@ -48,7 +48,7 @@ const AddMedia = (props: AddMediaProps) => {
         Add Media
       </button>
       {isDesktop ? (
-        <Dialog open={open}>
+        <Dialog open={open} onOpenChange={(e) => setOpen(e)}>
           <DialogContent
             className={cn(expandNotes ? "w-full max-w-[30dvw]" : "")}
           >
