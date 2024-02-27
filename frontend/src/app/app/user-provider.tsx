@@ -2,7 +2,9 @@
 import { User } from "@/interfaces/user";
 import { useRouter } from "next/navigation";
 import {
+  Dispatch,
   ReactNode,
+  SetStateAction,
   createContext,
   useContext,
   useEffect,
@@ -12,10 +14,12 @@ import { toast } from "sonner";
 
 type UserContextType = {
   user: User | undefined;
+  setUser: Dispatch<SetStateAction<User | undefined>>;
 };
 
 const UserContext = createContext<UserContextType>({
   user: undefined,
+  setUser: () => {},
 });
 
 export const useUserContext = () => useContext(UserContext);
@@ -57,7 +61,9 @@ const UserProvider = ({ children }: { children: ReactNode }) => {
   }, [router]);
 
   return (
-    <UserContext.Provider value={{ user }}>{children}</UserContext.Provider>
+    <UserContext.Provider value={{ user, setUser }}>
+      {children}
+    </UserContext.Provider>
   );
 };
 

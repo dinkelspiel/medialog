@@ -5,6 +5,7 @@ namespace App\Http\Controllers\User;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\UserSession;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
@@ -57,7 +58,7 @@ class UserController extends Controller
     {
         $data = $user->only('id', 'username', 'email', 'rating_style');
         $data['ratingStyle'] = $data['rating_style'];
-        unset($data['rating_style']); 
+        unset($data['rating_style']);
         return response()->json($data);
     }
 
@@ -66,7 +67,21 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        //
+        if(UserSession::where('session', $request->get('sessionToken'))->first()->user->id != $user->id)
+        {
+            return response()->json(['error' => 'You do not have permission to update this user'], 401);
+        }
+
+        if($request->json('ratingStyle') !== null)
+        {
+            $request->validate([
+                'ratingStyle' => 'required|in:stars,range'
+            ]);
+            $user->rating_style = $request->json('ratingStyle');
+        }
+
+        $user->save();
+        return response()->json(['message' => 'Successfully saved user'], 201);
     }
 
     /**
