@@ -13,7 +13,7 @@ const RatingSelector = ({
   rating,
   userEntryId,
 }: RatingSelectorProps) => {
-  let [hoverRating, setHoverRating] = useState(rating);
+  const [hoverRating, setHoverRating] = useState(rating);
 
   useEffect(() => {
     setHoverRating(rating);
@@ -21,7 +21,7 @@ const RatingSelector = ({
 
   return (
     <div className="flex flex-row justify-center gap-2">
-      {[...Array(5)].map((x, i) => (
+      {[...(Array(5) as number[])].map((x, i) => (
         <div className="flex flex-row" key={i}>
           <StarHalf
             variant={hoverRating >= (i + 1) * 20 - 10 ? "fill" : "outline"}

@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 const Rating = ({ rating }: { rating: number }) => {
   return (
     <div className="flex flex-row justify-center gap-2">
-      {[...Array(5)].map((x, i) => (
+      {[...(Array(5) as number[])].map((x, i) => (
         <div className="flex flex-row" key={i}>
           <StarHalf
             variant={rating >= (i + 1) * 20 - 10 ? "fill" : "outline"}

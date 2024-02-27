@@ -61,8 +61,10 @@ const ModifyUserEntryContent = ({
     toast.promise(response, {
       loading: "Loading...",
       success: () => {
-        fetchEntries(user.id);
-        getUserEntryData(userEntryData.id, true);
+        fetchEntries(user.id).catch((e: string) => toast.error(e));
+        getUserEntryData(userEntryData.id, true).catch((e: string) =>
+          toast.error(e),
+        );
         return `Successfully saved changes for entry ${userEntryData.franchiseName}: ${userEntryData.entryName}`;
       },
       error: "Error",
@@ -86,9 +88,12 @@ const ModifyUserEntryContent = ({
       },
     );
 
-    response.json().then((data) => {
-      getUserEntryData(userEntryData.id, true);
-    });
+    response
+      .json()
+      .then((data) => {
+        getUserEntryData(userEntryData.id, true);
+      })
+      .catch((e: string) => toast.error(e));
   };
 
   const addRewatch = async (entryId: number) => {

@@ -17,7 +17,7 @@ const UpdateInformation = ({
   setUserEntryData,
 }: {
   userEntryData: UserEntryData;
-  setUserEntryData: Dispatch<SetStateAction<UserEntryData>>;
+  setUserEntryData: Dispatch<SetStateAction<UserEntryData | undefined>>;
 }) => {
   const [open, setOpen] = useState(false);
 

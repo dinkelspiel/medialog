@@ -1,4 +1,4 @@
-import React, { SVGProps } from "react";
+import React, { type SVGProps } from "react";
 
 interface starHalfProps extends SVGProps<SVGSVGElement> {
   variant?: "fill" | "outline";
