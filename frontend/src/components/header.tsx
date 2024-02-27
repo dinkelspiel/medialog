@@ -13,7 +13,7 @@ const Header = ({ title, subtext, children }: HeaderProps) => {
         <div className="text-2xl font-semibold">{title}</div>
         <div className="text-sm text-slate-500">{subtext}</div>
       </div>
-      {children}
+      <div className="flex flex-row gap-3">{children}</div>
     </div>
   );
 };
