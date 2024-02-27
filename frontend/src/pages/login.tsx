@@ -3,15 +3,16 @@ import Spinner from "@/components/icons/spinner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { LoginResponse } from "@/interfaces/authInterfaces";
+import type { LoginResponse } from "@/interfaces/authInterfaces";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { FormEvent, useEffect, useState } from "react";
+import React, { type FormEvent, useEffect, useState } from "react";
 
 const Login = () => {
-  let [pendingLoginResult, setPendingLoginResult] = useState<boolean>(false);
-  let [error, setError] = useState<string | undefined>(undefined);
-  let [email, setEmail] = useState("");
-  let [password, setPassword] = useState("");
+  const [pendingLoginResult, setPendingLoginResult] = useState<boolean>(false);
+  const [error, setError] = useState<string | undefined>(undefined);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const router = useRouter();
 
@@ -37,18 +38,21 @@ const Login = () => {
       },
     );
 
-    response.json().then((data: LoginResponse) => {
-      if (response.status === 200) {
-        if (data.sessionToken === undefined) {
-          return;
-        }
+    response
+      .json()
+      .then((data: LoginResponse) => {
+        if (response.status === 200) {
+          if (data.sessionToken === undefined) {
+            return;
+          }
 
-        localStorage.setItem("sessionToken", data.sessionToken);
-        router.push("/dashboard");
-      } else if (response.status === 401) {
-        setError(data.error);
-      }
-    });
+          localStorage.setItem("sessionToken", data.sessionToken);
+          router.push("/dashboard");
+        } else if (response.status === 401) {
+          setError(data.error);
+        }
+      })
+      .catch((e: string) => setError(e));
     setPendingLoginResult(false);
   };
 
@@ -61,11 +65,11 @@ const Login = () => {
         </div>
       </div>
       <div className="relative flex items-center">
-        <a href="/signup">
+        <Link href="/signup">
           <Button className="absolute right-8 top-8" variant="ghost">
             Sign up
           </Button>
-        </a>
+        </Link>
         <form
           className="mx-auto flex w-[350px] flex-col items-center justify-center gap-3"
           onSubmit={(e) => attemptLogin(e)}

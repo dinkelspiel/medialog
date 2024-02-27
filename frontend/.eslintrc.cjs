@@ -1,9 +1,7 @@
 /** @type {import("eslint").Linter.Config} */
 const config = {
   parser: "@typescript-eslint/parser",
-  parserOptions: {
-    project: true,
-  },
+  parserOptions: {},
   plugins: ["@typescript-eslint"],
   extends: [
     "next/core-web-vitals",
@@ -15,7 +13,8 @@ const config = {
     // Feel free to reconfigure them to your own preference.
     "@typescript-eslint/array-type": "off",
     "@typescript-eslint/consistent-type-definitions": "off",
-
+    "@typescript-eslint/prefer-nullish-coalescing": "off",
+    "@typescript-eslint/no-empty-interface": "off",
     "@typescript-eslint/consistent-type-imports": [
       "warn",
       {

@@ -1,4 +1,4 @@
-import UserEntryStatus from "./userEntryStatus";
+import type UserEntryStatus from "./userEntryStatus";
 
 interface UserEntryData {
     id: number;

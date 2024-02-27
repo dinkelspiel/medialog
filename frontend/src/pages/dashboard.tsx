@@ -2,67 +2,25 @@ import AddMedia from "@/components/addMedia";
 import ModifyUserEntry from "@/components/dashboard/modifyUserEntry";
 import Entry from "@/components/entry";
 import Az from "@/components/icons/az";
-import Bookmark from "@/components/icons/bookmark";
 import Eye from "@/components/icons/eye";
-import FlagCheckered from "@/components/icons/flagCheckered";
-import Pause from "@/components/icons/pause";
 import Pen from "@/components/icons/pen";
 import Sort from "@/components/icons/sort";
 import Star from "@/components/icons/star";
-import StarHalf from "@/components/icons/starHalf";
-import StarOutline from "@/components/icons/starOutline";
 import Xmark from "@/components/icons/xmark";
-import Rating from "@/components/rating";
-import RatingSelector from "@/components/ratingSelector";
 import Sidebar from "@/components/sidebar";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Button } from "@/components/ui/button";
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardFooter,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import {
-  Command,
-  CommandEmpty,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from "@/components/ui/command";
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog";
-import { Drawer } from "@/components/ui/drawer";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from "@/components/ui/popover";
-import { Separator } from "@/components/ui/separator";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Textarea } from "@/components/ui/textarea";
-import { Toggle } from "@/components/ui/toggle";
-import { User } from "@/interfaces/user";
-import UserEntryData from "@/interfaces/userEntryData";
-import UserEntryStatus from "@/interfaces/userEntryStatus";
-import { cn } from "@/lib/utils";
-import { BookmarkIcon, EyeOpenIcon, PauseIcon } from "@radix-ui/react-icons";
-import { Check, ChevronsDown, ChevronsUpDown } from "lucide-react";
+import type { User } from "@/interfaces/user";
+import type UserEntryData from "@/interfaces/userEntryData";
+import type UserEntryStatus from "@/interfaces/userEntryStatus";
 import Head from "next/head";
-import Link from "next/link";
 import { useRouter } from "next/router";
-import { SetStateAction, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { toast } from "sonner";
 import { useMediaQuery } from "usehooks-ts";
 
 interface UserEntry {
@@ -118,15 +76,18 @@ export default function Home() {
       },
     );
 
-    response.json().then((data: UserEntry[]) => {
-      setUserEntries(data);
-      setPendingUserEntries(false);
-      clearTimeout(timeout);
-    });
+    response
+      .json()
+      .then((data: UserEntry[]) => {
+        setUserEntries(data);
+        setPendingUserEntries(false);
+        clearTimeout(timeout);
+      })
+      .catch((e: string) => toast.error(e));
   };
 
   useEffect(() => {
-    let timeout = setTimeout(() => {
+    const timeout = setTimeout(() => {
       setPendingUserEntries(true);
     }, 200);
 
@@ -144,21 +105,24 @@ export default function Home() {
       );
 
       if (response.status == 401) {
-        router.push("/login");
+        router.push("/login").catch((e: string) => toast.error(e));
         return;
       }
 
-      response.json().then((data: User) => {
-        setUser(data);
-        fetchEntries(data.id, timeout);
-      });
+      response
+        .json()
+        .then((data: User) => {
+          setUser(data);
+          fetchEntries(data.id, timeout).catch((e: string) => toast.error(e));
+        })
+        .catch((e: string) => toast.error(e));
     };
 
     if (localStorage.getItem("sortBy") !== null) {
       setSortByValue(localStorage.getItem("sortBy") as sortByType);
     }
 
-    getLoggedInUser();
+    getLoggedInUser().catch((e: string) => toast.error(e));
   }, []);
 
   const setSortBy = (value: sortByType) => {
@@ -168,7 +132,7 @@ export default function Home() {
 
   const getUserEntryData = async (
     userEntryId: number,
-    updateExisting: boolean = false,
+    updateExisting = false,
   ) => {
     if (userEntryData !== undefined && !updateExisting) {
       if (userEntryData.id === userEntryId) {
@@ -177,7 +141,7 @@ export default function Home() {
       }
     }
 
-    let timeout = setTimeout(() => {
+    const timeout = setTimeout(() => {
       setPendingDataFetch(true);
     }, 0);
 
@@ -193,11 +157,14 @@ export default function Home() {
       },
     );
 
-    response.json().then((data: UserEntryData) => {
-      setUserEntryData(data);
-      clearTimeout(timeout);
-      setPendingDataFetch(false);
-    });
+    response
+      .json()
+      .then((data: UserEntryData) => {
+        setUserEntryData(data);
+        clearTimeout(timeout);
+        setPendingDataFetch(false);
+      })
+      .catch((e: string) => toast.error(e));
   };
 
   return (
@@ -299,7 +266,11 @@ export default function Home() {
                 <div className="grid w-[calc(100dvw-64px)] grid-cols-3 gap-4 pt-4 lg:flex lg:w-full lg:flex-row lg:flex-wrap">
                   <AddMedia
                     {...{
-                      fetchEntries: () => fetchEntries(user.id),
+                      fetchEntries: () => {
+                        fetchEntries(user.id).catch((e: string) =>
+                          toast.error(e),
+                        );
+                      },
                       userId: user.id,
                     }}
                   />
@@ -314,6 +285,12 @@ export default function Home() {
                                 b.franchiseName,
                               );
                             case "watched":
+                              if (
+                                a.watchedAt === undefined ||
+                                b.watchedAt === undefined
+                              ) {
+                                return 0;
+                              }
                               return (
                                 new Date(b.watchedAt).getTime() -
                                 new Date(a.watchedAt).getTime()
@@ -339,19 +316,23 @@ export default function Home() {
                               rating={userEntry.rating}
                               coverUrl={userEntry.coverUrl}
                               onClick={() => {
-                                getUserEntryData(userEntry.id);
+                                getUserEntryData(userEntry.id).catch(
+                                  (e: string) => {
+                                    toast.error(e);
+                                  },
+                                );
                               }}
                             />
                           );
                         })
                     : isDesktop
-                      ? [...Array(2)].map((_, i) => (
+                      ? [...(Array(2) as number[])].map((_, i) => (
                           <Skeleton
                             key={`desk${i}`}
                             className="relative h-[255px] w-[170px] cursor-pointer"
                           />
                         ))
-                      : [...Array(2)].map((_, i) => (
+                      : [...(Array(2) as number[])].map((_, i) => (
                           <Skeleton key={`mob${i}`}>
                             <AspectRatio
                               ratio={2 / 3}
@@ -364,17 +345,19 @@ export default function Home() {
             </div>
             {(pendingUserEntryData || userEntryData) && (
               <div className="h-full py-6 pr-8">
-                <ModifyUserEntry
-                  {...{
-                    pendingUserEntryData,
-                    userEntryData,
-                    setUserEntryData,
-                    fetchEntries,
-                    getUserEntryData,
-                    user,
-                    setPendingDataFetch,
-                  }}
-                />
+                {userEntryData !== undefined && (
+                  <ModifyUserEntry
+                    {...{
+                      pendingUserEntryData,
+                      userEntryData,
+                      setUserEntryData,
+                      fetchEntries,
+                      getUserEntryData,
+                      user,
+                      setPendingDataFetch,
+                    }}
+                  />
+                )}
               </div>
             )}
           </div>

@@ -18,6 +18,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
 import UserIcon from "./icons/user";
 import { User } from "@/interfaces/user";
 import { useRouter } from "next/router";
+import { toast } from "sonner";
 
 interface SidebarProps {
   user: User;
@@ -30,7 +31,7 @@ const Sidebar = ({ user }: SidebarProps) => {
 
   const logOut = () => {
     localStorage.removeItem("sessionToken");
-    router.push("/login");
+    router.push("/login").catch((e: string) => toast.error(e));
   };
 
   return (

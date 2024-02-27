@@ -48,7 +48,7 @@ import ModifyUserEntryContent from "./modifyUserEntryContent";
 export interface ModifyUserEntryProps {
   pendingUserEntryData: boolean;
   userEntryData: UserEntryData;
-  setUserEntryData: Dispatch<SetStateAction<UserEntryData>>;
+  setUserEntryData: Dispatch<SetStateAction<UserEntryData | undefined>>;
   setPendingDataFetch: Dispatch<SetStateAction<boolean>>;
   fetchEntries: (userId: number) => Promise<void>;
   getUserEntryData: (

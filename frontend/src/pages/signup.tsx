@@ -3,16 +3,17 @@ import Spinner from "@/components/icons/spinner";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { LoginResponse } from "@/interfaces/authInterfaces";
+import type { LoginResponse } from "@/interfaces/authInterfaces";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
-import React, { FormEvent, useEffect, useState } from "react";
+import React, { type FormEvent, useEffect, useState } from "react";
 
 const SignUp = () => {
-  let [pendingLoginResult, setPendingLoginResult] = useState<boolean>(false);
-  let [error, setError] = useState<string | undefined>(undefined);
-  let [username, setUsername] = useState("");
-  let [email, setEmail] = useState("");
-  let [password, setPassword] = useState("");
+  const [pendingLoginResult, setPendingLoginResult] = useState<boolean>(false);
+  const [error, setError] = useState<string | undefined>(undefined);
+  const [username, setUsername] = useState("");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   const router = useRouter();
 
@@ -36,18 +37,23 @@ const SignUp = () => {
       }),
     });
 
-    response.json().then((data: LoginResponse) => {
-      if (response.status === 200) {
-        if (data.sessionToken === undefined) {
-          return;
-        }
+    response
+      .json()
+      .then((data: LoginResponse) => {
+        if (response.status === 200) {
+          if (data.sessionToken === undefined) {
+            return;
+          }
 
-        localStorage.setItem("sessionToken", data.sessionToken);
-        router.push("/dashboard");
-      } else if (response.status === 401) {
-        setError(data.error);
-      }
-    });
+          localStorage.setItem("sessionToken", data.sessionToken);
+          router.push("/dashboard");
+        } else if (response.status === 401) {
+          setError(data.error);
+        }
+      })
+      .catch((e: string) => {
+        setError(e);
+      });
     setPendingLoginResult(false);
   };
 
@@ -60,11 +66,11 @@ const SignUp = () => {
         </div>
       </div>
       <div className="relative flex items-center">
-        <a href="/login">
+        <Link href="/login">
           <Button className="absolute right-8 top-8" variant="ghost">
             Log in
           </Button>
-        </a>
+        </Link>
         <form
           className="mx-auto flex w-[350px] flex-col items-center justify-center gap-3"
           onSubmit={(e) => attemptLogin(e)}

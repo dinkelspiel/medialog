@@ -23,9 +23,9 @@ const Entry = ({
 }: EntryProps) => {
   const isDesktop = useMediaQuery("(min-width: 1024px)");
 
-  const getRatingAsStars = (rating: number) => {
-    let stars = [];
-    for (var i = 0; i < 5; i++) {
+  const getRatingAsStars = (rating: number | undefined) => {
+    const stars: React.JSX.Element[] = [];
+    for (let i = 0; i < 5; i++) {
       if (Math.floor((rating ?? 0) / 20) >= i + 1) {
         stars.push(
           <Star key={i} className="h-[16px] w-[16.5px] fill-primary" />,
@@ -33,10 +33,10 @@ const Entry = ({
       }
     }
 
-    let fraction = (rating ?? 0) / 20 - Math.floor((rating ?? 0) / 20);
+    const fraction = (rating ?? 0) / 20 - Math.floor((rating ?? 0) / 20);
 
-    let showHalf = fraction >= 0.3 && fraction <= 0.7;
-    let showFull = fraction > 0.7;
+    const showHalf = fraction >= 0.3 && fraction <= 0.7;
+    const showFull = fraction > 0.7;
 
     if (showHalf) {
       stars.push(

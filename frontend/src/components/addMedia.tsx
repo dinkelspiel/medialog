@@ -110,7 +110,7 @@ const AddMediaContent = ({
   const [notes, setNotes] = useState("");
 
   useEffect(() => {
-    let timeoutId;
+    let timeoutId: NodeJS.Timeout;
 
     const fetchData = async () => {
       const response = await fetch(
@@ -124,12 +124,11 @@ const AddMediaContent = ({
       );
 
       response.json().then((entries: Entry[]) => {
-        const formattedEntries = [];
+        const formattedEntries: Entry[] = [];
         entries.forEach((entry) => {
           formattedEntries.push({
             id: entry.id,
             name: entry.name,
-            releaseYear: 2023,
             creators: entry.creators,
             category: entry.category,
             coverUrl: entry.coverUrl,
@@ -159,6 +158,9 @@ const AddMediaContent = ({
   };
 
   const addMediaWithReview = async () => {
+    if (selectedEntry === undefined) {
+      return;
+    }
     const response = fetch(
       process.env.NEXT_PUBLIC_API_URL + `/users/${userId}/entries`,
       {
@@ -192,6 +194,9 @@ const AddMediaContent = ({
   };
 
   const addMediaWithoutReview = async () => {
+    if (selectedEntry === undefined) {
+      return;
+    }
     const response = fetch(
       process.env.NEXT_PUBLIC_API_URL + `/users/${userId}/entries`,
       {
