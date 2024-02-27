@@ -29,6 +29,12 @@ import { cn } from "@/lib/utils";
 import Rating from "../rating";
 import { Slider } from "../ui/slider";
 import UpdateInformation from "./updateInformation";
+import UserEntryData from "@/interfaces/userEntryData";
+
+export interface ModifyUserEntryContentProps
+  extends Omit<ModifyUserEntryProps, "userEntryData"> {
+  userEntryData: UserEntryData;
+}
 
 const ModifyUserEntryContent = ({
   pendingUserEntryData,
@@ -37,7 +43,7 @@ const ModifyUserEntryContent = ({
   fetchEntries,
   getUserEntryData,
   user,
-}: ModifyUserEntryProps) => {
+}: ModifyUserEntryContentProps) => {
   const [rewatchOpen, setRewatchOpen] = useState(false);
   const isDesktop = useMediaQuery("(min-width: 1024px)");
 
