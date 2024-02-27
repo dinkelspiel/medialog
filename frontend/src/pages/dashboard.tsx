@@ -1,6 +1,5 @@
 import AddMedia from "@/components/addMedia";
 import ModifyUserEntry from "@/components/dashboard/modifyUserEntry";
-import SortBy from "@/components/dashboard/sortBy";
 import Entry from "@/components/entry";
 import Az from "@/components/icons/az";
 import Bookmark from "@/components/icons/bookmark";
@@ -180,7 +179,7 @@ export default function Home() {
 
     let timeout = setTimeout(() => {
       setPendingDataFetch(true);
-    }, 200);
+    }, 0);
 
     const response = await fetch(
       process.env.NEXT_PUBLIC_API_URL +
@@ -294,13 +293,10 @@ export default function Home() {
                           <Input placeholder="Studio Name" />
                         </div>
                       </div>
-                      {!isDesktop && (
-                        <SortBy setSortBy={setSortBy} sortBy={sortBy} />
-                      )}
                     </div>
                   )}
                 </div>
-                <div className="grid grid-cols-3 gap-4 pt-4 lg:flex lg:flex-row lg:flex-wrap">
+                <div className="grid w-[calc(100dvw-64px)] grid-cols-3 gap-4 pt-4 lg:flex lg:w-full lg:flex-row lg:flex-wrap">
                   <AddMedia
                     {...{
                       fetchEntries: () => fetchEntries(user.id),
@@ -376,6 +372,7 @@ export default function Home() {
                     fetchEntries,
                     getUserEntryData,
                     user,
+                    setPendingDataFetch,
                   }}
                 />
               </div>
