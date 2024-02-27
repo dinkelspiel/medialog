@@ -1,9 +1,15 @@
-import React from "react";
-import { Button } from "./ui/button";
-import House from "./icons/house";
-import UserGroup from "./icons/userGroup";
+import React, {
+  Dispatch,
+  SetStateAction,
+  createContext,
+  useContext,
+} from "react";
+import { useUserContext } from "./user-provider";
+import { Button } from "../../components/ui/button";
+import House from "../../components/icons/house";
+import UserGroup from "../../components/icons/userGroup";
 import { useMediaQuery } from "usehooks-ts";
-import Logo from "./icons/logo";
+import Logo from "../../components/icons/logo";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -13,51 +19,66 @@ import {
   DropdownMenuSeparator,
   DropdownMenuShortcut,
   DropdownMenuTrigger,
-} from "./ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar";
-import UserIcon from "./icons/user";
-import { User } from "@/interfaces/user";
-import { useRouter } from "next/router";
-import { toast } from "sonner";
+} from "../../components/ui/dropdown-menu";
+import UserIcon from "../../components/icons/user";
+import { useRouter } from "next/navigation";
+import { useSidebarContext } from "./sidebar-provider";
+import { cn } from "@/lib/utils";
+import Link from "next/link";
 
-interface SidebarProps {
-  user: User;
-}
+const Sidebar = () => {
+  const { user } = useUserContext();
+  const { sidebarSelected } = useSidebarContext();
 
-const Sidebar = ({ user }: SidebarProps) => {
   const isDesktop = useMediaQuery("(min-width: 1024px)");
 
   const router = useRouter();
 
   const logOut = () => {
     localStorage.removeItem("sessionToken");
-    router.push("/login").catch((e: string) => toast.error(e));
+    router.push("/login");
   };
+
+  if (user === undefined) return;
 
   return (
     <>
       {isDesktop ? (
         <div className="flex h-[100dvh] w-64 flex-col gap-1 border-r border-r-slate-200 px-3 py-6">
           <div className="px-4 pb-1 text-lg font-semibold">Medialog</div>
-          <Button className="w-full justify-start">
-            <House />
-            Homepage
-          </Button>
-          <Button className="w-full justify-start" variant="ghost">
+          <Link href="/app/dashboard">
+            <Button
+              className="w-full justify-start"
+              variant={sidebarSelected === "dashboard" ? "default" : "ghost"}
+            >
+              <House />
+              Homepage
+            </Button>
+          </Link>
+          <Button
+            className="w-full justify-start"
+            variant={sidebarSelected === "community" ? "default" : "ghost"}
+          >
             <UserGroup />
             Community
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button className="mt-auto w-full justify-start" variant="ghost">
+              <Button
+                className="mt-auto w-full justify-start py-6"
+                variant={
+                  sidebarSelected === "settings" ||
+                  sidebarSelected === "profile"
+                    ? "default"
+                    : "ghost"
+                }
+              >
                 <UserIcon />
                 <div className="flex flex-col items-start space-y-1">
                   <p className="text-sm font-medium leading-none">
                     {user.username}
                   </p>
-                  <p className="text-xs leading-none text-muted-foreground">
-                    {user.email}
-                  </p>
+                  <p className="text-xs leading-none">{user.email}</p>
                 </div>
               </Button>
             </DropdownMenuTrigger>
@@ -74,16 +95,16 @@ const Sidebar = ({ user }: SidebarProps) => {
               </DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuGroup>
-                <a href="/profile">
+                <Link href="/app/profile">
                   <DropdownMenuItem className="cursor-pointer">
                     Profile
                   </DropdownMenuItem>
-                </a>
-                <a href="/settings">
+                </Link>
+                <Link href="/app/settings">
                   <DropdownMenuItem className="cursor-pointer">
                     Settings
                   </DropdownMenuItem>
-                </a>
+                </Link>
               </DropdownMenuGroup>
               <DropdownMenuSeparator />
               <DropdownMenuItem
