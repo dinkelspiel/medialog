@@ -3,6 +3,7 @@ import React, {
   SetStateAction,
   createContext,
   useContext,
+  useState,
 } from "react";
 import { useUserContext } from "./user-provider";
 import { Button } from "../../components/ui/button";
@@ -25,12 +26,54 @@ import { useRouter } from "next/navigation";
 import { useSidebarContext } from "./sidebar-provider";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+import Menu from "@/components/icons/menu";
 
 const Sidebar = () => {
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
+
+  return <>{isDesktop ? <Desktop /> : <Mobile />}</>;
+};
+
+const Mobile = () => {
+  const [open, setOpen] = useState(false);
+
+  return (
+    <>
+      <div className="sticky top-0 flex cursor-pointer items-center justify-between border-b border-slate-200 bg-white px-8">
+        <Logo />
+        <Menu
+          onClick={() => setOpen(!open)}
+          className="h-5 w-5 duration-100 hover:fill-slate-600 active:fill-slate-500"
+        />
+      </div>
+      <div
+        className={cn(
+          `fixed left-0 top-[72px] z-[1] flex h-[calc(100dvh-72px)] w-[100dvw] flex-col gap-3 bg-white p-4 transition-all duration-200`,
+          open ? `translate-x-full` : `translate-x-0`,
+        )}
+      >
+        <Content setOpen={setOpen} />
+      </div>
+    </>
+  );
+};
+
+const Desktop = () => {
+  return (
+    <div className="flex h-[100dvh] w-64 flex-col gap-1 border-r border-r-slate-200 px-3 py-6">
+      <div className="px-4 pb-1 text-lg font-semibold">Medialog</div>
+      <Content setOpen={() => {}} />
+    </div>
+  );
+};
+
+const Content = ({
+  setOpen,
+}: {
+  setOpen: Dispatch<SetStateAction<boolean>>;
+}) => {
   const { user } = useUserContext();
   const { sidebarSelected } = useSidebarContext();
-
-  const isDesktop = useMediaQuery("(min-width: 1024px)");
 
   const router = useRouter();
 
@@ -43,91 +86,71 @@ const Sidebar = () => {
 
   return (
     <>
-      {isDesktop ? (
-        <div className="flex h-[100dvh] w-64 flex-col gap-1 border-r border-r-slate-200 px-3 py-6">
-          <div className="px-4 pb-1 text-lg font-semibold">Medialog</div>
-          <Link href="/app/dashboard">
-            <Button
-              className="w-full justify-start"
-              variant={sidebarSelected === "dashboard" ? "default" : "ghost"}
-            >
-              <House />
-              Homepage
-            </Button>
-          </Link>
+      <Link href="/app/dashboard" onClick={() => setOpen(false)}>
+        <Button
+          className="w-full justify-start"
+          variant={sidebarSelected === "dashboard" ? "default" : "ghost"}
+        >
+          <House />
+          Homepage
+        </Button>
+      </Link>
+      <Button
+        className="w-full justify-start"
+        variant={sidebarSelected === "community" ? "default" : "ghost"}
+      >
+        <UserGroup />
+        Community
+      </Button>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
           <Button
-            className="w-full justify-start"
-            variant={sidebarSelected === "community" ? "default" : "ghost"}
+            className="mt-auto w-full justify-start py-6"
+            variant={
+              sidebarSelected === "settings" || sidebarSelected === "profile"
+                ? "default"
+                : "ghost"
+            }
           >
-            <UserGroup />
-            Community
+            <UserIcon />
+            <div className="flex flex-col items-start space-y-1">
+              <p className="text-sm font-medium leading-none">
+                {user.username}
+              </p>
+              <p className="text-xs leading-none">{user.email}</p>
+            </div>
           </Button>
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button
-                className="mt-auto w-full justify-start py-6"
-                variant={
-                  sidebarSelected === "settings" ||
-                  sidebarSelected === "profile"
-                    ? "default"
-                    : "ghost"
-                }
-              >
-                <UserIcon />
-                <div className="flex flex-col items-start space-y-1">
-                  <p className="text-sm font-medium leading-none">
-                    {user.username}
-                  </p>
-                  <p className="text-xs leading-none">{user.email}</p>
-                </div>
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent className="w-56" align="end" forceMount>
-              <DropdownMenuLabel className="font-normal">
-                <div className="flex flex-col space-y-1">
-                  <p className="text-sm font-medium leading-none">
-                    {user.username}
-                  </p>
-                  <p className="text-xs leading-none text-muted-foreground">
-                    {user.email}
-                  </p>
-                </div>
-              </DropdownMenuLabel>
-              <DropdownMenuSeparator />
-              <DropdownMenuGroup>
-                <Link href="/app/profile">
-                  <DropdownMenuItem className="cursor-pointer">
-                    Profile
-                  </DropdownMenuItem>
-                </Link>
-                <Link href="/app/settings">
-                  <DropdownMenuItem className="cursor-pointer">
-                    Settings
-                  </DropdownMenuItem>
-                </Link>
-              </DropdownMenuGroup>
-              <DropdownMenuSeparator />
-              <DropdownMenuItem
-                className="cursor-pointer"
-                onClick={() => logOut()}
-              >
-                Log out
+        </DropdownMenuTrigger>
+        <DropdownMenuContent className="w-56" align="end" forceMount>
+          <DropdownMenuLabel className="font-normal">
+            <div className="flex flex-col space-y-1">
+              <p className="text-sm font-medium leading-none">
+                {user.username}
+              </p>
+              <p className="text-xs leading-none text-muted-foreground">
+                {user.email}
+              </p>
+            </div>
+          </DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuGroup>
+            <Link href="/app/profile" onClick={() => setOpen(false)}>
+              <DropdownMenuItem className="cursor-pointer">
+                Profile
               </DropdownMenuItem>
-            </DropdownMenuContent>
-          </DropdownMenu>
-        </div>
-      ) : (
-        <div className="flex cursor-pointer items-center justify-between border-b border-slate-200 px-8">
-          <Logo />
-          <svg
-            className="h-5 w-5 duration-100 hover:fill-slate-600 active:fill-slate-500"
-            xmlns="http://www.w3.org/2000/svg"
-            viewBox="0 0 448 512"
-          >
-            <path d="M0 96C0 78.3 14.3 64 32 64H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 128 0 113.7 0 96zM0 256c0-17.7 14.3-32 32-32H416c17.7 0 32 14.3 32 32s-14.3 32-32 32H32c-17.7 0-32-14.3-32-32zM448 416c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32s14.3-32 32-32H416c17.7 0 32 14.3 32 32z" />
-          </svg>
-        </div>
-      )}
+            </Link>
+            <Link href="/app/settings" onClick={() => setOpen(false)}>
+              <DropdownMenuItem className="cursor-pointer">
+                Settings
+              </DropdownMenuItem>
+            </Link>
+          </DropdownMenuGroup>
+          <DropdownMenuSeparator />
+          <DropdownMenuItem className="cursor-pointer" onClick={() => logOut()}>
+            Log out
+          </DropdownMenuItem>
+        </DropdownMenuContent>
+      </DropdownMenu>
     </>
   );
 };
