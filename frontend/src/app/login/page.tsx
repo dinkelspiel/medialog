@@ -1,3 +1,4 @@
+"use client";
 import Logo from "@/components/icons/logo";
 import Spinner from "@/components/icons/spinner";
 import { Button } from "@/components/ui/button";
