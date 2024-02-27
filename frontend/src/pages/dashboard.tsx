@@ -345,19 +345,17 @@ export default function Home() {
             </div>
             {(pendingUserEntryData || userEntryData) && (
               <div className="h-full py-6 pr-8">
-                {userEntryData !== undefined && (
-                  <ModifyUserEntry
-                    {...{
-                      pendingUserEntryData,
-                      userEntryData,
-                      setUserEntryData,
-                      fetchEntries,
-                      getUserEntryData,
-                      user,
-                      setPendingDataFetch,
-                    }}
-                  />
-                )}
+                <ModifyUserEntry
+                  {...{
+                    pendingUserEntryData,
+                    userEntryData,
+                    setUserEntryData,
+                    fetchEntries,
+                    getUserEntryData,
+                    user,
+                    setPendingDataFetch,
+                  }}
+                />
               </div>
             )}
           </div>

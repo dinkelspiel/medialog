@@ -43,11 +43,14 @@ import {
 import { useMediaQuery } from "usehooks-ts";
 import { toast } from "sonner";
 import { Slider } from "../ui/slider";
-import ModifyUserEntryContent from "./modifyUserEntryContent";
+import ModifyUserEntryContent, {
+  ModifyUserEntryContentProps,
+} from "./modifyUserEntryContent";
+import ModifyUserEntrySkeleton from "./modifyUserEntrySkeleton";
 
 export interface ModifyUserEntryProps {
   pendingUserEntryData: boolean;
-  userEntryData: UserEntryData;
+  userEntryData: UserEntryData | undefined;
   setUserEntryData: Dispatch<SetStateAction<UserEntryData | undefined>>;
   setPendingDataFetch: Dispatch<SetStateAction<boolean>>;
   fetchEntries: (userId: number) => Promise<void>;
@@ -65,7 +68,12 @@ const ModifyUserContent = (props: ModifyUserEntryProps) => {
     <>
       {isDesktop ? (
         <Card className="hidden h-full w-[23vw] grid-rows-[max-content,1fr,max-content] lg:grid">
-          <ModifyUserEntryContent {...props} />
+          {props.pendingUserEntryData && <ModifyUserEntrySkeleton {...props} />}
+          {props.userEntryData !== undefined && (
+            <ModifyUserEntryContent
+              {...(props as ModifyUserEntryContentProps)}
+            />
+          )}
         </Card>
       ) : (
         <Drawer
@@ -76,7 +84,14 @@ const ModifyUserContent = (props: ModifyUserEntryProps) => {
           }}
         >
           <DrawerContent>
-            <ModifyUserEntryContent {...props} />
+            {props.pendingUserEntryData && (
+              <ModifyUserEntrySkeleton {...props} />
+            )}
+            {props.userEntryData !== undefined && (
+              <ModifyUserEntryContent
+                {...(props as ModifyUserEntryContentProps)}
+              />
+            )}
           </DrawerContent>
         </Drawer>
       )}
