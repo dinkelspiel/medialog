@@ -78,11 +78,6 @@ const Entry = ({
           className="relative cursor-pointer"
         >
           <img src={coverUrl} className="h-full w-full rounded-md" />
-          <div className="bject-cover absolute bottom-0 flex h-[20%] w-full flex-col justify-end rounded-md p-1.5 backdrop-blur-sm">
-            <div className="flex flex-col gap-1">
-              <div className="grid grid-cols-5">{getRatingAsStars(rating)}</div>
-            </div>
-          </div>
         </AspectRatio>
       )}
     </>
