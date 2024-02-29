@@ -139,7 +139,10 @@ const Content = ({
                 Profile
               </DropdownMenuItem>
             </Link>
-            <Link href="/app/settings" onClick={() => setOpen(false)}>
+            <Link
+              href="/app/settings/appearance"
+              onClick={() => setOpen(false)}
+            >
               <DropdownMenuItem className="cursor-pointer">
                 Settings
               </DropdownMenuItem>
