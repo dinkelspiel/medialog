@@ -3,6 +3,7 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EntryController;
 use App\Http\Controllers\FranchiseController;
+use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\User\UserEntryController;
 use App\Http\Controllers\User\UserController;
 use App\Http\Middleware\Authenticate;
@@ -44,6 +45,8 @@ Route::prefix("/auth")->group(function () {
 Route::post("/users", [UserController::class, "store"]);
 Route::patch("/users/{user}", [UserController::class, "update"]);
 Route::get("/users/{user}", [UserController::class, "show"]);
+Route::get("/users/{user}/profile", [ProfileController::class, "get"]);
+
 
 Route::prefix("/users/{userId}")->group(function () {
     Route::get("/entries", [UserEntryController::class, "index"]);
