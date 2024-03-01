@@ -35,7 +35,7 @@ class ProfileController extends Controller
 
         $diary = [];
 
-        foreach(UserEntry::where("user_id", $user->id)->where('status', UserEntryStatusEnum::Completed)->limit(10)->get() as $userEntry) {
+        foreach(UserEntry::where("user_id", $user->id)->where('status', UserEntryStatusEnum::Completed)->orderByDesc('id')->limit(10)->get() as $userEntry) {
             $month = strtoupper(substr(Carbon::parse($userEntry->watched_at)->format('F'), 0, 3));
 
             $diary[$month][] = [
