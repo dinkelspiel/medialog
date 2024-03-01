@@ -97,7 +97,9 @@ class ProfileController extends Controller
             }),
             "ratingsCount" => UserEntry::where('user_id', $user->id)->where('status', UserEntryStatusEnum::Completed)->count(),
             "ratings" => $ratings,
-            "diary" => $d
+            "diary" => $d,
+            "dailyStreak" => $user->getDailyStreak(),
+            "dailyStreakUpdated" => Carbon::parse($user->daily_streak_updated)->gt(Carbon::today()),
         ]);
     }
 }
