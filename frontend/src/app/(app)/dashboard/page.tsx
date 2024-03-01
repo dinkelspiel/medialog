@@ -11,6 +11,12 @@ import { UserEntry } from "@/interfaces/userEntry";
 import Entries from "@/components/dashboard/entries";
 import { redirect } from "next/navigation";
 
+export type DashboardFilter = {
+  title: string;
+  director: string;
+  studio: string;
+};
+
 export default function Home() {
   const [userEntries, setUserEntries] = useState<UserEntry[]>([]);
   const [pendingUserEntries, setPendingUserEntries] = useState(false);
@@ -20,6 +26,12 @@ export default function Home() {
   const [userEntryData, setUserEntryData] = useState<UserEntryData | undefined>(
     undefined,
   );
+
+  const [filter, setFilter] = useState<DashboardFilter>({
+    title: "",
+    director: "",
+    studio: "",
+  });
 
   const { setSidebarSelected } = useSidebarContext();
   setSidebarSelected("dashboard");
@@ -118,7 +130,12 @@ export default function Home() {
       <div className="grid grid-cols-[1fr,max-content]">
         <div className="lg:scrollable-grid-item no-scrollbar flex flex-row gap-4 px-8 py-6">
           <div className="w-full">
-            <DashboardHeader setSortBy={setSortBy} sortBy={sortBy} />
+            <DashboardHeader
+              setSortBy={setSortBy}
+              sortBy={sortBy}
+              filter={filter}
+              setFilter={setFilter}
+            />
             <div className="grid w-[calc(100dvw-64px)] grid-cols-3 gap-4 pt-4 lg:flex lg:w-full lg:flex-row lg:flex-wrap">
               <Entries
                 {...{
@@ -127,6 +144,8 @@ export default function Home() {
                   pendingUserEntries,
                   sortBy,
                   getUserEntryData,
+                  filter,
+                  setFilter,
                 }}
               />
             </div>

@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { Dispatch, SetStateAction, useState } from "react";
 import Header from "../header";
 import SortByDesktop from "./sortByDesktop";
 import { Button } from "../ui/button";
@@ -9,13 +9,21 @@ import Sort from "../icons/sort";
 import Xmark from "../icons/xmark";
 import { SortByType } from "@/interfaces/sortByType";
 import SortByMobile from "./sortByMobile";
+import { DashboardFilter } from "@/app/(app)/dashboard/page";
 
 interface DashboardHeaderProps {
   sortBy: SortByType;
   setSortBy: (value: SortByType) => void;
+  filter: DashboardFilter;
+  setFilter: Dispatch<SetStateAction<DashboardFilter>>;
 }
 
-const DashboardHeader = ({ sortBy, setSortBy }: DashboardHeaderProps) => {
+const DashboardHeader = ({
+  sortBy,
+  setSortBy,
+  filter,
+  setFilter,
+}: DashboardHeaderProps) => {
   const isDesktop = useMediaQuery("(min-width: 1024px)");
   const [showFilters, setShowFilters] = useState<boolean>(false);
 
@@ -40,7 +48,10 @@ const DashboardHeader = ({ sortBy, setSortBy }: DashboardHeaderProps) => {
         <div className="flex flex-col gap-4 border-b border-b-slate-200 pb-4">
           <div className="flex flex-col gap-2">
             <Label>Title</Label>
-            <Input placeholder="Name" />
+            <Input
+              onChange={(e) => setFilter({ ...filter, title: e.target.value })}
+              placeholder="Name"
+            />
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-2">
