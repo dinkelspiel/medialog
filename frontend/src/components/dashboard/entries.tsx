@@ -1,4 +1,4 @@
-import React from "react";
+import React, { Dispatch, SetStateAction } from "react";
 import AddMedia from "../addMedia";
 import UserEntryData from "@/interfaces/userEntryData";
 import { UserEntry } from "@/interfaces/userEntry";
@@ -9,6 +9,7 @@ import { useUserContext } from "@/app/(app)/user-provider";
 import { toast } from "sonner";
 import { SortByType } from "@/interfaces/sortByType";
 import { useMediaQuery } from "usehooks-ts";
+import { DashboardFilter } from "@/app/(app)/dashboard/page";
 
 interface EntriesProps {
   fetchEntries: (
@@ -22,6 +23,8 @@ interface EntriesProps {
     userEntryId: number,
     updateExisting?: boolean,
   ) => Promise<void>;
+  filter: DashboardFilter;
+  setFilter: Dispatch<SetStateAction<DashboardFilter>>;
 }
 
 const Entries = ({
@@ -30,6 +33,8 @@ const Entries = ({
   userEntries,
   sortBy,
   getUserEntryData,
+  filter,
+  setFilter,
 }: EntriesProps) => {
   const { user } = useUserContext();
   const isDesktop = useMediaQuery("(min-width: 1024px)");
@@ -70,6 +75,14 @@ const Entries = ({
               }
             })
             .map((userEntry: UserEntry) => {
+              if (
+                !userEntry.franchiseName
+                  .toLowerCase()
+                  .includes(filter.title.toLowerCase())
+              ) {
+                return;
+              }
+
               return (
                 <Entry
                   key={userEntry.id}
