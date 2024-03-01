@@ -38,6 +38,8 @@ type ProfileType = {
       day: number;
     }[];
   };
+  dailyStreak: number;
+  dailyStreakUpdated: boolean;
 };
 
 const Profile404 = () => {
@@ -289,8 +291,8 @@ const ProfileSidebar = ({ profile }: { profile: ProfileType }) => {
           <span className="ms-auto text-slate-500">{profile.ratingsCount}</span>
         </div>
         <div className="flex w-full flex-row items-end justify-between gap-2 lg:w-[250px]">
-          <SmallRating rating={20} />
-          <div className="flex w-[135px] flex-row items-end gap-0.5">
+          <SmallRating rating={20} className="pb-1" />
+          <div className="flex w-[135px] flex-row items-end gap-0.5 border-b border-b-slate-200 pb-1">
             {profile.ratings.map((ratingPercentage) => (
               <div
                 className="w-full bg-slate-300"
@@ -298,15 +300,25 @@ const ProfileSidebar = ({ profile }: { profile: ProfileType }) => {
               ></div>
             ))}
           </div>
-          <SmallRating rating={100} />
+          <SmallRating rating={100} className="pb-1" />
         </div>
       </div>
       <div className="flex flex-col gap-4">
-        <div className="flex justify-between text-lg font-medium">Diary</div>
+        {profile.dailyStreak != 0 && !profile.dailyStreakUpdated && (
+          <div className="w-full rounded-md border bg-red-500 py-1 text-center text-white">
+            Daily streak hasn't been updated
+          </div>
+        )}
+        <div className="flex w-full justify-between text-lg font-medium">
+          Diary
+          <span className="ms-auto text-slate-500">
+            {profile.dailyStreak} Day Streak
+          </span>
+        </div>
         {Object.keys(profile.diary).map((month) => (
           <div className="grid grid-cols-[42px,1fr] gap-2">
             <div className="relative h-max w-max">
-              <div className="absolute top-1/2 w-full -translate-y-[2px] text-center text-xs font-semibold text-white">
+              <div className="absolute top-1/2 w-full -translate-y-[3px] text-center text-[11px] font-semibold text-white">
                 {month}
               </div>
               <Calendar />

@@ -1,6 +1,7 @@
 import React from "react";
 import Star from "./icons/star";
 import StarHalf from "./icons/starHalf";
+import { cn } from "@/lib/utils";
 
 export const getRatingAsStars = (rating: number | undefined) => {
   const stars: React.JSX.Element[] = [];
@@ -28,8 +29,18 @@ export const getRatingAsStars = (rating: number | undefined) => {
   return stars;
 };
 
-const SmallRating = ({ rating }: { rating: number | undefined }) => {
-  return <div className="flex flex-row">{getRatingAsStars(rating)}</div>;
+const SmallRating = ({
+  rating,
+  className,
+}: {
+  rating: number | undefined;
+  className?: string;
+}) => {
+  return (
+    <div className={cn(`flex flex-row`, className)}>
+      {getRatingAsStars(rating)}
+    </div>
+  );
 };
 
 export default SmallRating;
