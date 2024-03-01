@@ -25,7 +25,12 @@ class ProfileController extends Controller
         $totalRatings = UserEntry::where("user_id", $user->id)->where('status', UserEntryStatusEnum::Completed)->count();
         for($ratingThreshold = 0; $ratingThreshold <= 10; $ratingThreshold++)
         {
-            $ratings[$ratingThreshold - 1] = UserEntry::where("user_id", $user->id)->where('status', UserEntryStatusEnum::Completed)->where('rating', '>', ($ratingThreshold - 1) * 10)->where('rating', '<=', $ratingThreshold * 10)->count() / $totalRatings;
+            if($totalRatings > 0)
+            {
+                $ratings[$ratingThreshold - 1] = UserEntry::where("user_id", $user->id)->where('status', UserEntryStatusEnum::Completed)->where('rating', '>', ($ratingThreshold - 1) * 10)->where('rating', '<=', $ratingThreshold * 10)->count() / $totalRatings;
+            } else {
+                $ratings[$ratingThreshold - 1] = 0;
+            }
         }
 
         $ratings[0] += $ratings[-1];
