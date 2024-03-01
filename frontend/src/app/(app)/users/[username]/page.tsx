@@ -177,7 +177,7 @@ const Profile = ({ params }: { params: { username: string } }) => {
                     key={`userEntry-${idx}`}
                     {...{
                       id: userEntry.id,
-                      title: `${userEntry.franchiseName}: ${userEntry.entryName}`,
+                      title: `${userEntry.franchiseName}${userEntry.entries > 1 ? `: ${userEntry.entryName}` : ""}`,
                       coverUrl: userEntry.coverUrl,
                       releaseYear: 2023,
                       rating: userEntry.rating,
