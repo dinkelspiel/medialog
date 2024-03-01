@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useState } from "react";
+import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
 import Header from "../header";
 import SortByDesktop from "./sortByDesktop";
 import { Button } from "../ui/button";
@@ -10,6 +10,16 @@ import Xmark from "../icons/xmark";
 import { SortByType } from "@/interfaces/sortByType";
 import SortByMobile from "./sortByMobile";
 import { DashboardFilter } from "@/app/(app)/dashboard/page";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { Check, ChevronsUpDown } from "lucide-react";
+import {
+  Command,
+  CommandEmpty,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from "../ui/command";
+import { cn } from "@/lib/utils";
 
 interface DashboardHeaderProps {
   sortBy: SortByType;
@@ -17,6 +27,9 @@ interface DashboardHeaderProps {
   filter: DashboardFilter;
   setFilter: Dispatch<SetStateAction<DashboardFilter>>;
 }
+
+type Studio = { name: string };
+type Person = { name: string };
 
 const DashboardHeader = ({
   sortBy,
@@ -26,6 +39,59 @@ const DashboardHeader = ({
 }: DashboardHeaderProps) => {
   const isDesktop = useMediaQuery("(min-width: 1024px)");
   const [showFilters, setShowFilters] = useState<boolean>(false);
+
+  const [people, setPeople] = useState<Person[]>([]);
+  const [studios, setStudios] = useState<Studio[]>([]);
+
+  const [filterPeopleOpen, setFilterPeopleOpen] = useState(false);
+  const [filterStudiosOpen, setFilterStudiosOpen] = useState(false);
+
+  useEffect(() => {
+    const fetchStudios = async () => {
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_API_URL + "/studios",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      response
+        .json()
+        .then((data: Studio[]) => {
+          setStudios(data);
+        })
+        .catch((e: any) => {
+          console.log(e);
+        });
+    };
+
+    const fetchPeople = async () => {
+      const response = await fetch(
+        process.env.NEXT_PUBLIC_API_URL + "/people",
+        {
+          method: "GET",
+          headers: {
+            "Content-Type": "application/json",
+          },
+        },
+      );
+
+      response
+        .json()
+        .then((data: Person[]) => {
+          setPeople(data);
+        })
+        .catch((e: any) => {
+          console.log(e);
+        });
+    };
+
+    fetchPeople();
+    fetchStudios();
+  }, []);
 
   return (
     <div className="flex w-full flex-col gap-4 pb-4">
@@ -56,11 +122,113 @@ const DashboardHeader = ({
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-2">
               <Label>Directors/Writers</Label>
-              <Input placeholder="Name" />
-            </div>{" "}
+              <Popover
+                open={filterPeopleOpen}
+                onOpenChange={setFilterPeopleOpen}
+              >
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    className="w-full justify-between"
+                  >
+                    {filter.creator
+                      ? people.find((person) => person.name === filter.creator)
+                          ?.name
+                      : "Select person..."}
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-full p-0">
+                  <Command>
+                    <CommandInput placeholder="Search people..." />
+                    <CommandEmpty>No people found.</CommandEmpty>
+                    <CommandGroup>
+                      {people.map((person) => (
+                        <CommandItem
+                          key={person.name}
+                          value={person.name}
+                          onSelect={(_) => {
+                            setFilter({
+                              ...filter,
+                              creator:
+                                person.name === filter.creator
+                                  ? undefined
+                                  : person.name,
+                            });
+                            setFilterPeopleOpen(false);
+                          }}
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              filter.creator === person.name
+                                ? "opacity-100"
+                                : "opacity-0",
+                            )}
+                          />
+                          {person.name}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+            </div>
             <div className="flex flex-col gap-2">
               <Label>Studios</Label>
-              <Input placeholder="Studio Name" />
+              <Popover
+                open={filterStudiosOpen}
+                onOpenChange={setFilterStudiosOpen}
+              >
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    className="w-full justify-between"
+                  >
+                    {filter.studio
+                      ? studios.find((studio) => studio.name === filter.studio)
+                          ?.name
+                      : "Select studio..."}
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-full p-0">
+                  <Command>
+                    <CommandInput placeholder="Search studios..." />
+                    <CommandEmpty>No studios found.</CommandEmpty>
+                    <CommandGroup>
+                      {studios.map((studio) => (
+                        <CommandItem
+                          key={studio.name}
+                          value={studio.name}
+                          onSelect={(_) => {
+                            setFilter({
+                              ...filter,
+                              studio:
+                                studio.name === filter.studio
+                                  ? undefined
+                                  : studio.name,
+                            });
+                            setFilterStudiosOpen(false);
+                          }}
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              filter.studio === studio.name
+                                ? "opacity-100"
+                                : "opacity-0",
+                            )}
+                          />
+                          {studio.name}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </Command>
+                </PopoverContent>
+              </Popover>
             </div>
           </div>
           {!isDesktop && <SortByMobile setSortBy={setSortBy} sortBy={sortBy} />}

@@ -76,9 +76,28 @@ const Entries = ({
             })
             .map((userEntry: UserEntry) => {
               if (
+                filter.title !== "" &&
                 !userEntry.franchiseName
                   .toLowerCase()
                   .includes(filter.title.toLowerCase())
+              ) {
+                return;
+              }
+
+              if (
+                filter.creator !== undefined &&
+                userEntry.creators.filter(
+                  (creator) => creator.name === filter.creator,
+                ).length === 0
+              ) {
+                return;
+              }
+
+              if (
+                filter.studio !== undefined &&
+                userEntry.studios.filter(
+                  (studio) => studio.name === filter.studio,
+                ).length === 0
               ) {
                 return;
               }

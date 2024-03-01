@@ -13,8 +13,8 @@ import { redirect } from "next/navigation";
 
 export type DashboardFilter = {
   title: string;
-  director: string;
-  studio: string;
+  creator: string | undefined;
+  studio: string | undefined;
 };
 
 export default function Home() {
@@ -29,8 +29,8 @@ export default function Home() {
 
   const [filter, setFilter] = useState<DashboardFilter>({
     title: "",
-    director: "",
-    studio: "",
+    creator: undefined,
+    studio: undefined,
   });
 
   const { setSidebarSelected } = useSidebarContext();
