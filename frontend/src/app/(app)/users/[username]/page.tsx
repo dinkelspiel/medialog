@@ -259,7 +259,7 @@ const Profile = ({ params }: { params: { username: string } }) => {
   );
 };
 
-export const ProfileSidebar = ({ profile }: { profile: ProfileType }) => {
+const ProfileSidebar = ({ profile }: { profile: ProfileType }) => {
   const isDesktop = useMediaQuery("(min-width: 1024px)", {
     defaultValue: true,
     initializeWithValue: false,
