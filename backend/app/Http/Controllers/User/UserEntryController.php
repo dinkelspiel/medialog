@@ -47,6 +47,8 @@ class UserEntryController extends Controller
                     "rating" => $userEntry->getLatestCompleted() ? $userEntry->getLatestCompleted()->rating : 0,
                     "watchedAt" => $userEntry->getLatestCompleted() ? $userEntry->getLatestCompleted()->watched_at : null,
                     "status" => $userEntry->status,
+                    "creators" => $userEntry->entry->creators->map(fn($creator) => ['name' => $creator->name]),
+                    "studios" => $userEntry->entry->studios->map(fn($studio) => ['name' => $studio->name])
                 ];
             });
 
