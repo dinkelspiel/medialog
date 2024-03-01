@@ -9,12 +9,13 @@ import { SortByType } from "@/interfaces/sortByType";
 import DashboardHeader from "@/components/dashboard/dashboardHeader";
 import { UserEntry } from "@/interfaces/userEntry";
 import Entries from "@/components/dashboard/entries";
+import { redirect } from "next/navigation";
 
 export default function Home() {
   const [userEntries, setUserEntries] = useState<UserEntry[]>([]);
   const [pendingUserEntries, setPendingUserEntries] = useState(false);
   const [sortBy, setSortByValue] = useState<SortByType>("rating");
-  const { user } = useUserContext();
+  const { user, userError } = useUserContext();
   const [pendingUserEntryData, setPendingDataFetch] = useState(false);
   const [userEntryData, setUserEntryData] = useState<UserEntryData | undefined>(
     undefined,
@@ -67,6 +68,7 @@ export default function Home() {
     }
   }, [user]);
 
+  if (userError) return redirect("/login");
   if (user === undefined) return <div></div>;
 
   const setSortBy = (value: SortByType) => {
