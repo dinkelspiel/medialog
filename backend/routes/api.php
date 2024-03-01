@@ -3,6 +3,8 @@
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\EntryController;
 use App\Http\Controllers\FranchiseController;
+use App\Http\Controllers\PersonController;
+use App\Http\Controllers\StudioController;
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\User\UserEntryController;
 use App\Http\Controllers\User\UserController;
@@ -35,6 +37,10 @@ Route::prefix("/entries")->group(function () {
     });
 });
 
+Route::get("/people", [PersonController::class, "index"]);
+
+Route::get("/studios", [StudioController::class, "index"]);
+
 Route::prefix("/auth")->group(function () {
     Route::post("/login", [AuthController::class, "login"]);
     Route::middleware([Authenticate::class])->group(function() {
@@ -46,7 +52,6 @@ Route::post("/users", [UserController::class, "store"]);
 Route::patch("/users/{user}", [UserController::class, "update"]);
 Route::get("/users/{user}", [UserController::class, "show"]);
 Route::get("/users/{user}/profile", [ProfileController::class, "get"]);
-
 
 Route::prefix("/users/{userId}")->group(function () {
     Route::get("/entries", [UserEntryController::class, "index"]);
