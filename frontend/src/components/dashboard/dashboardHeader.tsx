@@ -20,6 +20,8 @@ import {
   CommandItem,
 } from "../ui/command";
 import { cn } from "@/lib/utils";
+import { UserEntryStatusArray } from "@/interfaces/userEntryStatus";
+import { capitalizeFirst } from "@/lib/capitalizeFirst";
 
 interface DashboardHeaderProps {
   sortBy: SortByType;
@@ -45,6 +47,7 @@ const DashboardHeader = ({
 
   const [filterPeopleOpen, setFilterPeopleOpen] = useState(false);
   const [filterStudiosOpen, setFilterStudiosOpen] = useState(false);
+  const [filterStatusOpen, setFilterStatusOpen] = useState(false);
 
   useEffect(() => {
     const fetchStudios = async () => {
@@ -112,12 +115,70 @@ const DashboardHeader = ({
       </Header>
       {showFilters && (
         <div className="flex flex-col gap-4 border-b border-b-slate-200 pb-4">
-          <div className="flex flex-col gap-2">
-            <Label>Title</Label>
-            <Input
-              onChange={(e) => setFilter({ ...filter, title: e.target.value })}
-              placeholder="Name"
-            />
+          <div className="grid grid-cols-2 gap-4">
+            <div className="flex flex-col gap-2">
+              <Label>Title</Label>
+              <Input
+                onChange={(e) =>
+                  setFilter({ ...filter, title: e.target.value })
+                }
+                placeholder="Name"
+              />
+            </div>
+            <div className="flex flex-col gap-2">
+              <Label>Status</Label>
+              <Popover
+                open={filterStatusOpen}
+                onOpenChange={setFilterStatusOpen}
+              >
+                <PopoverTrigger asChild>
+                  <Button
+                    variant="outline"
+                    role="combobox"
+                    className="w-full justify-between"
+                  >
+                    {filter.status
+                      ? filter.status !== "dnf"
+                        ? capitalizeFirst(filter.status)
+                        : "Did not finish"
+                      : "Select status..."}
+                    <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                  </Button>
+                </PopoverTrigger>
+                <PopoverContent className="w-full p-0">
+                  <Command>
+                    <CommandGroup>
+                      {UserEntryStatusArray.map((status) => (
+                        <CommandItem
+                          key={status}
+                          value={status}
+                          onSelect={(_) => {
+                            setFilter({
+                              ...filter,
+                              status:
+                                status === filter.status ? undefined : status,
+                            });
+                            setFilterStatusOpen(false);
+                          }}
+                        >
+                          <Check
+                            className={cn(
+                              "mr-2 h-4 w-4",
+                              filter.status === status
+                                ? "opacity-100"
+                                : "opacity-0",
+                            )}
+                          />
+                          {status !== "dnf"
+                            ? capitalizeFirst(status)
+                            : "Did not finish"}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                  </Command>
+                </PopoverContent>
+              </Popover>
+            </div>
           </div>
           <div className="grid grid-cols-2 gap-4">
             <div className="flex flex-col gap-2">

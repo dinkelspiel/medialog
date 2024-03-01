@@ -10,11 +10,13 @@ import DashboardHeader from "@/components/dashboard/dashboardHeader";
 import { UserEntry } from "@/interfaces/userEntry";
 import Entries from "@/components/dashboard/entries";
 import { redirect } from "next/navigation";
+import UserEntryStatus from "@/interfaces/userEntryStatus";
 
 export type DashboardFilter = {
   title: string;
   creator: string | undefined;
   studio: string | undefined;
+  status: UserEntryStatus | undefined;
 };
 
 export default function Home() {
@@ -31,6 +33,7 @@ export default function Home() {
     title: "",
     creator: undefined,
     studio: undefined,
+    status: undefined,
   });
 
   const { setSidebarSelected } = useSidebarContext();
