@@ -291,7 +291,7 @@ const ModifyUserEntryContent = ({
                         <Input
                           defaultValue={userEntryData.progress ?? 0}
                           type="number"
-                          onChange={(e) => {
+                          onBlur={(e) => {
                             if (Number(e.target.value) < 0) {
                               return;
                             }
