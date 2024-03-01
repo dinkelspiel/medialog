@@ -31,6 +31,7 @@ type ProfileType = {
     [month: string]: {
       entryName: string;
       franchiseName: string;
+      entries: number;
       day: number;
     }[];
   };
@@ -275,7 +276,8 @@ const Profile = ({ params }: { params: { username: string } }) => {
                       <>
                         <div className="text-slate-500">{day.day}</div>
                         <div>
-                          {day.franchiseName}: {day.entryName}
+                          {day.franchiseName}
+                          {day.entries > 1 && `: ${day.entryName}`}
                         </div>
                       </>
                     ))}

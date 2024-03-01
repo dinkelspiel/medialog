@@ -41,6 +41,7 @@ class ProfileController extends Controller
             $diary[$month][] = [
                 'entryName' => $userEntry->entry->name,
                 'franchiseName' => $userEntry->entry->franchise->name,
+                'entries' => $userEntry->entry->franchise->entries->count(),
                 'day' => Carbon::parse($userEntry->watched_at)->day
             ];
         };
