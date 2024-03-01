@@ -66,7 +66,7 @@ class ProfileController extends Controller
             "watchedThisYear" => UserEntry::where('user_id', $user->id)->where('status', UserEntryStatusEnum::Completed)->whereYear('created_at', Carbon::now()->year)->count(),
             "following" => UserFollow::where('user_id', $user->id)->count(),
             "followers" => UserFollow::where('follow_id', $user->id)->count(),
-            "favorites" => UserEntry::where('user_id', $user->id)->orderByDesc('rating')->limit(4)->get()->map(function($userEntry) {
+            "favorites" => UserEntry::where('user_id', $user->id)->where('status', UserEntryStatusEnum::Completed)->orderByDesc('rating')->limit(4)->get()->map(function($userEntry) {
                 return [
                     'id' => $userEntry->id,
                     'franchiseName' => $userEntry->entry->franchise->name,
