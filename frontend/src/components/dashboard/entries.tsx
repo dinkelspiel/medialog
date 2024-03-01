@@ -5,7 +5,7 @@ import { UserEntry } from "@/interfaces/userEntry";
 import Entry from "../entry";
 import { Skeleton } from "../ui/skeleton";
 import { AspectRatio } from "../ui/aspect-ratio";
-import { useUserContext } from "@/app/app/user-provider";
+import { useUserContext } from "@/app/(app)/user-provider";
 import { toast } from "sonner";
 import { SortByType } from "@/interfaces/sortByType";
 import { useMediaQuery } from "usehooks-ts";

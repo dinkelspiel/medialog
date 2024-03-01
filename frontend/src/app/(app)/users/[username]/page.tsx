@@ -2,7 +2,7 @@
 
 import Header from "@/components/header";
 import React, { useEffect, useState } from "react";
-import { useUserContext } from "../user-provider";
+import { useUserContext } from "../../user-provider";
 import Entry from "@/components/entry";
 import { UserEntry } from "@/interfaces/userEntry";
 import { Activity } from "@/interfaces/activity";
@@ -11,6 +11,7 @@ import { numberSuffix } from "@/lib/numberSuffix";
 import Rating from "@/components/rating";
 import SmallRating from "@/components/smallRating";
 import Calendar from "@/components/icons/calendar";
+import { useRouter } from "next/navigation";
 
 type ProfileType = {
   username: string;
@@ -35,7 +36,7 @@ type ProfileType = {
   };
 };
 
-const Profile = () => {
+const Profile = ({ params }: { params: { username: string } }) => {
   const { user } = useUserContext();
   const [profile, setProfile] = useState<ProfileType>();
 
@@ -104,13 +105,15 @@ const Profile = () => {
   };
 
   useEffect(() => {
+    console.log(params.username);
     const fetchProfile = async () => {
       if (user === undefined) return;
 
       setProfile(
         (await (
           await fetch(
-            process.env.NEXT_PUBLIC_API_URL + `/users/${user.id}/profile`,
+            process.env.NEXT_PUBLIC_API_URL +
+              `/users/@${params.username}/profile`,
             {
               method: "GET",
               headers: {
@@ -163,7 +166,7 @@ const Profile = () => {
         </div>
       </Header>
       <div className="col-span-2 flex justify-center">
-        <div className="grid w-max grid-cols-[1fr,250px] gap-8">
+        <div className="grid w-max grid-cols-[1fr,250px] gap-16">
           <div className="flex flex-col gap-6">
             <div className="flex flex-col gap-4">
               <div className="text-lg font-medium">Favorites</div>
