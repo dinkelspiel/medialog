@@ -86,7 +86,7 @@ const Content = ({
 
   return (
     <>
-      <Link href="/app/dashboard" onClick={() => setOpen(false)}>
+      <Link href="/dashboard" onClick={() => setOpen(false)}>
         <Button
           className="w-full justify-start"
           variant={sidebarSelected === "dashboard" ? "default" : "ghost"}
@@ -134,15 +134,12 @@ const Content = ({
           </DropdownMenuLabel>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <Link href="/app/profile" onClick={() => setOpen(false)}>
+            <Link href={`/@${user.username}`} onClick={() => setOpen(false)}>
               <DropdownMenuItem className="cursor-pointer">
                 Profile
               </DropdownMenuItem>
             </Link>
-            <Link
-              href="/app/settings/appearance"
-              onClick={() => setOpen(false)}
-            >
+            <Link href="/settings/appearance" onClick={() => setOpen(false)}>
               <DropdownMenuItem className="cursor-pointer">
                 Settings
               </DropdownMenuItem>
