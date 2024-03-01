@@ -102,6 +102,13 @@ const Entries = ({
                 return;
               }
 
+              if (
+                filter.status !== undefined &&
+                userEntry.status !== filter.status
+              ) {
+                return;
+              }
+
               return (
                 <Entry
                   key={userEntry.id}
