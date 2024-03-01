@@ -15,17 +15,20 @@ import { toast } from "sonner";
 type UserContextType = {
   user: User | undefined;
   setUser: Dispatch<SetStateAction<User | undefined>>;
+  userError: boolean;
 };
 
 const UserContext = createContext<UserContextType>({
   user: undefined,
   setUser: () => {},
+  userError: false,
 });
 
 export const useUserContext = () => useContext(UserContext);
 
 const UserProvider = ({ children }: { children: ReactNode }) => {
   const [user, setUser] = useState<User | undefined>();
+  const [userError, setUserError] = useState(false);
   const router = useRouter();
 
   useEffect(() => {
@@ -43,7 +46,7 @@ const UserProvider = ({ children }: { children: ReactNode }) => {
       );
 
       if (response.status == 401) {
-        router.push("/login");
+        setUserError(true);
         return;
       }
 
@@ -61,7 +64,7 @@ const UserProvider = ({ children }: { children: ReactNode }) => {
   }, [router]);
 
   return (
-    <UserContext.Provider value={{ user, setUser }}>
+    <UserContext.Provider value={{ user, setUser, userError }}>
       {children}
     </UserContext.Provider>
   );

@@ -48,7 +48,7 @@ const Entry = ({
         <AspectRatio
           ratio={2 / 3}
           onClick={onClick}
-          className="relative cursor-pointer"
+          className="relative h-full w-full cursor-pointer"
         >
           <img src={coverUrl} className="h-full w-full rounded-md" />
         </AspectRatio>
