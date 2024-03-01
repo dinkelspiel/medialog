@@ -17,6 +17,14 @@ const config = {
     locales: ["en"],
     defaultLocale: "en",
   },
+  rewrites: async () => {
+    return [
+      {
+        source: "/@:username",
+        destination: "/users/:username",
+      },
+    ];
+  },
 };
 
 export default config;
