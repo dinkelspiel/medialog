@@ -105,4 +105,13 @@ class User extends Authenticatable
         $this->daily_streak_updated = Carbon::now();
         $this->save();
     }
+
+    public function resolveRouteBinding($value, $field = null)
+    {
+        if (str_starts_with($value, '@')) {
+            return $this->where('username', substr($value, 1))->firstOrFail();
+        }
+
+        return $this->where('id', $value)->firstOrFail();
+    }
 }
