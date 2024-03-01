@@ -199,59 +199,81 @@ const Profile = ({ params }: { params: { username: string } }) => {
       </Header>
       <div className="col-span-2 flex justify-center">
         <div className="grid w-max grid-cols-1 gap-16 lg:grid-cols-[1fr,250px]">
-          <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-6 lg:min-w-[716px]">
             <div className="flex flex-col gap-4">
-              <div className="text-lg font-medium">Favorites</div>
-              <div className="grid w-[calc(100dvw-16px)] grid-cols-4 gap-3 lg:w-full">
-                {profile.favorites.map((userEntry, idx) => (
-                  <Entry
-                    key={`userEntry-${idx}`}
-                    {...{
-                      id: userEntry.id,
-                      title: `${userEntry.franchiseName}${userEntry.entries > 1 ? `: ${userEntry.entryName}` : ""}`,
-                      coverUrl: userEntry.coverUrl,
-                      releaseYear: 2023,
-                      rating: userEntry.rating,
-                    }}
-                  />
-                ))}
+              <div className="border-b border-b-slate-200 pb-2 text-lg font-medium">
+                Favorites
               </div>
+              {profile.favorites.length > 0 && (
+                <div className="grid w-[calc(100dvw-16px)] grid-cols-4 gap-3 lg:w-full">
+                  {profile.favorites.map((userEntry, idx) => (
+                    <Entry
+                      key={`userEntry-${idx}`}
+                      {...{
+                        id: userEntry.id,
+                        title: `${userEntry.franchiseName}${userEntry.entries > 1 ? `: ${userEntry.entryName}` : ""}`,
+                        coverUrl: userEntry.coverUrl,
+                        releaseYear: 2023,
+                        rating: userEntry.rating,
+                      }}
+                    />
+                  ))}
+                </div>
+              )}
+              {profile.favorites.length === 0 &&
+                (user !== undefined && profile.username === user.username ? (
+                  <div className="text-lg">
+                    Rate your favorites{" "}
+                    <Link href="/dashboard">
+                      <span className="font-semibold">here</span>
+                    </Link>
+                  </div>
+                ) : (
+                  <div className="text-lg">No favorites found</div>
+                ))}
             </div>
             {!isDesktop && <ProfileSidebar profile={profile} />}
             <div className="flex flex-col gap-4">
-              <div className="text-lg font-medium">Recent Activity</div>
-              <div className="flex flex-col gap-3">
-                {profile.activity.map((activity, idx) => {
-                  return (
-                    <div
-                      key={`activity-${idx}`}
-                      className="grid w-[calc(100dvw-16px)] grid-cols-[53px,1fr] gap-4 lg:w-full lg:grid-cols-[80px,1fr]"
-                    >
-                      <img
-                        src={activity.coverUrl}
-                        className="h-[80px] w-[53px] rounded-md lg:h-[120px] lg:w-[80px]"
-                      />
-                      <div className="flex h-full flex-col justify-center gap-3 border-b border-b-slate-200 pb-3 lg:border-b-0 lg:pb-0">
-                        <div className="space-x-3">
-                          <span className="text-base font-semibold lg:text-2xl">
-                            {activity.franchiseName}: {activity.entryName}
-                          </span>
-                          <span className="text-sm font-medium text-slate-500">
-                            2023
-                          </span>
-                        </div>
-                        <div className="mr-auto">
-                          {activity.type == "reviewed" ||
-                            (activity.type == "complete_review" && (
-                              <SmallRating rating={activity.rating} />
-                            ))}
-                        </div>
-                        <div>{generateActivityInfo(activity)}</div>
-                      </div>
-                    </div>
-                  );
-                })}
+              <div className="border-b border-b-slate-200 pb-2 text-lg font-medium">
+                Recent Activity
               </div>
+              {profile.activity.length > 0 && (
+                <div className="flex flex-col gap-3">
+                  {profile.activity.map((activity, idx) => {
+                    return (
+                      <div
+                        key={`activity-${idx}`}
+                        className="grid w-[calc(100dvw-16px)] grid-cols-[53px,1fr] gap-4 lg:w-full lg:grid-cols-[80px,1fr]"
+                      >
+                        <img
+                          src={activity.coverUrl}
+                          className="h-[80px] w-[53px] rounded-md lg:h-[120px] lg:w-[80px]"
+                        />
+                        <div className="flex h-full flex-col justify-center gap-3 border-b border-b-slate-200 pb-3 lg:border-b-0 lg:pb-0">
+                          <div className="space-x-3">
+                            <span className="text-base font-semibold lg:text-2xl">
+                              {activity.franchiseName}: {activity.entryName}
+                            </span>
+                            <span className="text-sm font-medium text-slate-500">
+                              2023
+                            </span>
+                          </div>
+                          <div className="mr-auto">
+                            {activity.type == "reviewed" ||
+                              (activity.type == "complete_review" && (
+                                <SmallRating rating={activity.rating} />
+                              ))}
+                          </div>
+                          <div>{generateActivityInfo(activity)}</div>
+                        </div>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+              {profile.activity.length === 0 && (
+                <div className="text-lg">No recent activity found</div>
+              )}
             </div>
           </div>
           {isDesktop && <ProfileSidebar profile={profile} />}
@@ -270,7 +292,7 @@ const ProfileSidebar = ({ profile }: { profile: ProfileType }) => {
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-4">
-        <div className="flex justify-between text-lg font-medium">
+        <div className="flex justify-between border-b border-b-slate-200 pb-2 text-lg font-medium">
           Watchlist
           <span className="ms-auto text-slate-500">
             {profile.watchlistCount}
@@ -286,7 +308,7 @@ const ProfileSidebar = ({ profile }: { profile: ProfileType }) => {
         </div>
       </div>
       <div className="flex flex-col items-center gap-4 lg:items-start">
-        <div className="flex w-full justify-between text-lg font-medium">
+        <div className="flex w-full justify-between border-b border-b-slate-200 pb-2 text-lg font-medium">
           Ratings
           <span className="ms-auto text-slate-500">{profile.ratingsCount}</span>
         </div>
@@ -296,7 +318,7 @@ const ProfileSidebar = ({ profile }: { profile: ProfileType }) => {
             {profile.ratings.map((ratingPercentage) => (
               <div
                 className="w-full bg-slate-300"
-                style={{ height: 100 * ratingPercentage }}
+                style={{ height: 110 * ratingPercentage }}
               ></div>
             ))}
           </div>
@@ -309,7 +331,7 @@ const ProfileSidebar = ({ profile }: { profile: ProfileType }) => {
             Daily streak hasn't been updated
           </div>
         )}
-        <div className="flex w-full justify-between text-lg font-medium">
+        <div className="flex w-full justify-between border-b border-b-slate-200 pb-2 text-lg font-medium">
           Diary
           <span className="ms-auto text-slate-500">
             {profile.dailyStreak} Day Streak
