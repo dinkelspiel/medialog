@@ -289,6 +289,21 @@ const ProfileSidebar = ({ profile }: { profile: ProfileType }) => {
     initializeWithValue: false,
   });
 
+  const monthOrder = [
+    "DEC",
+    "NOV",
+    "OCT",
+    "SEP",
+    "AUG",
+    "JUL",
+    "JUN",
+    "MAY",
+    "APR",
+    "MAR",
+    "FEB",
+    "JAN",
+  ];
+
   return (
     <div className="flex flex-col gap-6">
       <div className="flex flex-col gap-4">
@@ -337,27 +352,29 @@ const ProfileSidebar = ({ profile }: { profile: ProfileType }) => {
             {profile.dailyStreak} Day Streak
           </span>
         </div>
-        {Object.keys(profile.diary).map((month) => (
-          <div className="grid grid-cols-[42px,1fr] gap-2">
-            <div className="relative h-max w-max">
-              <div className="absolute top-1/2 w-full -translate-y-[3px] text-center text-[11px] font-semibold text-white">
-                {month}
+        {Object.keys(profile.diary)
+          .sort((a, b) => monthOrder.indexOf(a) - monthOrder.indexOf(b))
+          .map((month) => (
+            <div className="grid grid-cols-[42px,1fr] gap-2">
+              <div className="relative h-max w-max">
+                <div className="absolute top-1/2 w-full -translate-y-[3px] text-center text-[11px] font-semibold text-white">
+                  {month}
+                </div>
+                <Calendar />
               </div>
-              <Calendar />
+              <div className="grid grid-cols-[max-content,1fr] gap-2 text-sm font-medium">
+                {profile.diary[month].map((day) => (
+                  <>
+                    <div className="text-slate-500">{day.day}</div>
+                    <div className="whitespace-break-spaces">
+                      {day.franchiseName}
+                      {day.entries > 1 && `: ${day.entryName}`}
+                    </div>
+                  </>
+                ))}
+              </div>
             </div>
-            <div className="grid grid-cols-[max-content,1fr] gap-2 text-sm font-medium">
-              {profile.diary[month].map((day) => (
-                <>
-                  <div className="text-slate-500">{day.day}</div>
-                  <div className="whitespace-break-spaces">
-                    {day.franchiseName}
-                    {day.entries > 1 && `: ${day.entryName}`}
-                  </div>
-                </>
-              ))}
-            </div>
-          </div>
-        ))}
+          ))}
       </div>
     </div>
   );
