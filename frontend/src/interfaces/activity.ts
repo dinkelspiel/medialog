@@ -5,6 +5,7 @@ export type Activity = {
   additionalData: string;
   franchiseName: string;
   entryName: string;
+  entries: number;
   franchiseCategory: Category;
   rating: number;
   coverUrl: string;
