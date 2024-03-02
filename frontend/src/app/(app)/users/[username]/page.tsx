@@ -15,6 +15,12 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { useMediaQuery } from "usehooks-ts";
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from "@/components/ui/tooltip";
 
 type ProfileType = {
   username: string;
@@ -74,7 +80,7 @@ const Profile = ({ params }: { params: { username: string } }) => {
     initializeWithValue: false,
   });
 
-  const generateActivityInfo = (activity: Activity): string => {
+  const generateActivityInfo = (activity: Activity): JSX.Element => {
     let text = "";
     switch (activity.type) {
       case "status_update":
@@ -135,7 +141,23 @@ const Profile = ({ params }: { params: { username: string } }) => {
         }
         break;
     }
-    return `${text} ${activity.createdAt}`;
+    return (
+      <>
+        {text}
+        <span className="ps-1">
+          <TooltipProvider>
+            <Tooltip>
+              <TooltipTrigger asChild>
+                <span>{activity.createdAtHuman}</span>
+              </TooltipTrigger>
+              <TooltipContent>
+                <p>{new Date(activity.createdAt).toDateString()}</p>
+              </TooltipContent>
+            </Tooltip>
+          </TooltipProvider>
+        </span>
+      </>
+    );
   };
 
   useEffect(() => {
