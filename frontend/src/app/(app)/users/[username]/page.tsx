@@ -274,7 +274,9 @@ const Profile = ({ params }: { params: { username: string } }) => {
                         <div className="flex h-full flex-col justify-center gap-3 border-b border-b-slate-200 pb-3 lg:border-b-0 lg:pb-0">
                           <div className="space-x-3">
                             <span className="text-base font-semibold lg:text-2xl">
-                              {activity.franchiseName}: {activity.entryName}
+                              {activity.franchiseName}
+                              {activity.entries > 1 &&
+                                `: ${activity.entryName}`}
                             </span>
                             <span className="text-sm font-medium text-slate-500">
                               2023

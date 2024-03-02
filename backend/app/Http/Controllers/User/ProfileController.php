@@ -85,6 +85,7 @@ class ProfileController extends Controller
                     'additionalData' => $activity->additional_data,
                     'franchiseName' => $activity->entry->franchise->name,
                     'entryName' => $activity->entry->name,
+                    'entries' => $activity->entry->franchise->entries->count(),
                     'franchiseCategory' => $activity->entry->franchise->category,
                     'coverUrl' => $activity->entry->cover_url,
                     'rating' => $activity->type == ActivityTypeEnum::Reviewed || $activity->type == ActivityTypeEnum::CompleteReview ? UserEntry::where('user_id', $activity->user_id)
