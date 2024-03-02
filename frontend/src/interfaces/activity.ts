@@ -9,4 +9,5 @@ export type Activity = {
   rating: number;
   coverUrl: string;
   createdAt: string;
+  createdAtHuman: string;
 };

@@ -91,7 +91,8 @@ class ProfileController extends Controller
                         ->where('entry_id', $activity->entry_id)
                         ->first()
                         ->getLatestCompleted()->rating : 0,
-                    'createdAt' => $activity->created_at->diffForHumans()
+                    'createdAtHuman' => $activity->created_at->diffForHumans(),
+                    'createdAt' => $activity->created_at
                 ];
             }),
             "watchlistCount" => UserEntry::where('user_id', $user->id)->where('status', UserEntryStatusEnum::Planning)->count(),
