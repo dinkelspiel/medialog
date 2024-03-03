@@ -60,12 +60,14 @@ class ProfileController extends Controller
             $d[$key] = $sortedValue->values()->all();
         }
 
+        // Get Viewer
+
+        $viewerUser = User::where('username', request()->get('viewer-username'))->first();
+
         return response()->json([
             "username" => $user->username,
             "watched" => UserEntry::where('user_id', $user->id)->where('status', UserEntryStatusEnum::Completed)->count(),
             "watchedThisYear" => UserEntry::where('user_id', $user->id)->where('status', UserEntryStatusEnum::Completed)->whereYear('created_at', Carbon::now()->year)->count(),
-            "following" => UserFollow::where('user_id', $user->id)->count(),
-            "followers" => UserFollow::where('follow_id', $user->id)->count(),
             "favorites" => UserEntry::where('user_id', $user->id)->where('status', UserEntryStatusEnum::Completed)->orderByDesc('rating')->limit(4)->get()->map(function($userEntry) {
                 return [
                     'id' => $userEntry->id,
@@ -107,6 +109,25 @@ class ProfileController extends Controller
             "diary" => $d,
             "dailyStreak" => $user->getDailyStreak(),
             "dailyStreakUpdated" => Carbon::parse($user->daily_streak_updated)->gt(Carbon::today()),
+            "isViewerFollowing" => $viewerUser && $viewerUser->id !== $user-> id ? UserFollow::where('user_id', $viewerUser->id)->where('follow_id', $user->id)->where('is_following', true)->exists() : false,
+            "following" => UserFollow::where('user_id', $user->id)->where('is_following', true)->get()->map(function(UserFollow $follow) use ($viewerUser) {
+                return [
+                    'username' => $follow->follow->username,
+                    'followingCount' => UserFollow::where('user_id', $follow->follow->id)->where('is_following', true)->count(),
+                    'followersCount' => UserFollow::where('follow_id', $follow->follow->id)->where('is_following', true)->count(),
+                    'watched' => UserEntry::where('user_id', $follow->follow->id)->where('status', UserEntryStatusEnum::Completed)->count(),
+                    'isViewerFollowing' => $viewerUser && $viewerUser->id !== $follow->follow->id ? UserFollow::where('user_id', $viewerUser->id)->where('follow_id', $follow->follow->id)->where('is_following', true)->exists() : false
+                ];
+            }),
+            "followers" => UserFollow::where('follow_id', $user->id)->where('is_following', true)->get()->map(function(UserFollow $follow) use ($viewerUser) {
+                return [
+                    'username' => $follow->user->username,
+                    'followingCount' => UserFollow::where('user_id', $follow->user->id)->where('is_following', true)->count(),
+                    'followersCount' => UserFollow::where('follow_id', $follow->user->id)->where('is_following', true)->count(),
+                    'watched' => UserEntry::where('user_id', $follow->user->id)->where('status', UserEntryStatusEnum::Completed)->count(),
+                    'isViewerFollowing' => $viewerUser && $viewerUser->id !== $follow->user->id ? UserFollow::where('user_id', $viewerUser->id)->where('follow_id', $follow->user->id)->where('is_following', true)->exists() : false
+                ];
+            })
         ]);
     }
 }

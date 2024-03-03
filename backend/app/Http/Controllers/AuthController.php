@@ -41,7 +41,7 @@ class AuthController extends Controller
 
     public function validateSession(Request $request): JsonResponse
     {
-        $session = UserSession::where('session', $request->get('sessionToken'))->first();
+        $session = UserSession::where('session', $request->input('sessionToken'))->first();
 
         return (new UserController)->show($session->user);
     }

@@ -14,14 +14,14 @@ class FranchiseController extends Controller
     {
         $franchises = Franchise::where('name', '!=', 'null');
 
-        if($request->get('q'))
+        if($request->input('q'))
         {
-            $franchises = $franchises->where("name", "LIKE", "%" . $request->get('q') . "%");
+            $franchises = $franchises->where("name", "LIKE", "%" . $request->input('q') . "%");
         }
 
-        if($request->get('limit'))
+        if($request->input('limit'))
         {
-            $franchises = $franchises->limit($request->get('limit'));
+            $franchises = $franchises->limit($request->input('limit'));
         }
 
         $franchises = $franchises->with(["category", "entries.creators"]);

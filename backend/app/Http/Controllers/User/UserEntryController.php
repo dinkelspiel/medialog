@@ -18,9 +18,9 @@ class UserEntryController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index(string $userId)
+    public function index(User $user)
     {
-        $userEntries = UserEntry::where("user_id", $userId)
+        $userEntries = UserEntry::where("user_id", $user->id)
             ->with([
                 "user",
                 "entry.franchise",
@@ -58,14 +58,14 @@ class UserEntryController extends Controller
     /**
      * Store a newly created resource in storage.
      */
-    public function store(Request $request, string $userId)
+    public function store(Request $request, User $user)
     {
-        if(UserSession::where('session', $request->get('sessionToken'))->first()->user->id != $userId)
+        if(UserSession::where('session', $request->input('sessionToken'))->first()->user->id != $user->id)
         {
             return response()->json(['error' => 'You do not have permission to add user entries to this user'], 401);
         }
 
-        $user = UserSession::where('session', $request->get('sessionToken'))->first()->user;
+        $user = UserSession::where('session', $request->input('sessionToken'))->first()->user;
 
         $request->validate([
             'entryId' => 'required|exists:entries,id',
@@ -103,7 +103,7 @@ class UserEntryController extends Controller
 
                 $userEntry = UserEntry::create([
                     'entry_id' => $request->json('entryId'),
-                    'user_id' => $userId,
+                    'user_id' => $user->id,
                     'status' => UserEntryStatusEnum::Planning
                 ]);
             }
@@ -118,7 +118,7 @@ class UserEntryController extends Controller
 
         $userEntry = UserEntry::create([
             'entry_id' => $request->json('entryId'),
-            'user_id' => $userId,
+            'user_id' => $user->id,
             'rating' => $request->json('rating'),
             'notes' => $request->json('notes') ?? "",
             'watched_at' => now(),
@@ -169,16 +169,16 @@ class UserEntryController extends Controller
     /**
      * Display the specified resource.
      */
-    public function show(Request $request, int $userId, UserEntry $userEntry)
+    public function show(Request $request, User $user, UserEntry $userEntry)
     {
-        if(UserSession::where('session', $request->get('sessionToken'))->first()->user->id != $userId)
+        if(UserSession::where('session', $request->input('sessionToken'))->first()->user->id != $user->id)
         {
             return response()->json(['error' => 'You do not have permission to show user entries by this user'], 401);
         }
 
         $userEntry = $userEntry->with(['entry', 'entry.franchise'])->where('id', $userEntry->id)->first();
 
-        if($userEntry->user_id !== $userId)
+        if($userEntry->user_id !== $user->id)
         {
             return response()->json(['error' => 'You do not have permission to show user entries by this user'], 401);
         }
@@ -192,8 +192,8 @@ class UserEntryController extends Controller
             "entryCoverUrl" => $userEntry->entry->cover_url,
             "releaseYear" => 2023,
             "entries" => $userEntry->entry->franchise->entries->count(),
-            "userEntries" => $userEntry->entry->userEntries->map(function($userEntry) use($userId) {
-                if($userEntry->user_id != $userId) {
+            "userEntries" => $userEntry->entry->userEntries->map(function($userEntry) use($user) {
+                if($userEntry->user_id != $user->id) {
                     return;
                 }
 
@@ -214,7 +214,7 @@ class UserEntryController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $userId, UserEntry $userEntry)
+    public function update(Request $request, User $user, UserEntry $userEntry)
     {
         $request->validate([
             'sessionToken' => 'required',
@@ -224,12 +224,12 @@ class UserEntryController extends Controller
             'progress' => 'nullable|numeric|min:0'
         ]);
 
-        if(UserSession::where('session', $request->get('sessionToken'))->first()->user->id != $userId)
+        if(UserSession::where('session', $request->input('sessionToken'))->first()->user->id != $user->id)
         {
             return response()->json(['error' => 'You do not have permission to add user entries to this user'], 401);
         }
 
-        $user = UserSession::where('session', $request->get('sessionToken'))->first()->user;
+        $user = UserSession::where('session', $request->input('sessionToken'))->first()->user;
 
         if($request->json('rating') !== null)
         {

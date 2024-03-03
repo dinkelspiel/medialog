@@ -31,7 +31,6 @@ class UserEntry extends Model
 
     public function getLatestCompleted(): ?UserEntry
     {
-        Log::info($this->id);
         return UserEntry::where("entry_id", $this->entry_id)
             ->where("user_id", $this->user_id)
             ->where("status", "completed")

@@ -17,10 +17,14 @@ import { useUserContext } from "../../user-provider";
 import { cn } from "@/lib/utils";
 import { RatingStyle } from "@/interfaces/user";
 import { toast } from "sonner";
+import { useSettingContext } from "../settingsProvider";
 
 const Appearance = () => {
   const { setSidebarSelected } = useSidebarContext();
   setSidebarSelected("settings");
+
+  const { setSettingSelected } = useSettingContext();
+  setSettingSelected("appearance");
 
   const { user, setUser } = useUserContext();
 

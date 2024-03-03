@@ -2,6 +2,9 @@
 
 import Header from "@/components/header";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
+import SettingsSidebar from "./settingsSidebar";
+import SettingSidebarProvider from "./settingsProvider";
 
 export default function SettingsLayout({
   // Layouts must accept a children prop.
@@ -17,11 +20,10 @@ export default function SettingsLayout({
         subtext="Manage your color schemes and account settings"
       />
       <div className="flex flex-row gap-4">
-        <div className="flex w-[250px] flex-col gap-1">
-          <Button variant="ghost">Profile</Button>
-          <Button variant="secondary">Appearance</Button>
-        </div>
-        <div className="flex w-full flex-col gap-4">{children}</div>
+        <SettingSidebarProvider>
+          <SettingsSidebar />
+          <div className="flex w-full flex-col gap-4">{children}</div>
+        </SettingSidebarProvider>
       </div>
     </div>
   );

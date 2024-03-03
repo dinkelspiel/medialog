@@ -16,16 +16,16 @@ class EntryController extends Controller
     {
         $entries = Entry::where('name', '!=', 'null');
 
-        if($request->get('q'))
+        if($request->input('q'))
         {
             $entries = $entries->whereHas("franchise", function ($query) use ($request) {
-                $query->where('name', "LIKE", "%" . $request->get('q') . "%");
+                $query->where('name', "LIKE", "%" . $request->input('q') . "%");
             });
         }
 
-        if($request->get('limit'))
+        if($request->input('limit'))
         {
-            $entries = $entries->limit($request->get('limit'));
+            $entries = $entries->limit($request->input('limit'));
         }
 
         $entries = $entries->with(["franchise.category"]);
@@ -70,7 +70,7 @@ class EntryController extends Controller
             'coverUrl' => 'required|url'
         ]);
 
-        if(!UserSession::where('session', $request->get('sessionToken'))->exists())
+        if(!UserSession::where('session', $request->input('sessionToken'))->exists())
         {
             return response()->json(['error' => 'You have to provide a session token to update an entry'], 401);
         }

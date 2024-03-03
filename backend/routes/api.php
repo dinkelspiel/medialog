@@ -5,6 +5,7 @@ use App\Http\Controllers\EntryController;
 use App\Http\Controllers\FranchiseController;
 use App\Http\Controllers\PersonController;
 use App\Http\Controllers\StudioController;
+use App\Http\Controllers\User\FollowController;
 use App\Http\Controllers\User\ProfileController;
 use App\Http\Controllers\User\UserEntryController;
 use App\Http\Controllers\User\UserController;
@@ -53,11 +54,16 @@ Route::patch("/users/{user}", [UserController::class, "update"]);
 Route::get("/users/{user}", [UserController::class, "show"]);
 Route::get("/users/{user}/profile", [ProfileController::class, "get"]);
 
-Route::prefix("/users/{userId}")->group(function () {
+Route::prefix("/users/{user}")->group(function () {
     Route::get("/entries", [UserEntryController::class, "index"]);
-    Route::middleware([Authenticate::class])->group(function() {
-        Route::put("/entries", [UserEntryController::class, "store"]);
-        Route::get("/entries/{userEntry}", [UserEntryController::class, "show"]);
-        Route::patch("/entries/{userEntry}", [UserEntryController::class, "update"]);
+    Route::middleware([Authenticate::class])->prefix("/entries")->group(function() {
+        Route::put("/", [UserEntryController::class, "store"]);
+        Route::get("/{userEntry}", [UserEntryController::class, "show"]);
+        Route::patch("/{userEntry}", [UserEntryController::class, "update"]);
+    });
+
+    Route::middleware([Authenticate::class])->prefix("/follows")->group(function() {
+        Route::post("/{follow}", [FollowController::class, "store"]);
+        Route::delete("/{follow}", [FollowController::class, "destroy"]);
     });
 });

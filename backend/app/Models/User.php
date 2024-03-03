@@ -114,4 +114,10 @@ class User extends Authenticatable
 
         return $this->where('id', $value)->firstOrFail();
     }
+
+    public static function findModelStatically($value, $field = null)
+    {
+        $instance = new static;
+        return $instance->resolveRouteBinding($value, $field);
+    }
 }

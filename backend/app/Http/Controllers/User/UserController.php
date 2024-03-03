@@ -67,7 +67,7 @@ class UserController extends Controller
      */
     public function update(Request $request, User $user)
     {
-        if(UserSession::where('session', $request->get('sessionToken'))->first()->user->id != $user->id)
+        if(UserSession::where('session', $request->input('sessionToken'))->first()->user->id != $user->id)
         {
             return response()->json(['error' => 'You do not have permission to update this user'], 401);
         }
