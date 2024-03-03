@@ -102,16 +102,18 @@ const DashboardHeader = ({
         title="My Media"
         subtext="Search through your entire media catalogue"
       >
-        {isDesktop && <SortByDesktop setSortBy={setSortBy} sortBy={sortBy} />}
-        <Button
-          variant={!showFilters ? `outline` : `secondary`}
-          className="w-9 px-0"
-          onClick={() => {
-            setShowFilters((x) => !x);
-          }}
-        >
-          {!showFilters ? <Sort /> : <Xmark />}
-        </Button>
+        <div className="flex flex-row gap-3">
+          {isDesktop && <SortByDesktop setSortBy={setSortBy} sortBy={sortBy} />}
+          <Button
+            variant={!showFilters ? `outline` : `secondary`}
+            className="w-9 px-0"
+            onClick={() => {
+              setShowFilters((x) => !x);
+            }}
+          >
+            {!showFilters ? <Sort /> : <Xmark />}
+          </Button>
+        </div>
       </Header>
       {showFilters && (
         <div className="flex flex-col gap-4 border-b border-b-slate-200 pb-4">

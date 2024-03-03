@@ -16,12 +16,12 @@ class Authenticate
      */
     public function handle(Request $request, Closure $next): Response
     {
-        if($request->json('sessionToken') === null && $request->get('sessionToken') === null)
+        if($request->json('sessionToken') === null && $request->input('sessionToken') === null)
         {
             return response()->json(["error" => "No session token provided"], 401);
         }
 
-        if(!UserSession::where('session', $request->json('sessionToken') ?? $request->get('sessionToken'))->exists())
+        if(!UserSession::where('session', $request->json('sessionToken') ?? $request->input('sessionToken'))->exists())
         {
             return response()->json(["error" => "No session exists with token"], 401);
         }

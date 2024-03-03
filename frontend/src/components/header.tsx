@@ -16,11 +16,11 @@ const Header = ({ title, subtext, children, className }: HeaderProps) => {
         className,
       )}
     >
-      <div className="flex flex-col gap-1">
+      <div className="flex min-w-max flex-col gap-1">
         <div className="text-2xl font-semibold">{title}</div>
-        <div className="text-sm text-slate-500">{subtext}</div>
+        <div className="min-w-max text-sm text-slate-500">{subtext}</div>
       </div>
-      <div className="flex flex-row gap-3">{children}</div>
+      {children}
     </div>
   );
 };

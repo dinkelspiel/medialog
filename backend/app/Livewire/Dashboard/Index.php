@@ -196,26 +196,6 @@ class Index extends Component
             ->orderBy("id", "DESC")
             ->first();
 
-        Log::info($lastActivity);
-        Log::info(
-            str_contains($lastActivity->additional_data, "completed")
-                ? "true"
-                : "false",
-        );
-        Log::info(
-            $lastActivity->type == ActivityTypeEnum::StatusUpdate
-                ? "true"
-                : "false",
-        );
-
-        Log::info(
-            $lastActivity &&
-            str_contains($lastActivity->additional_data, "completed") &&
-            $lastActivity->type == ActivityTypeEnum::StatusUpdate
-                ? "true"
-                : "false",
-        );
-
         if (
             $lastActivity &&
             str_contains($lastActivity->additional_data, "completed") &&
