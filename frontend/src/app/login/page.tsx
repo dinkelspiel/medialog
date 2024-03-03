@@ -58,15 +58,20 @@ const Login = () => {
   };
 
   return (
-    <main className="grid h-[100dvh] w-[100dvw] grid-cols-2">
+    <main className="grid h-[100dvh] w-[100dvw] grid-cols-1 lg:grid-cols-2">
       <div className="relative bg-primary">
         <div className="absolute left-8 top-8 flex items-center">
           <Logo className="mr-2 h-6 w-6 fill-white" />
           <div className=" text-lg font-medium text-white">Medialog</div>
         </div>
+        <Link href="/signup" className="block lg:hidden">
+          <Button className="absolute right-8 top-8 text-white" variant="ghost">
+            Sign up
+          </Button>
+        </Link>
       </div>
-      <div className="relative flex items-center">
-        <Link href="/signup">
+      <div className="absolute left-1/2 top-1/2 flex -translate-x-1/2 -translate-y-1/2 items-center text-white lg:relative lg:text-black">
+        <Link href="/signup" className="hidden lg:block">
           <Button className="absolute right-8 top-8" variant="ghost">
             Sign up
           </Button>
@@ -84,6 +89,7 @@ const Login = () => {
               name="email"
               onChange={(e) => setEmail(e.target.value)}
               placeholder="name@example.com"
+              className="bg-white"
             />
           </div>
           <div className="flex w-full flex-col space-y-1.5">
@@ -92,10 +98,14 @@ const Login = () => {
               name="password"
               type="password"
               onChange={(e) => setPassword(e.target.value)}
+              className="bg-white"
             />
           </div>
           {error && <div className="text-sm text-red-400">{error}</div>}
-          <Button className="w-full" disabled={pendingLoginResult}>
+          <Button
+            className="w-full bg-primary-foreground text-primary lg:bg-primary lg:text-primary-foreground "
+            disabled={pendingLoginResult}
+          >
             {pendingLoginResult && <Spinner />}
             Sign in with email
           </Button>
