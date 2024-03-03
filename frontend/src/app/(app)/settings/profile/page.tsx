@@ -2,7 +2,11 @@
 
 import React from "react";
 import { useSidebarContext } from "../../sidebar-provider";
-import Header from "@/components/header";
+import Header, {
+  HeaderContent,
+  HeaderSubtext,
+  HeaderTitle,
+} from "@/components/header";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import {
@@ -32,10 +36,14 @@ const Appearance = () => {
 
   return (
     <>
-      <Header
-        title="Profile"
-        subtext="Manage your account settings and set e-mail preferences."
-      />
+      <Header>
+        <HeaderContent>
+          <HeaderTitle>Profile</HeaderTitle>
+          <HeaderSubtext>
+            Manage your account settings and set e-mail preferences.
+          </HeaderSubtext>
+        </HeaderContent>
+      </Header>
       <div className="flex flex-col gap-1.5"></div>
     </>
   );

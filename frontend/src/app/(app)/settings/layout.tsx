@@ -1,6 +1,10 @@
 "use client";
 
-import Header from "@/components/header";
+import Header, {
+  HeaderContent,
+  HeaderSubtext,
+  HeaderTitle,
+} from "@/components/header";
 import { Button } from "@/components/ui/button";
 import Link from "next/link";
 import SettingsSidebar from "./settingsSidebar";
@@ -15,10 +19,14 @@ export default function SettingsLayout({
 }) {
   return (
     <div className="flex flex-col gap-4 px-8 py-6">
-      <Header
-        title="Settings"
-        subtext="Manage your color schemes and account settings"
-      />
+      <Header>
+        <HeaderContent>
+          <HeaderTitle>Settings</HeaderTitle>
+          <HeaderSubtext>
+            Manage your color schemes and account settings
+          </HeaderSubtext>
+        </HeaderContent>
+      </Header>
       <div className="flex flex-row gap-4">
         <SettingSidebarProvider>
           <SettingsSidebar />

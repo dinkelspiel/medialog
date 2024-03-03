@@ -1,5 +1,5 @@
 import React, { Dispatch, SetStateAction, useEffect, useState } from "react";
-import Header from "../header";
+import Header, { HeaderContent, HeaderSubtext, HeaderTitle } from "../header";
 import SortByDesktop from "./sortByDesktop";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
@@ -98,10 +98,13 @@ const DashboardHeader = ({
 
   return (
     <div className="flex w-full flex-col gap-4 pb-4">
-      <Header
-        title="My Media"
-        subtext="Search through your entire media catalogue"
-      >
+      <Header>
+        <HeaderContent>
+          <HeaderTitle>My Media</HeaderTitle>
+          <HeaderSubtext>
+            Search through your entire media catalogue
+          </HeaderSubtext>
+        </HeaderContent>
         <div className="flex flex-row gap-3">
           {isDesktop && <SortByDesktop setSortBy={setSortBy} sortBy={sortBy} />}
           <Button
