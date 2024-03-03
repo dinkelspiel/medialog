@@ -18,6 +18,7 @@ import { useUserContext } from "../../user-provider";
 import { toast } from "sonner";
 import Link from "next/link";
 import FollowButton from "@/components/followButton";
+import { User } from "@/interfaces/user";
 
 export const ProfileHeader = ({
   profile,
@@ -26,34 +27,34 @@ export const ProfileHeader = ({
   profile: ProfileType;
   setProfile: Dispatch<SetStateAction<ProfileType | undefined | null>>;
 }) => {
-  const [page, setPage] = useState<"Following" | "Followers">("Followers");
   const { user } = useUserContext();
-
-  if (user == undefined) return <div></div>;
+  const [page, setPage] = useState<"Following" | "Followers">("Followers");
 
   const FollowEditProfile = () => {
     return (
-      <>
-        {user.username !== profile.username && (
-          <FollowButton
-            username={user.username}
-            followUsername={profile.username}
-            isViewerFollowing={profile.isViewerFollowing}
-            followSuccess={() =>
-              setProfile({ ...profile, isViewerFollowing: true })
-            }
-            unfollowSuccess={() =>
-              setProfile({ ...profile, isViewerFollowing: false })
-            }
-          />
-        )}
+      user !== undefined && (
+        <>
+          {user.username !== profile.username && (
+            <FollowButton
+              username={user.username}
+              followUsername={profile.username}
+              isViewerFollowing={profile.isViewerFollowing}
+              followSuccess={() =>
+                setProfile({ ...profile, isViewerFollowing: true })
+              }
+              unfollowSuccess={() =>
+                setProfile({ ...profile, isViewerFollowing: false })
+              }
+            />
+          )}
 
-        {user.username === profile.username && (
-          <Link href="/settings/profile">
-            <Button variant="outline">Edit Profile</Button>
-          </Link>
-        )}
-      </>
+          {user.username === profile.username && (
+            <Link href="/settings/profile">
+              <Button variant="outline">Edit Profile</Button>
+            </Link>
+          )}
+        </>
+      )
     );
   };
 
@@ -112,7 +113,7 @@ export const ProfileHeader = ({
                 </div>
               </div>
             </SheetTrigger>
-            <SheetContent>
+            <SheetContent className="!max-w-[450px] min-[450px]:max-w-[100dvw]">
               <SheetHeader>
                 <SheetTitle className="flex flex-row gap-6">
                   <div
@@ -180,8 +181,6 @@ const UserList = ({
 }) => {
   const { user: authUser } = useUserContext();
 
-  if (authUser === undefined) return <div></div>;
-
   const handleSuccess = (user: UserType, isFollowing: boolean) => {
     setProfile({
       ...profile,
@@ -207,7 +206,7 @@ const UserList = ({
               </div>
             </Link>
             <div className="flex flex-row justify-end">
-              {user.username !== profile.username && (
+              {user.username !== profile.username && authUser !== undefined && (
                 <FollowButton
                   username={authUser.username}
                   followUsername={user.username}
