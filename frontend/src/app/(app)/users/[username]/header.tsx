@@ -60,7 +60,13 @@ export const ProfileHeader = ({
 
   return (
     <Header className="col-span-2 h-max flex-col items-center justify-start gap-6 lg:flex-row">
-      <div className="flex w-full flex-row items-center justify-between px-6 lg:w-max lg:justify-start lg:px-0">
+      <div
+        className={cn(
+          `flex w-full flex-row items-center px-6 lg:w-max lg:justify-start lg:px-0`,
+          { "justify-center": user === undefined },
+          { "justify-between": user !== undefined },
+        )}
+      >
         <HeaderContent>
           <HeaderTitle>{profile.username}</HeaderTitle>
           <HeaderSubtext>{profile.username}'s profile</HeaderSubtext>
