@@ -164,7 +164,7 @@ const ModifyUserEntryContent = ({
         ) : (
           ""
         )}
-        <div className="ms-auto hidden h-full items-start lg:flex">
+        <div className="ms-auto hidden h-full items-start border-0 lg:flex">
           <button onClick={() => setUserEntryData(undefined)}>
             <Xmark />
           </button>
@@ -236,7 +236,7 @@ const ModifyUserEntryContent = ({
                   <Textarea
                     id="name"
                     placeholder={`I absolutely loved ${userEntryData.franchiseName}...`}
-                    className="h-full min-h-[100px] w-full resize-none"
+                    className="h-full min-h-[50dvh] w-full resize-none"
                     value={userEntryData.notes}
                     onChange={(e) => {
                       setUserEntryData({

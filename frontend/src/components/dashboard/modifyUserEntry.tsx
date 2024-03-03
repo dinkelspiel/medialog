@@ -47,6 +47,7 @@ import ModifyUserEntryContent, {
   ModifyUserEntryContentProps,
 } from "./modifyUserEntryContent";
 import ModifyUserEntrySkeleton from "./modifyUserEntrySkeleton";
+import { Sheet, SheetContent } from "../ui/sheet";
 
 export interface ModifyUserEntryProps {
   pendingUserEntryData: boolean;
@@ -67,14 +68,19 @@ const ModifyUserContent = (props: ModifyUserEntryProps) => {
   return (
     <>
       {isDesktop ? (
-        <Card className="hidden h-full w-[23vw] grid-rows-[max-content,1fr,max-content] lg:grid">
-          {props.pendingUserEntryData && <ModifyUserEntrySkeleton {...props} />}
-          {props.userEntryData !== undefined && (
+        <Sheet
+          open={props.userEntryData !== undefined || props.pendingUserEntryData}
+          onOpenChange={() => {
+            props.setUserEntryData(undefined);
+            props.setPendingDataFetch(false);
+          }}
+        >
+          <SheetContent className="!fixed !max-w-[550px] p-0">
             <ModifyUserEntryContent
               {...(props as ModifyUserEntryContentProps)}
             />
-          )}
-        </Card>
+          </SheetContent>
+        </Sheet>
       ) : (
         <Drawer
           open={props.userEntryData !== undefined || props.pendingUserEntryData}
