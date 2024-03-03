@@ -1,14 +1,10 @@
 import { cn } from "@/lib/utils";
 import React, { ReactNode } from "react";
 
-interface HeaderProps {
-  title: string;
-  subtext: string;
-  children?: ReactNode;
-  className?: string;
-}
-
-const Header = ({ title, subtext, children, className }: HeaderProps) => {
+const Header = ({
+  children,
+  className,
+}: React.HTMLAttributes<HTMLDivElement>) => {
   return (
     <div
       className={cn(
@@ -16,10 +12,45 @@ const Header = ({ title, subtext, children, className }: HeaderProps) => {
         className,
       )}
     >
-      <div className="flex min-w-max flex-col gap-1">
-        <div className="text-2xl font-semibold">{title}</div>
-        <div className="min-w-max text-sm text-slate-500">{subtext}</div>
-      </div>
+      {children}
+    </div>
+  );
+};
+
+export const HeaderContent = ({
+  children,
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => {
+  return (
+    <div className={cn(`flex min-w-max flex-col gap-1`, className)} {...props}>
+      {children}
+    </div>
+  );
+};
+
+export const HeaderTitle = ({
+  children,
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => {
+  return (
+    <div className={cn(`text-2xl font-semibold`, className)} {...props}>
+      {children}
+    </div>
+  );
+};
+
+export const HeaderSubtext = ({
+  children,
+  className,
+  ...props
+}: React.HTMLAttributes<HTMLDivElement>) => {
+  return (
+    <div
+      className={cn(`min-w-max text-sm text-slate-500`, className)}
+      {...props}
+    >
       {children}
     </div>
   );

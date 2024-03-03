@@ -1,6 +1,10 @@
 import React, { Dispatch, SetStateAction, useState } from "react";
 import { ProfileType, UserType } from "./page";
-import Header from "@/components/header";
+import Header, {
+  HeaderContent,
+  HeaderSubtext,
+  HeaderTitle,
+} from "@/components/header";
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -27,35 +31,48 @@ export const ProfileHeader = ({
 
   if (user == undefined) return <div></div>;
 
-  return (
-    <Header
-      title={profile.username}
-      subtext={`${profile.username}'s profile`}
-      className="col-span-2 h-max flex-col items-center justify-start gap-6 lg:flex-row"
-    >
-      <div className="flex w-full flex-1 flex-row items-center justify-between">
-        <div>
-          {user.username !== profile.username && (
-            <FollowButton
-              username={user.username}
-              followUsername={profile.username}
-              isViewerFollowing={profile.isViewerFollowing}
-              followSuccess={() =>
-                setProfile({ ...profile, isViewerFollowing: true })
-              }
-              unfollowSuccess={() =>
-                setProfile({ ...profile, isViewerFollowing: false })
-              }
-            />
-          )}
+  const FollowEditProfile = () => {
+    return (
+      <>
+        {user.username !== profile.username && (
+          <FollowButton
+            username={user.username}
+            followUsername={profile.username}
+            isViewerFollowing={profile.isViewerFollowing}
+            followSuccess={() =>
+              setProfile({ ...profile, isViewerFollowing: true })
+            }
+            unfollowSuccess={() =>
+              setProfile({ ...profile, isViewerFollowing: false })
+            }
+          />
+        )}
 
-          {user.username === profile.username && (
-            <Link href="/settings/profile">
-              <Button variant="outline">Edit Profile</Button>
-            </Link>
-          )}
+        {user.username === profile.username && (
+          <Link href="/settings/profile">
+            <Button variant="outline">Edit Profile</Button>
+          </Link>
+        )}
+      </>
+    );
+  };
+
+  return (
+    <Header className="col-span-2 h-max flex-col items-center justify-start gap-6 lg:flex-row">
+      <div className="flex w-full flex-row items-center justify-between px-6 lg:w-max lg:justify-start lg:px-0">
+        <HeaderContent>
+          <HeaderTitle>{profile.username}</HeaderTitle>
+          <HeaderSubtext>{profile.username}'s profile</HeaderSubtext>
+        </HeaderContent>
+        <div className="block lg:hidden">
+          <FollowEditProfile />
         </div>
-        <div className="flex flex-row gap-6">
+      </div>
+      <div className="flex w-full flex-1 flex-row items-center justify-center lg:justify-between">
+        <div className="hidden lg:block">
+          <FollowEditProfile />
+        </div>
+        <div className="grid w-full grid-cols-[1fr,1fr,2fr] justify-between px-6 sm:flex sm:w-max sm:flex-row sm:justify-start sm:gap-6 sm:px-0">
           <div className="flex flex-col">
             <div className="text-center text-2xl font-semibold">
               {profile.watched}
@@ -70,7 +87,7 @@ export const ProfileHeader = ({
           </div>
           <Sheet>
             <SheetTrigger asChild>
-              <div className="flex cursor-pointer flex-row gap-6">
+              <div className="grid cursor-pointer grid-cols-2 sm:flex sm:flex-row sm:gap-6">
                 <div
                   className="flex flex-col"
                   onMouseOver={() => setPage("Following")}
