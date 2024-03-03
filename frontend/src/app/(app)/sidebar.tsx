@@ -167,7 +167,7 @@ const Content = ({
           <Link href="/signup" onClick={() => setOpen(false)}>
             <Button className="w-full justify-start" variant={"default"}>
               <RightToBracket className="h-4 w-4" />
-              Sign up
+              Sign in
             </Button>
           </Link>
         </>
