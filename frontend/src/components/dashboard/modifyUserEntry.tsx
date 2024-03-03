@@ -75,7 +75,7 @@ const ModifyUserContent = (props: ModifyUserEntryProps) => {
             props.setPendingDataFetch(false);
           }}
         >
-          <SheetContent className="!fixed !max-w-[550px] p-0">
+          <SheetContent close={false} className="!fixed !max-w-[550px] p-0">
             <ModifyUserEntryContent
               {...(props as ModifyUserEntryContentProps)}
             />
