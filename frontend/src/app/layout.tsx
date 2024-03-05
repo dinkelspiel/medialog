@@ -1,4 +1,4 @@
-import { Viewport } from "next";
+import { Metadata, Viewport } from "next";
 import "../styles/globals.css";
 
 export default function RootLayout({
@@ -21,4 +21,8 @@ export const viewport: Viewport = {
   initialScale: 1,
   width: "device-width",
   maximumScale: 1,
+};
+
+export const metadata: Metadata = {
+  title: "Medialog",
 };
