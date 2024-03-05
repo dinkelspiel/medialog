@@ -2,6 +2,7 @@ import { useMediaQuery } from "usehooks-ts";
 import { ProfileType } from "./page";
 import SmallRating from "@/components/smallRating";
 import Calendar from "@/components/icons/calendar";
+import { Progress } from "@/components/ui/progress";
 
 export const ProfileSidebar = ({ profile }: { profile: ProfileType }) => {
   const isDesktop = useMediaQuery("(min-width: 1024px)", {
@@ -26,6 +27,7 @@ export const ProfileSidebar = ({ profile }: { profile: ProfileType }) => {
 
   return (
     <div className="flex flex-col gap-6">
+      {/* Watchlist */}
       <div className="flex flex-col gap-4">
         <div className="flex justify-between border-b border-b-slate-200 pb-2 text-lg font-medium">
           Watchlist
@@ -42,6 +44,26 @@ export const ProfileSidebar = ({ profile }: { profile: ProfileType }) => {
           ))}
         </div>
       </div>
+
+      {/* In Progress */}
+      {profile.watching.length > 0 && (
+        <div className="flex flex-col gap-4">
+          <div className="flex w-full justify-between border-b border-b-slate-200 pb-2 text-lg font-medium">
+            In Progress
+            <span className="ms-auto text-slate-500">
+              {profile.watching.length}
+            </span>
+          </div>
+          {profile.watching.map((entry) => (
+            <div className="flex flex-col gap-1.5">
+              {`${entry.franchiseName}${entry.entries > 1 ? `: ${entry.entryName}` : ""}`}
+              <Progress value={(entry.progress / entry.length) * 100} />
+            </div>
+          ))}
+        </div>
+      )}
+
+      {/* Ratings */}
       <div className="flex flex-col items-center gap-4 lg:items-start">
         <div className="flex w-full justify-between border-b border-b-slate-200 pb-2 text-lg font-medium">
           Ratings
@@ -60,6 +82,8 @@ export const ProfileSidebar = ({ profile }: { profile: ProfileType }) => {
           <SmallRating rating={100} className="pb-1" />
         </div>
       </div>
+
+      {/* Diary */}
       <div className="flex flex-col gap-4">
         {profile.dailyStreak != 0 && !profile.dailyStreakUpdated && (
           <div className="w-full rounded-md border bg-red-500 py-1 text-center text-white">
@@ -86,7 +110,7 @@ export const ProfileSidebar = ({ profile }: { profile: ProfileType }) => {
                 {profile.diary[month].map((day) => (
                   <>
                     <div className="text-slate-500">{day.day}</div>
-                    <div className="whitespace-break-spaces">
+                    <div className="w-full whitespace-pre-wrap">
                       {day.franchiseName}
                       {day.entries > 1 && `: ${day.entryName}`}
                     </div>
