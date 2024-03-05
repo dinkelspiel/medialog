@@ -33,6 +33,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { ProfileSidebar } from "./sidebar";
 import { ProfileHeader } from "./header";
+import { number, string } from "zod";
 
 export type UserType = {
   username: string;
@@ -67,6 +68,14 @@ export type ProfileType = {
   isViewerFollowing: boolean;
   following: UserType[];
   followers: UserType[];
+  watching: {
+    id: number;
+    franchiseName: string;
+    entryName: string;
+    entries: number;
+    progress: number;
+    length: number;
+  }[];
 };
 
 const Profile404 = () => {

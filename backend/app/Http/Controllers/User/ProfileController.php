@@ -23,10 +23,8 @@ class ProfileController extends Controller
         // Generate ratings graph
         $ratings = [];
         $totalRatings = UserEntry::where("user_id", $user->id)->where('status', UserEntryStatusEnum::Completed)->count();
-        for($ratingThreshold = 0; $ratingThreshold <= 10; $ratingThreshold++)
-        {
-            if($totalRatings > 0)
-            {
+        for ($ratingThreshold = 0; $ratingThreshold <= 10; $ratingThreshold++) {
+            if ($totalRatings > 0) {
                 $ratings[$ratingThreshold - 1] = UserEntry::where("user_id", $user->id)->where('status', UserEntryStatusEnum::Completed)->where('rating', '>', ($ratingThreshold - 1) * 10)->where('rating', '<=', $ratingThreshold * 10)->count() / $totalRatings;
             } else {
                 $ratings[$ratingThreshold - 1] = 0;
@@ -40,7 +38,7 @@ class ProfileController extends Controller
 
         $diary = [];
 
-        foreach(UserEntry::where("user_id", $user->id)->where('status', UserEntryStatusEnum::Completed)->orderByDesc('id')->limit(10)->get() as $userEntry) {
+        foreach (UserEntry::where("user_id", $user->id)->where('status', UserEntryStatusEnum::Completed)->orderByDesc('id')->limit(10)->get() as $userEntry) {
             $month = strtoupper(substr(Carbon::parse($userEntry->watched_at)->format('F'), 0, 3));
 
             $diary[$month][] = [
@@ -49,13 +47,14 @@ class ProfileController extends Controller
                 'entries' => $userEntry->entry->franchise->entries->count(),
                 'day' => Carbon::parse($userEntry->watched_at)->day
             ];
-        };
+        }
+        ;
 
         $diary = collect($diary);
 
         $d = [];
 
-        foreach($diary as $key => $value) {
+        foreach ($diary as $key => $value) {
             $sortedValue = collect($value)->sortByDesc('day');
             $d[$key] = $sortedValue->values()->all();
         }
@@ -68,7 +67,7 @@ class ProfileController extends Controller
             "username" => $user->username,
             "watched" => UserEntry::where('user_id', $user->id)->where('status', UserEntryStatusEnum::Completed)->count(),
             "watchedThisYear" => UserEntry::where('user_id', $user->id)->where('status', UserEntryStatusEnum::Completed)->whereYear('created_at', Carbon::now()->year)->count(),
-            "favorites" => UserEntry::where('user_id', $user->id)->where('status', UserEntryStatusEnum::Completed)->orderByDesc('rating')->limit(4)->get()->map(function($userEntry) {
+            "favorites" => UserEntry::where('user_id', $user->id)->where('status', UserEntryStatusEnum::Completed)->orderByDesc('rating')->limit(4)->get()->map(function ($userEntry) {
                 return [
                     'id' => $userEntry->id,
                     'franchiseName' => $userEntry->entry->franchise->name,
@@ -81,7 +80,7 @@ class ProfileController extends Controller
                     'status' => $userEntry->status
                 ];
             }),
-            "activity" => Activity::where('user_id', $user->id)->orderByDesc('id')->limit(10)->get()->map(function($activity) {
+            "activity" => Activity::where('user_id', $user->id)->orderByDesc('id')->limit(10)->get()->map(function ($activity) {
                 return [
                     'type' => $activity->type,
                     'additionalData' => $activity->additional_data,
@@ -99,7 +98,7 @@ class ProfileController extends Controller
                 ];
             }),
             "watchlistCount" => UserEntry::where('user_id', $user->id)->where('status', UserEntryStatusEnum::Planning)->count(),
-            "watchlist" => UserEntry::where('user_id', $user->id)->where('status', UserEntryStatusEnum::Planning)->limit(4)->get()->map(function($userEntry) {
+            "watchlist" => UserEntry::where('user_id', $user->id)->where('status', UserEntryStatusEnum::Planning)->limit(4)->get()->map(function ($userEntry) {
                 return [
                     'coverUrl' => $userEntry->entry->cover_url
                 ];
@@ -109,8 +108,8 @@ class ProfileController extends Controller
             "diary" => $d,
             "dailyStreak" => $user->getDailyStreak(),
             "dailyStreakUpdated" => Carbon::parse($user->daily_streak_updated)->gt(Carbon::today()),
-            "isViewerFollowing" => $viewerUser && $viewerUser->id !== $user-> id ? UserFollow::where('user_id', $viewerUser->id)->where('follow_id', $user->id)->where('is_following', true)->exists() : false,
-            "following" => UserFollow::where('user_id', $user->id)->where('is_following', true)->get()->map(function(UserFollow $follow) use ($viewerUser) {
+            "isViewerFollowing" => $viewerUser && $viewerUser->id !== $user->id ? UserFollow::where('user_id', $viewerUser->id)->where('follow_id', $user->id)->where('is_following', true)->exists() : false,
+            "following" => UserFollow::where('user_id', $user->id)->where('is_following', true)->get()->map(function (UserFollow $follow) use ($viewerUser) {
                 return [
                     'username' => $follow->follow->username,
                     'followingCount' => UserFollow::where('user_id', $follow->follow->id)->where('is_following', true)->count(),
@@ -119,7 +118,7 @@ class ProfileController extends Controller
                     'isViewerFollowing' => $viewerUser && $viewerUser->id !== $follow->follow->id ? UserFollow::where('user_id', $viewerUser->id)->where('follow_id', $follow->follow->id)->where('is_following', true)->exists() : false
                 ];
             }),
-            "followers" => UserFollow::where('follow_id', $user->id)->where('is_following', true)->get()->map(function(UserFollow $follow) use ($viewerUser) {
+            "followers" => UserFollow::where('follow_id', $user->id)->where('is_following', true)->get()->map(function (UserFollow $follow) use ($viewerUser) {
                 return [
                     'username' => $follow->user->username,
                     'followingCount' => UserFollow::where('user_id', $follow->user->id)->where('is_following', true)->count(),
@@ -127,7 +126,17 @@ class ProfileController extends Controller
                     'watched' => UserEntry::where('user_id', $follow->user->id)->where('status', UserEntryStatusEnum::Completed)->count(),
                     'isViewerFollowing' => $viewerUser && $viewerUser->id !== $follow->user->id ? UserFollow::where('user_id', $viewerUser->id)->where('follow_id', $follow->user->id)->where('is_following', true)->exists() : false
                 ];
-            })
+            }),
+            "watching" => UserEntry::where('user_id', $user->id)->where('status', UserEntryStatusEnum::Watching)->get()->map(function ($userEntry) {
+                return [
+                    'id' => $userEntry->id,
+                    'franchiseName' => $userEntry->entry->franchise->name,
+                    'entryName' => $userEntry->entry->name,
+                    'entries' => $userEntry->entry->franchise->entries->count(),
+                    'progress' => $userEntry->progress,
+                    'length' => $userEntry->entry->length
+                ];
+            }),
         ]);
     }
 }
