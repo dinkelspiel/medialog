@@ -28,6 +28,7 @@ import { cn } from "@/lib/utils";
 import Link from "next/link";
 import Menu from "@/components/icons/menu";
 import RightToBracket from "@/components/icons/rightToBracket";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 
 const Sidebar = () => {
   const isDesktop = useMediaQuery("(min-width: 1024px)", {
@@ -43,14 +44,22 @@ const Sidebar = () => {
 };
 
 const Mobile = () => {
+  const [open, setOpen] = useState(false);
+
   return (
     <>
       <div className="sticky top-0 flex cursor-pointer items-center justify-between border-b border-slate-200 bg-white px-8">
         <Logo />
-        <Menu
-          onClick={() => {}}
-          className="h-5 w-5 duration-100 hover:fill-slate-600 active:fill-slate-500"
-        />
+        <Sheet open={open} onOpenChange={setOpen}>
+          <SheetTrigger asChild>
+            <Menu className="h-5 w-5 duration-100 hover:fill-slate-600 active:fill-slate-500" />
+          </SheetTrigger>
+          <SheetContent>
+            <div className="flex  h-full flex-col gap-1 pt-4">
+              <Content setOpen={setOpen} />
+            </div>
+          </SheetContent>
+        </Sheet>
       </div>
     </>
   );
