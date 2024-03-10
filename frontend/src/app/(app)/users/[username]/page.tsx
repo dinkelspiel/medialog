@@ -34,6 +34,7 @@ import { Button } from "@/components/ui/button";
 import { ProfileSidebar } from "./sidebar";
 import { ProfileHeader } from "./header";
 import { number, string } from "zod";
+import { useSidebarContext } from "../../sidebar-provider";
 
 export type UserType = {
   username: string;
@@ -109,6 +110,9 @@ const Profile = ({ params }: { params: { username: string } }) => {
     defaultValue: true,
     initializeWithValue: false,
   });
+
+  const { setSidebarSelected } = useSidebarContext();
+  setSidebarSelected("profile");
 
   const generateActivityInfo = (activity: Activity): JSX.Element => {
     let text = "";
