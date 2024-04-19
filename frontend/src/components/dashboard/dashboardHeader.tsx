@@ -49,6 +49,7 @@ const DashboardHeader = ({
   const [filterPeopleOpen, setFilterPeopleOpen] = useState(false);
   const [filterStudiosOpen, setFilterStudiosOpen] = useState(false);
   const [filterStatusOpen, setFilterStatusOpen] = useState(false);
+  const [filterCategoryOpen, setFilterCategoryOpen] = useState(false);
 
   useEffect(() => {
     const fetchStudios = async () => {
@@ -301,6 +302,58 @@ const DashboardHeader = ({
                 </Popover>
               </div>
             </div>
+            <div className="flex flex-col gap-2">
+                <Label>Category</Label>
+                <Popover
+                  open={filterCategoryOpen}
+                  onOpenChange={setFilterCategoryOpen}
+                >
+                  <PopoverTrigger asChild>
+                    <Button
+                      variant="outline"
+                      role="combobox"
+                      className="w-full justify-between"
+                    >
+                      {filter.category
+                        ? capitalizeFirst(filter.category) 
+                        : "Select category..."}
+                      <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 opacity-50" />
+                    </Button>
+                  </PopoverTrigger>
+                  <PopoverContent className="w-full p-0">
+                    <Command>
+                      <CommandGroup>
+                        {["book", "movie", "series"].map((category) => (
+                          <CommandItem
+                            key={category}
+                            value={category}
+                            onSelect={(_) => {
+                              setFilter({
+                                ...filter,
+                                category:
+                                category === filter.category
+                                    ? undefined
+                                    : category,
+                              });
+                              setFilterCategoryOpen(false);
+                            }}
+                          >
+                            <Check
+                              className={cn(
+                                "mr-2 h-4 w-4",
+                                filter.category === category
+                                  ? "opacity-100"
+                                  : "opacity-0",
+                              )}
+                            />
+                            {capitalizeFirst(category)}
+                          </CommandItem>
+                        ))}
+                      </CommandGroup>
+                    </Command>
+                  </PopoverContent>
+                </Popover>
+              </div>
             {!isDesktop && (
               <SortByMobile setSortBy={setSortBy} sortBy={sortBy} />
             )}
