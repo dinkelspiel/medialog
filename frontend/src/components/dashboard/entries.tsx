@@ -103,6 +103,13 @@ const Entries = ({
               }
 
               if (
+                filter.category !== undefined &&
+                userEntry.franchiseCategory !== filter.category
+              ) {
+                return;
+              }
+
+              if (
                 filter.status !== undefined &&
                 userEntry.status !== filter.status
               ) {
