@@ -1,1 +1,1 @@
-export type Category = "book" | "movie" | "series";
+export type Category = "Book" | "Movie" | "Series";

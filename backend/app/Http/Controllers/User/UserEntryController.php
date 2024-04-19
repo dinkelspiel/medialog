@@ -40,6 +40,7 @@ class UserEntryController extends Controller
                 return [
                     "id" => $userEntry->getLatest()->id,
                     "franchiseName" => $userEntry->entry->franchise->name,
+                    "franchiseCategory" => $userEntry->entry->franchise->category->name,
                     "entryName" => $userEntry->entry->name,
                     "coverUrl" => $userEntry->entry->cover_url,
                     "entries" => $userEntry->entry->franchise->entries->count(),

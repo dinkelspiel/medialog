@@ -129,9 +129,9 @@ const Profile = ({ params }: { params: { username: string } }) => {
             break;
           case "watching":
             if (rewatch === 0) {
-              text = `Started ${activity.franchiseCategory === "book" ? "reading" : "watching"}`;
+              text = `Started ${activity.franchiseCategory === "Book" ? "reading" : "watching"}`;
             } else {
-              text = `Is for the ${numberSuffix(rewatch + 1)} time ${activity.franchiseCategory === "book" ? "reading" : "watching"}`;
+              text = `Is for the ${numberSuffix(rewatch + 1)} time ${activity.franchiseCategory === "Book" ? "reading" : "watching"}`;
             }
             break;
           case "dnf":
