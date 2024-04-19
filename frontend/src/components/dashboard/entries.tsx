@@ -106,7 +106,6 @@ const Entries = ({
                 filter.category !== undefined &&
                 userEntry.franchiseCategory !== filter.category
               ) {
-                console.log(userEntry.franchiseCategory, filter.category);
                 return;
               }
 
