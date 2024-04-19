@@ -14,6 +14,7 @@ import UserEntryStatus from "@/interfaces/userEntryStatus";
 
 export type DashboardFilter = {
   title: string;
+  category: string | undefined;
   creator: string | undefined;
   studio: string | undefined;
   status: UserEntryStatus | undefined;
@@ -31,6 +32,7 @@ export default function Home() {
 
   const [filter, setFilter] = useState<DashboardFilter>({
     title: "",
+    category: undefined,
     creator: undefined,
     studio: undefined,
     status: undefined,
