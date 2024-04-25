@@ -1,5 +1,6 @@
-# Medialog
+# Medialog Frontend
 
-A self hosted solution for privately rating and reviewing different sorts of media
+## Run
 
-## Frontend and Backend instructions exist in their respective directories
+`pnpm install`
+`pnpm dev`
