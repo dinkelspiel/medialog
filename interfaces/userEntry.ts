@@ -1,4 +1,4 @@
-import UserEntryStatus from "./userEntryStatus.js";
+import UserEntryStatus from './userEntryStatus.js';
 
 type Studio = { name: string };
 type Person = { name: string };

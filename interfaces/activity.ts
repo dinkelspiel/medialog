@@ -1,7 +1,7 @@
-import { Category } from "./category.js";
+import { Category } from './category.js';
 
 export type Activity = {
-  type: "status_update" | "reviewed" | "rewatch" | "complete_review";
+  type: 'status_update' | 'reviewed' | 'rewatch' | 'complete_review';
   additionalData: string;
   franchiseName: string;
   entryName: string;
