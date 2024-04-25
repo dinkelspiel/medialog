@@ -1,5 +1,5 @@
-import { Metadata, Viewport } from "next";
-import "../styles/globals.css";
+import { Metadata, Viewport } from 'next';
+import '../styles/globals.css';
 
 export default function RootLayout({
   // Layouts must accept a children prop.
@@ -8,21 +8,15 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return (
-    <>
-      <html lang="en">
-        <body className="fill-black">{children}</body>
-      </html>
-    </>
-  );
+  return children;
 }
 
 export const viewport: Viewport = {
   initialScale: 1,
-  width: "device-width",
+  width: 'device-width',
   maximumScale: 1,
 };
 
 export const metadata: Metadata = {
-  title: "Medialog",
+  title: 'Medialog',
 };
