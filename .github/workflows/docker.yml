@@ -1,0 +1,38 @@
+name: Push
+on:
+  - push
+
+jobs:
+  build-and-push-container-image:
+    runs-on: ubuntu-20.04
+    env:
+      REGISTRY: ghcr.io
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Set environment variables
+        run: |
+          echo "IMAGE_NAME=$(echo "$REGISTRY/$GITHUB_REPOSITORY" | tr '[:upper:]' '[:lower:]')" >> $GITHUB_ENV
+          echo "GIT_SHA=$(echo ${{ github.sha }} | cut -c1-7)" >> $GITHUB_ENV
+          if [[ "${{ github.ref }}" == "refs/heads/"* ]]; then
+            GIT_REF=$(echo "${{ github.ref }}" | cut -d/ -f3)
+          else
+            GIT_REF=$(echo "${{ github.ref }}" | cut -d/ -f3)
+          fi
+          echo "GIT_REF=${GIT_REF}" >> $GITHUB_ENV
+          echo "IMAGE_TAG=${GIT_REF}-${GIT_SHA}" >> $GITHUB_ENV
+
+      - name: Docker Build
+        run: docker build --tag ${IMAGE_NAME}:${IMAGE_TAG} .
+
+      - name: Docker Login
+        run: echo ${{ secrets.GITHUB_TOKEN }} | docker login $REGISTRY -u "${{ github.actor }}" --password-stdin
+
+      - name: Docker Push (Tagged)
+        run: docker push ${IMAGE_NAME}:${IMAGE_TAG}
+
+      - name: Tag image as latest
+        run: docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:latest
+
+      - name: Docker Push (Latest)
+        run: docker push ${IMAGE_NAME}:latest

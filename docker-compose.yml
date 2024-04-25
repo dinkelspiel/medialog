@@ -1,0 +1,33 @@
+services:
+  mysql:
+    image: mysql
+    restart: always
+    ports:
+      - 3306:3306
+    environment:
+      MYSQL_ROOT_PASSWORD: prisma
+      MYSQL_PASSWORD: prisma
+      MYSQL_USER: prisma
+      MYSQL_DATABASE: database
+    volumes:
+      - mysql:/var/lib/mysql
+  prod:
+    build:
+      dockerfile: Dockerfile
+    ports:
+      - '3000:3000'
+    env_file:
+      - './.env'
+  dev:
+    build:
+      context: .
+      dockerfile: ./Dockerfile.dev
+    ports:
+      - '3000:3000'
+    volumes:
+      - type: bind
+        source: .
+        target: /usr/src/app
+volumes:
+  mysql: ~
+  dev:

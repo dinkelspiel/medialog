@@ -1,0 +1,11 @@
+FROM node:iron
+RUN npm install -g pnpm
+COPY . /usr/src/app
+WORKDIR /usr/src/app
+SHELL ["/bin/bash", "--login", "-c"]
+ENV SHELL bash
+# RUN chmod 777 /usr/src/app -R
+RUN chmod 744 ./prisma/schema.prisma
+RUN pnpm install
+RUN pnpm dlx prisma generate
+CMD ["pnpm", "dev"]
