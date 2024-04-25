@@ -1,1 +1,1 @@
-export type SortByType = "rating" | "az" | "updated" | "watched";
+export type SortByType = 'rating' | 'az' | 'updated' | 'watched';

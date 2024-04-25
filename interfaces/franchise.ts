@@ -1,12 +1,12 @@
 export interface Franchise {
-    id: number;
+  id: number;
+  name: string;
+  category: string;
+  creators: string[];
+  entries: {
     name: string;
-    category: string;
-    creators: string[];
-    entries: {
-      name: string;
-      coverUrl: string;
-      length: number;
-      creators: { name: string }[];
-    }
-};
+    coverUrl: string;
+    length: number;
+    creators: { name: string }[];
+  };
+}

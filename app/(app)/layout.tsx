@@ -1,7 +1,6 @@
-import { Sidebar, SidebarButton, SidebarFooter } from '@/components/sidebar';
-import { Toaster } from '@/components/ui/sonner';
-import { CornerDownLeft, Home, Shield, UsersRound } from 'lucide-react';
-import React, { ReactNode } from 'react';
+import { Sidebar, SidebarButton } from '@/components/sidebar';
+import { Home } from 'lucide-react';
+import { ReactNode } from 'react';
 
 const Layout = ({ children }: { children: ReactNode }) => {
   return (
