@@ -8,8 +8,39 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+enum RatingStyle {
+  stars
+  range
+}
+
 model User {
-  id    Int     @id @default(autoincrement())
-  email String  @unique
-  name  String?
+  id          Int         @id @default(autoincrement()) @db.UnsignedInt
+  username    String      @unique
+  email       String      @unique
+  sessions    Session[]
+  ratingStyle RatingStyle @default(stars)
+
+  dailyStreakStarted DateTime @default(now())
+  dailyStreakUpdated DateTime @default(now())
+  dailyStreakLength  Int      @default(0) @db.SmallInt
+  dailyStreakLongest Int      @default(0) @db.SmallInt
+
+  invitedById Int?   @db.UnsignedInt
+  invitedBy   User?  @relation("Invite", fields: [invitedById], references: [id])
+  invitees    User[] @relation("Invite")
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Session {
+  id        Int       @id @default(autoincrement()) @db.UnsignedInt
+  token     String    @db.VarChar(64)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int       @db.UnsignedInt
+  expiry    DateTime?
+  ipAddress String
+  userAgent String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now()) @updatedAt
 }
