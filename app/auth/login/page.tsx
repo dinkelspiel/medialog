@@ -1,6 +1,7 @@
 'use client';
 
 import Logo from '@/components/icons/logo';
+import SubmitButton from '@/components/submitButton';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { login } from '@/server/auth/login';
@@ -40,9 +41,7 @@ const Page = () => {
             <Input placeholder="Email" name="email" />
             <Input placeholder="Password" type="password" name="password" />
           </div>
-          <Button className="w-full" size="sm">
-            Log in
-          </Button>
+          <SubmitButton>Log in</SubmitButton>
           <p className="text-sm text-muted-foreground">
             Don't have an account?{' '}
             <Link href="/auth/sign-up" className="text-primary">
