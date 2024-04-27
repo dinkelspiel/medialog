@@ -3,14 +3,14 @@
 import Logo from '@/components/icons/logo';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { login } from '@/server/auth/login';
+import { signUp } from '@/server/auth/signUp';
 import Link from 'next/link';
 import { useEffect } from 'react';
 import { useFormState } from 'react-dom';
 import { toast } from 'sonner';
 
 const Page = () => {
-  const [state, formAction] = useFormState(login, {});
+  const [state, formAction] = useFormState(signUp, {});
 
   useEffect(() => {
     if (state.message) {
@@ -28,7 +28,7 @@ const Page = () => {
         <div className="grid gap-2">
           <Logo className="mb-2" />
           <h3 className="font-bold text-[22px] leading-7 tracking-[-0.02em]">
-            Login to Medialog
+            Sign up to Medialog
           </h3>
           <p className="text-sm text-muted-foreground">
             Welcome to <i>your</i> website for rating Movies, Books, and TV
@@ -37,16 +37,17 @@ const Page = () => {
         </div>
         <div className="grid gap-4">
           <div className="grid gap-2">
+            <Input placeholder="Username" name="username" />
             <Input placeholder="Email" name="email" />
             <Input placeholder="Password" type="password" name="password" />
           </div>
           <Button className="w-full" size="sm">
-            Log in
+            Create my account
           </Button>
           <p className="text-sm text-muted-foreground">
-            Don't have an account?{' '}
-            <Link href="/auth/sign-up" className="text-primary">
-              Sign up
+            Already have an account?{' '}
+            <Link href="/auth/login" className="text-primary">
+              Log in
             </Link>
           </p>
         </div>
