@@ -1,23 +1,37 @@
-import { Sidebar, SidebarButton } from '@/components/sidebar';
-import { Home } from 'lucide-react';
+import Logo from '@/components/icons/logo';
+import SidebarLayout from '@/components/layouts/sidebar';
+import { Sidebar, SidebarButton, SidebarFooter } from '@/components/sidebar';
+import UserDisplay from '@/components/userDisplay';
+import { validateSessionToken } from '@/server/auth/validateSession';
+import { Home, KeyRound, UsersRound } from 'lucide-react';
+import { redirect } from 'next/navigation';
 import { ReactNode } from 'react';
 
-const Layout = ({ children }: { children: ReactNode }) => {
-  return (
-    <html lang="en">
-      <body
-        className={`grid grid-cols-1 grid-rows-[70px,1fr] lg:grid-rows-1 lg:grid-cols-[256px,1fr] min-h-[100dvh]`}
-      >
-        <Sidebar header={<>Medialog</>}>
-          <SidebarButton href="/dashboard">
-            <Home size={20} />
-            Home
-          </SidebarButton>
-        </Sidebar>
+const Layout = async ({ children }: { children: ReactNode }) => {
+  const user = await validateSessionToken();
 
-        <main className="px-6 py-4 flex flex-col gap-4">{children}</main>
-      </body>
-    </html>
+  if (!user) {
+    return redirect('/auth/login');
+  }
+
+  return (
+    <SidebarLayout>
+      <Sidebar
+        header={<UserDisplay user={user} />}
+        headerProps={{ className: '[&>svg]:size-7 p-0' }}
+      >
+        <SidebarButton href="/dashboard">
+          <Home size={20} />
+          Home
+        </SidebarButton>
+        <SidebarButton href="/community">
+          <UsersRound size={20} />
+          Community
+        </SidebarButton>
+      </Sidebar>
+
+      <main className="px-5 py-3 flex flex-col gap-4">{children}</main>
+    </SidebarLayout>
   );
 };
 

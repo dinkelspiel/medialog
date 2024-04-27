@@ -30,7 +30,7 @@ export const Sidebar = ({
       {...props}
       aria-label="Sidebar"
     >
-      <div className="flex bg-neutral-100 shadow-[inset_0_0px_8px_0_rgb(0_0_0_/_0.02)] h-[75px] justify-center lg:justify-start border-b lg:border-b-0 lg:h-full flex-col overflow-y-auto border-slate-200 px-3 py-4 dark:border-slate-700 dark:bg-slate-900">
+      <div className="flex bg-neutral-100 shadow-[inset_0_0px_8px_0_rgb(0_0_0_/_0.02)] h-[75px] justify-center lg:justify-start border-b lg:border-b-0 lg:h-full flex-col overflow-y-auto border-slate-200 p-3 dark:border-slate-700 dark:bg-slate-900">
         <SidebarHeader {...headerProps}>
           {header}
           <button className="lg:hidden w-full justify-end flex">
@@ -58,7 +58,7 @@ export const SidebarHeader = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      `lg:mb-12 flex whitespace-nowrap items-center rounded-lg px-3 py-2 text-slate-900 dark:text-white gap-3 text-base font-semibold [&>svg]:size-5`,
+      `lg:mb-12 flex whitespace-nowrap items-center rounded-lg text-slate-900 dark:text-white gap-3 text-base font-semibold [&>svg]:size-5`,
       className
     )}
     {...props}
@@ -117,7 +117,14 @@ const ClientSidebarButton = ({
           ? (selectedVariant as any) ?? 'default'
           : 'ghost'
       }
-      className={cn(`w-full justify-start select-none`, className)}
+      className={cn(
+        `w-full justify-start select-none`,
+        {
+          'text-white': pathname.endsWith(href),
+          'text-muted-foreground': !pathname.endsWith(href),
+        },
+        className
+      )}
       tabIndex={-1}
       {...props}
     >
