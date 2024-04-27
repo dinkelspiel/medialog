@@ -40,3 +40,6 @@ next-env.d.ts
 # cache
 .prettiercache
 .eslintjscache
+
+# lockfile
+pnpm-lock.yaml
