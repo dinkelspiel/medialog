@@ -16,15 +16,11 @@ const UserDisplay = ({ user }: { user: User }) => {
   return (
     <DropdownMenu>
       <DropdownMenuTrigger>
-        <div className="flex gap-x-2">
-          <Logo className="size-9" />
-          <div className="flex justify-between flex-col pb-[1px] items-start">
-            <div className="font-normal tracking-[-.005em] leading-none">
-              Medialog
-            </div>
-            <div className="text-sm font-normal text-muted-foreground leading-none tracking-[.01em]">
-              @{user.username}
-            </div>
+        <div className="flex gap-x-3">
+          <Logo className="size-[41px]" />
+          <div className="flex justify-center items-start flex-col pb-[1px]">
+            <div className="text-xs font-normal">Medialog</div>
+            <div className="text-base font-semibold">@{user.username}</div>
           </div>
         </div>
       </DropdownMenuTrigger>
