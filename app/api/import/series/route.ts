@@ -3,7 +3,6 @@ import { NextRequest } from 'next/server';
 export const dynamic = 'force-dynamic';
 
 export const GET = async (request: NextRequest) => {
-  const url = '';
   const options = {
     method: 'GET',
     headers: {
