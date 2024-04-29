@@ -290,23 +290,30 @@ export const GET = async (request: NextRequest) => {
       },
     });
 
-    if (!productionCompany.origin_country) {
-      continue;
-    }
-
     if (!existingCompany) {
+      const country = await prisma.country.findFirst({
+        where: {
+          iso_3166_1: productionCompany.origin_country,
+        },
+      });
+
       existingCompany = await prisma.company.create({
         data: {
           tmdbId: productionCompany.id,
-          logo: productionCompany.logo_path,
+          logo: productionCompany.logo_path ?? '',
           name: productionCompany.name,
-          countryId: (
-            await prisma.country.findFirst({
+          country: {
+            connectOrCreate: {
               where: {
-                iso_3166_1: productionCompany.origin_country,
+                id: country?.id,
               },
-            })
-          )?.id!,
+              create: {
+                iso_3166_1: productionCompany.origin_country,
+                name:
+                  'Forgotten Country Added ' + productionCompany.origin_country,
+              },
+            },
+          },
         },
       });
     }

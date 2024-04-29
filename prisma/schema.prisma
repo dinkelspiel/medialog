@@ -90,7 +90,7 @@ model Session {
 model Company {
   id                       Int                      @id @default(autoincrement()) @db.UnsignedInt
   name                     String
-  logo                     String
+  logo                     String?
   countryId                Int                      @db.UnsignedInt
   country                  Country                  @relation(fields: [countryId], references: [id], onDelete: Cascade)
   tmdbId                   Int                      @db.UnsignedInt
@@ -102,8 +102,8 @@ model Company {
 
 model Country {
   id                     Int                      @id @default(autoincrement()) @db.UnsignedInt
-  name                   String
-  iso_3166_1             String                   @db.VarChar(6)
+  name                   String                   @unique
+  iso_3166_1             String                   @unique @db.VarChar(6)
   companies              Company[]
   productionCountries    EntryProductionCountry[]
   entryWatchProviders    EntryWatchProvider[]
