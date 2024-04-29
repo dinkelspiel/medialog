@@ -1,6 +1,8 @@
-# Medialog Frontend
+# Medialog
 
-## Run
-
-`pnpm install`
-`pnpm dev`
+> [!IMPORTANT]
+>
+> ## JustWatch 
+> 
+> All data related to Watch Providers for Movies and Series are provided by JustWatch
+>
