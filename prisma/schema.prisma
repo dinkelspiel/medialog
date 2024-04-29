@@ -87,7 +87,7 @@ model Session {
   updatedAt DateTime  @default(now()) @updatedAt
 }
 
-model ProductionCompany {
+model Company {
   id                       Int                      @id @default(autoincrement()) @db.UnsignedInt
   name                     String
   logo                     String
@@ -103,7 +103,7 @@ model Country {
   id                  Int                      @id @default(autoincrement()) @db.UnsignedInt
   name                String
   iso_3166_1          String                   @db.VarChar(6)
-  productionCompanies ProductionCompany[]
+  companies           Company[]
   productionCountries EntryProductionCountry[]
   entryWatchProviders EntryWatchProvider[]
 
@@ -176,11 +176,11 @@ model Job {
 }
 
 model EntryProductionCompany {
-  id                  Int               @id @default(autoincrement()) @db.UnsignedInt
-  entryId             Int               @db.UnsignedInt
-  entry               Entry             @relation(fields: [entryId], references: [id])
-  productionCompanyId Int               @db.UnsignedInt
-  productionCompany   ProductionCompany @relation(fields: [productionCompanyId], references: [id])
+  id        Int     @id @default(autoincrement()) @db.UnsignedInt
+  entryId   Int     @db.UnsignedInt
+  entry     Entry   @relation(fields: [entryId], references: [id])
+  companyId Int     @db.UnsignedInt
+  company   Company @relation(fields: [companyId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
