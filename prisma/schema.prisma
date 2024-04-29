@@ -105,6 +105,7 @@ model Country {
   iso_3166_1          String                   @db.VarChar(6)
   productionCompanies ProductionCompany[]
   productionCountries EntryProductionCountry[]
+  entryWatchProviders EntryWatchProvider[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -257,12 +258,21 @@ model EntryGenre {
   updatedAt DateTime @default(now()) @updatedAt
 }
 
+enum WatchProviderType {
+  buy
+  rent
+  flatrate
+}
+
 model EntryWatchProvider {
-  id              Int           @id @default(autoincrement()) @db.UnsignedInt
-  entryId         Int           @db.UnsignedInt
-  entry           Entry         @relation(fields: [entryId], references: [id])
-  watchProviderId Int           @db.UnsignedInt
-  watchProvider   WatchProvider @relation(fields: [watchProviderId], references: [id])
+  id              Int               @id @default(autoincrement()) @db.UnsignedInt
+  entryId         Int               @db.UnsignedInt
+  entry           Entry             @relation(fields: [entryId], references: [id])
+  watchProviderId Int               @db.UnsignedInt
+  watchProvider   WatchProvider     @relation(fields: [watchProviderId], references: [id])
+  countryId       Int               @db.UnsignedInt
+  country         Country           @relation(fields: [countryId], references: [id])
+  type            WatchProviderType
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
