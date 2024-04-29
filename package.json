@@ -14,7 +14,8 @@
     "lint:fix": "npm run lint -- --fix",
     "prettier": "prettier \"**/*.{js,mjs,ts,tsx,md,mdx,json,yml,css}\" --check --cache --cache-strategy=content --cache-location=.prettiercache",
     "prettier:fix": "npm run prettier -- --write",
-    "format": "npm run lint:fix && npm run prettier:fix"
+    "format": "npm run lint:fix && npm run prettier:fix",
+    "cli": "tsc ./cli/cli.ts --outdir ./cli/dist && node ./cli/dist/cli/cli.js"
   },
   "dependencies": {
     "@prisma/client": "5.11.0",
@@ -39,6 +40,8 @@
     "class-variance-authority": "^0.7.0",
     "clsx": "^2.1.0",
     "cmdk": "^0.2.1",
+    "commander": "^12.0.0",
+    "dotenv": "^16.4.5",
     "google-auth-library": "^9.9.0",
     "googleapis": "^134.0.0",
     "lucide-react": "^0.321.0",
