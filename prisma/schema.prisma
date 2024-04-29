@@ -42,9 +42,9 @@ model UserFollow {
   id Int @id @default(autoincrement()) @db.UnsignedInt
 
   userId   Int  @db.UnsignedInt
-  user     User @relation("follower", fields: [userId], references: [id])
+  user     User @relation("follower", fields: [userId], references: [id], onDelete: Cascade)
   followId Int  @db.UnsignedInt
-  follow   User @relation("followee", fields: [followId], references: [id])
+  follow   User @relation("followee", fields: [followId], references: [id], onDelete: Cascade)
 
   isFollowing Boolean
 
@@ -63,9 +63,9 @@ enum UserEntryStatus {
 model UserEntry {
   id        Int             @id @default(autoincrement()) @db.UnsignedInt
   userId    Int             @db.UnsignedInt
-  user      User            @relation(fields: [userId], references: [id])
+  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
   entryId   Int             @db.UnsignedInt
-  entry     Entry           @relation(fields: [entryId], references: [id])
+  entry     Entry           @relation(fields: [entryId], references: [id], onDelete: Cascade)
   rating    Int             @db.SmallInt
   notes     String          @db.Text
   watchedAt DateTime?
@@ -92,7 +92,7 @@ model Company {
   name                     String
   logo                     String
   countryId                Int                      @db.UnsignedInt
-  country                  Country                  @relation(fields: [countryId], references: [id])
+  country                  Country                  @relation(fields: [countryId], references: [id], onDelete: Cascade)
   tmdbId                   Int                      @db.UnsignedInt
   entryProductionCompanies EntryProductionCompany[]
 
@@ -179,9 +179,9 @@ model Job {
 model EntryProductionCompany {
   id        Int     @id @default(autoincrement()) @db.UnsignedInt
   entryId   Int     @db.UnsignedInt
-  entry     Entry   @relation(fields: [entryId], references: [id])
+  entry     Entry   @relation(fields: [entryId], references: [id], onDelete: Cascade)
   companyId Int     @db.UnsignedInt
-  company   Company @relation(fields: [companyId], references: [id])
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -190,9 +190,9 @@ model EntryProductionCompany {
 model EntryProductionCountry {
   id        Int     @id @default(autoincrement()) @db.UnsignedInt
   entryId   Int     @db.UnsignedInt
-  entry     Entry   @relation(fields: [entryId], references: [id])
+  entry     Entry   @relation(fields: [entryId], references: [id], onDelete: Cascade)
   countryId Int     @db.UnsignedInt
-  country   Country @relation(fields: [countryId], references: [id])
+  country   Country @relation(fields: [countryId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -201,9 +201,9 @@ model EntryProductionCountry {
 model EntrySpokenLanguage {
   id         Int      @id @default(autoincrement()) @db.UnsignedInt
   entryId    Int      @db.UnsignedInt
-  entry      Entry    @relation(fields: [entryId], references: [id])
+  entry      Entry    @relation(fields: [entryId], references: [id], onDelete: Cascade)
   languageId Int      @db.UnsignedInt
-  language   Language @relation(fields: [languageId], references: [id])
+  language   Language @relation(fields: [languageId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -212,9 +212,9 @@ model EntrySpokenLanguage {
 model EntryAlternativeTitle {
   id        Int     @id @default(autoincrement()) @db.UnsignedInt
   entryId   Int     @db.UnsignedInt
-  entry     Entry   @relation(fields: [entryId], references: [id])
+  entry     Entry   @relation(fields: [entryId], references: [id], onDelete: Cascade)
   countryId Int     @db.UnsignedInt
-  country   Country @relation(fields: [countryId], references: [id])
+  country   Country @relation(fields: [countryId], references: [id], onDelete: Cascade)
   title     String
 
   createdAt DateTime @default(now())
@@ -224,9 +224,9 @@ model EntryAlternativeTitle {
 model EntryCast {
   id        Int    @id @default(autoincrement()) @db.UnsignedInt
   entryId   Int    @db.UnsignedInt
-  entry     Entry  @relation(fields: [entryId], references: [id])
+  entry     Entry  @relation(fields: [entryId], references: [id], onDelete: Cascade)
   personId  Int    @db.UnsignedInt
-  person    Person @relation(fields: [personId], references: [id])
+  person    Person @relation(fields: [personId], references: [id], onDelete: Cascade)
   character String
 
   createdAt DateTime @default(now())
@@ -236,13 +236,13 @@ model EntryCast {
 model EntryCrew {
   id           Int        @id @default(autoincrement()) @db.UnsignedInt
   entryId      Int        @db.UnsignedInt
-  entry        Entry      @relation(fields: [entryId], references: [id])
+  entry        Entry      @relation(fields: [entryId], references: [id], onDelete: Cascade)
   personId     Int        @db.UnsignedInt
-  person       Person     @relation(fields: [personId], references: [id])
+  person       Person     @relation(fields: [personId], references: [id], onDelete: Cascade)
   departmentId Int        @db.UnsignedInt
-  department   Department @relation(fields: [departmentId], references: [id])
+  department   Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
   jobId        Int        @db.UnsignedInt
-  job          Job        @relation(fields: [jobId], references: [id])
+  job          Job        @relation(fields: [jobId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -251,9 +251,9 @@ model EntryCrew {
 model EntryGenre {
   id      Int   @id @default(autoincrement()) @db.UnsignedInt
   entryId Int   @db.UnsignedInt
-  entry   Entry @relation(fields: [entryId], references: [id])
+  entry   Entry @relation(fields: [entryId], references: [id], onDelete: Cascade)
   genreId Int   @db.UnsignedInt
-  genre   Genre @relation(fields: [genreId], references: [id])
+  genre   Genre @relation(fields: [genreId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -268,11 +268,11 @@ enum WatchProviderType {
 model EntryWatchProvider {
   id              Int               @id @default(autoincrement()) @db.UnsignedInt
   entryId         Int               @db.UnsignedInt
-  entry           Entry             @relation(fields: [entryId], references: [id])
+  entry           Entry             @relation(fields: [entryId], references: [id], onDelete: Cascade)
   watchProviderId Int               @db.UnsignedInt
-  watchProvider   WatchProvider     @relation(fields: [watchProviderId], references: [id])
+  watchProvider   WatchProvider     @relation(fields: [watchProviderId], references: [id], onDelete: Cascade)
   countryId       Int               @db.UnsignedInt
-  country         Country           @relation(fields: [countryId], references: [id])
+  country         Country           @relation(fields: [countryId], references: [id], onDelete: Cascade)
   type            WatchProviderType
 
   createdAt DateTime @default(now())
@@ -300,15 +300,15 @@ enum Category {
 model Entry {
   id                 Int         @id @default(autoincrement()) @db.UnsignedInt
   collectionId       Int?        @db.UnsignedInt
-  collection         Collection? @relation(fields: [collectionId], references: [id])
+  collection         Collection? @relation(fields: [collectionId], references: [id], onDelete: Cascade)
   category           Category
   originalLanguageId Int         @db.UnsignedInt
-  originalLanguage   Language    @relation(fields: [originalLanguageId], references: [id])
+  originalLanguage   Language    @relation(fields: [originalLanguageId], references: [id], onDelete: Cascade)
   tmdbId             Int         @db.UnsignedInt
   posterPath         String
-  tagline            String
+  tagline            String      @db.Text
   originalTitle      String
-  overview           String
+  overview           String      @db.Text
   backdropPath       String
   length             Int         @db.UnsignedSmallInt
 

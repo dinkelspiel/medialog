@@ -1,5 +1,0 @@
-
-> medialog@0.1.0 cli /home/widi/Coding/medialog
-> tsc ./cli/cli.ts --outdir ./cli/dist && node ./cli/dist/cli/cli.js "populatedb"
-
- ELIFECYCLE  Command failed.

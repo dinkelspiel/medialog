@@ -81,7 +81,7 @@ export const GET = async (request: NextRequest) => {
             name: data.belongs_to_collection.name,
             tmdbId: data.belongs_to_collection.id,
             posterPath: data.belongs_to_collection.poster_path,
-            backdropPath: data.belongs_to_collection.backdropPath,
+            backdropPath: data.belongs_to_collection.backdrop_path,
           },
         })
       ).id;
@@ -149,8 +149,8 @@ export const GET = async (request: NextRequest) => {
     if (!existingWatchProvider) {
       existingWatchProvider = await prisma.watchProvider.create({
         data: {
-          tmdbId: provider.id,
-          name: provider.name,
+          tmdbId: provider.provider_id,
+          name: provider.provider_name,
           logoPath: provider.logo_path,
         },
       });
@@ -175,16 +175,22 @@ export const GET = async (request: NextRequest) => {
   for (const watchProviderCountry of Object.keys(data.watch_providers)) {
     const watchProvider = data.watch_providers[watchProviderCountry];
 
-    for (const provider of watchProvider.rent) {
-      await handleWatchProvider(provider, 'rent', watchProviderCountry);
+    if (watchProvider.rent) {
+      for (const provider of watchProvider.rent) {
+        await handleWatchProvider(provider, 'rent', watchProviderCountry);
+      }
     }
 
-    for (const provider of watchProvider.buy) {
-      await handleWatchProvider(provider, 'buy', watchProviderCountry);
+    if (watchProvider.buy) {
+      for (const provider of watchProvider.buy) {
+        await handleWatchProvider(provider, 'buy', watchProviderCountry);
+      }
     }
 
-    for (const provider of watchProvider.flatrate) {
-      await handleWatchProvider(provider, 'flatrate', watchProviderCountry);
+    if (watchProvider.flatrate) {
+      for (const provider of watchProvider.flatrate) {
+        await handleWatchProvider(provider, 'flatrate', watchProviderCountry);
+      }
     }
   }
 
@@ -284,6 +290,10 @@ export const GET = async (request: NextRequest) => {
       },
     });
 
+    if (!productionCompany.origin_country) {
+      continue;
+    }
+
     if (!existingCompany) {
       existingCompany = await prisma.company.create({
         data: {
@@ -339,5 +349,23 @@ export const GET = async (request: NextRequest) => {
     });
   }
 
-  return Response.json(data);
+  for (const alternativeTitle of data.alternative_titles) {
+    await prisma.entryAlternativeTitle.create({
+      data: {
+        entryId: entry.id,
+        countryId: (
+          await prisma.country.findFirst({
+            where: {
+              iso_3166_1: alternativeTitle.iso_3166_1,
+            },
+          })
+        )?.id!,
+        title: alternativeTitle.title,
+      },
+    });
+  }
+
+  return Response.json({
+    message: `Imported movie ${data.title}`,
+  });
 };
