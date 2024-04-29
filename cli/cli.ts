@@ -11,6 +11,7 @@ config({ path: '.env' });
 program
   .command('populatedb')
   .description('Populate the database with all countries and languages')
+  .option('-f, --file <path>', 'File path override')
   .action(populate);
 
 program.parse(process.argv);
