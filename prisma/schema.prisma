@@ -93,6 +93,7 @@ model Company {
   logo                     String
   countryId                Int                      @db.UnsignedInt
   country                  Country                  @relation(fields: [countryId], references: [id])
+  tmdbId                   Int                      @db.UnsignedInt
   entryProductionCompanies EntryProductionCompany[]
 
   createdAt DateTime @default(now())
