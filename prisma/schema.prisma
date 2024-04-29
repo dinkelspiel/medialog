@@ -298,19 +298,19 @@ enum Category {
 }
 
 model Entry {
-  id                 Int        @id @default(autoincrement()) @db.UnsignedInt
-  collectionId       Int        @db.UnsignedInt
-  collection         Collection @relation(fields: [collectionId], references: [id])
+  id                 Int         @id @default(autoincrement()) @db.UnsignedInt
+  collectionId       Int?        @db.UnsignedInt
+  collection         Collection? @relation(fields: [collectionId], references: [id])
   category           Category
-  originalLanguageId Int        @db.UnsignedInt
-  originalLanguage   Language   @relation(fields: [originalLanguageId], references: [id])
-  tmdbId             Int        @db.UnsignedInt
+  originalLanguageId Int         @db.UnsignedInt
+  originalLanguage   Language    @relation(fields: [originalLanguageId], references: [id])
+  tmdbId             Int         @db.UnsignedInt
   posterPath         String
   tagline            String
   originalTitle      String
   overview           String
   backdropPath       String
-  length             Int        @db.UnsignedSmallInt
+  length             Int         @db.UnsignedSmallInt
 
   productionCompanies EntryProductionCompany[]
   productionCountries EntryProductionCountry[]
