@@ -3,6 +3,19 @@ import { NextRequest } from 'next/server';
 export const dynamic = 'force-dynamic';
 
 export const GET = async (request: NextRequest) => {
+  const id = request.nextUrl.searchParams.get('id');
+
+  if (id === null) {
+    return Response.json({ error: 'No id provided' }, { status: 400 });
+  }
+
+  if (process.env.TMDB_ACCESS_TOKEN === undefined) {
+    return Response.json(
+      { error: 'No TMDB Access Token provided' },
+      { status: 400 }
+    );
+  }
+
   const options = {
     method: 'GET',
     headers: {
@@ -12,19 +25,19 @@ export const GET = async (request: NextRequest) => {
   };
 
   const details = await fetch(
-    'https://api.themoviedb.org/3/movie/889?language=en-US',
+    `https://api.themoviedb.org/3/movie/${id}?language=en-US`,
     options
   );
   const altTitles = await fetch(
-    'https://api.themoviedb.org/3/movie/889/alternative_titles?language=en-US',
+    `https://api.themoviedb.org/3/movie/${id}/alternative_titles?language=en-US`,
     options
   );
   const credits = await fetch(
-    'https://api.themoviedb.org/3/movie/889/credits?language=en-US',
+    `https://api.themoviedb.org/3/movie/${id}/credits?language=en-US`,
     options
   );
   const watchProviders = await fetch(
-    'https://api.themoviedb.org/3/movie/889/watch/providers',
+    `https://api.themoviedb.org/3/movie/${id}/watch/providers`,
     options
   );
 
