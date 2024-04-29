@@ -43,3 +43,5 @@ next-env.d.ts
 
 # lockfile
 pnpm-lock.yaml
+
+cli/dist
