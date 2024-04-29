@@ -222,12 +222,12 @@ model EntryAlternativeTitle {
 }
 
 model EntryCast {
-  id       Int    @id @default(autoincrement()) @db.UnsignedInt
-  entryId  Int    @db.UnsignedInt
-  entry    Entry  @relation(fields: [entryId], references: [id])
-  personId Int    @db.UnsignedInt
-  person   Person @relation(fields: [personId], references: [id])
-  title    String
+  id        Int    @id @default(autoincrement()) @db.UnsignedInt
+  entryId   Int    @db.UnsignedInt
+  entry     Entry  @relation(fields: [entryId], references: [id])
+  personId  Int    @db.UnsignedInt
+  person    Person @relation(fields: [personId], references: [id])
+  character String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
