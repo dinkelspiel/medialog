@@ -1,3 +1,4 @@
+import prisma from '@/server/db';
 import { NextRequest } from 'next/server';
 
 export const dynamic = 'force-dynamic';
@@ -38,7 +39,7 @@ export const GET = async (request: NextRequest) => {
   );
 
   const data = await details.json();
-  data['alternative_titles'] = (await altTitles.json())['titles'];
+  data['alternative_titles'] = (await altTitles.json())['results'];
   data['watch_providers'] = (await watchProviders.json())['results'];
 
   for (var i = 0; i < data.seasons.length; i++) {
@@ -53,5 +54,333 @@ export const GET = async (request: NextRequest) => {
     data.seasons[i].episodes = undefined;
   }
 
-  return Response.json(data);
+  // return Response.json(data);
+
+  let entry = await prisma.entry.findFirst({
+    where: {
+      tmdbId: data.id,
+      category: 'Series',
+    },
+  });
+
+  if (entry) {
+    return Response.json(
+      {
+        error: 'TMDB Series with id already imported',
+      },
+      { status: 400 }
+    );
+  }
+
+  let collectionId = undefined;
+
+  const existingCollection = await prisma.collection.findFirst({
+    where: {
+      tmdbId: data.id,
+    },
+  });
+
+  if (!existingCollection) {
+    collectionId = (
+      await prisma.collection.create({
+        data: {
+          name: data.original_name,
+          tmdbId: data.id,
+          posterPath: data.poster_path,
+          backdropPath: data.backdrop_path,
+        },
+      })
+    ).id;
+  } else {
+    collectionId = existingCollection.id;
+  }
+
+  for (const season of data.seasons) {
+    entry = await prisma.entry.create({
+      data: {
+        originalTitle: `${data.original_name}: ${season.name}`,
+        tmdbId: season.id,
+        collectionId,
+        posterPath: season.poster_path,
+        tagline: data.tagline,
+        overview: season.overview,
+        backdropPath: data.backdrop_path,
+        category: 'Series',
+        length: season.episode_count,
+        originalLanguageId: (
+          await prisma.language.findFirst({
+            where: {
+              iso_639_1: data.original_language,
+            },
+          })
+        )?.id!,
+      },
+    });
+
+    for (const genre of data.genres) {
+      let existingGenre = await prisma.genre.findFirst({
+        where: {
+          tmdbId: genre.id,
+        },
+      });
+
+      if (!existingGenre) {
+        existingGenre = await prisma.genre.create({
+          data: {
+            tmdbId: genre.id,
+            name: genre.name,
+          },
+        });
+      }
+
+      await prisma.entryGenre.create({
+        data: {
+          genreId: existingGenre.id,
+          entryId: entry.id,
+        },
+      });
+    }
+
+    const handleWatchProvider = async (
+      provider: any,
+      type: 'rent' | 'buy' | 'flatrate',
+      countryISO: string
+    ) => {
+      let existingWatchProvider = await prisma.watchProvider.findFirst({
+        where: {
+          tmdbId: provider.provider_id,
+        },
+      });
+
+      if (!existingWatchProvider) {
+        existingWatchProvider = await prisma.watchProvider.create({
+          data: {
+            tmdbId: provider.provider_id,
+            name: provider.provider_name,
+            logoPath: provider.logo_path,
+          },
+        });
+      }
+
+      await prisma.entryWatchProvider.create({
+        data: {
+          watchProviderId: existingWatchProvider.id,
+          entryId: entry?.id!,
+          type,
+          countryId: (
+            await prisma.country.findFirst({
+              where: {
+                iso_3166_1: countryISO,
+              },
+            })
+          )?.id!,
+        },
+      });
+    };
+
+    for (const watchProviderCountry of Object.keys(data.watch_providers)) {
+      const watchProvider = data.watch_providers[watchProviderCountry];
+
+      if (watchProvider.rent) {
+        for (const provider of watchProvider.rent) {
+          await handleWatchProvider(provider, 'rent', watchProviderCountry);
+        }
+      }
+
+      if (watchProvider.buy) {
+        for (const provider of watchProvider.buy) {
+          await handleWatchProvider(provider, 'buy', watchProviderCountry);
+        }
+      }
+
+      if (watchProvider.flatrate) {
+        for (const provider of watchProvider.flatrate) {
+          await handleWatchProvider(provider, 'flatrate', watchProviderCountry);
+        }
+      }
+    }
+
+    for (const person of season.cast) {
+      let existingPerson = await prisma.person.findFirst({
+        where: {
+          tmdbId: person.id,
+        },
+      });
+
+      if (!existingPerson) {
+        existingPerson = await prisma.person.create({
+          data: {
+            name: person.name,
+            tmdbId: person.id,
+            gender: person.gender,
+            profilePath: person.profile_path,
+          },
+        });
+      }
+
+      await prisma.entryCast.create({
+        data: {
+          personId: existingPerson.id,
+          entryId: entry.id,
+          character: person.character,
+        },
+      });
+    }
+
+    for (const person of season.crew) {
+      // Check for person
+
+      let existingPerson = await prisma.person.findFirst({
+        where: {
+          tmdbId: person.id,
+        },
+      });
+
+      if (!existingPerson) {
+        existingPerson = await prisma.person.create({
+          data: {
+            name: person.name,
+            tmdbId: person.id,
+            gender: person.gender,
+            profilePath: person.profile_path,
+          },
+        });
+      }
+
+      // Check for Department
+
+      let existingDepartment = await prisma.department.findFirst({
+        where: {
+          name: person.department,
+        },
+      });
+
+      if (!existingDepartment) {
+        existingDepartment = await prisma.department.create({
+          data: {
+            name: person.department,
+          },
+        });
+      }
+
+      // Check for job
+
+      let existingJob = await prisma.job.findFirst({
+        where: {
+          name: person.job,
+        },
+      });
+
+      if (!existingJob) {
+        existingJob = await prisma.job.create({
+          data: {
+            name: person.job,
+          },
+        });
+      }
+
+      await prisma.entryCrew.create({
+        data: {
+          personId: existingPerson.id,
+          entryId: entry.id,
+          departmentId: existingDepartment.id,
+          jobId: existingJob.id,
+        },
+      });
+    }
+
+    for (const productionCompany of data.production_companies) {
+      let existingCompany = await prisma.company.findFirst({
+        where: {
+          tmdbId: productionCompany.id,
+        },
+      });
+
+      if (!existingCompany) {
+        const country = await prisma.country.findFirst({
+          where: {
+            iso_3166_1: productionCompany.origin_country,
+          },
+        });
+
+        existingCompany = await prisma.company.create({
+          data: {
+            tmdbId: productionCompany.id,
+            logo: productionCompany.logo_path ?? '',
+            name: productionCompany.name,
+            country: {
+              connectOrCreate: {
+                where: {
+                  id: country?.id,
+                },
+                create: {
+                  iso_3166_1: productionCompany.origin_country,
+                  name:
+                    'Forgotten Country Added ' +
+                    productionCompany.origin_country,
+                },
+              },
+            },
+          },
+        });
+      }
+
+      await prisma.entryProductionCompany.create({
+        data: {
+          entryId: entry.id,
+          companyId: existingCompany.id,
+        },
+      });
+    }
+
+    for (const productionCountry of data.production_countries) {
+      await prisma.entryProductionCountry.create({
+        data: {
+          entryId: entry.id,
+          countryId: (
+            await prisma.country.findFirst({
+              where: {
+                iso_3166_1: productionCountry.iso_3166_1,
+              },
+            })
+          )?.id!,
+        },
+      });
+    }
+
+    for (const spokenLanguages of data.spoken_languages) {
+      await prisma.entrySpokenLanguage.create({
+        data: {
+          entryId: entry.id,
+          languageId: (
+            await prisma.language.findFirst({
+              where: {
+                iso_639_1: spokenLanguages.iso_639_1,
+              },
+            })
+          )?.id!,
+        },
+      });
+    }
+
+    for (const alternativeTitle of data.alternative_titles) {
+      await prisma.entryAlternativeTitle.create({
+        data: {
+          entryId: entry.id,
+          countryId: (
+            await prisma.country.findFirst({
+              where: {
+                iso_3166_1: alternativeTitle.iso_3166_1,
+              },
+            })
+          )?.id!,
+          title: `${alternativeTitle.title}: ${season.name}`,
+        },
+      });
+    }
+  }
+
+  return Response.json({
+    message: `Imported series ${data.original_name}`,
+  });
 };

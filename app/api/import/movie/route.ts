@@ -53,6 +53,7 @@ export const GET = async (request: NextRequest) => {
   let entry = await prisma.entry.findFirst({
     where: {
       tmdbId: data.id,
+      category: 'Movie',
     },
   });
 
@@ -207,7 +208,7 @@ export const GET = async (request: NextRequest) => {
           name: person.name,
           tmdbId: person.id,
           gender: person.gender,
-          profilePath: person.profilePath,
+          profilePath: person.profile_path,
         },
       });
     }
@@ -236,7 +237,7 @@ export const GET = async (request: NextRequest) => {
           name: person.name,
           tmdbId: person.id,
           gender: person.gender,
-          profilePath: person.profilePath,
+          profilePath: person.profile_path,
         },
       });
     }
@@ -296,6 +297,10 @@ export const GET = async (request: NextRequest) => {
           iso_3166_1: productionCompany.origin_country,
         },
       });
+
+      if (!productionCompany.origin_country) {
+        continue;
+      }
 
       existingCompany = await prisma.company.create({
         data: {

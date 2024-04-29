@@ -11,6 +11,17 @@ services:
       MYSQL_DATABASE: database
     volumes:
       - mysql:/var/lib/mysql
+  phpmyadmin:
+    image: phpmyadmin
+    restart: always
+    ports:
+      - 8080:80
+    environment:
+      - PMA_ARBITRARY=1
+      - PMA_PORT=3306
+      - PMA_HOST=mysql
+      - PMA_USER=root
+      - PMA_PASSWORD=prisma
   prod:
     build:
       dockerfile: Dockerfile
