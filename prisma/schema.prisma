@@ -128,7 +128,7 @@ model Person {
   name        String
   tmdbId      Int         @db.UnsignedInt
   gender      Int         @db.TinyInt
-  profilePath String
+  profilePath String?
   memberCasts EntryCast[]
   memberCrews EntryCrew[]
 
