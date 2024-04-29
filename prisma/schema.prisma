@@ -32,6 +32,47 @@ model User {
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
+
+  following UserFollow[] @relation("follower")
+  followers UserFollow[] @relation("followee")
+  UserEntry UserEntry[]
+}
+
+model UserFollow {
+  id Int @id @default(autoincrement()) @db.UnsignedInt
+
+  userId   Int  @db.UnsignedInt
+  user     User @relation("follower", fields: [userId], references: [id])
+  followId Int  @db.UnsignedInt
+  follow   User @relation("followee", fields: [followId], references: [id])
+
+  isFollowing Boolean
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+enum UserEntryStatus {
+  planning
+  watching
+  dnf
+  paused
+  completed
+}
+
+model UserEntry {
+  id        Int             @id @default(autoincrement()) @db.UnsignedInt
+  userId    Int             @db.UnsignedInt
+  user      User            @relation(fields: [userId], references: [id])
+  entryId   Int             @db.UnsignedInt
+  entry     Entry           @relation(fields: [entryId], references: [id])
+  rating    Int             @db.SmallInt
+  notes     String          @db.Text
+  watchedAt DateTime?
+  status    UserEntryStatus @default(planning)
+  progress  Int             @db.UnsignedSmallInt
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @default(now()) @updatedAt
 }
 
 model Session {
@@ -44,4 +85,235 @@ model Session {
   userAgent String
   createdAt DateTime  @default(now())
   updatedAt DateTime  @default(now()) @updatedAt
+}
+
+model ProductionCompany {
+  id                       Int                      @id @default(autoincrement()) @db.UnsignedInt
+  name                     String
+  logo                     String
+  countryId                Int                      @db.UnsignedInt
+  country                  Country                  @relation(fields: [countryId], references: [id])
+  entryProductionCompanies EntryProductionCompany[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Country {
+  id                  Int                      @id @default(autoincrement()) @db.UnsignedInt
+  name                String
+  iso_3166_1          String                   @db.VarChar(6)
+  productionCompanies ProductionCompany[]
+  productionCountries EntryProductionCountry[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Language {
+  id                Int                     @id @default(autoincrement()) @db.UnsignedInt
+  name              String
+  iso_639_1         String                  @db.VarChar(6)
+  spokenLanguages   EntrySpokenLanguage[]
+  alternativeTitles EntryAlternativeTitle[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+  Entry     Entry[]
+}
+
+model Person {
+  id          Int         @id @default(autoincrement()) @db.UnsignedInt
+  name        String
+  tmdbId      Int         @db.UnsignedInt
+  gender      Int         @db.TinyInt
+  profilePath String
+  memberCasts EntryCast[]
+  memberCrews EntryCrew[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Genre {
+  id      Int          @id @default(autoincrement()) @db.UnsignedInt
+  name    String
+  tmdbId  Int          @db.UnsignedInt
+  entries EntryGenre[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model WatchProvider {
+  id       Int                  @id @default(autoincrement()) @db.UnsignedInt
+  name     String
+  tmdbId   Int                  @db.UnsignedInt
+  logoPath String
+  entries  EntryWatchProvider[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Department {
+  id   Int         @id @default(autoincrement()) @db.UnsignedInt
+  name String
+  crew EntryCrew[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Job {
+  id   Int         @id @default(autoincrement()) @db.UnsignedInt
+  name String
+  crew EntryCrew[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model EntryProductionCompany {
+  id                  Int               @id @default(autoincrement()) @db.UnsignedInt
+  entryId             Int               @db.UnsignedInt
+  entry               Entry             @relation(fields: [entryId], references: [id])
+  productionCompanyId Int               @db.UnsignedInt
+  productionCompany   ProductionCompany @relation(fields: [productionCompanyId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model EntryProductionCountry {
+  id        Int     @id @default(autoincrement()) @db.UnsignedInt
+  entryId   Int     @db.UnsignedInt
+  entry     Entry   @relation(fields: [entryId], references: [id])
+  countryId Int     @db.UnsignedInt
+  country   Country @relation(fields: [countryId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model EntrySpokenLanguage {
+  id         Int      @id @default(autoincrement()) @db.UnsignedInt
+  entryId    Int      @db.UnsignedInt
+  entry      Entry    @relation(fields: [entryId], references: [id])
+  languageId Int      @db.UnsignedInt
+  language   Language @relation(fields: [languageId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model EntryAlternativeTitle {
+  id         Int      @id @default(autoincrement()) @db.UnsignedInt
+  entryId    Int      @db.UnsignedInt
+  entry      Entry    @relation(fields: [entryId], references: [id])
+  languageId Int      @db.UnsignedInt
+  language   Language @relation(fields: [languageId], references: [id])
+  title      String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model EntryCast {
+  id       Int    @id @default(autoincrement()) @db.UnsignedInt
+  entryId  Int    @db.UnsignedInt
+  entry    Entry  @relation(fields: [entryId], references: [id])
+  personId Int    @db.UnsignedInt
+  person   Person @relation(fields: [personId], references: [id])
+  title    String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model EntryCrew {
+  id           Int        @id @default(autoincrement()) @db.UnsignedInt
+  entryId      Int        @db.UnsignedInt
+  entry        Entry      @relation(fields: [entryId], references: [id])
+  personId     Int        @db.UnsignedInt
+  person       Person     @relation(fields: [personId], references: [id])
+  departmentId Int        @db.UnsignedInt
+  department   Department @relation(fields: [departmentId], references: [id])
+  jobId        Int        @db.UnsignedInt
+  job          Job        @relation(fields: [jobId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model EntryGenre {
+  id      Int   @id @default(autoincrement()) @db.UnsignedInt
+  entryId Int   @db.UnsignedInt
+  entry   Entry @relation(fields: [entryId], references: [id])
+  genreId Int   @db.UnsignedInt
+  genre   Genre @relation(fields: [genreId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model EntryWatchProvider {
+  id              Int           @id @default(autoincrement()) @db.UnsignedInt
+  entryId         Int           @db.UnsignedInt
+  entry           Entry         @relation(fields: [entryId], references: [id])
+  watchProviderId Int           @db.UnsignedInt
+  watchProvider   WatchProvider @relation(fields: [watchProviderId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Collection {
+  id           Int     @id @default(autoincrement()) @db.UnsignedInt
+  name         String
+  tmdbId       Int     @db.UnsignedInt
+  posterPath   String
+  backdropPath String
+  entries      Entry[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Category {
+  id        Int      @id @default(autoincrement()) @db.UnsignedTinyInt
+  name      String
+  entries   Entry[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model Entry {
+  id                 Int        @id @default(autoincrement()) @db.UnsignedInt
+  collectionId       Int        @db.UnsignedInt
+  collection         Collection @relation(fields: [collectionId], references: [id])
+  categoryId         Int        @db.UnsignedTinyInt
+  category           Category   @relation(fields: [categoryId], references: [id])
+  originalLanguageId Int        @db.UnsignedInt
+  originalLanguage   Language   @relation(fields: [originalLanguageId], references: [id])
+  tmdbId             Int        @db.UnsignedInt
+  posterPath         String
+  tagline            String
+  originalTitle      String
+  overview           String
+  backdropPath       String
+  length             Int        @db.UnsignedSmallInt
+
+  productionCompanies EntryProductionCompany[]
+  productionCountries EntryProductionCountry[]
+  spokenLanguage      EntrySpokenLanguage[]
+  alternativeTitles   EntryAlternativeTitle[]
+  cast                EntryCast[]
+  crew                EntryCrew[]
+  genres              EntryGenre[]
+  watchProviders      EntryWatchProvider[]
+
+  createdAt DateTime    @default(now())
+  updatedAt DateTime    @default(now()) @updatedAt
+  UserEntry UserEntry[]
 }
