@@ -280,22 +280,23 @@ model EntryWatchProvider {
   updatedAt DateTime @default(now()) @updatedAt
 }
 
-model Collection {
-  id           Int     @id @default(autoincrement()) @db.UnsignedInt
-  name         String
-  tmdbId       Int     @db.UnsignedInt
-  posterPath   String
-  backdropPath String
-  entries      Entry[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @default(now()) @updatedAt
-}
-
 enum Category {
   Series
   Movie
   Book
+}
+
+model Collection {
+  id           Int      @id @default(autoincrement()) @db.UnsignedInt
+  name         String
+  tmdbId       Int      @db.UnsignedInt
+  posterPath   String
+  backdropPath String
+  type         Category
+  entries      Entry[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Entry {
