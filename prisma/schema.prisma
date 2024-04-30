@@ -116,7 +116,8 @@ model Country {
 model Language {
   id              Int                   @id @default(autoincrement()) @db.UnsignedInt
   name            String
-  iso_639_1       String                @db.VarChar(6)
+  iso_639_1       String?               @db.VarChar(2)
+  iso_639_2       String                @db.VarChar(3)
   spokenLanguages EntrySpokenLanguage[]
 
   createdAt DateTime @default(now())
