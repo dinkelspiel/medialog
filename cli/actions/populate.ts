@@ -51,7 +51,7 @@ export const populateCountries = async (options: {
         },
       });
 
-      console.log(`${entry.countryLabel.value} ${entry.iso_code.value}`);
+      console.log(`${entry.countryLabel.value} ${entry.isoCode.value}`);
     }
   }
 
