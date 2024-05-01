@@ -86,8 +86,9 @@ export const GET = async (request: NextRequest) => {
         data: {
           name: data.original_name,
           foreignId: data.id.toString(),
-          posterPath: data.poster_path,
-          backdropPath: data.backdrop_path,
+          posterPath: 'https://image.tmdb.org/t/p/original/' + data.poster_path,
+          backdropPath:
+            'https://image.tmdb.org/t/p/original/' + data.backdrop_path,
           type: 'Series',
         },
       })
@@ -102,7 +103,7 @@ export const GET = async (request: NextRequest) => {
         originalTitle: `${data.original_name}: ${season.name}`,
         foreignId: season.id.toString(),
         collectionId,
-        posterPath: season.poster_path,
+        posterPath: 'https://image.tmdb.org/t/p/original/' + season.poster_path,
         tagline: data.tagline,
         overview: season.overview,
         backdropPath: data.backdrop_path,
@@ -164,18 +165,22 @@ export const GET = async (request: NextRequest) => {
         });
       }
 
+      const language = await prisma.country.findFirst({
+        where: {
+          iso_3166_1: countryISO,
+        },
+      });
+
+      if (!language) {
+        return;
+      }
+
       await prisma.entryWatchProvider.create({
         data: {
           watchProviderId: existingWatchProvider.id,
           entryId: entry?.id!,
           type,
-          countryId: (
-            await prisma.country.findFirst({
-              where: {
-                iso_3166_1: countryISO,
-              },
-            })
-          )?.id!,
+          countryId: language.id,
         },
       });
     };
@@ -368,14 +373,14 @@ export const GET = async (request: NextRequest) => {
     for (const alternativeTitle of data.alternative_titles) {
       await prisma.entryAlternativeTitle.create({
         data: {
-          entryId: entry.id,
+          entryId: entry.id!,
           countryId: (
             await prisma.country.findFirst({
               where: {
                 iso_3166_1: alternativeTitle.iso_3166_1,
               },
             })
-          )?.id!,
+          )?.id,
           title: `${alternativeTitle.title}: ${season.name}`,
         },
       });
