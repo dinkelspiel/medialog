@@ -58,7 +58,7 @@ export const GET = async (request: NextRequest) => {
 
   let entry = await prisma.entry.findFirst({
     where: {
-      tmdbId: data.id,
+      foreignId: data.id,
       category: 'Series',
     },
   });
@@ -76,7 +76,7 @@ export const GET = async (request: NextRequest) => {
 
   const existingCollection = await prisma.collection.findFirst({
     where: {
-      tmdbId: data.id,
+      foreignId: data.id,
     },
   });
 
@@ -85,9 +85,10 @@ export const GET = async (request: NextRequest) => {
       await prisma.collection.create({
         data: {
           name: data.original_name,
-          tmdbId: data.id,
+          foreignId: data.id,
           posterPath: data.poster_path,
           backdropPath: data.backdrop_path,
+          type: 'Series',
         },
       })
     ).id;
@@ -99,7 +100,7 @@ export const GET = async (request: NextRequest) => {
     entry = await prisma.entry.create({
       data: {
         originalTitle: `${data.original_name}: ${season.name}`,
-        tmdbId: season.id,
+        foreignId: season.id,
         collectionId,
         posterPath: season.poster_path,
         tagline: data.tagline,
@@ -120,14 +121,14 @@ export const GET = async (request: NextRequest) => {
     for (const genre of data.genres) {
       let existingGenre = await prisma.genre.findFirst({
         where: {
-          tmdbId: genre.id,
+          foreignId: genre.id,
         },
       });
 
       if (!existingGenre) {
         existingGenre = await prisma.genre.create({
           data: {
-            tmdbId: genre.id,
+            foreignId: genre.id,
             name: genre.name,
           },
         });
@@ -148,14 +149,14 @@ export const GET = async (request: NextRequest) => {
     ) => {
       let existingWatchProvider = await prisma.watchProvider.findFirst({
         where: {
-          tmdbId: provider.provider_id,
+          foreignId: provider.provider_id,
         },
       });
 
       if (!existingWatchProvider) {
         existingWatchProvider = await prisma.watchProvider.create({
           data: {
-            tmdbId: provider.provider_id,
+            foreignId: provider.provider_id,
             name: provider.provider_name,
             logoPath: provider.logo_path,
           },
@@ -203,7 +204,7 @@ export const GET = async (request: NextRequest) => {
     for (const person of season.cast) {
       let existingPerson = await prisma.person.findFirst({
         where: {
-          tmdbId: person.id,
+          foreignId: person.id,
         },
       });
 
@@ -211,7 +212,7 @@ export const GET = async (request: NextRequest) => {
         existingPerson = await prisma.person.create({
           data: {
             name: person.name,
-            tmdbId: person.id,
+            foreignId: person.id,
             gender: person.gender,
             profilePath: person.profile_path,
           },
@@ -232,7 +233,7 @@ export const GET = async (request: NextRequest) => {
 
       let existingPerson = await prisma.person.findFirst({
         where: {
-          tmdbId: person.id,
+          foreignId: person.id,
         },
       });
 
@@ -240,7 +241,7 @@ export const GET = async (request: NextRequest) => {
         existingPerson = await prisma.person.create({
           data: {
             name: person.name,
-            tmdbId: person.id,
+            foreignId: person.id,
             gender: person.gender,
             profilePath: person.profile_path,
           },
@@ -292,7 +293,7 @@ export const GET = async (request: NextRequest) => {
     for (const productionCompany of data.production_companies) {
       let existingCompany = await prisma.company.findFirst({
         where: {
-          tmdbId: productionCompany.id,
+          foreignId: productionCompany.id,
         },
       });
 
@@ -305,7 +306,7 @@ export const GET = async (request: NextRequest) => {
 
         existingCompany = await prisma.company.create({
           data: {
-            tmdbId: productionCompany.id,
+            foreignId: productionCompany.id,
             logo: productionCompany.logo_path ?? '',
             name: productionCompany.name,
             country: {
