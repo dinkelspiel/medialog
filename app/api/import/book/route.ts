@@ -28,6 +28,12 @@ export const GET = async (request: NextRequest) => {
     await fetch(`https://openlibrary.org/works/${id}/editions.json`, options)
   ).json();
 
+  if (work.error) {
+    return Response.json({
+      error: work.error,
+    });
+  }
+
   let editions = editionsData.entries;
 
   for (let offset = 50; offset < editionsData.size; offset += 50) {
