@@ -30,11 +30,11 @@ export const GET = async (request: NextRequest) => {
     options
   );
   const altTitles = await fetch(
-    `https://api.themoviedb.org/3/tv/${id}/alternative_titles`,
+    `https://api.themoviedb.org/3/tv/${id}/alternative_titles?language=en-US`,
     options
   );
   const watchProviders = await fetch(
-    `https://api.themoviedb.org/3/tv/${id}/watch/providers`,
+    `https://api.themoviedb.org/3/tv/${id}/watch/providers?language=en-US`,
     options
   );
 
@@ -58,7 +58,7 @@ export const GET = async (request: NextRequest) => {
 
   let entry = await prisma.entry.findFirst({
     where: {
-      foreignId: data.id,
+      foreignId: data.id.toString(),
       category: 'Series',
     },
   });
@@ -76,7 +76,7 @@ export const GET = async (request: NextRequest) => {
 
   const existingCollection = await prisma.collection.findFirst({
     where: {
-      foreignId: data.id,
+      foreignId: data.id.toString(),
     },
   });
 
@@ -85,7 +85,7 @@ export const GET = async (request: NextRequest) => {
       await prisma.collection.create({
         data: {
           name: data.original_name,
-          foreignId: data.id,
+          foreignId: data.id.toString(),
           posterPath: data.poster_path,
           backdropPath: data.backdrop_path,
           type: 'Series',
@@ -100,13 +100,14 @@ export const GET = async (request: NextRequest) => {
     entry = await prisma.entry.create({
       data: {
         originalTitle: `${data.original_name}: ${season.name}`,
-        foreignId: season.id,
+        foreignId: season.id.toString(),
         collectionId,
         posterPath: season.poster_path,
         tagline: data.tagline,
         overview: season.overview,
         backdropPath: data.backdrop_path,
         category: 'Series',
+        releaseDate: new Date(season.air_date),
         length: season.episode_count,
         originalLanguageId: (
           await prisma.language.findFirst({
@@ -121,14 +122,14 @@ export const GET = async (request: NextRequest) => {
     for (const genre of data.genres) {
       let existingGenre = await prisma.genre.findFirst({
         where: {
-          foreignId: genre.id,
+          foreignId: genre.id.toString(),
         },
       });
 
       if (!existingGenre) {
         existingGenre = await prisma.genre.create({
           data: {
-            foreignId: genre.id,
+            foreignId: genre.id.toString(),
             name: genre.name,
           },
         });
@@ -149,14 +150,14 @@ export const GET = async (request: NextRequest) => {
     ) => {
       let existingWatchProvider = await prisma.watchProvider.findFirst({
         where: {
-          foreignId: provider.provider_id,
+          foreignId: provider.provider_id.toString(),
         },
       });
 
       if (!existingWatchProvider) {
         existingWatchProvider = await prisma.watchProvider.create({
           data: {
-            foreignId: provider.provider_id,
+            foreignId: provider.provider_id.toString(),
             name: provider.provider_name,
             logoPath: provider.logo_path,
           },
@@ -204,7 +205,7 @@ export const GET = async (request: NextRequest) => {
     for (const person of season.cast) {
       let existingPerson = await prisma.person.findFirst({
         where: {
-          foreignId: person.id,
+          foreignId: person.id.toString(),
         },
       });
 
@@ -212,7 +213,7 @@ export const GET = async (request: NextRequest) => {
         existingPerson = await prisma.person.create({
           data: {
             name: person.name,
-            foreignId: person.id,
+            foreignId: person.id.toString(),
             gender: person.gender,
             profilePath: person.profile_path,
           },
@@ -233,7 +234,7 @@ export const GET = async (request: NextRequest) => {
 
       let existingPerson = await prisma.person.findFirst({
         where: {
-          foreignId: person.id,
+          foreignId: person.id.toString(),
         },
       });
 
@@ -241,7 +242,7 @@ export const GET = async (request: NextRequest) => {
         existingPerson = await prisma.person.create({
           data: {
             name: person.name,
-            foreignId: person.id,
+            foreignId: person.id.toString(),
             gender: person.gender,
             profilePath: person.profile_path,
           },
@@ -293,7 +294,7 @@ export const GET = async (request: NextRequest) => {
     for (const productionCompany of data.production_companies) {
       let existingCompany = await prisma.company.findFirst({
         where: {
-          foreignId: productionCompany.id,
+          foreignId: productionCompany.id.toString(),
         },
       });
 
@@ -306,7 +307,7 @@ export const GET = async (request: NextRequest) => {
 
         existingCompany = await prisma.company.create({
           data: {
-            foreignId: productionCompany.id,
+            foreignId: productionCompany.id.toString(),
             logo: productionCompany.logo_path ?? '',
             name: productionCompany.name,
             country: {

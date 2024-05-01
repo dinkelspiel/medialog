@@ -312,6 +312,7 @@ model Entry {
   originalTitle      String
   overview           String      @db.Text
   backdropPath       String
+  releaseDate        DateTime
   length             Int         @db.UnsignedSmallInt
 
   productionCompanies EntryProductionCompany[]
