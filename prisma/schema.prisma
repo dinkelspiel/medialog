@@ -93,7 +93,7 @@ model Company {
   logo                     String?
   countryId                Int                      @db.UnsignedInt
   country                  Country                  @relation(fields: [countryId], references: [id], onDelete: Cascade)
-  tmdbId                   Int                      @db.UnsignedInt
+  foreignId                String
   entryProductionCompanies EntryProductionCompany[]
 
   createdAt DateTime @default(now())
@@ -128,7 +128,7 @@ model Language {
 model Person {
   id          Int         @id @default(autoincrement()) @db.UnsignedInt
   name        String
-  tmdbId      Int         @db.UnsignedInt
+  foreignId   String
   gender      Int         @db.TinyInt
   profilePath String?
   memberCasts EntryCast[]
@@ -139,21 +139,21 @@ model Person {
 }
 
 model Genre {
-  id      Int          @id @default(autoincrement()) @db.UnsignedInt
-  name    String
-  tmdbId  Int          @db.UnsignedInt
-  entries EntryGenre[]
+  id        Int          @id @default(autoincrement()) @db.UnsignedInt
+  name      String
+  foreignId String
+  entries   EntryGenre[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 }
 
 model WatchProvider {
-  id       Int                  @id @default(autoincrement()) @db.UnsignedInt
-  name     String
-  tmdbId   Int                  @db.UnsignedInt
-  logoPath String
-  entries  EntryWatchProvider[]
+  id        Int                  @id @default(autoincrement()) @db.UnsignedInt
+  name      String
+  foreignId String
+  logoPath  String
+  entries   EntryWatchProvider[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -289,7 +289,7 @@ enum Category {
 model Collection {
   id           Int      @id @default(autoincrement()) @db.UnsignedInt
   name         String
-  tmdbId       Int      @db.UnsignedInt
+  foreignId    String
   posterPath   String
   backdropPath String
   type         Category
@@ -306,7 +306,7 @@ model Entry {
   category           Category
   originalLanguageId Int         @db.UnsignedInt
   originalLanguage   Language    @relation(fields: [originalLanguageId], references: [id], onDelete: Cascade)
-  tmdbId             Int         @db.UnsignedInt
+  foreignId          String
   posterPath         String
   tagline            String      @db.Text
   originalTitle      String
