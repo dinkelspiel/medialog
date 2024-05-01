@@ -66,12 +66,9 @@ export const populateLanguages = async (options: {
     const endpointUrl: string = 'https://query.wikidata.org/sparql';
     const sparqlQuery: string = `SELECT ?languageLabel ?iso_639_1 ?iso_639_2
     WHERE {
-      ?language wdt:P31 wd:Q34770.
-      OPTIONAL { ?language wdt:P218 ?iso_639_1. }
-      OPTIONAL { ?language wdt:P219 ?iso_639_2. }
-      FILTER((BOUND(?iso6391) || BOUND(?iso_639_2)))
-      ?language rdfs:label ?englishName.
-      FILTER(LANG(?englishName) = "en")
+      ?language wdt:P31/wdt:P279* wd:Q34770;
+                wdt:P305 ?iso_639_1;           
+                wdt:P219 ?iso_639_2.       
       SERVICE wikibase:label { bd:serviceParam wikibase:language "en". }
     }`;
 
@@ -107,7 +104,9 @@ export const populateLanguages = async (options: {
       await prisma.language.create({
         data: {
           name: entry.languageLabel.value,
-          iso_639_1: entry.iso_639_1 ? entry.iso_639_1.value : undefined,
+          iso_639_1: entry.iso_639_1
+            ? entry.iso_639_1.value[0] + entry.iso_639_1.value[1]
+            : undefined,
           iso_639_2: entry.iso_639_2.value,
         },
       });

@@ -104,6 +104,8 @@ export const GET = async (request: NextRequest) => {
   }
 
   for (const season of data.seasons) {
+    console.log(data);
+
     entry = await prisma.entry.create({
       data: {
         originalTitle: `${data.original_name}: ${season.name}`,
