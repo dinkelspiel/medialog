@@ -114,11 +114,12 @@ model Country {
 }
 
 model Language {
-  id              Int                   @id @default(autoincrement()) @db.UnsignedInt
-  name            String
-  iso_639_1       String?               @db.VarChar(2)
-  iso_639_2       String                @db.VarChar(3)
-  spokenLanguages EntrySpokenLanguage[]
+  id                     Int                     @id @default(autoincrement()) @db.UnsignedInt
+  name                   String
+  iso_639_1              String?                 @db.VarChar(2)
+  iso_639_2              String                  @db.VarChar(3)
+  spokenLanguages        EntrySpokenLanguage[]
+  entryAlternativeTitles EntryAlternativeTitle[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -211,12 +212,14 @@ model EntrySpokenLanguage {
 }
 
 model EntryAlternativeTitle {
-  id        Int     @id @default(autoincrement()) @db.UnsignedInt
-  entryId   Int     @db.UnsignedInt
-  entry     Entry   @relation(fields: [entryId], references: [id], onDelete: Cascade)
-  countryId Int     @db.UnsignedInt
-  country   Country @relation(fields: [countryId], references: [id], onDelete: Cascade)
-  title     String
+  id         Int       @id @default(autoincrement()) @db.UnsignedInt
+  entryId    Int       @db.UnsignedInt
+  entry      Entry     @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  countryId  Int?      @db.UnsignedInt
+  country    Country?  @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  languageId Int?      @db.UnsignedInt
+  language   Language? @relation(fields: [languageId], references: [id], onDelete: Cascade)
+  title      String
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt

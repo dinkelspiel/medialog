@@ -81,8 +81,12 @@ export const GET = async (request: NextRequest) => {
           data: {
             name: data.belongs_to_collection.name,
             foreignId: data.belongs_to_collection.id.toString(),
-            posterPath: data.belongs_to_collection.poster_path,
-            backdropPath: data.belongs_to_collection.backdrop_path,
+            posterPath:
+              'https://image.tmdb.org/t/p/original/' +
+              data.belongs_to_collection.poster_path,
+            backdropPath:
+              'https://image.tmdb.org/t/p/original/' +
+              data.belongs_to_collection.backdrop_path,
             type: 'Movie',
           },
         })
@@ -97,10 +101,10 @@ export const GET = async (request: NextRequest) => {
       originalTitle: data.original_title,
       foreignId: data.id.toString(),
       collectionId,
-      posterPath: data.poster_path,
+      posterPath: 'https://image.tmdb.org/t/p/original/' + data.poster_path,
       tagline: data.tagline,
       overview: data.overview,
-      backdropPath: data.backdrop_path,
+      backdropPath: 'https://image.tmdb.org/t/p/original/' + data.backdrop_path,
       category: 'Movie',
       releaseDate: new Date(data.release_date),
       length: data.runtime,
@@ -159,18 +163,22 @@ export const GET = async (request: NextRequest) => {
       });
     }
 
+    const language = await prisma.country.findFirst({
+      where: {
+        iso_3166_1: countryISO,
+      },
+    });
+
+    if (!language) {
+      return;
+    }
+
     await prisma.entryWatchProvider.create({
       data: {
         watchProviderId: existingWatchProvider.id,
         entryId: entry.id,
         type,
-        countryId: (
-          await prisma.country.findFirst({
-            where: {
-              iso_3166_1: countryISO,
-            },
-          })
-        )?.id!,
+        countryId: language.id,
       },
     });
   };
@@ -366,7 +374,7 @@ export const GET = async (request: NextRequest) => {
   for (const alternativeTitle of data.alternative_titles) {
     await prisma.entryAlternativeTitle.create({
       data: {
-        entryId: entry.id,
+        entryId: entry.id!,
         countryId: (
           await prisma.country.findFirst({
             where: {
