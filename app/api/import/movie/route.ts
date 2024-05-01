@@ -4,10 +4,10 @@ import { NextRequest } from 'next/server';
 export const dynamic = 'force-dynamic';
 
 export const GET = async (request: NextRequest) => {
-  const id = request.nextUrl.searchParams.get('id');
+  const id = request.nextUrl.searchParams.get('tmdbId');
 
   if (id === null) {
-    return Response.json({ error: 'No id provided' }, { status: 400 });
+    return Response.json({ error: 'No tmdbId provided' }, { status: 400 });
   }
 
   if (process.env.TMDB_ACCESS_TOKEN === undefined) {
