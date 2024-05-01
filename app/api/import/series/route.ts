@@ -39,6 +39,12 @@ export const GET = async (request: NextRequest) => {
   );
 
   const data = await details.json();
+  if (data.status_message) {
+    return Response.json({
+      error: data.status_message,
+    });
+  }
+
   data['alternative_titles'] = (await altTitles.json())['results'];
   data['watch_providers'] = (await watchProviders.json())['results'];
 
