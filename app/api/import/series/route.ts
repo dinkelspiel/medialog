@@ -104,7 +104,17 @@ export const GET = async (request: NextRequest) => {
   }
 
   for (const season of data.seasons) {
-    console.log(data);
+    const existingEntry = await prisma.entry.findFirst({
+      where: {
+        foreignId: season.id.toString(),
+      },
+    });
+
+    console.log(existingEntry);
+
+    if (existingEntry) {
+      continue;
+    }
 
     entry = await prisma.entry.create({
       data: {
@@ -317,6 +327,10 @@ export const GET = async (request: NextRequest) => {
             iso_3166_1: productionCompany.origin_country,
           },
         });
+
+        if (!country) {
+          continue;
+        }
 
         existingCompany = await prisma.company.create({
           data: {

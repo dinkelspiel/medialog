@@ -6,6 +6,9 @@ SHELL ["/bin/bash", "--login", "-c"]
 ENV SHELL bash
 # RUN chmod 777 /usr/src/app -R
 RUN chmod 744 ./prisma/schema.prisma
+RUN apt-get update
+RUN apt-get install -y python3-pip
+RUN pip install mysql-connector-python requests python-levenshtein --break-system-packages
 RUN pnpm install
 RUN pnpm dlx prisma generate
 CMD ["pnpm", "dev"]

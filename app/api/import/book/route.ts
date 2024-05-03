@@ -53,17 +53,17 @@ export const GET = async (request: NextRequest) => {
   let edition: any | undefined = undefined;
 
   for (let editionData of editions) {
+    if (editionData.languages) {
+      fallbackLanguages = editionData.languages;
+    }
+    if (editionData.number_of_pages) {
+      fallbackNumberOfPages = editionData.number_of_pages;
+    }
     if (edition) {
       if (
         new Date(editionData.publish_date).getTime() <
         earliestPublishDate.getTime()
       ) {
-        if (editionData.number_of_pages) {
-          fallbackNumberOfPages = editionData.number_of_pages;
-        }
-        if (editionData.languages) {
-          fallbackLanguages = editionData.languages;
-        }
         earliestPublishDate = new Date(editionData.publish_date);
         edition = editionData;
       }
@@ -98,30 +98,41 @@ export const GET = async (request: NextRequest) => {
     );
   }
 
+  const createData = {
+    originalTitle: edition.title,
+    foreignId: work.key.split('/')[work.key.split('/').length - 1],
+    posterPath: `https://covers.openlibrary.org/b/id/${work.covers ? work.covers[0] : ''}-L.jpg`,
+    tagline: '',
+    overview: work.description
+      ? typeof work.description === 'object'
+        ? work.description.value
+        : work.description
+      : '',
+    backdropPath: '',
+    category: 'Book' as any,
+    length: edition.number_of_pages ?? fallbackNumberOfPages ?? 0,
+    releaseDate: earliestPublishDate,
+    originalLanguageId: (
+      await prisma.language.findFirst({
+        where: {
+          iso_639_2:
+            edition.languages ?? fallbackLanguages
+              ? (edition.languages ?? fallbackLanguages).length > 0
+                ? (edition.languages ?? fallbackLanguages)[0].key.split('/')[
+                    (edition.languages ?? fallbackLanguages)[0].key.split('/')
+                      .length - 1
+                  ]
+                : 'eng'
+              : 'eng',
+        },
+      })
+    )?.id!,
+  };
+
+  console.log(createData);
+
   entry = await prisma.entry.create({
-    data: {
-      originalTitle: edition.title,
-      foreignId: work.key.split('/')[work.key.split('/').length - 1],
-      posterPath: `https://covers.openlibrary.org/b/id/${work.covers[0]}-L.jpg`,
-      tagline: '',
-      overview: work.description,
-      backdropPath: '',
-      category: 'Book',
-      length: edition.number_of_pages ?? fallbackNumberOfPages ?? 0,
-      releaseDate: earliestPublishDate,
-      originalLanguageId: (
-        await prisma.language.findFirst({
-          where: {
-            iso_639_2: (edition.languages ?? fallbackLanguages)[0].key.split(
-              '/'
-            )[
-              (edition.languages ?? fallbackLanguages)[0].key.split('/')
-                .length - 1
-            ],
-          },
-        })
-      )?.id!,
-    },
+    data: createData,
   });
 
   for (const languageKey of edition.languages ?? fallbackLanguages) {
@@ -143,12 +154,15 @@ export const GET = async (request: NextRequest) => {
   for (const editionData of editions) {
     const language = await prisma.language.findFirst({
       where: {
-        iso_639_2: (editionData.languages ?? fallbackLanguages)[0].key.split(
-          '/'
-        )[
-          (editionData.languages ?? fallbackLanguages)[0].key.split('/')
-            .length - 1
-        ],
+        iso_639_2:
+          editionData.languages ?? fallbackLanguages
+            ? (editionData.languages ?? fallbackLanguages).length > 0
+              ? (editionData.languages ?? fallbackLanguages)[0].key.split('/')[
+                  (editionData.languages ?? fallbackLanguages)[0].key.split('/')
+                    .length - 1
+                ]
+              : 'eng'
+            : 'eng',
       },
     });
 
