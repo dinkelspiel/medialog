@@ -45,3 +45,5 @@ next-env.d.ts
 pnpm-lock.yaml
 
 cli/dist
+migration/__pycache__
+migration/connections.json
