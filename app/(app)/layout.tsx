@@ -21,11 +21,11 @@ const Layout = async ({ children }: { children: ReactNode }) => {
         headerProps={{ className: '[&>svg]:size-7 p-0' }}
       >
         <SidebarButton href="/dashboard">
-          <Home size={20} />
+          <Home className="size-3" />
           Home
         </SidebarButton>
         <SidebarButton href="/community">
-          <UsersRound size={20} />
+          <UsersRound className="size-3" />
           Community
         </SidebarButton>
       </Sidebar>
