@@ -58,7 +58,7 @@ export const SidebarHeader = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      `lg:mb-12 flex whitespace-nowrap items-center rounded-lg text-slate-900 dark:text-white gap-3 text-base font-semibold [&>svg]:size-5`,
+      `lg:mb-12 flex whitespace-nowrap items-center rounded-lg text-slate-900 dark:text-white gap-3 text-base font-semibold [&>svg]:size-3`,
       className
     )}
     {...props}
