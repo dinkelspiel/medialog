@@ -30,7 +30,7 @@ const Layout = async ({ children }: { children: ReactNode }) => {
         </SidebarButton>
       </Sidebar>
 
-      <main className="px-5 py-4 flex flex-col gap-4">{children}</main>
+      <main className="flex flex-col gap-4 px-5 py-4">{children}</main>
       <Toaster />
     </SidebarLayout>
   );

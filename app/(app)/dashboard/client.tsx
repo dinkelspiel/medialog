@@ -103,7 +103,7 @@ const Dashboard = ({
           <Tabs
             value={filterStyle}
             onValueChange={e => setFilterStyle(e as FilterStyle)}
-            className="lg:block hidden"
+            className="hidden lg:block"
           >
             <TabsList>
               <TabsTrigger value={'rating'}>
@@ -134,7 +134,7 @@ const Dashboard = ({
                 <Menu />
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="me-4 z-50">
+            <PopoverContent className="z-50 me-4">
               <div className="grid gap-2">
                 <div className="relative">
                   <Input
@@ -143,7 +143,7 @@ const Dashboard = ({
                     value={filterTitle}
                     onChange={e => setFilterTitle(e.target.value)}
                   />
-                  <div className="absolute text-xs text-gray-600 flex right-[5.2px] gap-1 font-medium px-2 py-0.5 items-center top-1/2 -translate-y-1/2 rounded-md bg-white border border-gray-200">
+                  <div className="absolute right-[5.2px] top-1/2 flex -translate-y-1/2 items-center gap-1 rounded-md border border-gray-200 bg-white px-2 py-0.5 text-xs font-medium text-gray-600">
                     <Command className="size-3" /> K
                   </div>
                 </div>
@@ -181,7 +181,7 @@ const Dashboard = ({
         </HeaderContent>
       </Header>
       <div className="grid justify-center">
-        <div className="grid grid-cols-3 min-[700px]:grid-cols-4 min-[1100px]:grid-cols-5 min-[1300px]:grid-cols-6 min-[1500px]:grid-cols-7 w-fit gap-4">
+        <div className="grid w-fit grid-cols-3 gap-4 min-[700px]:grid-cols-4 min-[1100px]:grid-cols-5 min-[1300px]:grid-cols-6 min-[1500px]:grid-cols-7">
           {userEntries
             .sort((a, b) => {
               switch (filterStyle) {

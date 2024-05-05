@@ -11,7 +11,7 @@ const UserEntryCard = ({
 } & HTMLProps<HTMLDivElement>) => {
   return (
     <div
-      className="w-full aspect-[2/3] rounded-lg bg-cover shadow-md relative cursor-pointer"
+      className="relative aspect-[2/3] w-full cursor-pointer rounded-lg bg-cover shadow-md"
       style={{ backgroundImage: `url(${userEntry.entry.posterPath})` }}
       {...props}
     >
@@ -27,14 +27,14 @@ const UserEntryCard = ({
           }
         })()}
       </div>
-      <div className="text-transparent select-none">
+      <div className="select-none text-transparent">
         {userEntry.entry.originalTitle}
       </div>
-      <div className="absolute top-[40%] h-[60%] w-full rounded-bl-lg rounded-br-lg flex flex-col justify-end bg-gradient-to-t from-slate-900 to-transparent object-cover p-2">
-        <div className="text-white font-semibold text-left">
+      <div className="absolute top-[40%] flex h-[60%] w-full flex-col justify-end rounded-bl-lg rounded-br-lg bg-gradient-to-t from-slate-900 to-transparent object-cover p-2">
+        <div className="text-left font-semibold text-white">
           {userEntry.entry.originalTitle}
         </div>
-        <div className="flex flex-row justify-between items-center">
+        <div className="flex flex-row items-center justify-between">
           <div className="text-sm text-slate-400">
             {userEntry.entry.releaseDate.getFullYear()}
           </div>
