@@ -1,8 +1,10 @@
+import AddLog from '@/components/addLog';
 import SidebarLayout from '@/components/layouts/sidebar';
-import { Sidebar, SidebarButton } from '@/components/sidebar';
+import { Sidebar, SidebarButton, SidebarFooter } from '@/components/sidebar';
+import { Button } from '@/components/ui/button';
 import UserDisplay from '@/components/userDisplay';
 import { validateSessionToken } from '@/server/auth/validateSession';
-import { Home, UsersRound } from 'lucide-react';
+import { Home, Plus, UsersRound } from 'lucide-react';
 import { redirect } from 'next/navigation';
 import { ReactNode } from 'react';
 import { Toaster } from 'sonner';
@@ -28,6 +30,14 @@ const Layout = async ({ children }: { children: ReactNode }) => {
           <UsersRound className="size-3" />
           Community
         </SidebarButton>
+        <SidebarFooter>
+          <AddLog>
+            <Button>
+              <Plus />
+              Log Media
+            </Button>
+          </AddLog>
+        </SidebarFooter>
       </Sidebar>
 
       <main className="flex flex-col gap-4 px-5 py-4">{children}</main>

@@ -58,7 +58,7 @@ const Dashboard = ({
     error: queryError,
     isLoading: queryIsLoading,
   } = useSwr<number[], { error: string }>(
-    `/api/user/entries/search?q=${filterTitle}`,
+    `/api/user/entries?q=${filterTitle}`,
     fetcher
   );
 
