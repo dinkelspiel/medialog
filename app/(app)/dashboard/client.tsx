@@ -10,7 +10,7 @@ import {
 import UserEntryComponent from './userEntry';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Entry, User, UserEntry, UserEntryStatus } from '@prisma/client';
-import { AArrowDown, Eye, Menu, Pen, Star } from 'lucide-react';
+import { AArrowDown, Command, Eye, Menu, Pen, Star } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Popover,
@@ -62,6 +62,34 @@ const Dashboard = ({
     fetcher
   );
 
+  // Shortcut for search
+
+  const [filterOpen, setFilterOpen] = useState(false);
+
+  useEffect(() => {
+    function handleKeyDown(e: KeyboardEvent) {
+      if (
+        (navigator?.platform?.toLowerCase().includes('mac')
+          ? e.metaKey
+          : e.ctrlKey) &&
+        e.key === 'k'
+      ) {
+        e.preventDefault();
+        e.stopPropagation();
+
+        setFilterOpen(currentValue => {
+          return !currentValue;
+        });
+      }
+    }
+
+    document.addEventListener('keydown', handleKeyDown);
+
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown);
+    };
+  }, []);
+
   return (
     <>
       <Header>
@@ -96,7 +124,7 @@ const Dashboard = ({
               </TabsTrigger>
             </TabsList>
           </Tabs>
-          <Popover>
+          <Popover open={filterOpen} onOpenChange={setFilterOpen}>
             <PopoverTrigger asChild>
               <Button
                 variant={'outline'}
@@ -108,12 +136,17 @@ const Dashboard = ({
             </PopoverTrigger>
             <PopoverContent className="me-4 z-50">
               <div className="grid gap-2">
-                <Input
-                  placeholder="Title"
-                  name="title"
-                  value={filterTitle}
-                  onChange={e => setFilterTitle(e.target.value)}
-                />
+                <div className="relative">
+                  <Input
+                    placeholder="Title"
+                    name="title"
+                    value={filterTitle}
+                    onChange={e => setFilterTitle(e.target.value)}
+                  />
+                  <div className="absolute text-xs text-gray-600 flex right-[5.2px] gap-1 font-medium px-2 py-0.5 items-center top-1/2 -translate-y-1/2 rounded-md bg-white border border-gray-200">
+                    <Command className="size-3" /> K
+                  </div>
+                </div>
                 <Select
                   value={filterStatus}
                   onValueChange={e =>
