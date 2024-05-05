@@ -1,15 +1,6 @@
-import {
-  Header,
-  HeaderContent,
-  HeaderDescription,
-  HeaderHeader,
-  HeaderTitle,
-} from '@/components/header';
 import { validateSessionToken } from '@/server/auth/validateSession';
 import prisma from '@/server/db';
-import UserEntry from './userEntry';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import Dashboard from './dashboard';
+import Dashboard from './client';
 
 const Page = async () => {
   const user = await validateSessionToken();
@@ -20,7 +11,15 @@ const Page = async () => {
     },
     include: {
       user: true,
-      entry: true,
+      entry: {
+        include: {
+          userEntries: {
+            where: {
+              userId: user?.id,
+            },
+          },
+        },
+      },
     },
   });
 

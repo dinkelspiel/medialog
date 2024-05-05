@@ -1,11 +1,11 @@
-import Logo from '@/components/icons/logo';
 import SidebarLayout from '@/components/layouts/sidebar';
-import { Sidebar, SidebarButton, SidebarFooter } from '@/components/sidebar';
+import { Sidebar, SidebarButton } from '@/components/sidebar';
 import UserDisplay from '@/components/userDisplay';
 import { validateSessionToken } from '@/server/auth/validateSession';
-import { Home, KeyRound, UsersRound } from 'lucide-react';
+import { Home, UsersRound } from 'lucide-react';
 import { redirect } from 'next/navigation';
 import { ReactNode } from 'react';
+import { Toaster } from 'sonner';
 
 const Layout = async ({ children }: { children: ReactNode }) => {
   const user = await validateSessionToken();
@@ -31,6 +31,7 @@ const Layout = async ({ children }: { children: ReactNode }) => {
       </Sidebar>
 
       <main className="px-5 py-4 flex flex-col gap-4">{children}</main>
+      <Toaster />
     </SidebarLayout>
   );
 };
