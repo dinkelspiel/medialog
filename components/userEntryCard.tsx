@@ -1,23 +1,40 @@
 import { Book, Film, Tv } from 'lucide-react';
 import SmallRating from './smallRating';
-import { Entry, User, UserEntry } from '@prisma/client';
+import { Category, Entry, User, UserEntry } from '@prisma/client';
 import { HTMLProps } from 'react';
+import { title } from 'process';
+import Image from 'next/image';
 
 const UserEntryCard = ({
-  userEntry,
+  title,
+  backgroundImage,
+  category,
+  releaseDate,
+  rating,
   ...props
 }: {
-  userEntry: UserEntry & { user: User } & { entry: Entry };
+  title: string;
+  backgroundImage: string;
+  category: Category;
+  releaseDate: Date;
+  rating: number;
 } & HTMLProps<HTMLDivElement>) => {
   return (
     <div
-      className="relative aspect-[2/3] w-full cursor-pointer rounded-lg bg-cover shadow-md"
-      style={{ backgroundImage: `url(${userEntry.entry.posterPath})` }}
+      className="relative aspect-[2/3] w-full cursor-pointer overflow-clip rounded-lg bg-cover shadow-md"
       {...props}
     >
+      <div className="relative h-full w-full">
+        <Image
+          src={backgroundImage}
+          alt={title}
+          width={350}
+          height={350 * (3 / 2)}
+        />
+      </div>
       <div className="p-2">
         {(() => {
-          switch (userEntry.entry.category) {
+          switch (category) {
             case 'Book':
               return <Book className="size-5 stroke-white" />;
             case 'Movie':
@@ -27,19 +44,15 @@ const UserEntryCard = ({
           }
         })()}
       </div>
-      <div className="select-none text-transparent">
-        {userEntry.entry.originalTitle}
-      </div>
+      <div className="select-none text-transparent">{title}</div>
       <div className="absolute top-[40%] flex h-[60%] w-full flex-col justify-end rounded-bl-lg rounded-br-lg bg-gradient-to-t from-slate-900 to-transparent object-cover p-2">
-        <div className="text-left font-semibold text-white">
-          {userEntry.entry.originalTitle}
-        </div>
+        <div className="text-left font-semibold text-white">{title}</div>
         <div className="flex flex-row items-center justify-between">
           <div className="text-sm text-slate-400">
-            {userEntry.entry.releaseDate.getFullYear()}
+            {releaseDate.getFullYear()}
           </div>
           <div className="text-white">
-            <SmallRating rating={userEntry.rating} />
+            <SmallRating rating={rating} />
           </div>
         </div>
       </div>

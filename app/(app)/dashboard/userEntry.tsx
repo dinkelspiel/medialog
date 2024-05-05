@@ -31,7 +31,14 @@ const UserEntryComponent = ({
 
   return (
     <>
-      <UserEntryCard userEntry={userEntry} onClick={() => setOpen(true)} />
+      <UserEntryCard
+        title={userEntry.entry.originalTitle}
+        backgroundImage={userEntry.entry.posterPath}
+        category={userEntry.entry.category}
+        releaseDate={userEntry.entry.releaseDate}
+        rating={userEntry.rating}
+        onClick={() => setOpen(true)}
+      />
 
       {(() => {
         if (isDesktop) {

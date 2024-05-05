@@ -11,10 +11,6 @@ export const GET = async (request: NextRequest) => {
 
   const query = request.nextUrl.searchParams.get('q');
 
-  if (!query) {
-    return Response.json({ error: 'No query provided' }, { status: 400 });
-  }
-
   return Response.json(
     (
       await prisma.userEntry.findMany({
@@ -24,7 +20,7 @@ export const GET = async (request: NextRequest) => {
             alternativeTitles: {
               some: {
                 title: {
-                  contains: query,
+                  contains: query ?? '',
                 },
               },
             },

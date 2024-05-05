@@ -16,6 +16,9 @@ const config = {
     locales: ['en'],
     defaultLocale: 'en',
   },
+  images: {
+    domains: ['image.tmdb.org', 'covers.openlibrary.org'],
+  },
   rewrites: async () => {
     return [
       {
