@@ -27,8 +27,10 @@ import {
   SelectTrigger,
   SelectValue,
 } from '@/components/ui/select';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { FilterStyle, useDashboardStore } from './state';
+import useSwr from 'swr';
+import fetcher from '@/client/fetcher';
 
 const Dashboard = ({
   userEntries: originalUserEntries,
@@ -45,12 +47,20 @@ const Dashboard = ({
 
     userEntries,
     setUserEntries,
-    setUserEntry,
   } = useDashboardStore();
 
   useEffect(() => {
     setUserEntries(originalUserEntries);
   }, [originalUserEntries]);
+
+  const {
+    data: queryResults,
+    error: queryError,
+    isLoading: queryIsLoading,
+  } = useSwr<number[], { error: string }>(
+    `/api/user/entries/search?q=${filterTitle}`,
+    fetcher
+  );
 
   return (
     <>
@@ -158,13 +168,23 @@ const Dashboard = ({
               }
             })
             .map(userEntry => {
-              if (
+              if (filterTitle !== '' && (queryIsLoading || queryError)) {
+                if (
+                  filterTitle !== '' &&
+                  !userEntry.entry.originalTitle
+                    .toLowerCase()
+                    .includes(filterTitle.toLowerCase())
+                ) {
+                  return;
+                }
+              } else if (
                 filterTitle !== '' &&
-                !userEntry.entry.originalTitle
-                  .toLowerCase()
-                  .includes(filterTitle.toLowerCase())
+                !queryIsLoading &&
+                queryResults
               ) {
-                return;
+                if (!queryResults.includes(userEntry.id)) {
+                  return;
+                }
               }
 
               // if (
