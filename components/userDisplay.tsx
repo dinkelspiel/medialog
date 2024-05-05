@@ -18,7 +18,7 @@ const UserDisplay = ({ user }: { user: User }) => {
       <DropdownMenuTrigger>
         <div className="flex gap-x-3">
           <Logo className="size-[41px]" />
-          <div className="flex justify-center items-start flex-col pb-[1px]">
+          <div className="flex flex-col items-start justify-center pb-[1px]">
             <div className="text-xs font-normal">Medialog</div>
             <div className="text-base font-semibold">@{user.username}</div>
           </div>
@@ -28,7 +28,7 @@ const UserDisplay = ({ user }: { user: User }) => {
         <form action={logout} className="w-full">
           <button type="submit" className="w-full">
             <DropdownMenuItem>
-              <LogOut className="size-3 me-2" />
+              <LogOut className="me-2 size-3" />
               Log out
             </DropdownMenuItem>
           </button>

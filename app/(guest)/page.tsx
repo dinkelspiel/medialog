@@ -1,5 +1,5 @@
 const Page = () => {
-  return <div className="font-bold text-xl">W.I.P Medialog Homepage</div>;
+  return <div className="text-xl font-bold">W.I.P Medialog Homepage</div>;
 };
 
 export default Page;

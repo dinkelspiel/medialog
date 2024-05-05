@@ -45,7 +45,7 @@ const UserEntryComponent = ({
         } else {
           return (
             <Drawer open={open} onOpenChange={setOpen}>
-              <DrawerContent className="p-6 min-h-[80dvh]">
+              <DrawerContent className="min-h-[80dvh] p-6">
                 <ModifyUserEntry userEntry={userEntry} setOpen={setOpen} />
               </DrawerContent>
             </Drawer>
@@ -83,13 +83,13 @@ const ModifyUserEntry = ({
   }, [state]);
 
   return (
-    <div className="grid grid-rows-[max-content,max-content,1fr,max-content] h-full w-full grow">
+    <div className="grid h-full w-full grow grid-rows-[max-content,max-content,1fr,max-content]">
       <input type="hidden" value={userEntry.id} name="userEntryId" />
-      <div className="xl:w-max text-lg font-semibold tracking-tight mb-8 break-all w-fit">
+      <div className="mb-8 w-fit break-all text-lg font-semibold tracking-tight xl:w-max">
         {userEntry.entry.originalTitle}
       </div>
-      <div className="flex flex-row gap-3 items-center text-sm border-b border-b-gray-200 py-3">
-        <div className="text-muted-foreground w-max">
+      <div className="flex flex-row items-center gap-3 border-b border-b-gray-200 py-3 text-sm">
+        <div className="w-max text-muted-foreground">
           <TooltipProvider>
             <Tooltip>
               <TooltipTrigger>Rating</TooltipTrigger>
@@ -109,16 +109,16 @@ const ModifyUserEntry = ({
           />
         </div>
       </div>
-      <div className="flex flex-row gap-2 items-center text-sm h-full py-3">
+      <div className="flex h-full flex-row items-center gap-2 py-3 text-sm">
         <Textarea
-          className="focus-visible:ring-0 shadow-none border-none p-0 resize-none h-full"
+          className="h-full resize-none border-none p-0 shadow-none focus-visible:ring-0"
           placeholder="Write your review"
           value={notes}
           onChange={e => setNotes(e.target.value)}
           name="notes"
         />
       </div>
-      <div className="flex justify-between items-center">
+      <div className="flex items-center justify-between">
         <form action={formAction}>
           <input type="hidden" value={userEntry.id} name="userEntryId" />
           <input type="hidden" value={rating} name="rating" />

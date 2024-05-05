@@ -23,11 +23,11 @@ const Page = () => {
   }, [state]);
 
   return (
-    <main className="grid items-center justify-center w-full bg-neutral-100 h-[100dvh]">
-      <form className="grid gap-8 w-[350px]" action={formAction}>
+    <main className="grid h-[100dvh] w-full items-center justify-center bg-neutral-100">
+      <form className="grid w-[350px] gap-8" action={formAction}>
         <div className="grid gap-2">
           <Logo className="mb-2" />
-          <h3 className="font-bold text-[22px] leading-7 tracking-[-0.02em]">
+          <h3 className="text-[22px] font-bold leading-7 tracking-[-0.02em]">
             Sign up to Medialog
           </h3>
           <p className="text-sm text-muted-foreground">

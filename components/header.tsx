@@ -19,7 +19,7 @@ export const HeaderHeader = ({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => {
   return (
-    <div className={cn('flex flex-col xl:w-max w-full', className)} {...props}>
+    <div className={cn('flex w-full flex-col xl:w-max', className)} {...props}>
       {children}
     </div>
   );
@@ -33,7 +33,7 @@ export const HeaderTitle = ({
   return (
     <div
       className={cn(
-        'xl:w-max w-full scroll-m-20 text-2xl font-semibold tracking-tight',
+        'w-full scroll-m-20 text-2xl font-semibold tracking-tight xl:w-max',
         className
       )}
       {...props}
@@ -50,7 +50,7 @@ export const HeaderDescription = ({
 }: React.HTMLAttributes<HTMLDivElement>) => {
   return (
     <div
-      className={cn('xl:w-max w-full text-muted-foreground', className)}
+      className={cn('w-full text-muted-foreground xl:w-max', className)}
       {...props}
     >
       {children}
@@ -65,7 +65,7 @@ export const HeaderContent = ({
 }: React.HTMLAttributes<HTMLDivElement>) => {
   return (
     <div
-      className={cn('flex justify-end w-full items-center gap-2', className)}
+      className={cn('flex w-full items-center justify-end gap-2', className)}
       {...props}
     >
       {children}
