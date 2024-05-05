@@ -1,4 +1,3 @@
-import prisma from '@/server/db';
 import { NextRequest } from 'next/server';
 
 export const dynamic = 'force-dynamic';

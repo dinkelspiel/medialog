@@ -1,4 +1,4 @@
-import { existsSync, fstat, readFileSync } from 'fs';
+import { existsSync, readFileSync } from 'fs';
 import prisma from '../../server/db';
 
 export const populateCountries = async (options: {

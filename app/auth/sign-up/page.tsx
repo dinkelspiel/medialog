@@ -2,7 +2,6 @@
 
 import Logo from '@/components/icons/logo';
 import SubmitButton from '@/components/submitButton';
-import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { signUp } from '@/server/auth/signUp';
 import Link from 'next/link';

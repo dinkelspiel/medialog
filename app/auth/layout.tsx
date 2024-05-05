@@ -1,6 +1,6 @@
 import { validateSessionToken } from '@/server/auth/validateSession';
 import { redirect } from 'next/navigation';
-import React, { ReactNode } from 'react';
+import { ReactNode } from 'react';
 import { Toaster } from 'sonner';
 
 const Layout = async ({ children }: { children: ReactNode }) => {
