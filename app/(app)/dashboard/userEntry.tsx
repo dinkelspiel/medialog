@@ -37,7 +37,7 @@ const UserEntryComponent = ({
         if (isDesktop) {
           return (
             <Sheet open={open} onOpenChange={setOpen}>
-              <SheetContent>
+              <SheetContent className="!max-w-[550px]">
                 <ModifyUserEntry userEntry={userEntry} setOpen={setOpen} />
               </SheetContent>
             </Sheet>
