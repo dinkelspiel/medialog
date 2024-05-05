@@ -181,7 +181,7 @@ const Dashboard = ({
         </HeaderContent>
       </Header>
       <div className="grid justify-center">
-        <div className="grid w-fit grid-cols-3 gap-4 min-[700px]:grid-cols-4 min-[1100px]:grid-cols-5 min-[1300px]:grid-cols-6 min-[1500px]:grid-cols-7">
+        <div className="grid w-fit grid-cols-3 gap-4 min-[700px]:grid-cols-4 min-[1100px]:grid-cols-5 min-[1300px]:grid-cols-6 min-[1500px]:grid-cols-7 min-[1600px]:grid-cols-8 min-[1700px]:grid-cols-9 min-[1800px]:grid-cols-10 min-[1900px]:grid-cols-11">
           {userEntries
             .sort((a, b) => {
               switch (filterStyle) {
