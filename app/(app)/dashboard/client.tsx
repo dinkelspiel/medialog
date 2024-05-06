@@ -10,7 +10,15 @@ import {
 import UserEntryComponent from './userEntry';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Entry, User, UserEntry, UserEntryStatus } from '@prisma/client';
-import { AArrowDown, Command, Eye, Menu, Pen, Star } from 'lucide-react';
+import {
+  AArrowDown,
+  Command,
+  Eye,
+  Filter,
+  Menu,
+  Pen,
+  Star,
+} from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import {
   Popover,
@@ -131,7 +139,7 @@ const Dashboard = ({
                 size={'icon'}
                 className="size-9 [&>svg]:size-4"
               >
-                <Menu />
+                <Filter />
               </Button>
             </PopoverTrigger>
             <PopoverContent className="z-50 me-4">
