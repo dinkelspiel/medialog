@@ -21,16 +21,9 @@ const UserEntryCard = ({
   return (
     <div
       className="relative aspect-[2/3] w-full cursor-pointer overflow-clip rounded-lg bg-cover shadow-md"
+      style={{ backgroundImage: `url(${backgroundImage})` }}
       {...props}
     >
-      <div className="relative h-full w-full">
-        <Image
-          src={backgroundImage}
-          alt={title}
-          width={350}
-          height={350 * (3 / 2)}
-        />
-      </div>
       <div className="p-2">
         {(() => {
           switch (category) {
