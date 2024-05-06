@@ -93,7 +93,7 @@ export const GET = async (request: NextRequest) => {
             backdropPath:
               'https://image.tmdb.org/t/p/original/' +
               data.belongs_to_collection.backdrop_path,
-            type: 'Movie',
+            category: 'Movie',
           },
         })
       ).id;

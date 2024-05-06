@@ -95,7 +95,7 @@ export const GET = async (request: NextRequest) => {
           posterPath: 'https://image.tmdb.org/t/p/original/' + data.poster_path,
           backdropPath:
             'https://image.tmdb.org/t/p/original/' + data.backdrop_path,
-          type: 'Series',
+          category: 'Series',
         },
       })
     ).id;
