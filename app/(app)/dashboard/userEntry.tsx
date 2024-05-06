@@ -52,7 +52,7 @@ const UserEntryComponent = ({
         } else {
           return (
             <Drawer open={open} onOpenChange={setOpen}>
-              <DrawerContent className="min-h-[80dvh] p-6">
+              <DrawerContent className="top-[50px] mt-0 p-6">
                 <ModifyUserEntry userEntry={userEntry} setOpen={setOpen} />
               </DrawerContent>
             </Drawer>
@@ -92,7 +92,7 @@ const ModifyUserEntry = ({
   return (
     <div className="grid h-full w-full grow grid-rows-[max-content,max-content,1fr,max-content]">
       <input type="hidden" value={userEntry.id} name="userEntryId" />
-      <div className="mb-8 w-fit break-all text-lg font-semibold tracking-tight xl:w-max">
+      <div className="mb-8 w-fit break-all pt-4 text-lg font-semibold tracking-tight lg:pt-0 xl:w-max">
         {userEntry.entry.originalTitle}
       </div>
       <div className="flex flex-row items-center gap-3 border-b border-b-gray-200 py-3 text-sm">
