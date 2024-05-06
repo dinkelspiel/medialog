@@ -45,9 +45,11 @@ const UserEntryCard = ({
       </div>
       <div className="select-none text-transparent">{title}</div>
       <div className="absolute top-[40%] flex h-[60%] w-full flex-col justify-end rounded-bl-lg rounded-br-lg bg-gradient-to-t from-slate-900 to-transparent object-cover p-2">
-        <div className="text-left font-semibold text-white">{title}</div>
-        <div className="flex flex-row items-center justify-between">
-          <div className="text-sm text-slate-400">
+        <div className="text-center text-sm font-semibold text-white sm:text-left sm:text-base">
+          {title}
+        </div>
+        <div className="flex flex-row items-center justify-center sm:justify-between">
+          <div className="text-[0px] text-slate-400 sm:text-sm">
             {releaseDate.getFullYear()}
           </div>
           <div className="text-white">

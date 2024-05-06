@@ -23,8 +23,9 @@ const Layout = async ({ children }: { children: ReactNode }) => {
           <div className="flex w-full justify-between">
             <UserDisplay user={user} />
             <AddLog>
-              <Button className="flex min-w-[40px] justify-center px-0 lg:hidden">
+              <Button className="flex min-w-[40px] justify-center lg:hidden">
                 <Plus />
+                Log Media
               </Button>
             </AddLog>
           </div>
