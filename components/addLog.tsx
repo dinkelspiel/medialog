@@ -75,7 +75,7 @@ const AddLog = ({ children }: { children: ReactNode }) => {
   return (
     <Dialog>
       <DialogTrigger asChild>{children}</DialogTrigger>
-      <DialogContent className="max-w-[700px]">
+      <DialogContent className="top-[50px] max-w-[700px] translate-y-0">
         <DialogHeader>
           <DialogTitle>Log Media</DialogTitle>
         </DialogHeader>
@@ -158,7 +158,9 @@ const AddLog = ({ children }: { children: ReactNode }) => {
         {externalQueryResults && externalQueryResults.length > 0 && (
           <>
             {!(
-              externalQueryResults.length > 0 && queryResults!.length === 0
+              queryResults &&
+              externalQueryResults.length > 0 &&
+              queryResults.length === 0
             ) && (
               <div className="relative">
                 <div className="absolute inset-0 flex items-center">

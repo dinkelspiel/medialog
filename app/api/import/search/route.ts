@@ -79,7 +79,7 @@ export const GET = async (request: NextRequest) => {
           : new Date(tmdb.release_date).toDateString(),
       author: '',
       foreignId: tmdb.id,
-      posterPath: 'https://image.tmdb.org/t/p/original' + tmdb.poster_path,
+      posterPath: 'https://image.tmdb.org/t/p/original/' + tmdb.poster_path,
     }))
     .filter((tmdb: any) => categories?.includes(tmdb.category))
     // .map((e: any) =>
