@@ -90,10 +90,21 @@ export const GET = async (request: NextRequest) => {
     for (const media of [...openLibrary, ...tmdb]) {
       const existing = await prisma.entry.findFirst({
         where: {
-          foreignId: media.foreignId.toString(),
-          category: media.category,
+          OR: [
+            {
+              foreignId: media.foreignId.toString(),
+              category: media.category,
+            },
+            {
+              collection: {
+                foreignId: media.foreignId.toString(),
+                category: media.category,
+              },
+            },
+          ],
         },
       });
+      console.log(existing);
 
       if (!existing) {
         finalMedia.push(media);
