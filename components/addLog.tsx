@@ -18,7 +18,6 @@ import { Category, Entry } from '@prisma/client';
 import UserEntryCard from './userEntryCard';
 import { Drawer, DrawerContent, DrawerTrigger } from './ui/drawer';
 import { useMediaQuery } from 'usehooks-ts';
-import { ScrollArea } from './ui/scroll-area';
 
 const AddLog = ({ children }: { children: ReactNode }) => {
   return (
