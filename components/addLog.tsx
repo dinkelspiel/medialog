@@ -27,7 +27,7 @@ const AddLog = ({ children }: { children: ReactNode }) => {
         <DialogTrigger asChild className="hidden lg:block">
           {children}
         </DialogTrigger>
-        <DialogContent className="top-[50px] max-w-[700px] translate-y-0">
+        <DialogContent className="top-[50px] max-h-[calc(100dvh-100px)] max-w-[700px] translate-y-0">
           <AddLogContent />
         </DialogContent>
       </Dialog>
@@ -159,7 +159,7 @@ const AddLogContent = () => {
           </div>
         )}
 
-      <ScrollArea>
+      <div className="max-h-[calc(100dvh-100px)] overflow-y-scroll lg:max-h-[calc(100dvh-220px)]">
         <div className="grid grid-cols-3 gap-4 lg:grid-cols-4">
           {queryResults &&
             queryResults
@@ -219,7 +219,7 @@ const AddLogContent = () => {
             </div>
           </>
         )}
-      </ScrollArea>
+      </div>
     </>
   );
 };
