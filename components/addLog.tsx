@@ -1,10 +1,9 @@
 'use client';
 
-import React, { ReactNode, useState } from 'react';
+import { ReactNode, useState } from 'react';
 import {
   Dialog,
   DialogContent,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -44,33 +43,29 @@ const AddLog = ({ children }: { children: ReactNode }) => {
     return q;
   };
 
-  const {
-    data: queryResults,
-    error: queryError,
-    isLoading: queryIsLoading,
-  } = useSWR<Entry[], { error: string }>(
+  const { data: queryResults, isLoading: queryIsLoading } = useSWR<
+    Entry[],
+    { error: string }
+  >(
     `/api/entries?q=${queryTitle}&take=8&categories=${generateQueryCategories()}`,
     fetcher
   );
 
-  const {
-    data: externalQueryResults,
-    error: externalQueryError,
-    isLoading: externalQueryIsLoading,
-  } = useSWR<
-    {
-      title: string;
-      category: Category;
-      releaseDate: Date;
-      author: string;
-      foreignId: number;
-      posterPath: string;
-    }[],
-    { error: string }
-  >(
-    `/api/import/search?q=${queryTitle}&categories=${generateQueryCategories()}&take=4&excludeExisting=true`,
-    fetcher
-  );
+  const { data: externalQueryResults, isLoading: externalQueryIsLoading } =
+    useSWR<
+      {
+        title: string;
+        category: Category;
+        releaseDate: Date;
+        author: string;
+        foreignId: number;
+        posterPath: string;
+      }[],
+      { error: string }
+    >(
+      `/api/import/search?q=${queryTitle}&categories=${generateQueryCategories()}&take=4&excludeExisting=true`,
+      fetcher
+    );
 
   return (
     <Dialog>
@@ -137,7 +132,7 @@ const AddLog = ({ children }: { children: ReactNode }) => {
               </span>
             </div>
           )}
-        <div className="grid grid-cols-4 gap-4">
+        <div className="grid grid-cols-3 gap-4 min-[600px]:grid-cols-4">
           {queryResults &&
             queryResults.map(e => (
               <UserEntryCard
@@ -150,11 +145,12 @@ const AddLog = ({ children }: { children: ReactNode }) => {
               />
             ))}
         </div>
-        <div className="relative flex justify-center text-xs uppercase">
-          {(externalQueryIsLoading || queryIsLoading) && (
+        {(externalQueryIsLoading || queryIsLoading) && (
+          <div className="relative flex justify-center text-xs uppercase">
             <Loader2 className="animate-spin" />
-          )}
-        </div>
+          </div>
+        )}
+
         {externalQueryResults && externalQueryResults.length > 0 && (
           <>
             {!(
@@ -173,7 +169,7 @@ const AddLog = ({ children }: { children: ReactNode }) => {
                 </div>
               </div>
             )}
-            <div className="grid grid-cols-4 gap-4">
+            <div className="grid grid-cols-3 gap-4 min-[600px]:grid-cols-4">
               {externalQueryResults.map(e => (
                 <UserEntryCard
                   key={e.posterPath}

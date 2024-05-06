@@ -1,8 +1,7 @@
 import { Book, Film, Tv } from 'lucide-react';
 import SmallRating from './smallRating';
-import { Category, Entry, User, UserEntry } from '@prisma/client';
+import { Category } from '@prisma/client';
 import { HTMLProps } from 'react';
-import { title } from 'process';
 import Image from 'next/image';
 
 const UserEntryCard = ({
