@@ -18,6 +18,7 @@ import { Category, Entry } from '@prisma/client';
 import UserEntryCard from './userEntryCard';
 import { Drawer, DrawerContent, DrawerTrigger } from './ui/drawer';
 import { useMediaQuery } from 'usehooks-ts';
+import { ScrollArea } from './ui/scroll-area';
 
 const AddLog = ({ children }: { children: ReactNode }) => {
   return (
@@ -90,7 +91,7 @@ const AddLogContent = () => {
       }[],
       { error: string }
     >(
-      `/api/import/search?q=${queryTitle}&categories=${generateQueryCategories()}&take=4&excludeExisting=true`,
+      `/api/import/search?q=${queryTitle}&categories=${generateQueryCategories()}&take=12&excludeExisting=true`,
       fetcher
     );
 
@@ -157,59 +158,68 @@ const AddLogContent = () => {
             </span>
           </div>
         )}
-      <div className="grid grid-cols-3 gap-4 min-[600px]:grid-cols-4">
-        {queryResults &&
-          queryResults
-            .slice(0, isDesktop ? 8 : 6)
-            .map(e => (
-              <UserEntryCard
-                key={e.posterPath}
-                title={e.originalTitle}
-                backgroundImage={e.posterPath}
-                releaseDate={new Date(e.releaseDate)}
-                category={e.category}
-                rating={0}
-              />
-            ))}
-      </div>
-      {(externalQueryIsLoading || queryIsLoading) && (
-        <div className="relative flex justify-center text-xs uppercase">
-          <Loader2 className="animate-spin" />
-        </div>
-      )}
 
-      {externalQueryResults && externalQueryResults.length > 0 && (
-        <>
-          {!(
-            queryResults &&
-            externalQueryResults.length > 0 &&
-            queryResults.length === 0
-          ) && (
-            <div className="relative">
-              <div className="absolute inset-0 flex items-center">
-                <span className="w-full border-t" />
-              </div>
-              <div className="relative flex justify-center text-xs uppercase">
-                <span className="bg-background px-2 text-muted-foreground">
-                  OR VIA IMPORT
-                </span>
-              </div>
-            </div>
-          )}
-          <div className="grid grid-cols-3 gap-4 min-[600px]:grid-cols-4">
-            {externalQueryResults.slice(0, isDesktop ? 4 : 3).map(e => (
-              <UserEntryCard
-                key={e.posterPath}
-                title={e.title}
-                backgroundImage={e.posterPath}
-                releaseDate={new Date(e.releaseDate)}
-                category={e.category as Category}
-                rating={0}
-              />
-            ))}
+      <ScrollArea>
+        <div className="grid grid-cols-3 gap-4 lg:grid-cols-4">
+          {queryResults &&
+            queryResults
+              .slice(0, isDesktop ? 8 : 6)
+              .map(e => (
+                <UserEntryCard
+                  key={e.posterPath}
+                  title={e.originalTitle}
+                  backgroundImage={e.posterPath}
+                  releaseDate={new Date(e.releaseDate)}
+                  category={e.category}
+                  rating={0}
+                />
+              ))}
+        </div>
+        {(externalQueryIsLoading || queryIsLoading) && (
+          <div className="relative flex justify-center text-xs uppercase">
+            <Loader2 className="animate-spin" />
           </div>
-        </>
-      )}
+        )}
+
+        {externalQueryResults && externalQueryResults.length > 0 && (
+          <>
+            {!(
+              queryResults &&
+              externalQueryResults.length > 0 &&
+              queryResults.length === 0
+            ) && (
+              <div className="relative py-4">
+                <div className="absolute inset-0 flex items-center">
+                  <span className="w-full border-t" />
+                </div>
+                <div className="relative flex justify-center text-xs uppercase">
+                  <span className="bg-background px-2 text-muted-foreground">
+                    OR VIA IMPORT
+                  </span>
+                </div>
+              </div>
+            )}
+            <div className="grid grid-cols-3 gap-4 lg:grid-cols-4">
+              {externalQueryResults
+                .slice(
+                  0,
+                  (isDesktop ? 8 : 12) -
+                    (queryResults ? queryResults.length : 0)
+                )
+                .map(e => (
+                  <UserEntryCard
+                    key={e.posterPath}
+                    title={e.title}
+                    backgroundImage={e.posterPath}
+                    releaseDate={new Date(e.releaseDate)}
+                    category={e.category as Category}
+                    rating={0}
+                  />
+                ))}
+            </div>
+          </>
+        )}
+      </ScrollArea>
     </>
   );
 };
