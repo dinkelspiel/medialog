@@ -23,7 +23,7 @@ export const GET = async (request: NextRequest) => {
   const openLibrary = (
     await (
       await fetch(
-        `https://openlibrary.org/search.json?title=${search.replace(' ', '+')}`
+        `https://openlibrary.org/search.json?title=${search.replace(' ', '+')}&limit=${take}`
       )
     ).json()
   ).docs
@@ -62,8 +62,6 @@ export const GET = async (request: NextRequest) => {
     },
   };
 
-  console.log('b');
-
   const tmdb = (
     await (
       await fetch(
@@ -76,14 +74,17 @@ export const GET = async (request: NextRequest) => {
       title: tmdb.original_title ?? tmdb.name,
       category: tmdb.media_type === 'tv' ? 'Series' : 'Movie',
       releaseDate:
-        tmdb.type === 'tv'
+        tmdb.media_type === 'tv'
           ? new Date(tmdb.first_air_date).toDateString()
           : new Date(tmdb.release_date).toDateString(),
       author: '',
       foreignId: tmdb.id,
-      posterPath: 'https://image.tmdb.org/t/p/original/' + tmdb.poster_path,
+      posterPath: 'https://image.tmdb.org/t/p/original' + tmdb.poster_path,
     }))
     .filter((tmdb: any) => categories?.includes(tmdb.category))
+    // .map((e: any) =>
+    //   e.releaseDate === 'Invalid Date' ? { ...e, releaseDate: new Date() } : e
+    // );
     .filter((e: any) => e.releaseDate !== 'Invalid Date');
 
   if (excludeExisting) {
@@ -101,12 +102,8 @@ export const GET = async (request: NextRequest) => {
       }
     }
 
-    console.log('c');
-
     return Response.json(finalMedia.slice(0, take));
   }
-
-  console.log('d');
 
   return Response.json([...openLibrary, ...tmdb].slice(0, take));
 };
