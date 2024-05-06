@@ -295,7 +295,7 @@ model Collection {
   foreignId    String
   posterPath   String
   backdropPath String
-  type         Category
+  category     Category
   entries      Entry[]
 
   createdAt DateTime @default(now())
