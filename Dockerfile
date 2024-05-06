@@ -1,5 +1,5 @@
 FROM node:iron
-RUN npm install -g pnpm
+RUN npm install -g pnpm@9.1.0
 WORKDIR /usr/src/app
 RUN ls
 SHELL ["/bin/bash", "--login", "-c"]
