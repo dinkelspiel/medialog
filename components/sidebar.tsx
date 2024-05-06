@@ -33,7 +33,7 @@ export const Sidebar = ({
       <div className="flex h-[75px] flex-col justify-center overflow-y-auto border-b border-slate-200 bg-neutral-100 px-3 py-4 shadow-[inset_0_0px_8px_0_rgb(0_0_0_/_0.02)] dark:border-slate-700 dark:bg-slate-900 lg:h-full lg:justify-start lg:border-b-0">
         <SidebarHeader {...headerProps}>
           {header}
-          <button className="flex w-full justify-end lg:hidden">
+          <button className="flex justify-end lg:hidden">
             <div className="sr-only">Öppna meny</div>
             <Menu onClick={() => setSheetOpen(true)} className="h-5 w-5" />
           </button>

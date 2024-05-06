@@ -19,7 +19,16 @@ const Layout = async ({ children }: { children: ReactNode }) => {
   return (
     <SidebarLayout>
       <Sidebar
-        header={<UserDisplay user={user} />}
+        header={
+          <div className="flex w-full justify-between">
+            <UserDisplay user={user} />
+            <AddLog>
+              <Button className="flex min-w-[40px] justify-center px-0 lg:hidden">
+                <Plus />
+              </Button>
+            </AddLog>
+          </div>
+        }
         headerProps={{ className: '[&>svg]:size-7 p-0' }}
       >
         <SidebarButton href="/dashboard">
@@ -32,7 +41,7 @@ const Layout = async ({ children }: { children: ReactNode }) => {
         </SidebarButton>
         <SidebarFooter>
           <AddLog>
-            <Button>
+            <Button className="hidden lg:flex">
               <Plus />
               Log Media
             </Button>

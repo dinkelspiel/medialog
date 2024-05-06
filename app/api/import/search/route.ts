@@ -6,9 +6,7 @@ export const dynamic = 'force-dynamic';
 
 export const GET = async (request: NextRequest) => {
   const search = request.nextUrl.searchParams.get('q');
-  const excludeExisting = !!Boolean(
-    request.nextUrl.searchParams.get('excludeExisting')
-  ); // Exclude media already in the local database
+  const excludeExisting = !!request.nextUrl.searchParams.get('excludeExisting'); // Exclude media already in the local database
   const take = request.nextUrl.searchParams.get('take')
     ? Number(request.nextUrl.searchParams.get('take'))
     : 10;
