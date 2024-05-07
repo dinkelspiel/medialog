@@ -46,7 +46,11 @@ export const GET = async (request: NextRequest) => {
         releaseDate: releaseDateFallback ?? lowestReleaseDate.toDateString(),
         author: ol.author_name ? ol.author_name[0] : '',
         foreignId: ol.key.split('/')[ol.key.split('/').length - 1],
-        posterPath: `https://covers.openlibrary.org/b/olid/${ol.edition_key[0]}-L.jpg`,
+        posterPath: ol.edition_key
+          ? `https://covers.openlibrary.org/b/olid/${ol.edition_key[0]}-L.jpg`
+          : ol.isbn
+            ? `https://covers.openlibrary.org/b/isbn/${ol.isbn[0]}-L.jpg`
+            : ``,
       };
     })
     .filter((e: any) => !!new Date(e.releaseDate))

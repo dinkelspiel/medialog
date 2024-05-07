@@ -3,6 +3,7 @@ import SmallRating from './smallRating';
 import { Category } from '@prisma/client';
 import { HTMLProps } from 'react';
 import Image from 'next/image';
+import { cn } from '@/lib/utils';
 
 const UserEntryCard = ({
   title,
@@ -10,6 +11,7 @@ const UserEntryCard = ({
   category,
   releaseDate,
   rating,
+  className,
   ...props
 }: {
   title: string;
@@ -20,7 +22,10 @@ const UserEntryCard = ({
 } & HTMLProps<HTMLDivElement>) => {
   return (
     <div
-      className="relative aspect-[2/3] w-full cursor-pointer overflow-clip rounded-lg bg-cover shadow-md"
+      className={cn(
+        'relative aspect-[2/3] w-full cursor-pointer overflow-clip rounded-lg bg-cover shadow-md',
+        className
+      )}
       style={{ backgroundImage: `url(${backgroundImage})` }}
       {...props}
     >

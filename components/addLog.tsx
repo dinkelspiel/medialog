@@ -18,6 +18,8 @@ import { Category, Entry } from '@prisma/client';
 import UserEntryCard from './userEntryCard';
 import { Drawer, DrawerContent, DrawerTrigger } from './ui/drawer';
 import { useMediaQuery } from 'usehooks-ts';
+import { cn } from '@/lib/utils';
+import { toast } from 'sonner';
 
 const AddLog = ({ children }: { children: ReactNode }) => {
   return (
@@ -93,6 +95,33 @@ const AddLogContent = () => {
       `/api/import/search?q=${queryTitle}&categories=${generateQueryCategories()}&take=12&excludeExisting=true`,
       fetcher
     );
+
+  const [importing, setImporting] = useState<string | undefined>(undefined);
+
+  const importMedia = async (foreignId: string, category: Category) => {
+    setImporting(foreignId);
+
+    console.log(
+      `/api/import/${category.toLowerCase()}?${category === 'Book' ? 'olId' : 'tmdbId'}=${foreignId}`
+    );
+
+    fetch(
+      `/api/import/${category.toLowerCase()}?${category === 'Book' ? 'olId' : 'tmdbId'}=${foreignId}`
+    )
+      .then(data => data.json())
+      .then(data => {
+        setImporting(undefined);
+        if (data.message) {
+          toast.success(data.message);
+        } else {
+          toast.error(data.error);
+        }
+      })
+      .catch(() => {
+        setImporting(undefined);
+        toast.error('Failed to import media!');
+      });
+  };
 
   return (
     <>
@@ -206,14 +235,36 @@ const AddLogContent = () => {
                     (queryResults ? queryResults.length : 0)
                 )
                 .map(e => (
-                  <UserEntryCard
+                  <div
                     key={e.posterPath}
-                    title={e.title}
-                    backgroundImage={e.posterPath}
-                    releaseDate={new Date(e.releaseDate)}
-                    category={e.category as Category}
-                    rating={0}
-                  />
+                    className={cn({
+                      'relative overflow-clip rounded-lg':
+                        importing === e.foreignId.toString(),
+                    })}
+                  >
+                    <UserEntryCard
+                      title={e.title}
+                      backgroundImage={e.posterPath}
+                      releaseDate={new Date(e.releaseDate)}
+                      category={e.category as Category}
+                      rating={0}
+                      className={cn({
+                        'blur-[2px] brightness-50':
+                          importing === e.foreignId.toString(),
+                      })}
+                      onClick={() => {
+                        importMedia(e.foreignId.toString(), e.category);
+                      }}
+                    />
+                    {importing === e.foreignId.toString() && (
+                      <div className="absolute top-1/2 flex w-full -translate-y-1/2 flex-col items-center justify-center gap-2">
+                        <div className="text-sm font-semibold text-white">
+                          IMPORTING
+                        </div>
+                        <Loader2 className="size-4 animate-spin stroke-white" />
+                      </div>
+                    )}
+                  </div>
                 ))}
             </div>
           </>
