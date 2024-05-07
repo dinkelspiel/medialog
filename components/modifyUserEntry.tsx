@@ -18,6 +18,8 @@ import { useFormState } from 'react-dom';
 import { toast } from 'sonner';
 import { Input } from './ui/input';
 import { cn } from '@/lib/utils';
+import UserEntryCard from './userEntryCard';
+import { useMediaQuery } from 'usehooks-ts';
 
 const ModifyUserEntry = ({
   userEntry,
@@ -32,6 +34,8 @@ const ModifyUserEntry = ({
   const [notes, setNotes] = useState(userEntry.notes);
 
   const [state, formAction] = useFormState(saveUserEntry, {});
+
+  const isDesktop = useMediaQuery('(min-width: 1024px)');
 
   useEffect(() => {
     if (state.message) {
@@ -108,8 +112,32 @@ const ModifyUserEntry = ({
   if (userEntry.watchedAt !== null) {
     return (
       <div className="grid h-full w-full grow grid-rows-[max-content,max-content,1fr,max-content]">
-        <div className="mb-8 w-fit break-all pt-4 text-lg font-semibold tracking-tight lg:pt-0 xl:w-max">
-          {userEntry.entry.originalTitle}
+        <div className="grid w-fit grid-cols-[max-content,1fr] gap-4 pb-4 pt-4 lg:pt-0">
+          <img
+            src={userEntry.entry.posterPath}
+            className="aspect-[2/3] w-[100px] rounded-lg shadow-md"
+          />
+          <div className="flex flex-col gap-2">
+            <div className="flex items-end gap-2">
+              <div className="text-lg font-semibold tracking-tight lg:pt-0 xl:w-max">
+                {userEntry.entry.originalTitle}
+              </div>
+              <div className="pb-[2px] text-sm text-muted-foreground">
+                {userEntry.entry.releaseDate.getFullYear()}
+              </div>
+            </div>
+            {userEntry.entry.tagline && (
+              <div className="text-sm font-normal italic text-muted-foreground">
+                "{userEntry.entry.tagline}"
+              </div>
+            )}
+            <div className="break-all text-sm font-normal">
+              {userEntry.entry.overview.slice(0, isDesktop ? 190 : 150) +
+                (userEntry.entry.overview.length > (isDesktop ? 190 : 150)
+                  ? '...'
+                  : '')}
+            </div>
+          </div>
         </div>
         <div className="flex flex-row items-center gap-3 border-b border-b-gray-200 py-3 text-sm">
           <div className="w-max text-muted-foreground">
