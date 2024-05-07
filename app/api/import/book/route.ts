@@ -181,5 +181,6 @@ export const GET = async (request: NextRequest) => {
 
   return Response.json({
     message: `Imported book ${entry.originalTitle}`,
+    entry: entry,
   });
 };

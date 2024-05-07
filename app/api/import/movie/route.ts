@@ -395,5 +395,6 @@ export const GET = async (request: NextRequest) => {
 
   return Response.json({
     message: `Imported movie ${data.title}`,
+    entry: entry,
   });
 };

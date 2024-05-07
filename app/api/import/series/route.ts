@@ -103,6 +103,7 @@ export const GET = async (request: NextRequest) => {
     collectionId = existingCollection.id;
   }
 
+  let firstSeason = undefined;
   for (const season of data.seasons) {
     const existingEntry = await prisma.entry.findFirst({
       where: {
@@ -137,6 +138,10 @@ export const GET = async (request: NextRequest) => {
         )?.id!,
       },
     });
+
+    if (firstSeason === undefined) {
+      firstSeason = entry;
+    }
 
     for (const genre of data.genres) {
       let existingGenre = await prisma.genre.findFirst({
@@ -411,5 +416,6 @@ export const GET = async (request: NextRequest) => {
 
   return Response.json({
     message: `Imported series ${data.original_name}`,
+    entryId: firstSeason!,
   });
 };
