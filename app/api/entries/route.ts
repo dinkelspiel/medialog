@@ -26,13 +26,22 @@ export const GET = async (request: NextRequest) => {
               in: categories.filter(e => !!e),
             }
           : undefined,
-        alternativeTitles: {
-          some: {
-            title: {
+        OR: [
+          {
+            alternativeTitles: {
+              some: {
+                title: {
+                  contains: query ?? '',
+                },
+              },
+            },
+          },
+          {
+            originalTitle: {
               contains: query ?? '',
             },
           },
-        },
+        ],
       },
       take,
       orderBy: {

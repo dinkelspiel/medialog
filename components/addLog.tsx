@@ -20,31 +20,88 @@ import { Drawer, DrawerContent, DrawerTrigger } from './ui/drawer';
 import { useMediaQuery } from 'usehooks-ts';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
+import UserEntryComponent from './userEntry';
+import { ExtendedUserEntry } from '@/app/(app)/dashboard/state';
 
 const AddLog = ({ children }: { children: ReactNode }) => {
+  const [activeUserEntry, setActiveUserEntry] = useState<
+    ExtendedUserEntry | undefined
+  >(undefined);
+  const isDesktop = useMediaQuery('(min-width: 1024px)');
+  const [open, setOpen] = useState(false);
+  const [userEntryOpen, setUserEntryOpen] = useState(false);
+
+  const addUserEntry = async (entryId: number) => {
+    fetch(`/api/user/entries`, {
+      method: 'POST',
+      body: JSON.stringify({
+        entryId,
+      }),
+    })
+      .then(data => data.json())
+      .then(data => {
+        if (data.message) {
+          toast.success(data.message);
+          data.userEntry.entry.releaseDate = new Date(
+            data.userEntry.entry.releaseDate
+          );
+          setOpen(false);
+          setUserEntryOpen(true);
+          setActiveUserEntry(data.userEntry);
+        } else {
+          toast.error(data.error);
+        }
+      })
+      .catch(() => {
+        toast.error('Failed to add user entry!');
+      });
+  };
+
   return (
     <>
-      <Dialog>
-        <DialogTrigger asChild className="hidden lg:block">
-          {children}
-        </DialogTrigger>
-        <DialogContent className="top-[50px] max-h-[calc(100dvh-100px)] max-w-[700px] translate-y-0">
-          <AddLogContent />
-        </DialogContent>
-      </Dialog>
-      <Drawer>
-        <DrawerTrigger asChild className="block lg:hidden">
-          {children}
-        </DrawerTrigger>
-        <DrawerContent className="top-[50px] mt-0 gap-4 p-4">
-          <AddLogContent />
-        </DrawerContent>
-      </Drawer>
+      {(() => {
+        if (isDesktop) {
+          return (
+            <Dialog open={open} onOpenChange={setOpen}>
+              <DialogTrigger asChild className="hidden lg:block">
+                {children}
+              </DialogTrigger>
+              <DialogContent className="top-[50px] max-h-[calc(100dvh-100px)] max-w-[700px] translate-y-0">
+                <AddLogContent addUserEntry={addUserEntry} />
+              </DialogContent>
+            </Dialog>
+          );
+        } else {
+          return (
+            <Drawer open={open} onOpenChange={setOpen}>
+              <DrawerTrigger asChild className="block lg:hidden">
+                {children}
+              </DrawerTrigger>
+              <DrawerContent className="top-[50px] mt-0 gap-4 p-4">
+                <AddLogContent addUserEntry={addUserEntry} />
+              </DrawerContent>
+            </Drawer>
+          );
+        }
+      })()}
+
+      {activeUserEntry !== undefined && (
+        <UserEntryComponent
+          hideCard={true}
+          openOverride={[userEntryOpen, setUserEntryOpen]}
+          userEntry={activeUserEntry}
+          setUserEntry={setActiveUserEntry}
+        />
+      )}
     </>
   );
 };
 
-const AddLogContent = () => {
+const AddLogContent = ({
+  addUserEntry,
+}: {
+  addUserEntry: (entryId: number) => void;
+}) => {
   const isDesktop = useMediaQuery('(min-width: 1024px)');
 
   const [queryCategories, setQueryCategories] = useState<{
@@ -96,32 +153,28 @@ const AddLogContent = () => {
       fetcher
     );
 
-  const [importing, setImporting] = useState<string | undefined>(undefined);
-
   const importMedia = async (foreignId: string, category: Category) => {
     setImporting(foreignId);
-
-    console.log(
-      `/api/import/${category.toLowerCase()}?${category === 'Book' ? 'olId' : 'tmdbId'}=${foreignId}`
-    );
 
     fetch(
       `/api/import/${category.toLowerCase()}?${category === 'Book' ? 'olId' : 'tmdbId'}=${foreignId}`
     )
       .then(data => data.json())
       .then(data => {
-        setImporting(undefined);
         if (data.message) {
           toast.success(data.message);
+          setImporting(undefined);
+          addUserEntry(data.entry.id);
         } else {
           toast.error(data.error);
         }
       })
       .catch(() => {
-        setImporting(undefined);
         toast.error('Failed to import media!');
       });
   };
+
+  const [importing, setImporting] = useState<string | undefined>(undefined);
 
   return (
     <>
@@ -200,6 +253,7 @@ const AddLogContent = () => {
                   releaseDate={new Date(e.releaseDate)}
                   category={e.category}
                   rating={0}
+                  onClick={() => addUserEntry(e.id)}
                 />
               ))}
         </div>

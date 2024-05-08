@@ -2,6 +2,7 @@ import { UserEntryStatusArray } from '@/lib/userEntryStatus';
 import { validateSessionToken } from '@/server/auth/validateSession';
 import prisma from '@/server/db';
 import { UserEntryStatus } from '@prisma/client';
+import { revalidatePath } from 'next/cache';
 import { NextRequest } from 'next/server';
 import z, { date } from 'zod';
 
@@ -105,6 +106,8 @@ export const PATCH = async (
       entry: true,
     },
   });
+
+  revalidatePath('/dashboard');
 
   return Response.json({
     message: 'Updated user entry',

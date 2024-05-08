@@ -7,7 +7,7 @@ import {
   HeaderHeader,
   HeaderTitle,
 } from '@/components/header';
-import UserEntryComponent from './userEntry';
+import UserEntryComponent from '../../../components/userEntry';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Entry, User, UserEntry, UserEntryStatus } from '@prisma/client';
 import {
@@ -55,6 +55,7 @@ const Dashboard = ({
 
     userEntries,
     setUserEntries,
+    setUserEntry,
   } = useDashboardStore();
 
   useEffect(() => {
@@ -254,7 +255,11 @@ const Dashboard = ({
               }
 
               return (
-                <UserEntryComponent userEntry={userEntry} key={userEntry.id} />
+                <UserEntryComponent
+                  userEntry={userEntry}
+                  setUserEntry={setUserEntry}
+                  key={userEntry.id}
+                />
               );
             })}
         </div>
