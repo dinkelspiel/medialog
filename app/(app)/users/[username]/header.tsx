@@ -1,10 +1,11 @@
 'use client';
 
-import React, { Dispatch, SetStateAction, useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import {
   Header,
   HeaderContent,
   HeaderDescription,
+  HeaderHeader,
   HeaderTitle,
 } from '@/components/header';
 import { Button } from '@/components/ui/button';
@@ -20,6 +21,7 @@ import { toast } from 'sonner';
 import Link from 'next/link';
 import { validateSessionToken } from '@/server/auth/validateSession';
 import { User, UserEntry, UserFollow } from '@prisma/client';
+import FollowButton from './followButton';
 
 export const ProfileHeader = ({
   user,
@@ -28,25 +30,34 @@ export const ProfileHeader = ({
   user: User | null;
   profileUser: User & {
     userEntries: UserEntry[];
-    followers: (UserFollow & { user: User })[];
-    following: (UserFollow & { user: User })[];
+    followers: (UserFollow & {
+      user: User & { following: UserFollow[]; followers: UserFollow[] };
+    })[];
+    following: (UserFollow & {
+      follow: User & { following: UserFollow[]; followers: UserFollow[] };
+    })[];
   };
 }) => {
   const [page, setPage] = useState<'Following' | 'Followers'>('Followers');
 
   const FollowEditProfile = () => {
-    return user !== undefined && <></>;
+    return (
+      user &&
+      user.id !== profileUser.id && (
+        <FollowButton user={profileUser} authUser={user} />
+      )
+    );
   };
 
   return (
-    <Header className="col-span-2 h-max flex-col items-center justify-start gap-6 lg:flex-row">
-      <div className="flex w-full flex-row items-center justify-between px-6 lg:w-max lg:justify-start lg:px-0">
-        <HeaderContent>
+    <Header className="col-span-2 h-max flex-col items-center justify-center gap-6 lg:flex-row">
+      <div className="flex w-full flex-row items-center justify-between lg:w-max lg:justify-start">
+        <HeaderHeader className="pt-4 text-center lg:pt-0 lg:text-left">
           <HeaderTitle>{profileUser.username}</HeaderTitle>
           <HeaderDescription>
             {profileUser.username}'s profile
           </HeaderDescription>
-        </HeaderContent>
+        </HeaderHeader>
         <div className="block lg:hidden">
           <FollowEditProfile />
         </div>
@@ -83,7 +94,7 @@ export const ProfileHeader = ({
                   onMouseOver={() => setPage('Following')}
                 >
                   <div className="text-center text-2xl font-semibold">
-                    {profileUser.following.length}
+                    {profileUser.following.filter(e => e.isFollowing).length}
                   </div>
                   <div className="text-center text-sm text-slate-500">
                     Following
@@ -94,7 +105,7 @@ export const ProfileHeader = ({
                   onMouseOver={() => setPage('Followers')}
                 >
                   <div className="text-center text-2xl font-semibold">
-                    {profileUser.followers.length}
+                    {profileUser.followers.filter(e => e.isFollowing).length}
                   </div>
                   <div className="text-center text-sm text-slate-500">
                     Followers
@@ -131,25 +142,24 @@ export const ProfileHeader = ({
                   </div>
                 </SheetTitle>
               </SheetHeader>
-              {/* {page === 'Followers' ? (
-                <UserList
-                  {...{
-                    profile,
-                    setProfile,
-                    users: profile.followers,
-                    userType: 'followers',
-                  }}
-                />
-              ) : (
-                <UserList
-                  {...{
-                    profile,
-                    setProfile,
-                    users: profile.following,
-                    userType: 'following',
-                  }}
-                />
-              )} */}
+              <UserList
+                users={
+                  (page === 'Followers'
+                    ? profileUser.followers
+                    : profileUser.following) as (UserFollow & {
+                    follow: User & {
+                      following: UserFollow[];
+                      followers: UserFollow[];
+                    };
+                  } & {
+                    user: User & {
+                      following: UserFollow[];
+                      followers: UserFollow[];
+                    };
+                  })[]
+                }
+                authUser={user}
+              />
             </SheetContent>
           </Sheet>
         </div>
@@ -157,57 +167,58 @@ export const ProfileHeader = ({
     </Header>
   );
 };
-// const UserList = ({
-//   users,
-//   profile,
-//   setProfile,
-//   userType,
-// }: {
-//   users: UserType[];
-//   profile: ProfileType;
-//   setProfile: Dispatch<SetStateAction<ProfileType | undefined | null>>;
-//   userType: 'following' | 'followers';
-// }) => {
-//   const { user: authUser } = useUserContext();
 
-//   const handleSuccess = (user: UserType, isFollowing: boolean) => {
-//     setProfile({
-//       ...profile,
-//       [userType]: [
-//         ...profile[userType].filter(e => e.username !== user.username),
-//         { ...user, isViewerFollowing: isFollowing },
-//       ],
-//     });
-//   };
+const UserList = ({
+  users,
+  authUser,
+}: {
+  users: (UserFollow & {
+    follow: User & { following: UserFollow[]; followers: UserFollow[] };
+  } & { user: User & { following: UserFollow[]; followers: UserFollow[] } })[];
+  authUser: User | null;
+}) => {
+  return (
+    <div className="py-6">
+      <div className="grid grid-cols-[1fr,96px] items-center gap-3">
+        {users
+          .filter(e => e.isFollowing)
+          .map(user => {
+            if (user.follow) {
+              return <UserCard user={user.follow} authUser={authUser} />;
+            }
 
-//   return (
-//     <div className="py-6">
-//       <div className="grid grid-cols-[1fr,96px] items-center gap-3">
-//         {users.map(user => (
-//           <React.Fragment key={user.username}>
-//             <Link href={`/@${user.username}`}>
-//               <div className="flex flex-col">
-//                 <div className="font-semibold">{user.username}</div>
-//                 <div className="text-sm text-slate-500">
-//                   {user.followersCount} followers, following{' '}
-//                   {user.followingCount}
-//                 </div>
-//               </div>
-//             </Link>
-//             <div className="flex flex-row justify-end">
-//               {/* {user.username !== profile.username && authUser !== undefined && (
-//                 <FollowButton
-//                   username={authUser.username}
-//                   followUsername={user.username}
-//                   isViewerFollowing={user.isViewerFollowing}
-//                   followSuccess={() => handleSuccess(user, true)}
-//                   unfollowSuccess={() => handleSuccess(user, false)}
-//                 />
-//               )} */}
-//             </div>
-//           </React.Fragment>
-//         ))}
-//       </div>
-//     </div>
-//   );
-// };
+            if (user.user) {
+              return <UserCard user={user.user} authUser={authUser} />;
+            }
+          })}
+      </div>
+    </div>
+  );
+};
+
+const UserCard = ({
+  user,
+  authUser,
+}: {
+  user: User & { following: UserFollow[]; followers: UserFollow[] };
+  authUser: User | null;
+}) => {
+  return (
+    <React.Fragment key={user.username}>
+      <Link href={`/@${user.username}`}>
+        <div className="flex flex-col">
+          <div className="font-semibold">{user.username}</div>
+          <div className="text-sm text-slate-500">
+            {user.followers.filter(e => e.isFollowing).length} followers,
+            following {user.following.filter(e => e.isFollowing).length}
+          </div>
+        </div>
+      </Link>
+      <div className="flex flex-row justify-end">
+        {authUser && authUser.username !== user.username && (
+          <FollowButton user={user} authUser={authUser} />
+        )}
+      </div>
+    </React.Fragment>
+  );
+};

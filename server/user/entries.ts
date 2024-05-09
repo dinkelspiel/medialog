@@ -3,6 +3,7 @@
 import z from 'zod';
 import { validateSessionToken } from '../auth/validateSession';
 import prisma from '../db';
+import { pushDailyStreak } from './user';
 
 export const saveUserEntry = async (
   prevState: any,
@@ -50,6 +51,8 @@ export const saveUserEntry = async (
       rating,
     },
   });
+
+  await pushDailyStreak(user);
 
   return {
     message: 'Saved successfully',

@@ -13,6 +13,9 @@ import UserEntryCard from '@/components/userEntryCard';
 import SmallRating from '@/components/smallRating';
 import { Entry, UserActivity, UserEntryStatus } from '@prisma/client';
 import { ProfileHeader } from './header';
+import { ProfileSidebar } from './sidebar';
+import { getDailyStreak } from '@/server/user/user';
+import { getUserDiary } from './diary';
 
 const Profile404 = async () => {
   const user = await validateSessionToken();
@@ -38,22 +41,9 @@ const Profile404 = async () => {
 
 const Profile = async ({ params }: { params: { username: string } }) => {
   const user = await validateSessionToken();
-  const profileUser = await prisma.user.findFirst({
+  const profileUserExists = await prisma.user.findFirst({
     where: {
       username: params.username,
-    },
-    include: {
-      userEntries: true,
-      followers: {
-        include: {
-          user: true,
-        },
-      },
-      following: {
-        include: {
-          user: true,
-        },
-      },
     },
   });
 
@@ -73,28 +63,28 @@ const Profile = async ({ params }: { params: { username: string } }) => {
             }
             break;
           case 'watching':
-            if (rewatch === 0) {
+            if (rewatch === -1) {
               text = `Started ${activity.entry.category === 'Book' ? 'reading' : 'watching'}`;
             } else {
               text = `Is for the ${numberSuffix(rewatch + 1)} time ${activity.entry.category === 'Book' ? 'reading' : 'watching'}`;
             }
             break;
           case 'dnf':
-            if (rewatch === 0) {
+            if (rewatch === -1) {
               text = 'Did not finish';
             } else {
               text = `Did not finish their ${numberSuffix(rewatch)} rewatch`;
             }
             break;
           case 'paused':
-            if (rewatch === 0) {
+            if (rewatch === -1) {
               text = 'Paused';
             } else {
               text = `Paused their ${numberSuffix(rewatch)} rewatch`;
             }
             break;
           case 'completed':
-            if (rewatch === 0) {
+            if (rewatch === -1) {
               text = 'Completed';
             } else {
               text = `Completed their ${numberSuffix(rewatch)} rewatch`;
@@ -128,7 +118,53 @@ const Profile = async ({ params }: { params: { username: string } }) => {
     );
   };
 
-  if (profileUser === null) return <Profile404></Profile404>;
+  if (profileUserExists === null) return <Profile404></Profile404>;
+
+  await getDailyStreak(profileUserExists);
+
+  const profileUser = (await prisma.user.findFirst({
+    where: {
+      username: params.username,
+    },
+    include: {
+      userEntries: {
+        select: {
+          id: true,
+          rating: true,
+          status: true,
+          progress: true,
+          watchedAt: true,
+          entry: {
+            select: {
+              originalTitle: true,
+              posterPath: true,
+              length: true,
+            },
+          },
+        },
+      },
+      followers: {
+        include: {
+          user: {
+            include: {
+              followers: true,
+              following: true,
+            },
+          },
+        },
+      },
+      following: {
+        include: {
+          follow: {
+            include: {
+              followers: true,
+              following: true,
+            },
+          },
+        },
+      },
+    },
+  }))!;
 
   const favorites = await prisma.userEntry.findMany({
     where: {
@@ -139,7 +175,9 @@ const Profile = async ({ params }: { params: { username: string } }) => {
       rating: 'desc',
     },
     take: 4,
-    include: {
+    select: {
+      notes: false,
+      rating: true,
       entry: true,
     },
   });
@@ -157,31 +195,77 @@ const Profile = async ({ params }: { params: { username: string } }) => {
     },
   });
 
+  let ratings = [];
+  const totalRatings = await prisma.userEntry.count({
+    where: {
+      userId: profileUser.id,
+      status: 'completed',
+    },
+  });
+  for (let ratingThreshold = 0; ratingThreshold <= 10; ratingThreshold++) {
+    if (totalRatings > 0) {
+      ratings[ratingThreshold - 1] =
+        (await prisma.userEntry.count({
+          where: {
+            userId: profileUser.id,
+            status: 'completed',
+            rating: {
+              gt: (ratingThreshold - 1) * 10,
+              lte: ratingThreshold * 10,
+            },
+          },
+        })) / totalRatings;
+    } else {
+      ratings[ratingThreshold - 1] = 0;
+    }
+  }
+
+  ratings[0] += ratings[-1] ?? 0;
+  delete ratings[-1];
+
+  const diary = await getUserDiary(profileUser.id);
+
   return (
-    <div className="scrollable-grid-item grid grid-rows-[max-content,1fr] gap-4 p-2 lg:grid-rows-[73px,1fr] lg:px-8 lg:py-6">
-      <ProfileHeader user={user} profileUser={profileUser} />
-      <div className="col-span-2 flex justify-center">
-        <div className="grid w-max grid-cols-1 gap-16 lg:grid-cols-[1fr,250px]">
-          <div className="flex flex-col gap-6 lg:min-w-[716px]">
+    <div className="grid grid-rows-[max-content,1fr] gap-4 2xl:grid-rows-[73px,1fr]">
+      <ProfileHeader user={user} profileUser={profileUser as any} />
+      <div className="col-span-2 mx-auto">
+        <div className="grid w-fit grid-cols-1 gap-16 2xl:grid-cols-[1fr,250px]">
+          <div className="flex flex-col gap-6 md:w-[716px]">
             <div className="flex flex-col gap-4">
-              <div className="border-b border-b-slate-200 pb-2 text-lg font-medium">
+              <div className="flex w-full justify-between border-b border-b-slate-200 pb-2 text-lg font-medium">
                 Favorites
               </div>
               {favorites.length > 0 && (
-                <div className="grid w-[calc(100dvw-16px)] grid-cols-4 gap-3 lg:w-full">
-                  {favorites.map((userEntry, idx) => (
-                    <UserEntryCard
-                      key={`userEntry-${idx}`}
-                      {...{
-                        title: userEntry.entry.originalTitle,
-                        backgroundImage: userEntry.entry.posterPath,
-                        releaseDate: userEntry.entry.releaseDate,
-                        rating: userEntry.rating,
-                        category: userEntry.entry.category,
-                      }}
-                    />
-                  ))}
-                </div>
+                <>
+                  <div className="hidden grid-cols-4 gap-4 sm:grid">
+                    {favorites.map((userEntry, idx) => (
+                      <UserEntryCard
+                        key={`userEntry-${idx}`}
+                        {...{
+                          title: userEntry.entry.originalTitle,
+                          backgroundImage: userEntry.entry.posterPath,
+                          releaseDate: userEntry.entry.releaseDate,
+                          rating: userEntry.rating,
+                          category: userEntry.entry.category,
+                        }}
+                      />
+                    ))}
+                  </div>
+                  <div className="grid grid-cols-3 gap-4 sm:hidden">
+                    {favorites.slice(0, 3).map((userEntry, idx) => (
+                      <UserEntryCard
+                        key={`userEntry-${idx}`}
+                        {...{
+                          title: userEntry.entry.originalTitle,
+                          backgroundImage: userEntry.entry.posterPath,
+                          releaseDate: userEntry.entry.releaseDate,
+                          rating: userEntry.rating,
+                          category: userEntry.entry.category,
+                        }}
+                      />
+                    ))}
+                  </div>
+                </>
               )}
               {favorites.length === 0 &&
                 (user !== undefined &&
@@ -196,9 +280,15 @@ const Profile = async ({ params }: { params: { username: string } }) => {
                   <div className="text-lg">No favorites found</div>
                 ))}
             </div>
-            {/* {!isDesktop && <ProfileSidebar profile={profile} />} */}
+            <ProfileSidebar
+              profileUser={profileUser as any}
+              ratings={ratings}
+              totalRatings={totalRatings}
+              className="flex 2xl:hidden"
+              diary={diary}
+            />
             <div className="flex flex-col gap-4">
-              <div className="border-b border-b-slate-200 pb-2 text-lg font-medium">
+              <div className="flex w-full justify-between border-b border-b-slate-200 pb-2 text-lg font-medium">
                 Recent Activity
               </div>
               {activity.length > 0 && (
@@ -207,15 +297,15 @@ const Profile = async ({ params }: { params: { username: string } }) => {
                     return (
                       <div
                         key={`activity-${idx}`}
-                        className="grid w-[calc(100dvw-16px)] grid-cols-[53px,1fr] gap-4 lg:w-full lg:grid-cols-[80px,1fr]"
+                        className="grid w-full grid-cols-[53px,1fr] gap-4 2xl:w-full 2xl:grid-cols-[80px,1fr]"
                       >
                         <img
                           src={activity.entry.posterPath}
-                          className="h-[80px] w-[53px] rounded-md lg:h-[120px] lg:w-[80px]"
+                          className="h-[80px] w-[53px] rounded-md 2xl:h-[120px] 2xl:w-[80px]"
                         />
-                        <div className="flex h-full flex-col justify-center gap-3 border-b border-b-slate-200 pb-3 lg:border-b-0 lg:pb-0">
+                        <div className="flex h-full flex-col justify-center gap-3 pb-3 2xl:border-b-0 2xl:pb-0">
                           <div className="space-x-3">
-                            <span className="text-base font-semibold lg:text-2xl">
+                            <span className="text-lg font-semibold 2xl:text-2xl">
                               {activity.entry.originalTitle}
                             </span>
                             <span className="text-sm font-medium text-slate-500">
@@ -232,7 +322,9 @@ const Profile = async ({ params }: { params: { username: string } }) => {
                                 />
                               ))}
                           </div>
-                          <div>{generateActivityInfo(activity)}</div>
+                          <div className="flex justify-between">
+                            {generateActivityInfo(activity)}
+                          </div>
                         </div>
                       </div>
                     );
@@ -244,7 +336,13 @@ const Profile = async ({ params }: { params: { username: string } }) => {
               )}
             </div>
           </div>
-          {/* {isDesktop && <ProfileSidebar profile={profile} />} */}
+          <ProfileSidebar
+            profileUser={profileUser as any}
+            ratings={ratings}
+            totalRatings={totalRatings}
+            className="hidden 2xl:flex"
+            diary={diary}
+          />
         </div>
       </div>
     </div>

@@ -129,8 +129,6 @@ export const GET = async (request: NextRequest) => {
     )?.id!,
   };
 
-  console.log(createData);
-
   entry = await prisma.entry.create({
     data: createData,
   });

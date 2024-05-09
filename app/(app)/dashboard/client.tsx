@@ -206,7 +206,10 @@ const Dashboard = ({
                   }
                   return b.watchedAt.getTime() - a.watchedAt.getTime();
                 case 'updated':
-                  return b.updatedAt.getTime() - a.updatedAt.getTime();
+                  return (
+                    new Date(b.updatedAt).getTime() -
+                    new Date(a.updatedAt).getTime()
+                  );
               }
             })
             .map(userEntry => {

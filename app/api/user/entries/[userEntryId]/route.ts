@@ -1,6 +1,7 @@
 import { UserEntryStatusArray } from '@/lib/userEntryStatus';
 import { validateSessionToken } from '@/server/auth/validateSession';
 import prisma from '@/server/db';
+import { pushDailyStreak } from '@/server/user/user';
 import { UserEntryStatus } from '@prisma/client';
 import { revalidatePath } from 'next/cache';
 import { NextRequest } from 'next/server';
@@ -67,6 +68,113 @@ export const PATCH = async (
     );
   }
 
+  if (data.data.progress && data.data.progress > userEntry.entry.length) {
+    const additionalData = `completed|${
+      (await prisma.userEntry.count({
+        where: {
+          userId: user.id,
+          entryId: Number(params.userEntryId),
+        },
+      })) - 1
+    }`;
+
+    if (
+      (await prisma.userActivity.count({
+        where: {
+          userId: user.id,
+          entryId: Number(params.userEntryId),
+          additionalData,
+        },
+      })) === 0
+    ) {
+      await prisma.userActivity.create({
+        data: {
+          userId: user.id,
+          entryId: Number(params.userEntryId),
+          type: 'statusUpdate',
+          additionalData,
+        },
+      });
+    }
+  } else if (data.data.status) {
+    await prisma.userActivity.create({
+      data: {
+        userId: user.id,
+        entryId: Number(params.userEntryId),
+        type: 'statusUpdate',
+        additionalData: `${data.data.status}|${
+          (await prisma.userEntry.count({
+            where: {
+              userId: user.id,
+              entryId: Number(params.userEntryId),
+            },
+          })) - 1
+        }`,
+      },
+    });
+  } else if (data.data.notes && data.data.rating) {
+    const lastActivity = await prisma.userActivity.findFirst({
+      where: {
+        userId: user.id,
+        type: {
+          not: 'reviewed',
+        },
+      },
+    });
+
+    if (
+      lastActivity &&
+      lastActivity.additionalData.includes('completed') &&
+      lastActivity.type === 'statusUpdate'
+    ) {
+      await prisma.userActivity.delete({
+        where: {
+          id: lastActivity.id,
+        },
+      });
+
+      await prisma.userActivity.create({
+        data: {
+          userId: user.id,
+          entryId: Number(params.userEntryId),
+          type: 'completeReview',
+          additionalData: `${
+            (await prisma.userEntry.count({
+              where: {
+                userId: user.id,
+                entryId: Number(params.userEntryId),
+              },
+            })) - 1
+          }`,
+        },
+      });
+    } else if (
+      (
+        await prisma.userEntry.findFirst({
+          where: {
+            id: userEntry.id,
+          },
+        })
+      )?.rating === 0
+    ) {
+      await prisma.userActivity.create({
+        data: {
+          userId: user.id,
+          entryId: Number(params.userEntryId),
+          type: 'reviewed',
+          additionalData: `${
+            (await prisma.userEntry.count({
+              where: {
+                userId: user.id,
+                entryId: Number(params.userEntryId),
+              },
+            })) - 1
+          }`,
+        },
+      });
+    }
+  }
+
   userEntry = await prisma.userEntry.update({
     where: {
       id: Number(params.userEntryId),
@@ -106,6 +214,8 @@ export const PATCH = async (
       entry: true,
     },
   });
+
+  await pushDailyStreak(user);
 
   revalidatePath('/dashboard');
 

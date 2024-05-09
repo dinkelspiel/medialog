@@ -111,8 +111,6 @@ export const GET = async (request: NextRequest) => {
       },
     });
 
-    console.log(existingEntry);
-
     if (existingEntry) {
       continue;
     }
