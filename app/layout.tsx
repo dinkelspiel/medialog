@@ -1,5 +1,6 @@
 import { Metadata, Viewport } from 'next';
 import '@/styles/globals.css';
+import BaseLayout from '@/components/layouts/base';
 
 export default function RootLayout({
   // Layouts must accept a children prop.
@@ -8,7 +9,7 @@ export default function RootLayout({
 }: {
   children: React.ReactNode;
 }) {
-  return children;
+  return <BaseLayout>{children}</BaseLayout>;
 }
 
 export const viewport: Viewport = {
