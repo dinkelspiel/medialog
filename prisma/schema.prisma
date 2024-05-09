@@ -33,9 +33,31 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
-  following UserFollow[] @relation("follower")
-  followers UserFollow[] @relation("followee")
-  UserEntry UserEntry[]
+  following   UserFollow[]   @relation("follower")
+  followers   UserFollow[]   @relation("followee")
+  userEntries UserEntry[]
+  activity    UserActivity[]
+}
+
+enum Activity {
+  statusUpdate
+  reviewed
+  rewatch
+  completeReview
+}
+
+model UserActivity {
+  id Int @id @default(autoincrement()) @db.UnsignedInt
+
+  userId         Int      @db.UnsignedInt
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  entryId        Int      @db.UnsignedInt
+  entry          Entry    @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  type           Activity
+  additionalData String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model UserFollow {
@@ -329,6 +351,7 @@ model Entry {
   genres              EntryGenre[]
   watchProviders      EntryWatchProvider[]
   userEntries         UserEntry[]
+  userActivity        UserActivity[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt

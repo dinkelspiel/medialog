@@ -108,7 +108,6 @@ export const GET = async (request: NextRequest) => {
           ],
         },
       });
-      console.log(existing);
 
       if (!existing) {
         finalMedia.push(media);

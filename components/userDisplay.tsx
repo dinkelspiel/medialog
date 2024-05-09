@@ -6,11 +6,13 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import Logo from './icons/logo';
-import { LogOut } from 'lucide-react';
+import { LogOut, User as UserIcon } from 'lucide-react';
 import { logout } from '@/server/auth/logout';
+import Link from 'next/link';
 
 const UserDisplay = ({ user }: { user: User }) => {
   return (
@@ -25,6 +27,13 @@ const UserDisplay = ({ user }: { user: User }) => {
         </div>
       </DropdownMenuTrigger>
       <DropdownMenuContent className="mx-3 w-[232px]">
+        <Link href={`/@${user.username}`}>
+          <DropdownMenuItem>
+            <UserIcon className="me-2 size-3" />
+            Go to profile
+          </DropdownMenuItem>
+        </Link>
+        <DropdownMenuSeparator />
         <form action={logout} className="w-full">
           <button type="submit" className="w-full">
             <DropdownMenuItem>
