@@ -73,7 +73,7 @@ export const PATCH = async (
       (await prisma.userEntry.count({
         where: {
           userId: user.id,
-          entryId: Number(params.userEntryId),
+          entryId: userEntry.entryId,
         },
       })) - 1
     }`;
@@ -82,7 +82,7 @@ export const PATCH = async (
       (await prisma.userActivity.count({
         where: {
           userId: user.id,
-          entryId: Number(params.userEntryId),
+          entryId: userEntry.entryId,
           additionalData,
         },
       })) === 0
@@ -90,7 +90,7 @@ export const PATCH = async (
       await prisma.userActivity.create({
         data: {
           userId: user.id,
-          entryId: Number(params.userEntryId),
+          entryId: userEntry.entryId,
           type: 'statusUpdate',
           additionalData,
         },
@@ -100,13 +100,13 @@ export const PATCH = async (
     await prisma.userActivity.create({
       data: {
         userId: user.id,
-        entryId: Number(params.userEntryId),
+        entryId: userEntry.entryId,
         type: 'statusUpdate',
         additionalData: `${data.data.status}|${
           (await prisma.userEntry.count({
             where: {
               userId: user.id,
-              entryId: Number(params.userEntryId),
+              entryId: userEntry.entryId,
             },
           })) - 1
         }`,
@@ -136,13 +136,13 @@ export const PATCH = async (
       await prisma.userActivity.create({
         data: {
           userId: user.id,
-          entryId: Number(params.userEntryId),
+          entryId: userEntry.entryId,
           type: 'completeReview',
           additionalData: `${
             (await prisma.userEntry.count({
               where: {
                 userId: user.id,
-                entryId: Number(params.userEntryId),
+                entryId: userEntry.entryId,
               },
             })) - 1
           }`,
@@ -160,13 +160,13 @@ export const PATCH = async (
       await prisma.userActivity.create({
         data: {
           userId: user.id,
-          entryId: Number(params.userEntryId),
+          entryId: userEntry.entryId,
           type: 'reviewed',
           additionalData: `${
             (await prisma.userEntry.count({
               where: {
                 userId: user.id,
-                entryId: Number(params.userEntryId),
+                entryId: userEntry.entryId,
               },
             })) - 1
           }`,
