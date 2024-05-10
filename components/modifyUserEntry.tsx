@@ -20,6 +20,7 @@ import { Input } from './ui/input';
 import { cn } from '@/lib/utils';
 import UserEntryCard from './userEntryCard';
 import { useMediaQuery } from 'usehooks-ts';
+import { Badge } from './ui/badge';
 
 const ModifyUserEntry = ({
   userEntry,
@@ -144,14 +145,10 @@ const ModifyUserEntry = ({
       <div className="grid h-full w-full grow grid-rows-[max-content,max-content,1fr,max-content]">
         <Header />
         <div className="flex flex-row items-center gap-3 border-b border-b-gray-200 py-3 text-sm">
-          <div className="w-max text-muted-foreground">
-            <TooltipProvider>
-              <Tooltip>
-                <TooltipTrigger>Rating</TooltipTrigger>
-                <TooltipContent>{rating / 20}</TooltipContent>
-              </Tooltip>
-            </TooltipProvider>
-          </div>
+          <div className="w-max text-muted-foreground">Rating</div>
+          <Badge className="min-w-[50px] max-w-[50px] justify-center">
+            {rating / 20}
+          </Badge>
           <div className="w-full">
             <Slider
               value={[rating]}
