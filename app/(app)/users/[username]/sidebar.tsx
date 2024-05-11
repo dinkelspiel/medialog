@@ -7,6 +7,7 @@ import { cn } from '@/lib/utils';
 import { Diary } from './diary';
 import { Calendar } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
+import { Fragment } from 'react';
 
 export const ProfileSidebar = ({
   profileUser,
@@ -66,6 +67,7 @@ export const ProfileSidebar = ({
                 className={cn(
                   `${idx !== 0 && 'ms-[-24px]'} h-[120px] w-[80px] rounded-md shadow-lg`
                 )}
+                alt={watchlist.entry.originalTitle}
                 style={{ zIndex: idx }}
               />
             ))}
@@ -86,7 +88,7 @@ export const ProfileSidebar = ({
             {profileUser.userEntries
               .filter(e => e.status === 'watching')
               .map(entry => (
-                <div className="flex flex-col gap-1.5">
+                <div className="flex flex-col gap-1.5" key={entry.id}>
                   {entry.entry.originalTitle}
                   <Progress
                     value={(entry.progress / entry.entry.length) * 100}
@@ -145,7 +147,7 @@ export const ProfileSidebar = ({
             return monthOrder.indexOf(aMonth) - monthOrder.indexOf(bMonth);
           })
           .map(month => (
-            <div className="grid grid-cols-[42px,1fr] gap-2">
+            <div className="grid grid-cols-[42px,1fr] gap-2" key={month}>
               <div className="flex flex-col items-center gap-1">
                 <Calendar />
                 <div className="text-center text-[11px] font-semibold text-black">
@@ -154,10 +156,10 @@ export const ProfileSidebar = ({
               </div>
               <div className="grid grid-cols-[17.5px,1fr] gap-2 text-sm font-medium">
                 {diary[month]!.map(day => (
-                  <>
+                  <Fragment key={month + (day + '')}>
                     <div className="text-slate-500">{day.day}</div>
                     <div className="whitespace-break-spaces">{day.title}</div>
-                  </>
+                  </Fragment>
                 ))}
               </div>
             </div>
