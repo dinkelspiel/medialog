@@ -12,48 +12,53 @@ import { Toaster } from 'sonner';
 const Layout = async ({ children }: { children: ReactNode }) => {
   const user = await validateSessionToken();
 
-  if (!user) {
-    return redirect('/auth/login');
-  }
-
-  return (
-    <SidebarLayout>
-      <Sidebar
-        header={
-          <div className="flex w-full justify-between">
-            <UserDisplay user={user} />
+  if (user) {
+    return (
+      <SidebarLayout>
+        <Sidebar
+          header={
+            <div className="flex w-full justify-between">
+              <UserDisplay user={user} />
+              <AddLog>
+                <Button className="flex min-w-[40px] justify-center lg:hidden">
+                  <Plus />
+                  Log Media
+                </Button>
+              </AddLog>
+            </div>
+          }
+          headerProps={{ className: '[&>svg]:size-7 p-0' }}
+        >
+          <SidebarButton href="/dashboard">
+            <Home className="size-3" />
+            Home
+          </SidebarButton>
+          <SidebarButton href="/community">
+            <UsersRound className="size-3" />
+            Community
+          </SidebarButton>
+          <SidebarFooter>
             <AddLog>
-              <Button className="flex min-w-[40px] justify-center lg:hidden">
+              <Button className="hidden lg:flex">
                 <Plus />
                 Log Media
               </Button>
             </AddLog>
-          </div>
-        }
-        headerProps={{ className: '[&>svg]:size-7 p-0' }}
-      >
-        <SidebarButton href="/dashboard">
-          <Home className="size-3" />
-          Home
-        </SidebarButton>
-        <SidebarButton href="/community">
-          <UsersRound className="size-3" />
-          Community
-        </SidebarButton>
-        <SidebarFooter>
-          <AddLog>
-            <Button className="hidden lg:flex">
-              <Plus />
-              Log Media
-            </Button>
-          </AddLog>
-        </SidebarFooter>
-      </Sidebar>
+          </SidebarFooter>
+        </Sidebar>
 
-      <main className="flex flex-col gap-4 px-5 py-4">{children}</main>
-      <Toaster />
-    </SidebarLayout>
-  );
+        <main className="flex flex-col gap-4 px-5 py-4">{children}</main>
+        <Toaster />
+      </SidebarLayout>
+    );
+  } else {
+    return (
+      <>
+        <main className="flex flex-col gap-4 px-5 py-4">{children}</main>
+        <Toaster />
+      </>
+    );
+  }
 };
 
 export default Layout;
