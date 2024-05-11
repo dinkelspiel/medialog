@@ -131,13 +131,25 @@ export const ProfileSidebar = ({
           </span>
         </div>
         {Object.keys(diary)
-          .sort((a, b) => monthOrder.indexOf(a) - monthOrder.indexOf(b))
+          .sort((a, b) => {
+            const aMonth = a.split('-')[0]!;
+            const aYear = Number(a.split('-')[1]!);
+
+            const bMonth = b.split('-')[0]!;
+            const bYear = Number(b.split('-')[1]!);
+
+            if (aYear !== bYear) {
+              return bYear - aYear;
+            }
+
+            return monthOrder.indexOf(aMonth) - monthOrder.indexOf(bMonth);
+          })
           .map(month => (
             <div className="grid grid-cols-[42px,1fr] gap-2">
               <div className="flex flex-col items-center gap-1">
                 <Calendar />
                 <div className="text-center text-[11px] font-semibold text-black">
-                  {month}
+                  {month.split('-')[0]!}
                 </div>
               </div>
               <div className="grid grid-cols-[17.5px,1fr] gap-2 text-sm font-medium">

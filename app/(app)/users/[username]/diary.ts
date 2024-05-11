@@ -26,14 +26,17 @@ export const getUserDiary = async (userId: number): Promise<Diary> => {
   const diary: Diary = {};
 
   userEntries.forEach(userEntry => {
-    const month = userEntry
-      .watchedAt!.toLocaleString('default', { month: 'short' })
-      .toUpperCase()
-      .slice(0, 3);
-    if (!diary[month]) {
-      diary[month] = [];
+    const monthMinusYear =
+      userEntry // Example NOV-2024
+        .watchedAt!.toLocaleString('default', { month: 'short' })
+        .toUpperCase()
+        .slice(0, 3) +
+      '-' +
+      userEntry.watchedAt!.getFullYear();
+    if (!diary[monthMinusYear]) {
+      diary[monthMinusYear] = [];
     }
-    diary[month]!.push({
+    diary[monthMinusYear]!.push({
       title: userEntry.entry.originalTitle,
       day: userEntry.watchedAt!.getDate(),
     });
