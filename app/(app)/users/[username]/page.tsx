@@ -63,14 +63,14 @@ const Profile = async ({ params }: { params: { username: string } }) => {
             }
             break;
           case 'watching':
-            if (rewatch === -1) {
+            if (rewatch === 0) {
               text = `Started ${activity.entry.category === 'Book' ? 'reading' : 'watching'}`;
             } else {
               text = `Is for the ${numberSuffix(rewatch + 1)} time ${activity.entry.category === 'Book' ? 'reading' : 'watching'}`;
             }
             break;
           case 'dnf':
-            if (rewatch === -1) {
+            if (rewatch === 0) {
               text = 'Did not finish';
             } else {
               text = `Did not finish their ${numberSuffix(rewatch)} rewatch`;
@@ -84,7 +84,7 @@ const Profile = async ({ params }: { params: { username: string } }) => {
             }
             break;
           case 'completed':
-            if (rewatch === -1) {
+            if (rewatch === 0) {
               text = 'Completed';
             } else {
               text = `Completed their ${numberSuffix(rewatch)} rewatch`;
