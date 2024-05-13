@@ -15,7 +15,7 @@ export const getUserDiary = async (userId: number): Promise<Diary> => {
       status: 'completed',
     },
     orderBy: {
-      id: 'desc',
+      watchedAt: 'desc',
     },
     take: 10,
     include: {
