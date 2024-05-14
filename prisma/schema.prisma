@@ -33,10 +33,11 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
-  following   UserFollow[]   @relation("follower")
-  followers   UserFollow[]   @relation("followee")
-  userEntries UserEntry[]
-  activity    UserActivity[]
+  following          UserFollow[]         @relation("follower")
+  followers          UserFollow[]         @relation("followee")
+  userEntries        UserEntry[]
+  activity           UserActivity[]
+  UserForgotPassword UserForgotPassword[]
 }
 
 enum Activity {
@@ -357,4 +358,13 @@ model Entry {
   updatedAt DateTime @default(now()) @updatedAt
 
   @@index([originalTitle])
+}
+
+model UserForgotPassword {
+  id        String   @id @db.VarChar(36)
+  userId    Int      @db.UnsignedInt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  used      Boolean
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
