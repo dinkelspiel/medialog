@@ -229,7 +229,7 @@ const Profile = async ({ params }: { params: { username: string } }) => {
     <div className="grid grid-rows-[max-content,1fr] gap-4 2xl:grid-rows-[73px,1fr]">
       <ProfileHeader user={user} profileUser={profileUser as any} />
       <div className="col-span-2 mx-auto">
-        <div className="grid w-fit grid-cols-1 gap-16 2xl:grid-cols-[1fr,250px]">
+        <div className="grid w-fit grid-cols-1 gap-16 min-[1330px]:grid-cols-[1fr,250px]">
           <div className="flex flex-col gap-6 md:w-[716px]">
             <div className="flex flex-col gap-4">
               <div className="flex w-full justify-between border-b border-b-slate-200 pb-2 text-lg font-medium">
@@ -284,7 +284,7 @@ const Profile = async ({ params }: { params: { username: string } }) => {
               profileUser={profileUser as any}
               ratings={ratings}
               totalRatings={totalRatings}
-              className="flex 2xl:hidden"
+              className="flex min-[1330px]:hidden"
               diary={diary}
             />
             <div className="flex flex-col gap-4">
@@ -340,7 +340,7 @@ const Profile = async ({ params }: { params: { username: string } }) => {
             profileUser={profileUser as any}
             ratings={ratings}
             totalRatings={totalRatings}
-            className="hidden 2xl:flex"
+            className="hidden min-[1330px]:flex"
             diary={diary}
           />
         </div>
