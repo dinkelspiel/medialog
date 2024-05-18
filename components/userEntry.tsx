@@ -2,14 +2,21 @@
 import { Drawer, DrawerContent } from '@/components/ui/drawer';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import UserEntryCard from '@/components/userEntryCard';
-import { Entry, User, UserEntry } from '@prisma/client';
-import { Dispatch, SetStateAction, useState } from 'react';
+import {
+  Entry,
+  User,
+  UserEntry,
+  UserList,
+  UserListEntry,
+} from '@prisma/client';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import { useMediaQuery } from 'usehooks-ts';
 import {
   ExtendedUserEntry,
   useDashboardStore,
 } from '../app/(app)/dashboard/state';
 import ModifyUserEntry from '@/components/modifyUserEntry';
+import { toast } from 'sonner';
 
 const UserEntryComponent = ({
   userEntry,
@@ -26,6 +33,38 @@ const UserEntryComponent = ({
 }) => {
   const isDesktop = useMediaQuery('(min-width: 1024px)');
   const [open, setOpen] = openOverride ?? useState(false);
+
+  const [lists, setLists] = useState<UserList[]>([]);
+  const [listsWithEntry, setListsWithEntry] = useState<UserList[]>([]);
+
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+
+    refetchUserLists();
+  }, [open]);
+
+  const refetchUserLists = async () => {
+    const entryListsResponse = await (
+      await fetch(`/api/user/entries/${userEntry.id}/lists`)
+    ).json();
+    const listsResponse = await (await fetch(`/api/user/lists`)).json();
+
+    if (entryListsResponse.error) {
+      toast.error(
+        `Error fetching entry userLists: ${entryListsResponse.error}`
+      );
+    } else {
+      setListsWithEntry(entryListsResponse);
+    }
+
+    if (listsResponse.error) {
+      toast.error(`Error fetching userLists: ${listsResponse.error}`);
+    } else {
+      setLists(listsResponse);
+    }
+  };
 
   return (
     <>
@@ -49,6 +88,9 @@ const UserEntryComponent = ({
                   userEntry={userEntry}
                   setOpen={setOpen}
                   setUserEntry={setUserEntry}
+                  userLists={lists}
+                  userListsWithEntry={listsWithEntry}
+                  refetchUserLists={refetchUserLists}
                 />
               </SheetContent>
             </Sheet>
@@ -61,6 +103,9 @@ const UserEntryComponent = ({
                   userEntry={userEntry}
                   setOpen={setOpen}
                   setUserEntry={setUserEntry}
+                  userLists={lists}
+                  userListsWithEntry={listsWithEntry}
+                  refetchUserLists={refetchUserLists}
                 />
               </DrawerContent>
             </Drawer>
