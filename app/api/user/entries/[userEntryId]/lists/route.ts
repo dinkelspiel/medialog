@@ -19,7 +19,7 @@ export const GET = async (
     include: {
       entry: {
         include: {
-          userLists: {
+          userListEntries: {
             include: {
               list: true,
             },
@@ -33,7 +33,7 @@ export const GET = async (
     return Response.json({ error: 'No user entry with id' }, { status: 400 });
   }
 
-  const lists = userEntry!.entry.userLists
+  const lists = userEntry!.entry.userListEntries
     .map(e => e.list)
     .filter(e => e.userId === user.id);
 
