@@ -132,7 +132,6 @@ const ModifyUserEntry = ({
     if (response.error) {
       toast.error(response.error);
     } else if (response.message) {
-      toast.success(response.message);
       setUserEntry({
         ...response.userEntry,
         entry: {
