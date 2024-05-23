@@ -237,16 +237,10 @@ const ModifyUserEntry = ({
           />
         </div>
         <div className="flex items-center justify-between">
+          <Button variant={'ghost'} className="[&>svg]:size-4">
+            <Trash2 className="stroke-red-500" />
+          </Button>
           <div className="flex gap-4">
-            <form action={formAction}>
-              <input type="hidden" value={userEntry.id} name="userEntryId" />
-              <input type="hidden" value={rating} name="rating" />
-              <input type="hidden" value={notes} name="notes" />
-              <SubmitButton className="w-max px-6" size={'default'}>
-                <Save className="size-3" />
-                Save
-              </SubmitButton>
-            </form>
             <Popover open={addListsOpen} onOpenChange={setAddListsOpen}>
               <PopoverTrigger asChild>
                 <Button
@@ -310,10 +304,16 @@ const ModifyUserEntry = ({
                 </Command>
               </PopoverContent>
             </Popover>
+            <form action={formAction}>
+              <input type="hidden" value={userEntry.id} name="userEntryId" />
+              <input type="hidden" value={rating} name="rating" />
+              <input type="hidden" value={notes} name="notes" />
+              <SubmitButton className="w-max px-6" size={'default'}>
+                <Save className="size-3" />
+                Save
+              </SubmitButton>
+            </form>
           </div>
-          <Button variant={'ghost'} className="[&>svg]:size-4">
-            <Trash2 className="stroke-red-500" />
-          </Button>
         </div>
       </div>
     );

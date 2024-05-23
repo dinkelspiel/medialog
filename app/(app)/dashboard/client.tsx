@@ -39,6 +39,7 @@ import { useEffect, useState } from 'react';
 import { FilterStyle, useDashboardStore } from './state';
 import useSwr from 'swr';
 import fetcher from '@/client/fetcher';
+import ModifyUserEntry from '@/components/modifyUserEntry';
 
 const Dashboard = ({
   userEntries: originalUserEntries,
@@ -101,7 +102,7 @@ const Dashboard = ({
 
   return (
     <>
-      <Header>
+      <Header className="col-span-2">
         <HeaderHeader>
           <HeaderTitle>My Media</HeaderTitle>
           <HeaderDescription>
@@ -189,8 +190,8 @@ const Dashboard = ({
           </Popover>
         </HeaderContent>
       </Header>
-      <div className="grid justify-center">
-        <div className="grid w-fit grid-cols-3 gap-4 min-[700px]:grid-cols-4 min-[1100px]:grid-cols-5 min-[1300px]:grid-cols-6 min-[1500px]:grid-cols-7 min-[1600px]:grid-cols-8 min-[1700px]:grid-cols-9 min-[1800px]:grid-cols-10 min-[1900px]:grid-cols-11">
+      <div className="grid justify-center p-4">
+        <div className="grid w-fit grid-cols-3 gap-4 min-[700px]:grid-cols-4 min-[1100px]:grid-cols-5 min-[1300px]:grid-cols-6 min-[1500px]:grid-cols-7 min-[1600px]:grid-cols-8 min-[1700px]:grid-cols-8">
           {userEntries
             .sort((a, b) => {
               switch (filterStyle) {
@@ -266,6 +267,18 @@ const Dashboard = ({
               );
             })}
         </div>
+      </div>
+      <div className="sticky top-[80px] h-[calc(100dvh-81px)] bg-[#F5F5F5] p-4 shadow-[inset_0_0px_8px_0_rgb(0_0_0_/_0.02)] shadow-gray-300">
+        {userEntries[0] && (
+          <ModifyUserEntry
+            userEntry={userEntries[0]!}
+            setOpen={() => []}
+            setUserEntry={setUserEntry}
+            userLists={[]}
+            userListsWithEntry={[]}
+            refetchUserLists={async () => {}}
+          />
+        )}
       </div>
     </>
   );
