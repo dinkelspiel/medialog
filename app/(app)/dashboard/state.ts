@@ -1,7 +1,7 @@
 import { Entry, User, UserEntry, UserEntryStatus } from '@prisma/client';
 import { create } from 'zustand';
 
-export type FilterStyle = 'rating' | 'az' | 'watched' | 'updated';
+export type FilterStyle = 'rating' | 'az' | 'completed' | 'updated';
 export type ExtendedUserEntry = UserEntry & { entry: Entry } & { user: User };
 
 type DashboardStore = {

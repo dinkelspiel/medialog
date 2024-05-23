@@ -1,7 +1,7 @@
 import { Book, Film, Star, Tv } from 'lucide-react';
 import SmallRating from './smallRating';
 import { Category } from '@prisma/client';
-import { HTMLProps } from 'react';
+import { HTMLProps, ReactElement, ReactNode } from 'react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
 import { ExtendedUserEntry } from '@/app/(app)/dashboard/state';
@@ -13,6 +13,7 @@ const UserEntryCard = ({
   releaseDate,
   rating,
   className,
+  customStars,
   ...props
 }: {
   title: string;
@@ -20,6 +21,7 @@ const UserEntryCard = ({
   category: Category;
   releaseDate: Date;
   rating: number;
+  customStars?: ReactElement;
 } & HTMLProps<HTMLDivElement>) => {
   return (
     <div
@@ -53,13 +55,18 @@ const UserEntryCard = ({
           <div className="text-sm text-slate-400">
             {releaseDate.getFullYear()}
           </div>
-          <div className="hidden text-white sm:block">
-            <SmallRating rating={rating} />
-          </div>
-          <div className="flex items-center gap-1 text-white sm:hidden">
-            <span className="text-sm">{rating / 20}</span>
-            <Star strokeWidth={0} className="size-4 fill-primary" />
-          </div>
+          {!!customStars && customStars}
+          {!customStars && (
+            <>
+              <div className="hidden text-white sm:block">
+                <SmallRating rating={rating} />
+              </div>
+              <div className="flex items-center gap-1 text-white sm:hidden">
+                <span className="text-sm">{(rating / 20).toFixed(1)}</span>
+                <Star strokeWidth={0} className="size-4 fill-primary" />
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>

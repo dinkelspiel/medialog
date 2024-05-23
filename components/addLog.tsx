@@ -20,8 +20,8 @@ import { Drawer, DrawerContent, DrawerTrigger } from './ui/drawer';
 import { useMediaQuery } from 'usehooks-ts';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
-import UserEntryComponent from './userEntry';
 import { ExtendedUserEntry } from '@/app/(app)/dashboard/state';
+import ExternalUserEntry from './userEntryExternal';
 
 const AddLog = ({ children }: { children: ReactNode }) => {
   const [activeUserEntry, setActiveUserEntry] = useState<
@@ -86,8 +86,7 @@ const AddLog = ({ children }: { children: ReactNode }) => {
       })()}
 
       {activeUserEntry !== undefined && (
-        <UserEntryComponent
-          hideCard={true}
+        <ExternalUserEntry
           openOverride={[userEntryOpen, setUserEntryOpen]}
           userEntry={activeUserEntry}
           setUserEntry={setActiveUserEntry}

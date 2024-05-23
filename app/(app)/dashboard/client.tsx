@@ -7,7 +7,6 @@ import {
   HeaderHeader,
   HeaderTitle,
 } from '@/components/header';
-import UserEntryComponent from '../../../components/userEntry';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
   Entry,
@@ -46,15 +45,20 @@ import { FilterStyle, useDashboardStore } from './state';
 import useSwr from 'swr';
 import fetcher from '@/client/fetcher';
 import ModifyUserEntry from '@/components/modifyUserEntry';
-import { UserEntryCardObject } from '@/components/userEntryCard';
+import UserEntryCard, { UserEntryCardObject } from '@/components/userEntryCard';
 import { useMediaQuery } from 'usehooks-ts';
 import { toast } from 'sonner';
 import { Drawer, DrawerContent } from '@/components/ui/drawer';
+import SmallRating from '@/components/smallRating';
 
 const Dashboard = ({
   userEntries: originalUserEntries,
+  topRatedNotCompleted,
+  topCompletedNotCompleted,
 }: {
   userEntries: (UserEntry & { entry: Entry } & { user: User })[];
+  topCompletedNotCompleted: Entry[];
+  topRatedNotCompleted: Entry[];
 }) => {
   const {
     filterStatus,
@@ -152,6 +156,18 @@ const Dashboard = ({
   };
 
   const InformationView = () => {
+    const CustomStars = ({ rating }: { rating: number }) => (
+      <>
+        <div className="hidden text-white 2xl:block">
+          <SmallRating rating={rating} />
+        </div>
+        <div className="flex items-center gap-1 text-white 2xl:hidden">
+          <span className="text-sm">{(rating / 20).toFixed(1)}</span>
+          <Star strokeWidth={0} className="size-4 fill-primary" />
+        </div>
+      </>
+    );
+
     if (selectedUserEntry) {
       return (
         <ModifyUserEntry
@@ -170,16 +186,61 @@ const Dashboard = ({
       );
     } else {
       return (
-        <>
-          <h3>Most popular media today</h3>
-        </>
+        <div className="flex flex-col gap-6">
+          <div className="flex flex-col gap-4">
+            <h2 className="text-2xl font-medium">
+              Highest rated media you haven’t completed
+            </h2>
+            <div className="grid grid-cols-3 gap-4">
+              {topRatedNotCompleted.map(e => (
+                <UserEntryCard
+                  {...{
+                    title: e.originalTitle,
+                    backgroundImage: e.posterPath,
+                    category: e.category,
+                    releaseDate: new Date(e.releaseDate),
+                    rating: (e as any).average,
+                    customStars: <CustomStars rating={(e as any).average} />,
+                  }}
+                />
+              ))}
+            </div>
+            {/* <div className="flex w-full justify-end">
+              <div className="text-sm">See more</div>
+            </div> */}
+          </div>
+          <div className="flex flex-col gap-4">
+            <h2 className="text-2xl font-medium">
+              Most popular media you haven’t completed
+            </h2>
+            <div className="grid grid-cols-3 gap-4">
+              {topCompletedNotCompleted.map(e => (
+                <>
+                  <UserEntryCard
+                    {...{
+                      title: e.originalTitle,
+                      backgroundImage: e.posterPath,
+                      category: e.category,
+                      releaseDate: new Date(e.releaseDate),
+                      rating: 0,
+                      customStars: <CustomStars rating={(e as any).average} />,
+                    }}
+                  />
+                </>
+              ))}
+            </div>
+            {/* <div className="flex w-full justify-end">
+              <div className="text-sm">See more</div>
+            </div> */}
+          </div>
+        </div>
       );
     }
   };
 
   // Mobile
 
-  const isAbove2xl = useMediaQuery('(min-width: 1536px)');
+  const isDesktop = useMediaQuery('(min-width: 1024px)');
   const [informationViewOpen, setInformationViewOpenValue] = useState(false);
 
   const setInformationViewOpen = (open: boolean) => {
@@ -195,7 +256,7 @@ const Dashboard = ({
       return;
     }
 
-    if (isAbove2xl) {
+    if (isDesktop) {
       return;
     }
 
@@ -206,7 +267,7 @@ const Dashboard = ({
     <>
       <Header className="col-span-2">
         <HeaderHeader>
-          <HeaderTitle>My Media {isAbove2xl ? 'true' : 'false'}</HeaderTitle>
+          <HeaderTitle>My Media</HeaderTitle>
           <HeaderDescription>
             Search through your entire media catalogue
           </HeaderDescription>
@@ -226,9 +287,9 @@ const Dashboard = ({
                 <AArrowDown className="size-3" />
                 A-Z
               </TabsTrigger>
-              <TabsTrigger value={'watched'}>
+              <TabsTrigger value={'completed'}>
                 <Eye className="size-3" />
-                Watched
+                Completed
               </TabsTrigger>
               <TabsTrigger value={'updated'}>
                 <Pen className="size-3" />
@@ -292,8 +353,8 @@ const Dashboard = ({
           </Popover>
         </HeaderContent>
       </Header>
-      <div className="col-span-2 grid justify-center p-4 2xl:col-span-1">
-        <div className="grid w-fit grid-cols-3 gap-4 min-[700px]:grid-cols-4 min-[1100px]:grid-cols-5 min-[1300px]:grid-cols-6 min-[1500px]:grid-cols-7 2xl:grid-cols-4 min-[1600px]:grid-cols-5 min-[1800px]:grid-cols-6 min-[2000px]:grid-cols-7 min-[2200px]:grid-cols-8">
+      <div className="col-span-2 grid justify-center p-4 xl:col-span-1">
+        <div className="grid w-fit grid-cols-3 gap-4 min-[700px]:grid-cols-4 lg:grid-cols-5  min-[1600px]:grid-cols-5 min-[1800px]:grid-cols-6 min-[2000px]:grid-cols-7 min-[2200px]:grid-cols-8">
           {userEntries
             .sort((a, b) => {
               switch (filterStyle) {
@@ -303,7 +364,7 @@ const Dashboard = ({
                   return a.entry.originalTitle.localeCompare(
                     b.entry.originalTitle
                   );
-                case 'watched':
+                case 'completed':
                   if (a.watchedAt === null || b.watchedAt === null) {
                     return 0;
                   }
@@ -374,7 +435,7 @@ const Dashboard = ({
             })}
         </div>
       </div>
-      <div className="sticky top-[81px] hidden h-[calc(100dvh-81px)] bg-[#F5F5F5] p-4 shadow-[inset_0_0px_8px_0_rgb(0_0_0_/_0.02)] shadow-gray-300 2xl:block">
+      <div className="sticky top-[81px] hidden h-[calc(100dvh-81px)] bg-[#F5F5F5] p-4 shadow-[inset_0_0px_8px_0_rgb(0_0_0_/_0.02)] shadow-gray-300 xl:block">
         <InformationView />
       </div>
       <Drawer open={informationViewOpen} onOpenChange={setInformationViewOpen}>
