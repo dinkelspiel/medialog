@@ -194,6 +194,7 @@ const Dashboard = ({
             <div className="grid grid-cols-3 gap-4">
               {topRatedNotCompleted.map(e => (
                 <UserEntryCard
+                  key={'tr' + e.id}
                   {...{
                     title: e.originalTitle,
                     backgroundImage: e.posterPath,
@@ -215,18 +216,17 @@ const Dashboard = ({
             </h2>
             <div className="grid grid-cols-3 gap-4">
               {topCompletedNotCompleted.map(e => (
-                <>
-                  <UserEntryCard
-                    {...{
-                      title: e.originalTitle,
-                      backgroundImage: e.posterPath,
-                      category: e.category,
-                      releaseDate: new Date(e.releaseDate),
-                      rating: 0,
-                      customStars: <CustomStars rating={(e as any).average} />,
-                    }}
-                  />
-                </>
+                <UserEntryCard
+                  key={'tc' + e.id}
+                  {...{
+                    title: e.originalTitle,
+                    backgroundImage: e.posterPath,
+                    category: e.category,
+                    releaseDate: new Date(e.releaseDate),
+                    rating: 0,
+                    customStars: <CustomStars rating={(e as any).average} />,
+                  }}
+                />
               ))}
             </div>
             {/* <div className="flex w-full justify-end">
@@ -240,7 +240,7 @@ const Dashboard = ({
 
   // Mobile
 
-  const isDesktop = useMediaQuery('(min-width: 1024px)');
+  const isXl = useMediaQuery('(min-width: 1280px)');
   const [informationViewOpen, setInformationViewOpenValue] = useState(false);
 
   const setInformationViewOpen = (open: boolean) => {
@@ -256,12 +256,16 @@ const Dashboard = ({
       return;
     }
 
-    if (isDesktop) {
+    if (isXl) {
       return;
     }
 
     setInformationViewOpen(true);
   }, [selectedUserEntry]);
+
+  useEffect(() => {
+    setInformationViewOpen(false);
+  }, []);
 
   return (
     <>
@@ -423,7 +427,7 @@ const Dashboard = ({
 
               return (
                 <UserEntryCardObject
-                  key={userEntry.id}
+                  key={'ue' + userEntry.id}
                   userEntry={userEntry}
                   onClick={() => {
                     setSelectedUserEntry(userEntry.id);

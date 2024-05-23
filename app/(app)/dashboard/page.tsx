@@ -141,11 +141,13 @@ const Page = async () => {
   const topRated = await getTop3RatedNotCompleted(user.id);
 
   return (
-    <Dashboard
-      userEntries={userEntries}
-      topRatedNotCompleted={topRated}
-      topCompletedNotCompleted={topCompleted}
-    />
+    <div className="grid grid-cols-1 xl:grid-cols-[1fr,400px] 2xl:grid-cols-[1fr,600px]">
+      <Dashboard
+        userEntries={userEntries}
+        topRatedNotCompleted={topRated}
+        topCompletedNotCompleted={topCompleted}
+      />
+    </div>
   );
 };
 
