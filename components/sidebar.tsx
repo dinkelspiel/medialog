@@ -30,7 +30,7 @@ export const Sidebar = ({
       {...props}
       aria-label="Sidebar"
     >
-      <div className="flex h-[75px] flex-col justify-center overflow-y-auto border-b border-e border-gray-300 bg-neutral-100 px-3 py-4 shadow-md shadow-gray-300 dark:border-slate-700 dark:bg-slate-900 lg:h-full lg:justify-start lg:border-b-0">
+      <div className="flex h-[75px] flex-col justify-center overflow-y-auto border-b border-e border-gray-300 bg-neutral-100 px-3 py-4 shadow-gray-200 dark:border-slate-700 dark:bg-slate-900 lg:h-full lg:justify-start lg:border-b-0 lg:shadow-md lg:shadow-gray-300">
         <SidebarHeader {...headerProps}>
           {header}
           <button className="flex justify-end px-2 lg:hidden">

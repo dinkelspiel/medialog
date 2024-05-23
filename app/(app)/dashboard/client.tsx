@@ -9,7 +9,13 @@ import {
 } from '@/components/header';
 import UserEntryComponent from '../../../components/userEntry';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Entry, User, UserEntry, UserEntryStatus } from '@prisma/client';
+import {
+  Entry,
+  User,
+  UserEntry,
+  UserEntryStatus,
+  UserList,
+} from '@prisma/client';
 import {
   AArrowDown,
   Command,
@@ -40,6 +46,10 @@ import { FilterStyle, useDashboardStore } from './state';
 import useSwr from 'swr';
 import fetcher from '@/client/fetcher';
 import ModifyUserEntry from '@/components/modifyUserEntry';
+import { UserEntryCardObject } from '@/components/userEntryCard';
+import { useMediaQuery } from 'usehooks-ts';
+import { toast } from 'sonner';
+import { Drawer, DrawerContent } from '@/components/ui/drawer';
 
 const Dashboard = ({
   userEntries: originalUserEntries,
@@ -57,6 +67,9 @@ const Dashboard = ({
     userEntries,
     setUserEntries,
     setUserEntry,
+
+    selectedUserEntry,
+    setSelectedUserEntry,
   } = useDashboardStore();
 
   useEffect(() => {
@@ -100,11 +113,100 @@ const Dashboard = ({
     };
   }, []);
 
+  // Lists
+
+  useEffect(() => {
+    if (selectedUserEntry === undefined) {
+      return;
+    }
+
+    fetchUserListsWithEntry(selectedUserEntry ?? 0);
+  }, [selectedUserEntry]);
+
+  const [listsWithUserEntry, setListsWithUserEntry] = useState<UserList[]>([]);
+  const [userLists, setUserLists] = useState<UserList[]>([]);
+  const fetchUserLists = async () => {
+    const listsResponse = await (await fetch(`/api/user/lists`)).json();
+
+    if (listsResponse.error) {
+      toast.error(`Error fetching userLists: ${listsResponse.error}`);
+    } else {
+      setUserLists(listsResponse);
+    }
+  };
+
+  const fetchUserListsWithEntry = async (userEntryId: number) => {
+    const entryListsResponse = await (
+      await fetch(`/api/user/entries/${userEntryId}/lists`)
+    ).json();
+
+    if (entryListsResponse.error) {
+      toast.error(
+        `Error fetching entry userLists: ${entryListsResponse.error}`
+      );
+    } else {
+      setListsWithUserEntry(entryListsResponse);
+    }
+
+    fetchUserLists();
+  };
+
+  const InformationView = () => {
+    if (selectedUserEntry) {
+      return (
+        <ModifyUserEntry
+          userEntry={userEntries.find(e => e.id == selectedUserEntry)!}
+          setOpen={() => {
+            setSelectedUserEntry(undefined);
+          }}
+          setUserEntry={setUserEntry}
+          userLists={userLists ?? []}
+          userListsWithEntry={listsWithUserEntry}
+          refetchUserLists={async () => {
+            fetchUserLists();
+            fetchUserListsWithEntry(selectedUserEntry);
+          }}
+        />
+      );
+    } else {
+      return (
+        <>
+          <h3>Most popular media today</h3>
+        </>
+      );
+    }
+  };
+
+  // Mobile
+
+  const isAbove2xl = useMediaQuery('(min-width: 1536px)');
+  const [informationViewOpen, setInformationViewOpenValue] = useState(false);
+
+  const setInformationViewOpen = (open: boolean) => {
+    if (!open) {
+      setSelectedUserEntry(undefined);
+    }
+
+    setInformationViewOpenValue(open);
+  };
+
+  useEffect(() => {
+    if (selectedUserEntry === undefined) {
+      return;
+    }
+
+    if (isAbove2xl) {
+      return;
+    }
+
+    setInformationViewOpen(true);
+  }, [selectedUserEntry]);
+
   return (
     <>
       <Header className="col-span-2">
         <HeaderHeader>
-          <HeaderTitle>My Media</HeaderTitle>
+          <HeaderTitle>My Media {isAbove2xl ? 'true' : 'false'}</HeaderTitle>
           <HeaderDescription>
             Search through your entire media catalogue
           </HeaderDescription>
@@ -190,8 +292,8 @@ const Dashboard = ({
           </Popover>
         </HeaderContent>
       </Header>
-      <div className="grid justify-center p-4">
-        <div className="grid w-fit grid-cols-3 gap-4 min-[700px]:grid-cols-4 min-[1100px]:grid-cols-5 min-[1300px]:grid-cols-6 min-[1500px]:grid-cols-7 min-[1600px]:grid-cols-8 min-[1700px]:grid-cols-8">
+      <div className="col-span-2 grid justify-center p-4 2xl:col-span-1">
+        <div className="grid w-fit grid-cols-3 gap-4 min-[700px]:grid-cols-4 min-[1100px]:grid-cols-5 min-[1300px]:grid-cols-6 min-[1500px]:grid-cols-7 2xl:grid-cols-4 min-[1600px]:grid-cols-5 min-[1800px]:grid-cols-6 min-[2000px]:grid-cols-7 min-[2200px]:grid-cols-8">
           {userEntries
             .sort((a, b) => {
               switch (filterStyle) {
@@ -259,27 +361,27 @@ const Dashboard = ({
               }
 
               return (
-                <UserEntryComponent
-                  userEntry={userEntry}
-                  setUserEntry={setUserEntry}
+                <UserEntryCardObject
                   key={userEntry.id}
+                  userEntry={userEntry}
+                  onClick={() => {
+                    setSelectedUserEntry(userEntry.id);
+                    setListsWithUserEntry([]);
+                    fetchUserListsWithEntry(userEntry.id);
+                  }}
                 />
               );
             })}
         </div>
       </div>
-      <div className="sticky top-[80px] h-[calc(100dvh-81px)] bg-[#F5F5F5] p-4 shadow-[inset_0_0px_8px_0_rgb(0_0_0_/_0.02)] shadow-gray-300">
-        {userEntries[0] && (
-          <ModifyUserEntry
-            userEntry={userEntries[0]!}
-            setOpen={() => []}
-            setUserEntry={setUserEntry}
-            userLists={[]}
-            userListsWithEntry={[]}
-            refetchUserLists={async () => {}}
-          />
-        )}
+      <div className="sticky top-[81px] hidden h-[calc(100dvh-81px)] bg-[#F5F5F5] p-4 shadow-[inset_0_0px_8px_0_rgb(0_0_0_/_0.02)] shadow-gray-300 2xl:block">
+        <InformationView />
       </div>
+      <Drawer open={informationViewOpen} onOpenChange={setInformationViewOpen}>
+        <DrawerContent className="top-[50px] mt-0 p-6">
+          <InformationView />
+        </DrawerContent>
+      </Drawer>
     </>
   );
 };

@@ -9,7 +9,7 @@ export const Header = ({
   return (
     <div
       className={cn(
-        'sticky top-0 z-10 flex flex-row border-b border-b-gray-200 bg-white px-4 py-3',
+        'sticky top-[75px] z-10 flex flex-row border-b border-b-gray-200 bg-white px-4 py-3 lg:top-0',
         className
       )}
       {...props}

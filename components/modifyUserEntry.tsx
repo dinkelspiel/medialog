@@ -68,8 +68,12 @@ const ModifyUserEntry = ({
   const [addListsOpen, setAddListsOpen] = useState(false);
 
   useEffect(() => {
+    setNotes(userEntry.notes);
+    setRating(userEntry.rating);
+  }, [userEntry]);
+
+  useEffect(() => {
     if (state.message) {
-      setOpen(false);
       setUserEntry({ ...userEntry, notes, rating });
       toast.success(state.message);
     }
@@ -177,14 +181,14 @@ const ModifyUserEntry = ({
   };
 
   const Header = () => (
-    <div className="grid w-fit grid-cols-[max-content,1fr] gap-4 pb-4 pt-4 lg:pt-0">
+    <div className="grid w-full grid-cols-[max-content,1fr] gap-4 pb-4 pt-4 lg:pt-0">
       <img
         src={userEntry.entry.posterPath}
         className="aspect-[2/3] w-[100px] rounded-lg shadow-md"
       />
       <div className="flex flex-col gap-2">
         <div className="flex items-end gap-2">
-          <div className="text-lg font-semibold tracking-tight lg:pt-0 xl:w-max">
+          <div className="text-lg font-semibold tracking-tight lg:pt-0">
             {userEntry.entry.originalTitle}
           </div>
           <div className="pb-[2px] text-sm text-muted-foreground">
@@ -208,7 +212,7 @@ const ModifyUserEntry = ({
 
   if (userEntry.watchedAt !== null) {
     return (
-      <div className="grid h-full w-full grow grid-rows-[max-content,max-content,1fr,max-content]">
+      <div className="grid h-full grow grid-rows-[max-content,max-content,1fr,max-content]">
         <Header />
         <div className="flex flex-row items-center gap-3 border-b border-b-gray-200 py-3 text-sm">
           <div className="w-max text-muted-foreground">Rating</div>
@@ -269,7 +273,10 @@ const ModifyUserEntry = ({
                   {userLists.length !== 0 && (
                     <CommandGroup>
                       {userLists.map(list => (
-                        <div className="flex justify-between gap-1">
+                        <div
+                          className="flex justify-between gap-1"
+                          key={list.id}
+                        >
                           <CommandItem
                             key={list.id}
                             value={list.name}

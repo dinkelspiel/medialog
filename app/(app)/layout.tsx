@@ -47,7 +47,9 @@ const Layout = async ({ children }: { children: ReactNode }) => {
           </SidebarFooter>
         </Sidebar>
 
-        <main className="grid grid-cols-[1fr,600px]">{children}</main>
+        <main className="grid grid-cols-1 lg:grid-cols-[1fr,600px]">
+          {children}
+        </main>
         <Toaster />
       </SidebarLayout>
     );

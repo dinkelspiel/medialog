@@ -15,6 +15,9 @@ type DashboardStore = {
   userEntries: ExtendedUserEntry[];
   setUserEntries: (userEntries: ExtendedUserEntry[]) => void;
   setUserEntry: (userEntry: ExtendedUserEntry) => void;
+
+  selectedUserEntry: number | undefined;
+  setSelectedUserEntry: (userEntryId: number | undefined) => void;
 };
 
 export const useDashboardStore = create<DashboardStore>(set => ({
@@ -35,5 +38,12 @@ export const useDashboardStore = create<DashboardStore>(set => ({
         ...state.userEntries.filter(e => e.id !== userEntry.id),
         userEntry,
       ],
+    })),
+
+  selectedUserEntry: undefined,
+  setSelectedUserEntry: (userEntryId: number | undefined) =>
+    set(state => ({
+      selectedUserEntry:
+        userEntryId === state.selectedUserEntry ? undefined : userEntryId,
     })),
 }));
