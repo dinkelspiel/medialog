@@ -70,6 +70,7 @@ export const POST = async (request: NextRequest) => {
       name: `${user.username}'s ${numberSuffix(amountOfLists + 1)} list`,
       userId: user.id,
       type: 'unordered',
+      description: `My ${numberSuffix(amountOfLists + 1)} list`,
       entries: {
         create: {
           entryId: initialEntry.id,

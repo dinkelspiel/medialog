@@ -105,14 +105,15 @@ enum UserListType {
 }
 
 model UserList {
-  id        Int             @id @default(autoincrement()) @db.UnsignedInt
-  userId    Int             @db.UnsignedInt
-  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  name      String
-  type      UserListType
-  entries   UserListEntry[]
-  createdAt DateTime        @default(now())
-  updatedAt DateTime        @default(now()) @updatedAt
+  id          Int             @id @default(autoincrement()) @db.UnsignedInt
+  userId      Int             @db.UnsignedInt
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String
+  description String          @default("") @db.VarChar(256)
+  type        UserListType
+  entries     UserListEntry[]
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @default(now()) @updatedAt
 }
 
 model UserListEntry {

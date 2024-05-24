@@ -50,7 +50,7 @@ export const ProfileHeader = ({
   };
 
   return (
-    <Header className="col-span-2 h-max flex-col items-center justify-center gap-6 lg:flex-row">
+    <Header className="static col-span-2 h-max flex-col items-center justify-center gap-6 lg:flex-row">
       <div className="flex w-full flex-row items-center justify-between lg:w-max lg:justify-start">
         <HeaderHeader className="pt-4 text-center lg:pt-0 lg:text-left">
           <HeaderTitle>{profileUser.username}</HeaderTitle>
