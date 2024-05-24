@@ -26,7 +26,7 @@ const UserEntryCard = ({
   return (
     <div
       className={cn(
-        'relative aspect-[2/3] w-full cursor-pointer overflow-clip rounded-lg bg-cover shadow-md shadow-gray-400',
+        'relative aspect-[2/3] w-full cursor-pointer overflow-clip rounded-lg bg-cover shadow-md shadow-gray-300',
         className
       )}
       style={{ backgroundImage: `url(${backgroundImage})` }}

@@ -1,10 +1,13 @@
 import prisma from '@/server/db';
 import { Category } from '@prisma/client';
 import { NextRequest } from 'next/server';
+import { fetch, setGlobalDispatcher, Agent } from 'undici';
 
 export const dynamic = 'force-dynamic';
 
 export const GET = async (request: NextRequest) => {
+  setGlobalDispatcher(new Agent({ connect: { timeout: 50_000 } }));
+
   const search = request.nextUrl.searchParams.get('q');
   const excludeExisting = !!request.nextUrl.searchParams.get('excludeExisting'); // Exclude media already in the local database
   const take = request.nextUrl.searchParams.get('take')
@@ -19,11 +22,11 @@ export const GET = async (request: NextRequest) => {
   }
 
   const openLibrary = (
-    await (
+    (await (
       await fetch(
         `https://openlibrary.org/search.json?title=${search.replace(' ', '+')}&limit=${take}`
       )
-    ).json()
+    ).json()) as any
   ).docs
     .map((ol: any) => {
       let lowestReleaseDate = new Date();
@@ -65,12 +68,12 @@ export const GET = async (request: NextRequest) => {
   };
 
   const tmdb = (
-    await (
+    (await (
       await fetch(
         `https://api.themoviedb.org/3/search/multi?query=${search}&include_adult=false&language=en-US&page=1`,
         options
       )
-    ).json()
+    ).json()) as any
   ).results
     .map((tmdb: any) => ({
       title: tmdb.original_title ?? tmdb.name,

@@ -439,7 +439,7 @@ const Dashboard = ({
             })}
         </div>
       </div>
-      <div className="sticky top-[81px] hidden h-[calc(100dvh-81px)] bg-[#F5F5F5] p-4 shadow-[inset_0_0px_8px_0_rgb(0_0_0_/_0.02)] shadow-gray-300 xl:block">
+      <div className="sticky top-[81px] hidden h-[calc(100dvh-81px)] bg-[#F5F5F5] p-4 shadow-[inset_0_0px_8px_0_rgb(0_0_0_/_0.02)] shadow-gray-200 xl:block">
         <InformationView />
       </div>
       <Drawer open={informationViewOpen} onOpenChange={setInformationViewOpen}>

@@ -1,9 +1,13 @@
 import prisma from '@/server/db';
+import { AnySrvRecord } from 'dns';
 import { NextRequest } from 'next/server';
+import { fetch, setGlobalDispatcher, Agent } from 'undici';
 
 export const dynamic = 'force-dynamic';
 
 export const GET = async (request: NextRequest) => {
+  setGlobalDispatcher(new Agent({ connect: { timeout: 50_000 } }));
+
   const id = request.nextUrl.searchParams.get('tmdbId');
 
   if (id === null) {
@@ -25,20 +29,20 @@ export const GET = async (request: NextRequest) => {
     },
   };
 
-  const details = await fetch(
+  const details: any = await fetch(
     `https://api.themoviedb.org/3/tv/${id}?language=en-US`,
     options
   );
-  const altTitles = await fetch(
+  const altTitles: any = await fetch(
     `https://api.themoviedb.org/3/tv/${id}/alternative_titles?language=en-US`,
     options
   );
-  const watchProviders = await fetch(
+  const watchProviders: any = await fetch(
     `https://api.themoviedb.org/3/tv/${id}/watch/providers?language=en-US`,
     options
   );
 
-  const data = await details.json();
+  const data: any = await details.json();
   if (data.status_message) {
     return Response.json({
       error: data.status_message,
@@ -53,7 +57,7 @@ export const GET = async (request: NextRequest) => {
       `https://api.themoviedb.org/3/tv/${id}/season/${data.seasons[i].season_number}/credits?language=en-US`,
       options
     );
-    const creditsData = await credits.json();
+    const creditsData: any = await credits.json();
 
     data.seasons[i].cast = creditsData.cast;
     data.seasons[i].crew = creditsData.crew;

@@ -1,9 +1,12 @@
 import prisma from '@/server/db';
 import { NextRequest } from 'next/server';
+import { fetch, setGlobalDispatcher, Agent } from 'undici';
 
 export const dynamic = 'force-dynamic';
 
 export const GET = async (request: NextRequest) => {
+  setGlobalDispatcher(new Agent({ connect: { timeout: 50_000 } }));
+
   const id = request.nextUrl.searchParams.get('olId');
 
   if (id === null) {
@@ -20,11 +23,11 @@ export const GET = async (request: NextRequest) => {
     },
   };
 
-  const work = await (
+  const work: any = await (
     await fetch(`https://openlibrary.org/works/${id}.json`, options)
   ).json();
 
-  let editionsData = await (
+  let editionsData: any = await (
     await fetch(`https://openlibrary.org/works/${id}/editions.json`, options)
   ).json();
 

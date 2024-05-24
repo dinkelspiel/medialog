@@ -84,8 +84,8 @@ const Page = async ({
           </HeaderDescription>
         </HeaderHeader>
       </Header>
-      <div className="mx-auto flex w-full flex-col-reverse gap-16 px-4 pb-8 pt-4 md:w-fit lg:grid min-[1330px]:grid-cols-[1fr,250px]">
-        <div className="grid w-full grid-cols-3 gap-4  md:grid-cols-4 lg:w-[716px]">
+      <div className="mx-auto flex w-full flex-col-reverse gap-16 px-4 pb-8 pt-4 md:w-fit xl:grid xl:grid-cols-[1fr,250px]">
+        <div className="grid w-full grid-cols-3 gap-4  md:grid-cols-4 xl:w-[716px]">
           {list.entries
             .sort((a, b) => a.order - b.order)
             .map(e => (
