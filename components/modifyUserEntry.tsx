@@ -4,30 +4,57 @@ import SubmitButton from '@/components/submitButton';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
 import { saveUserEntry } from '@/server/user/entries';
-import { Entry, User, UserEntry, UserEntryStatus } from '@prisma/client';
-import { Bookmark, Check, Eye, Pause, Trash2, X } from 'lucide-react';
+import {
+  Entry,
+  User,
+  UserEntry,
+  UserEntryStatus,
+  UserList,
+} from '@prisma/client';
+import {
+  Bookmark,
+  Check,
+  ExternalLink,
+  Eye,
+  Pause,
+  Plus,
+  Save,
+  Trash2,
+  X,
+} from 'lucide-react';
 import { useEffect, useState } from 'react';
 import { useFormState } from 'react-dom';
 import { toast } from 'sonner';
 import { Input } from './ui/input';
 import { cn } from '@/lib/utils';
-import UserEntryCard from './userEntryCard';
 import { useMediaQuery } from 'usehooks-ts';
 import { Badge } from './ui/badge';
+import {
+  Command,
+  CommandGroup,
+  CommandInput,
+  CommandItem,
+} from '@/components/ui/command';
+import {
+  Popover,
+  PopoverContent,
+  PopoverTrigger,
+} from '@/components/ui/popover';
+import Link from 'next/link';
 
 const ModifyUserEntry = ({
   userEntry,
+  userLists,
+  userListsWithEntry,
+  refetchUserLists,
   setOpen,
   setUserEntry,
 }: {
   userEntry: UserEntry & { user: User } & { entry: Entry };
+  userLists: UserList[];
+  userListsWithEntry: UserList[];
+  refetchUserLists: () => Promise<void>;
   setOpen: (value: boolean) => void;
   setUserEntry: (userEntry: ExtendedUserEntry) => void;
 }) => {
@@ -38,9 +65,15 @@ const ModifyUserEntry = ({
 
   const isDesktop = useMediaQuery('(min-width: 1024px)');
 
+  const [addListsOpen, setAddListsOpen] = useState(false);
+
+  useEffect(() => {
+    setNotes(userEntry.notes);
+    setRating(userEntry.rating);
+  }, [userEntry]);
+
   useEffect(() => {
     if (state.message) {
-      setOpen(false);
       setUserEntry({ ...userEntry, notes, rating });
       toast.success(state.message);
     }
@@ -99,7 +132,6 @@ const ModifyUserEntry = ({
     if (response.error) {
       toast.error(response.error);
     } else if (response.message) {
-      toast.success(response.message);
       setUserEntry({
         ...response.userEntry,
         entry: {
@@ -110,15 +142,52 @@ const ModifyUserEntry = ({
     }
   };
 
+  const createNewList = async () => {
+    const response = await (
+      await fetch(`/api/user/lists`, {
+        method: 'POST',
+        body: JSON.stringify({
+          initialEntryId: userEntry.entryId,
+        }),
+      })
+    ).json();
+
+    if (response.error) {
+      toast.error(`Error when creating list: ${response.error}`);
+    } else {
+      refetchUserLists().then(() => toast.success(response.message));
+    }
+  };
+
+  const addEntryToList = async (userList: UserList) => {
+    const response = await (
+      await fetch(`/api/user/lists/${userList.id}/entries`, {
+        method: 'POST',
+        body: JSON.stringify({
+          entryId: userEntry.entryId,
+        }),
+      })
+    ).json();
+
+    if (response.error) {
+      toast.error(`Error when adding entry to list: ${response.error}`);
+    } else {
+      refetchUserLists().then(() => {
+        setAddListsOpen(false);
+        toast.success(response.message);
+      });
+    }
+  };
+
   const Header = () => (
-    <div className="grid w-fit grid-cols-[max-content,1fr] gap-4 pb-4 pt-4 lg:pt-0">
+    <div className="grid w-full grid-cols-[max-content,1fr] gap-4 pb-4 pt-4 lg:pt-0">
       <img
         src={userEntry.entry.posterPath}
         className="aspect-[2/3] w-[100px] rounded-lg shadow-md"
       />
       <div className="flex flex-col gap-2">
         <div className="flex items-end gap-2">
-          <div className="text-lg font-semibold tracking-tight lg:pt-0 xl:w-max">
+          <div className="text-lg font-semibold tracking-tight lg:pt-0">
             {userEntry.entry.originalTitle}
           </div>
           <div className="pb-[2px] text-sm text-muted-foreground">
@@ -142,7 +211,7 @@ const ModifyUserEntry = ({
 
   if (userEntry.watchedAt !== null) {
     return (
-      <div className="grid h-full w-full grow grid-rows-[max-content,max-content,1fr,max-content]">
+      <div className="grid h-full grow grid-rows-[max-content,max-content,1fr,max-content]">
         <Header />
         <div className="flex flex-row items-center gap-3 border-b border-b-gray-200 py-3 text-sm">
           <div className="w-max text-muted-foreground">Rating</div>
@@ -171,15 +240,86 @@ const ModifyUserEntry = ({
           />
         </div>
         <div className="flex items-center justify-between">
-          <form action={formAction}>
-            <input type="hidden" value={userEntry.id} name="userEntryId" />
-            <input type="hidden" value={rating} name="rating" />
-            <input type="hidden" value={notes} name="notes" />
-            <SubmitButton className="w-max px-4">Save</SubmitButton>
-          </form>
-          <Button size={'sm'} variant={'ghost'} className="[&>svg]:size-4">
+          <Button variant={'ghost'} className="[&>svg]:size-4">
             <Trash2 className="stroke-red-500" />
           </Button>
+          <div className="flex gap-4">
+            <Popover open={addListsOpen} onOpenChange={setAddListsOpen}>
+              <PopoverTrigger asChild>
+                <Button
+                  variant="outline"
+                  role="combobox"
+                  aria-expanded={addListsOpen}
+                >
+                  <Plus className="size-3" /> Add to list
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[200px] p-0">
+                <Command>
+                  <div className="border-b p-1">
+                    <Button
+                      variant={'ghost'}
+                      size={'sm'}
+                      className="w-full"
+                      onClick={() => {
+                        setAddListsOpen(false);
+                        createNewList();
+                      }}
+                    >
+                      <Plus /> New list
+                    </Button>
+                  </div>
+                  {userLists.length !== 0 && (
+                    <CommandGroup>
+                      {userLists.map(list => (
+                        <div
+                          className="flex justify-between gap-1"
+                          key={list.id}
+                        >
+                          <CommandItem
+                            key={list.id}
+                            value={list.name}
+                            onSelect={() => {
+                              addEntryToList(list);
+                            }}
+                            className="w-full"
+                          >
+                            <Check
+                              className={cn(
+                                'mr-2 h-4 w-4',
+                                userListsWithEntry.find(
+                                  e => e.id === list.id
+                                ) !== undefined
+                                  ? 'opacity-100'
+                                  : 'opacity-0'
+                              )}
+                            />
+                            {list.name}
+                          </CommandItem>
+                          <Button variant={'ghost'} className="w-10">
+                            <Link
+                              href={`/@${userEntry.user.username}/lists/${list.id}`}
+                            >
+                              <ExternalLink className="size-4" />
+                            </Link>
+                          </Button>
+                        </div>
+                      ))}
+                    </CommandGroup>
+                  )}
+                </Command>
+              </PopoverContent>
+            </Popover>
+            <form action={formAction}>
+              <input type="hidden" value={userEntry.id} name="userEntryId" />
+              <input type="hidden" value={rating} name="rating" />
+              <input type="hidden" value={notes} name="notes" />
+              <SubmitButton className="w-max px-6" size={'default'}>
+                <Save className="size-3" />
+                Save
+              </SubmitButton>
+            </form>
+          </div>
         </div>
       </div>
     );

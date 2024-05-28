@@ -156,7 +156,9 @@ export const ProfileSidebar = ({
               </div>
               <div className="grid grid-cols-[17.5px,1fr] gap-2 text-sm font-medium">
                 {diary[month]!.map(day => (
-                  <Fragment key={month + (day + '')}>
+                  <Fragment
+                    key={month + (JSON.stringify(day) + '') + day.title}
+                  >
                     <div className="text-slate-500">{day.day}</div>
                     <div className="whitespace-break-spaces">{day.title}</div>
                   </Fragment>

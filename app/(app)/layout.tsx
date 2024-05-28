@@ -47,7 +47,7 @@ const Layout = async ({ children }: { children: ReactNode }) => {
           </SidebarFooter>
         </Sidebar>
 
-        <main className="flex flex-col gap-4 px-5 py-4">{children}</main>
+        <main>{children}</main>
         <Toaster />
       </SidebarLayout>
     );

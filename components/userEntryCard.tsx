@@ -1,9 +1,10 @@
-import { Book, Film, Tv } from 'lucide-react';
+import { Book, Film, Star, Tv } from 'lucide-react';
 import SmallRating from './smallRating';
 import { Category } from '@prisma/client';
-import { HTMLProps } from 'react';
+import { HTMLProps, ReactElement, ReactNode } from 'react';
 import Image from 'next/image';
 import { cn } from '@/lib/utils';
+import { ExtendedUserEntry } from '@/app/(app)/dashboard/state';
 
 const UserEntryCard = ({
   title,
@@ -12,6 +13,8 @@ const UserEntryCard = ({
   releaseDate,
   rating,
   className,
+  customStars,
+  hoverCard,
   ...props
 }: {
   title: string;
@@ -19,17 +22,20 @@ const UserEntryCard = ({
   category: Category;
   releaseDate: Date;
   rating: number;
+  customStars?: ReactElement;
+  hoverCard?: ReactElement;
 } & HTMLProps<HTMLDivElement>) => {
   return (
     <div
       className={cn(
-        'relative aspect-[2/3] w-full cursor-pointer overflow-clip rounded-lg bg-cover shadow-md',
+        'group relative aspect-[2/3] w-full cursor-pointer overflow-clip rounded-lg bg-cover shadow-md shadow-gray-300',
         className
       )}
       style={{ backgroundImage: `url(${backgroundImage})` }}
       {...props}
     >
-      <div className="p-2">
+      <div className="absolute top-0 flex h-[20%] w-full flex-col justify-end rounded-bl-lg rounded-br-lg bg-gradient-to-b from-slate-900/50 to-transparent"></div>
+      <div className="absolute top-0 p-2">
         {(() => {
           switch (category) {
             case 'Book':
@@ -41,22 +47,55 @@ const UserEntryCard = ({
           }
         })()}
       </div>
+      {hoverCard && (
+        <div className="duration-400 absolute right-1 top-1 -translate-y-4 rounded-sm border border-input bg-background bg-white opacity-0 shadow-sm transition-all hover:bg-accent hover:text-accent-foreground group-hover:translate-y-0 group-hover:opacity-100">
+          {hoverCard}
+        </div>
+      )}
+
       <div className="select-none text-transparent">{title}</div>
       <div className="absolute top-[40%] flex h-[60%] w-full flex-col justify-end rounded-bl-lg rounded-br-lg bg-gradient-to-t from-slate-900 to-transparent object-cover p-2">
-        <div className="text-center text-sm font-semibold text-white sm:text-left sm:text-base">
+        <div className="text-left text-sm font-semibold text-white sm:text-base">
           {title}
         </div>
-        <div className="flex flex-row items-center justify-center sm:justify-between">
-          <div className="text-[0px] text-slate-400 sm:text-sm">
+        <div className="flex flex-row items-center justify-between">
+          <div className="text-sm text-slate-400">
             {releaseDate.getFullYear()}
           </div>
-          <div className="text-white">
-            <SmallRating rating={rating} />
-          </div>
+          {!!customStars && customStars}
+          {!customStars && (
+            <>
+              <div className="hidden text-white sm:block">
+                <SmallRating rating={rating} />
+              </div>
+              <div className="flex items-center gap-1 text-white sm:hidden">
+                <span className="text-sm">{(rating / 20).toFixed(1)}</span>
+                <Star strokeWidth={0} className="size-4 fill-primary" />
+              </div>
+            </>
+          )}
         </div>
       </div>
     </div>
   );
 };
+
+export const UserEntryCardObject = ({
+  userEntry,
+  ...props
+}: {
+  userEntry: ExtendedUserEntry;
+} & HTMLProps<HTMLDivElement>) => (
+  <UserEntryCard
+    {...{
+      title: userEntry.entry.originalTitle,
+      backgroundImage: userEntry.entry.posterPath,
+      releaseDate: userEntry.entry.releaseDate,
+      category: userEntry.entry.category,
+      rating: userEntry.rating,
+    }}
+    {...props}
+  />
+);
 
 export default UserEntryCard;
