@@ -35,6 +35,24 @@ const AddMedia = ({
     }
   };
 
+  const moveEntry = async (entryId: number, order: number) => {
+    const response = await (
+      await fetch(`/api/user/lists/${userList.id}/entries/${entryId}`, {
+        method: 'PATCH',
+        body: JSON.stringify({
+          order,
+        }),
+      })
+    ).json();
+
+    if (response.error) {
+      toast.error(`Error when moving list entry: ${response.error}`);
+    } else {
+      toast.success(response.message);
+      router.refresh();
+    }
+  };
+
   return (
     <>
       {userList.entries
@@ -53,7 +71,7 @@ const AddMedia = ({
                     className="h-2 px-2 py-2 [&>svg]:size-3"
                     variant={'ghost'}
                     onClick={() => {
-                      toast.success('up');
+                      moveEntry(e.id, e.order - 1);
                     }}
                   >
                     <ChevronUp />
@@ -62,7 +80,7 @@ const AddMedia = ({
                     className="h-2 px-2 py-2 [&>svg]:size-3"
                     variant={'ghost'}
                     onClick={() => {
-                      toast.success('down');
+                      moveEntry(e.id, e.order + 1);
                     }}
                   >
                     <ChevronDown />

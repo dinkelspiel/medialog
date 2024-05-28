@@ -4,12 +4,12 @@ import z from 'zod';
 
 export const PATCH = async (
   request: Request,
-  params: { listId: string; entryId: string }
+  { params }: { params: { listId: string; entryId: string } }
 ) => {
   const body = await request.json();
 
   const schema = z.object({
-    order: z.number(),
+    order: z.number().optional(),
   });
 
   const data = schema.safeParse(body);
@@ -65,49 +65,51 @@ export const PATCH = async (
     );
   }
 
-  const currentOrder = list.entries[currentEntryIndex]!.order;
+  if (data.data.order) {
+    const currentOrder = list.entries[currentEntryIndex]!.order;
 
-  if (currentOrder === data.data.order) {
-    return;
-  }
-
-  const updates = [];
-
-  if (currentOrder < data.data.order) {
-    for (let i = currentEntryIndex + 1; i < list.entries.length; i++) {
-      const e = list.entries[i]!;
-      if (e.order > data.data.order) break;
-      updates.push(
-        prisma.userListEntry.update({
-          where: { id: e.id },
-          data: { order: e.order - 1 },
-        })
-      );
+    if (currentOrder === data.data.order) {
+      return;
     }
-  } else {
-    for (let i = currentEntryIndex - 1; i >= 0; i--) {
-      const e = list.entries[i]!;
-      if (e.order < data.data.order) break;
-      updates.push(
-        prisma.userListEntry.update({
-          where: { id: e.id },
-          data: { order: e.order + 1 },
-        })
-      );
+
+    const updates = [];
+
+    if (currentOrder < data.data.order) {
+      for (let i = currentEntryIndex + 1; i < list.entries.length; i++) {
+        const e = list.entries[i]!;
+        if (e.order > data.data.order) break;
+        updates.push(
+          prisma.userListEntry.update({
+            where: { id: e.id },
+            data: { order: e.order - 1 },
+          })
+        );
+      }
+    } else {
+      for (let i = currentEntryIndex - 1; i >= 0; i--) {
+        const e = list.entries[i]!;
+        if (e.order < data.data.order) break;
+        updates.push(
+          prisma.userListEntry.update({
+            where: { id: e.id },
+            data: { order: e.order + 1 },
+          })
+        );
+      }
     }
+
+    updates.push(
+      prisma.userListEntry.update({
+        where: { id: entryId },
+        data: { order: data.data.order },
+      })
+    );
+
+    await prisma.$transaction(updates);
   }
-
-  updates.push(
-    prisma.userListEntry.update({
-      where: { id: entryId },
-      data: { order: data.data.order },
-    })
-  );
-
-  await prisma.$transaction(updates);
 
   return Response.json(
-    { error: `Successfully updated order of list entries` },
+    { message: `Successfully updated list entries` },
     { status: 200 }
   );
 };

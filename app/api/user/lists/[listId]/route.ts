@@ -91,6 +91,74 @@ export const POST = async (
   }
 };
 
+export const PATCH = async (
+  request: NextRequest,
+  { params }: { params: { listId: string } }
+) => {
+  const body = await request.json();
+
+  const schema = z.object({
+    name: z.string().optional(),
+    description: z.string().optional(),
+  });
+
+  const data = schema.safeParse(body);
+
+  if (!data.success) {
+    return Response.json(
+      {
+        error: Object.entries(data.error.flatten().fieldErrors)
+          .map(entry => entry[0] + ' ' + entry[1].map(error => error).join(' '))
+          .join(' '),
+      },
+      { status: 400 }
+    );
+  }
+
+  const user = await validateSessionToken();
+
+  if (!user) {
+    return Response.json({ error: 'You are not logged in' }, { status: 400 });
+  }
+
+  const list = await prisma.userList.findUnique({
+    where: {
+      id: Number(params.listId),
+    },
+    include: {
+      entries: true,
+    },
+  });
+
+  if (!list) {
+    return Response.json({ error: 'No list with id exists' }, { status: 400 });
+  }
+
+  if (data.data.name) {
+    await prisma.userList.update({
+      where: {
+        id: list.id,
+      },
+      data: {
+        name: data.data.name,
+      },
+    });
+  }
+
+  if (data.data.description) {
+    await prisma.userList.update({
+      where: {
+        id: list.id,
+      },
+      data: {
+        description: data.data.description,
+      },
+    });
+  }
+
+  return Response.json({ message: 'Updated list' }, { status: 200 });
+};
+
 /**
  *
  * @returns {number} Returns the largest order number in the list + 1
