@@ -62,6 +62,7 @@ const ExternalUserEntry = ({
             userEntry={userEntry}
             setOpen={setOpen}
             setUserEntry={setUserEntry}
+            removeUserEntry={() => {}}
             userLists={lists}
             userListsWithEntry={listsWithEntry}
             refetchUserLists={refetchUserLists}
@@ -77,6 +78,7 @@ const ExternalUserEntry = ({
             userEntry={userEntry}
             setOpen={setOpen}
             setUserEntry={setUserEntry}
+            removeUserEntry={() => {}}
             userLists={lists}
             userListsWithEntry={listsWithEntry}
             refetchUserLists={refetchUserLists}
