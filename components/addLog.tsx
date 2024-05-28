@@ -17,7 +17,7 @@ import fetcher from '@/client/fetcher';
 import { Category, Entry } from '@prisma/client';
 import UserEntryCard from './userEntryCard';
 import { Drawer, DrawerContent, DrawerTrigger } from './ui/drawer';
-import { useMediaQuery } from 'usehooks-ts';
+import { useDebounceValue, useMediaQuery } from 'usehooks-ts';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { ExtendedUserEntry } from '@/app/(app)/dashboard/state';
@@ -168,11 +168,13 @@ const AddLogContent = ({
     return q;
   };
 
+  const debouncedQueryTitle = useDebounceValue(queryTitle, 500);
+
   const { data: queryResults, isLoading: queryIsLoading } = useSWR<
     Entry[],
     { error: string }
   >(
-    `/api/entries?q=${queryTitle}&take=8&categories=${generateQueryCategories()}`,
+    `/api/entries?q=${debouncedQueryTitle[0]}&take=8&categories=${generateQueryCategories()}`,
     fetcher
   );
 
@@ -188,7 +190,7 @@ const AddLogContent = ({
       }[],
       { error: string }
     >(
-      `/api/import/search?q=${queryTitle}&categories=${generateQueryCategories()}&take=12&excludeExisting=true`,
+      `/api/import/search?q=${debouncedQueryTitle[0]}&categories=${generateQueryCategories()}&take=12&excludeExisting=true`,
       fetcher
     );
 
