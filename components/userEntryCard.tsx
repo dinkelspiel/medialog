@@ -14,6 +14,7 @@ const UserEntryCard = ({
   rating,
   className,
   customStars,
+  hoverCard,
   ...props
 }: {
   title: string;
@@ -22,11 +23,12 @@ const UserEntryCard = ({
   releaseDate: Date;
   rating: number;
   customStars?: ReactElement;
+  hoverCard?: ReactElement;
 } & HTMLProps<HTMLDivElement>) => {
   return (
     <div
       className={cn(
-        'relative aspect-[2/3] w-full cursor-pointer overflow-clip rounded-lg bg-cover shadow-md shadow-gray-300',
+        'group relative aspect-[2/3] w-full cursor-pointer overflow-clip rounded-lg bg-cover shadow-md shadow-gray-300',
         className
       )}
       style={{ backgroundImage: `url(${backgroundImage})` }}
@@ -45,6 +47,11 @@ const UserEntryCard = ({
           }
         })()}
       </div>
+      {hoverCard && (
+        <div className="duration-400 absolute right-1 top-1 -translate-y-4 rounded-sm border border-input bg-background bg-white opacity-0 shadow-sm transition-all hover:bg-accent hover:text-accent-foreground group-hover:translate-y-0 group-hover:opacity-100">
+          {hoverCard}
+        </div>
+      )}
 
       <div className="select-none text-transparent">{title}</div>
       <div className="absolute top-[40%] flex h-[60%] w-full flex-col justify-end rounded-bl-lg rounded-br-lg bg-gradient-to-t from-slate-900 to-transparent object-cover p-2">

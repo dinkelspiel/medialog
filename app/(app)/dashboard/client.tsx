@@ -358,7 +358,7 @@ const Dashboard = ({
         </HeaderContent>
       </Header>
       <div className="col-span-2 grid justify-center p-4 xl:col-span-1">
-        <div className="grid w-fit grid-cols-3 gap-4 min-[700px]:grid-cols-4 lg:grid-cols-5  min-[1600px]:grid-cols-5 min-[1800px]:grid-cols-6 min-[2000px]:grid-cols-7 min-[2200px]:grid-cols-8">
+        <div className="grid w-fit grid-cols-3 gap-4 min-[700px]:grid-cols-4 min-[1000px]:grid-cols-5 xl:grid-cols-4  min-[1500px]:grid-cols-5 min-[1800px]:grid-cols-6 min-[2000px]:grid-cols-7 min-[2200px]:grid-cols-8">
           {userEntries
             .sort((a, b) => {
               switch (filterStyle) {

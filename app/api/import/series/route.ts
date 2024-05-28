@@ -126,7 +126,7 @@ export const GET = async (request: NextRequest) => {
         collectionId,
         posterPath: 'https://image.tmdb.org/t/p/original/' + season.poster_path,
         tagline: data.tagline,
-        overview: season.overview,
+        overview: season.overview.length > 0 ? season.overview : data.overview,
         backdropPath: data.backdrop_path,
         category: 'Series',
         releaseDate: new Date(season.air_date),
@@ -418,6 +418,6 @@ export const GET = async (request: NextRequest) => {
 
   return Response.json({
     message: `Imported series ${data.original_name}`,
-    entryId: firstSeason!,
+    entry: firstSeason!,
   });
 };

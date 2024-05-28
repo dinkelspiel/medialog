@@ -161,7 +161,7 @@ const ModifyUserEntry = ({
 
   const addEntryToList = async (userList: UserList) => {
     const response = await (
-      await fetch(`/api/user/lists/${userList.id}`, {
+      await fetch(`/api/user/lists/${userList.id}/entries`, {
         method: 'POST',
         body: JSON.stringify({
           entryId: userEntry.entryId,
