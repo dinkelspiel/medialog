@@ -25,6 +25,10 @@ const config = {
         source: '/@:username',
         destination: '/users/:username',
       },
+      {
+        source: '/@:username/lists/:listId',
+        destination: '/users/:username/lists/:listId',
+      },
     ];
   },
 };

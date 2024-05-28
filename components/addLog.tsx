@@ -20,10 +20,19 @@ import { Drawer, DrawerContent, DrawerTrigger } from './ui/drawer';
 import { useMediaQuery } from 'usehooks-ts';
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
-import UserEntryComponent from './userEntry';
 import { ExtendedUserEntry } from '@/app/(app)/dashboard/state';
+import ExternalUserEntry from './userEntryExternal';
 
-const AddLog = ({ children }: { children: ReactNode }) => {
+const AddLog = ({
+  children,
+  override,
+}: {
+  children: ReactNode;
+  override?: {
+    addAction?: (entryId: number) => Promise<void>;
+    title?: string;
+  };
+}) => {
   const [activeUserEntry, setActiveUserEntry] = useState<
     ExtendedUserEntry | undefined
   >(undefined);
@@ -67,7 +76,19 @@ const AddLog = ({ children }: { children: ReactNode }) => {
                 {children}
               </DialogTrigger>
               <DialogContent className="top-[50px] max-h-[calc(100dvh-100px)] max-w-[700px] translate-y-0">
-                <AddLogContent addUserEntry={addUserEntry} />
+                <AddLogContent
+                  title={override?.title ?? 'Add Log'}
+                  addAction={
+                    override
+                      ? override?.addAction
+                        ? (entryId: number) => {
+                            setOpen(false);
+                            override!.addAction!(entryId);
+                          }
+                        : addUserEntry
+                      : addUserEntry
+                  }
+                />
               </DialogContent>
             </Dialog>
           );
@@ -78,7 +99,19 @@ const AddLog = ({ children }: { children: ReactNode }) => {
                 {children}
               </DrawerTrigger>
               <DrawerContent className="top-[50px] mt-0 gap-4 p-4">
-                <AddLogContent addUserEntry={addUserEntry} />
+                <AddLogContent
+                  title={override?.title ?? 'Add Log'}
+                  addAction={
+                    override
+                      ? override?.addAction
+                        ? (entryId: number) => {
+                            setOpen(false);
+                            override!.addAction!(entryId);
+                          }
+                        : addUserEntry
+                      : addUserEntry
+                  }
+                />
               </DrawerContent>
             </Drawer>
           );
@@ -86,8 +119,7 @@ const AddLog = ({ children }: { children: ReactNode }) => {
       })()}
 
       {activeUserEntry !== undefined && (
-        <UserEntryComponent
-          hideCard={true}
+        <ExternalUserEntry
           openOverride={[userEntryOpen, setUserEntryOpen]}
           userEntry={activeUserEntry}
           setUserEntry={setActiveUserEntry}
@@ -98,9 +130,11 @@ const AddLog = ({ children }: { children: ReactNode }) => {
 };
 
 const AddLogContent = ({
-  addUserEntry,
+  addAction,
+  title,
 }: {
-  addUserEntry: (entryId: number) => void;
+  addAction: (entryId: number) => void;
+  title: string;
 }) => {
   const isDesktop = useMediaQuery('(min-width: 1024px)');
 
@@ -162,15 +196,15 @@ const AddLogContent = ({
       .then(data => data.json())
       .then(data => {
         if (data.message) {
-          toast.success(data.message);
           setImporting(undefined);
-          addUserEntry(data.entry.id);
+
+          addAction(data.entry.id);
         } else {
           toast.error(data.error);
         }
       })
-      .catch(() => {
-        toast.error('Failed to import media!');
+      .catch(e => {
+        toast.error(`Failed to import media! ${e.message}`);
       });
   };
 
@@ -179,7 +213,7 @@ const AddLogContent = ({
   return (
     <>
       <DialogHeader className="hidden lg:block">
-        <DialogTitle>Log Media</DialogTitle>
+        <DialogTitle>{title}</DialogTitle>
       </DialogHeader>
       <div className="flex flex-row gap-2">
         <Input
@@ -253,7 +287,7 @@ const AddLogContent = ({
                   releaseDate={new Date(e.releaseDate)}
                   category={e.category}
                   rating={0}
-                  onClick={() => addUserEntry(e.id)}
+                  onClick={() => addAction(e.id)}
                 />
               ))}
         </div>

@@ -7,7 +7,13 @@ export const Header = ({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => {
   return (
-    <div className={cn('flex flex-row', className)} {...props}>
+    <div
+      className={cn(
+        'sticky top-[75px] z-10 flex flex-row border-b border-b-gray-200 bg-white px-4 py-3 lg:top-0',
+        className
+      )}
+      {...props}
+    >
       {children}
     </div>
   );

@@ -33,11 +33,12 @@ model User {
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 
-  following          UserFollow[]         @relation("follower")
-  followers          UserFollow[]         @relation("followee")
-  userEntries        UserEntry[]
-  activity           UserActivity[]
-  UserForgotPassword UserForgotPassword[]
+  following       UserFollow[]         @relation("follower")
+  followers       UserFollow[]         @relation("followee")
+  userEntries     UserEntry[]
+  activity        UserActivity[]
+  forgotPasswords UserForgotPassword[]
+  lists           UserList[]
 }
 
 enum Activity {
@@ -96,6 +97,34 @@ model UserEntry {
   progress  Int             @db.UnsignedSmallInt
   createdAt DateTime        @default(now())
   updatedAt DateTime        @default(now()) @updatedAt
+}
+
+enum UserListType {
+  ordered
+  unordered
+}
+
+model UserList {
+  id          Int             @id @default(autoincrement()) @db.UnsignedInt
+  userId      Int             @db.UnsignedInt
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String
+  description String          @default("") @db.VarChar(256)
+  type        UserListType
+  entries     UserListEntry[]
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @default(now()) @updatedAt
+}
+
+model UserListEntry {
+  id        Int      @id @default(autoincrement()) @db.UnsignedInt
+  entryId   Int      @db.UnsignedInt
+  entry     Entry    @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  listId    Int      @db.UnsignedInt
+  list      UserList @relation(fields: [listId], references: [id], onDelete: Cascade)
+  order     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Session {
@@ -353,6 +382,7 @@ model Entry {
   watchProviders      EntryWatchProvider[]
   userEntries         UserEntry[]
   userActivity        UserActivity[]
+  userListEntries     UserListEntry[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
