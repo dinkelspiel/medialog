@@ -4,7 +4,7 @@ import SubmitButton from '@/components/submitButton';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
-import { saveUserEntry } from '@/server/user/entries';
+import { removeUserEntry, saveUserEntry } from '@/server/user/entries';
 import {
   Entry,
   User,
@@ -42,6 +42,13 @@ import {
   PopoverTrigger,
 } from '@/components/ui/popover';
 import Link from 'next/link';
+import {
+  Dialog,
+  DialogContent,
+  DialogFooter,
+  DialogHeader,
+  DialogTrigger,
+} from './ui/dialog';
 
 const ModifyUserEntry = ({
   userEntry,
@@ -50,6 +57,7 @@ const ModifyUserEntry = ({
   refetchUserLists,
   setOpen,
   setUserEntry,
+  removeUserEntry: removeUserEntryClient,
 }: {
   userEntry: UserEntry & { user: User } & { entry: Entry };
   userLists: UserList[];
@@ -57,15 +65,25 @@ const ModifyUserEntry = ({
   refetchUserLists: () => Promise<void>;
   setOpen: (value: boolean) => void;
   setUserEntry: (userEntry: ExtendedUserEntry) => void;
+  removeUserEntry: (userEntry: ExtendedUserEntry) => void;
 }) => {
   const [rating, setRating] = useState(userEntry.rating);
   const [notes, setNotes] = useState(userEntry.notes);
 
-  const [state, formAction] = useFormState(saveUserEntry, {});
+  const [saveUserEntryState, saveUserEntryAction] = useFormState(
+    saveUserEntry,
+    {}
+  );
+  const [removeUserEntryState, removeUserEntryAction] = useFormState(
+    removeUserEntry,
+    {}
+  );
 
   const isDesktop = useMediaQuery('(min-width: 1024px)');
 
   const [addListsOpen, setAddListsOpen] = useState(false);
+
+  const [removeUserEntryOpen, setRemoveUserEntryOpen] = useState(false);
 
   useEffect(() => {
     setNotes(userEntry.notes);
@@ -73,15 +91,27 @@ const ModifyUserEntry = ({
   }, [userEntry]);
 
   useEffect(() => {
-    if (state.message) {
+    if (saveUserEntryState.message) {
       setUserEntry({ ...userEntry, notes, rating });
-      toast.success(state.message);
+      toast.success(saveUserEntryState.message);
     }
 
-    if (state.error) {
-      toast.error(state.error);
+    if (saveUserEntryState.error) {
+      toast.error(saveUserEntryState.error);
     }
-  }, [state]);
+  }, [saveUserEntryState]);
+
+  useEffect(() => {
+    if (removeUserEntryState.message) {
+      removeUserEntryClient(userEntry);
+      setOpen(false);
+      toast.success(removeUserEntryState.message);
+    }
+
+    if (removeUserEntryState.error) {
+      toast.error(removeUserEntryState.error);
+    }
+  }, [removeUserEntryState]);
 
   const updateStatus = async (status: UserEntryStatus) => {
     setUserEntry({
@@ -240,9 +270,37 @@ const ModifyUserEntry = ({
           />
         </div>
         <div className="flex items-center justify-between">
-          <Button variant={'ghost'} className="[&>svg]:size-4">
-            <Trash2 className="stroke-red-500" />
-          </Button>
+          <Dialog
+            open={removeUserEntryOpen}
+            onOpenChange={setRemoveUserEntryOpen}
+          >
+            <DialogTrigger asChild>
+              <Button variant={'ghost'} className="[&>svg]:size-4">
+                <Trash2 className="stroke-red-500" />
+              </Button>
+            </DialogTrigger>
+            <DialogContent>
+              <DialogHeader>
+                Are you sure you want to remove this review?
+              </DialogHeader>
+              <DialogFooter>
+                <Button
+                  variant={'outline'}
+                  onClick={() => setRemoveUserEntryOpen(false)}
+                >
+                  No
+                </Button>
+                <form action={removeUserEntryAction}>
+                  <input
+                    type="hidden"
+                    value={userEntry.id}
+                    name="userEntryId"
+                  />
+                  <SubmitButton size={'default'}>Yes</SubmitButton>
+                </form>
+              </DialogFooter>
+            </DialogContent>
+          </Dialog>
           <div className="flex gap-4">
             <Popover open={addListsOpen} onOpenChange={setAddListsOpen}>
               <PopoverTrigger asChild>
@@ -310,7 +368,7 @@ const ModifyUserEntry = ({
                 </Command>
               </PopoverContent>
             </Popover>
-            <form action={formAction}>
+            <form action={saveUserEntryAction}>
               <input type="hidden" value={userEntry.id} name="userEntryId" />
               <input type="hidden" value={rating} name="rating" />
               <input type="hidden" value={notes} name="notes" />

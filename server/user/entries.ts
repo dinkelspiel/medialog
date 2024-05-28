@@ -58,3 +58,41 @@ export const saveUserEntry = async (
     message: 'Saved successfully',
   };
 };
+
+export const removeUserEntry = async (
+  prevState: any,
+  formData: FormData
+): Promise<{ error?: string; message?: string }> => {
+  const schema = z.object({
+    userEntryId: z.number(),
+  });
+
+  const user = await validateSessionToken();
+
+  if (!user) {
+    return {
+      error: 'You are not logged in',
+    };
+  }
+
+  const validatedFields = schema.safeParse({
+    userEntryId: Number(formData.get('userEntryId')),
+  });
+
+  if (!validatedFields.success) {
+    return {
+      error: Object.entries(validatedFields.error.flatten().fieldErrors)
+        .map(entry => entry[0] + ' ' + entry[1].map(error => error).join(' '))
+        .join(' '),
+    };
+  }
+
+  await prisma.userEntry.delete({
+    where: {
+      id: validatedFields.data.userEntryId,
+      userId: user.id,
+    },
+  });
+
+  return { message: 'Removed user entry' };
+};
