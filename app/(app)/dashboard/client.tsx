@@ -71,6 +71,7 @@ const Dashboard = ({
     userEntries,
     setUserEntries,
     setUserEntry,
+    removeUserEntry,
 
     selectedUserEntry,
     setSelectedUserEntry,
@@ -176,6 +177,7 @@ const Dashboard = ({
             setSelectedUserEntry(undefined);
           }}
           setUserEntry={setUserEntry}
+          removeUserEntry={removeUserEntry}
           userLists={userLists ?? []}
           userListsWithEntry={listsWithUserEntry}
           refetchUserLists={async () => {
