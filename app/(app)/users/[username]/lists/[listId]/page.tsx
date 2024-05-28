@@ -13,6 +13,7 @@ import { Button } from '@/components/ui/button';
 import { Plus, X } from 'lucide-react';
 import EditableDescription from './editableDescription';
 import AddMedia from './addMedia';
+import EditableName from './editableName';
 
 const Page = async ({
   params,
@@ -80,7 +81,7 @@ const Page = async ({
         <HeaderHeader>
           <HeaderTitle>
             {authUser && authUser?.id === targetUser.id && (
-              <input defaultValue={list.name} />
+              <EditableName userList={list} />
             )}
             {!(authUser && authUser?.id === targetUser.id) && list.name}
           </HeaderTitle>
@@ -92,8 +93,8 @@ const Page = async ({
           </HeaderDescription>
         </HeaderHeader>
       </Header>
-      <div className="mx-auto flex w-full flex-col-reverse gap-16 pb-8 pt-4 md:w-fit xl:grid xl:grid-cols-[1fr,250px] xl:gap-4">
-        <div className="grid w-full grid-cols-3 gap-4 px-4 ps-4  md:grid-cols-4 xl:w-[716px] xl:pe-4">
+      <div className="mx-auto flex w-full flex-col-reverse gap-16 pb-8 pt-4 md:w-fit min-[1330px]:grid min-[1330px]:grid-cols-[1fr,250px]">
+        <div className="grid w-full grid-cols-3 gap-4 px-4 ps-4  md:grid-cols-4 min-[1330px]:w-[716px] min-[1330px]:pe-4">
           {!(authUser && authUser?.id === targetUser.id) &&
             list.entries
               .sort((a, b) => a.order - b.order)
@@ -112,9 +113,9 @@ const Page = async ({
             <AddMedia userList={list} user={targetUser} />
           )}
         </div>
-        <div className="flex flex-col gap-6 px-4 xl:ps-0">
+        <div className="flex flex-col gap-6 px-4 min-[1330px]:px-0">
           {authUser && authUser?.id === targetUser.id && (
-            <EditableDescription description={list.description} />
+            <EditableDescription userList={list} />
           )}
           {!(authUser && authUser?.id === targetUser.id) && (
             <div className="h-max text-base text-gray-700">

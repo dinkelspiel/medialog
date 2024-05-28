@@ -188,7 +188,7 @@ const Dashboard = ({
       return (
         <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-4">
-            <h2 className="text-2xl font-medium">
+            <h2 className="text-xl font-medium">
               Highest rated media you haven’t completed
             </h2>
             <div className="grid grid-cols-3 gap-4">
@@ -211,7 +211,7 @@ const Dashboard = ({
             </div> */}
           </div>
           <div className="flex flex-col gap-4">
-            <h2 className="text-2xl font-medium">
+            <h2 className="text-xl font-medium">
               Most popular media you haven’t completed
             </h2>
             <div className="grid grid-cols-3 gap-4">

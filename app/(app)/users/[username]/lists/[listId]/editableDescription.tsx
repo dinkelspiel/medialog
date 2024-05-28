@@ -1,7 +1,10 @@
 'use client';
-import React, { createRef, useEffect } from 'react';
+import { UserList } from '@prisma/client';
+import React, { createRef, useEffect, useState } from 'react';
+import { toast } from 'sonner';
 
-const EditableDescription = ({ description }: { description: string }) => {
+const EditableDescription = ({ userList }: { userList: UserList }) => {
+  const [description, setDescription] = useState(userList.description);
   const ref = createRef<HTMLTextAreaElement>();
 
   useEffect(() => {
@@ -13,6 +16,27 @@ const EditableDescription = ({ description }: { description: string }) => {
     ref.current.style.height = `${ref.current.scrollHeight}px`;
   });
 
+  const updateDescription = async () => {
+    if (description === userList.description) {
+      return;
+    }
+
+    const response = await (
+      await fetch(`/api/user/lists/${userList.id}`, {
+        method: 'PATCH',
+        body: JSON.stringify({
+          description,
+        }),
+      })
+    ).json();
+
+    if (response.error) {
+      toast.error(`Error updating list: ${response.error}`);
+    } else {
+      toast.success(response.message);
+    }
+  };
+
   return (
     <textarea
       ref={ref}
@@ -20,7 +44,11 @@ const EditableDescription = ({ description }: { description: string }) => {
         (e.target as any).style.height = 'inherit';
         (e.target as any).style.height = `${(e.target as any).scrollHeight}px`;
       }}
-      defaultValue={description}
+      value={description}
+      onChange={e => setDescription(e.target.value)}
+      onBlur={() => {
+        updateDescription();
+      }}
       className="h-max resize-none text-base text-gray-700"
     />
   );

@@ -6,15 +6,17 @@ import UserEntryCard from '@/components/userEntryCard';
 import { Entry, User, UserList, UserListEntry } from '@prisma/client';
 import { ChevronDown, ChevronUp, Plus, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useState } from 'react';
 import { toast } from 'sonner';
 
 const AddMedia = ({
-  userList,
+  userList: userListDefault,
   user,
 }: {
   user: User;
   userList: UserList & { entries: (UserListEntry & { entry: Entry })[] };
 }) => {
+  const [userList, setUserList] = useState(userListDefault);
   const router = useRouter();
 
   const addEntryToList = async (entryId: number) => {
@@ -36,6 +38,20 @@ const AddMedia = ({
   };
 
   const moveEntry = async (entryId: number, order: number) => {
+    setUserList({
+      ...userList,
+      entries: [
+        ...userList.entries.filter(e => e.id !== entryId),
+        {
+          ...userList.entries.find(e => e.id === entryId)!,
+          order:
+            order > userList.entries.find(e => e.id === entryId)!.order
+              ? order + 0.5
+              : order - 0.5,
+        },
+      ],
+    });
+
     const response = await (
       await fetch(`/api/user/lists/${userList.id}/entries/${entryId}`, {
         method: 'PATCH',
@@ -59,6 +75,7 @@ const AddMedia = ({
         .sort((a, b) => a.order - b.order)
         .map(e => (
           <UserEntryCard
+            key={e.id}
             {...{
               title: e.entry.originalTitle,
               backgroundImage: e.entry.posterPath,
@@ -112,7 +129,7 @@ const AddMedia = ({
           <Plus />
           Add Media
         </Button>
-      </AddLog>{' '}
+      </AddLog>
     </>
   );
 };

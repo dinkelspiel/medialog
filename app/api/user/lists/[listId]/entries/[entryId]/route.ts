@@ -1,5 +1,6 @@
 import { validateSessionToken } from '@/server/auth/validateSession';
 import prisma from '@/server/db';
+import { normalizeOrderInList } from '@/server/user/list/normalizeOrder';
 import z from 'zod';
 
 export const PATCH = async (
@@ -34,6 +35,7 @@ export const PATCH = async (
   const list = await prisma.userList.findUnique({
     where: {
       id: Number(params.listId),
+      userId: user.id,
     },
     include: {
       entries: true,
@@ -106,6 +108,8 @@ export const PATCH = async (
     );
 
     await prisma.$transaction(updates);
+
+    await normalizeOrderInList(list);
   }
 
   return Response.json(

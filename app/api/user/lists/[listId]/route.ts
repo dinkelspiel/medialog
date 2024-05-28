@@ -1,5 +1,6 @@
 import { validateSessionToken } from '@/server/auth/validateSession';
 import prisma from '@/server/db';
+import { normalizeOrderInList } from '@/server/user/list/normalizeOrder';
 import { UserList } from '@prisma/client';
 import { NextRequest } from 'next/server';
 import z from 'zod';
@@ -124,6 +125,7 @@ export const PATCH = async (
   const list = await prisma.userList.findUnique({
     where: {
       id: Number(params.listId),
+      userId: user.id,
     },
     include: {
       entries: true,
@@ -157,34 +159,4 @@ export const PATCH = async (
   }
 
   return Response.json({ message: 'Updated list' }, { status: 200 });
-};
-
-/**
- *
- * @returns {number} Returns the largest order number in the list + 1
- */
-const normalizeOrderInList = async (userList: UserList): Promise<number> => {
-  const listEntries = (
-    await prisma.userListEntry.findMany({
-      where: {
-        listId: userList.id,
-      },
-    })
-  ).sort((a, b) => a.order - b.order);
-
-  let idx = 0;
-  for (const listEntry of listEntries) {
-    await prisma.userListEntry.update({
-      where: {
-        id: listEntry.id,
-      },
-      data: {
-        order: idx,
-      },
-    });
-
-    idx++;
-  }
-
-  return idx + 1;
 };
