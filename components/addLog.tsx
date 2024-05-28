@@ -22,6 +22,7 @@ import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import { ExtendedUserEntry } from '@/app/(app)/dashboard/state';
 import ExternalUserEntry from './userEntryExternal';
+import { useRouter } from 'next/navigation';
 
 const AddLog = ({
   children,
@@ -40,6 +41,8 @@ const AddLog = ({
   const [open, setOpen] = useState(false);
   const [userEntryOpen, setUserEntryOpen] = useState(false);
 
+  const router = useRouter();
+
   const addUserEntry = async (entryId: number) => {
     fetch(`/api/user/entries`, {
       method: 'POST',
@@ -57,6 +60,8 @@ const AddLog = ({
           setOpen(false);
           setUserEntryOpen(true);
           setActiveUserEntry(data.userEntry);
+
+          router.refresh();
         } else {
           toast.error(data.error);
         }
