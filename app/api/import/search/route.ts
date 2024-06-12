@@ -24,7 +24,10 @@ export const GET = async (request: NextRequest) => {
 
   const openLibrary = (
     await axios.get(
-      `https://openlibrary.org/search.json?title=${search.replace(' ', '+')}&limit=${take}`
+      `https://openlibrary.org/search.json?title=${search.replace(' ', '+')}&limit=${take}`,
+      {
+        timeout: 60_000,
+      }
     )
   ).data.docs
     .map((ol: any) => {
