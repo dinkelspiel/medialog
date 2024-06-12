@@ -12,8 +12,6 @@ import { Input } from './ui/input';
 import { Toggle } from './ui/toggle';
 import { Book, Film, Loader2, Tv } from 'lucide-react';
 
-import useSWR from 'swr';
-import fetcher from '@/client/fetcher';
 import { Category, Entry } from '@prisma/client';
 import UserEntryCard from './userEntryCard';
 import { Drawer, DrawerContent, DrawerTrigger } from './ui/drawer';
@@ -23,6 +21,7 @@ import { toast } from 'sonner';
 import { ExtendedUserEntry } from '@/app/(app)/dashboard/state';
 import ExternalUserEntry from './userEntryExternal';
 import { useRouter } from 'next/navigation';
+import { dataTagSymbol, useMutation, useQuery } from '@tanstack/react-query';
 
 const AddLog = ({
   children,
@@ -43,33 +42,36 @@ const AddLog = ({
 
   const router = useRouter();
 
-  const addUserEntry = async (entryId: number) => {
-    fetch(`/api/user/entries`, {
-      method: 'POST',
-      body: JSON.stringify({
-        entryId,
+  const addUserEntry = useMutation({
+    mutationKey: ['addUserEntry'],
+    mutationFn: (data: { entryId: number }) =>
+      fetch(`/api/user/entries`, {
+        method: 'POST',
+        body: JSON.stringify({
+          entryId: data.entryId,
+        }),
       }),
-    })
-      .then(data => data.json())
-      .then(data => {
-        if (data.message) {
-          toast.success(data.message);
-          data.userEntry.entry.releaseDate = new Date(
-            data.userEntry.entry.releaseDate
-          );
-          setOpen(false);
-          setUserEntryOpen(true);
-          setActiveUserEntry(data.userEntry);
+    onSuccess: async (result, variables, context) => {
+      const data = await result.json();
 
-          router.refresh();
-        } else {
-          toast.error(data.error);
-        }
-      })
-      .catch(() => {
-        toast.error('Failed to add user entry!');
-      });
-  };
+      if (data.message) {
+        toast.success(data.message);
+        data.userEntry.entry.releaseDate = new Date(
+          data.userEntry.entry.releaseDate
+        );
+        setOpen(false);
+        setUserEntryOpen(true);
+        setActiveUserEntry(data.userEntry);
+
+        router.refresh();
+      } else {
+        toast.error(data.error);
+      }
+    },
+    onError: error => {
+      toast.error('Failed to add user entry! ' + error.message);
+    },
+  });
 
   return (
     <>
@@ -90,8 +92,8 @@ const AddLog = ({
                             setOpen(false);
                             override!.addAction!(entryId);
                           }
-                        : addUserEntry
-                      : addUserEntry
+                        : (entryId: number) => addUserEntry.mutate({ entryId })
+                      : (entryId: number) => addUserEntry.mutate({ entryId })
                   }
                 />
               </DialogContent>
@@ -113,8 +115,8 @@ const AddLog = ({
                             setOpen(false);
                             override!.addAction!(entryId);
                           }
-                        : addUserEntry
-                      : addUserEntry
+                        : (entryId: number) => addUserEntry.mutate({ entryId })
+                      : (entryId: number) => addUserEntry.mutate({ entryId })
                   }
                 />
               </DrawerContent>
@@ -170,50 +172,69 @@ const AddLogContent = ({
 
   const debouncedQueryTitle = useDebounceValue(queryTitle, 500);
 
-  const { data: queryResults, isLoading: queryIsLoading } = useSWR<
-    Entry[],
-    { error: string }
-  >(
-    `/api/entries?q=${debouncedQueryTitle[0]}&take=8&categories=${generateQueryCategories()}`,
-    fetcher
-  );
+  const {
+    data: queryResults,
+    isLoading: queryIsLoading,
+    isError: queryIsError,
+    error: queryError,
+  } = useQuery<Entry[]>({
+    queryFn: () =>
+      fetch(
+        `/api/entries?q=${debouncedQueryTitle[0]}&take=8&categories=${generateQueryCategories()}`
+      ).then(res => res.json()),
+    queryKey: [
+      'internalSearch',
+      debouncedQueryTitle,
+      generateQueryCategories(),
+    ],
+  });
 
-  const { data: externalQueryResults, isLoading: externalQueryIsLoading } =
-    useSWR<
-      {
-        title: string;
-        category: Category;
-        releaseDate: Date;
-        author: string;
-        foreignId: number;
-        posterPath: string;
-      }[],
-      { error: string }
-    >(
-      `/api/import/search?q=${debouncedQueryTitle[0]}&categories=${generateQueryCategories()}&take=12&excludeExisting=true`,
-      fetcher
-    );
+  const {
+    data: externalQueryResults,
+    isLoading: externalQueryIsLoading,
+    isError: externalIsError,
+    error: externalQueryError,
+  } = useQuery<
+    {
+      title: string;
+      category: Category;
+      releaseDate: Date;
+      author: string;
+      foreignId: number;
+      posterPath: string;
+    }[]
+  >({
+    queryFn: () =>
+      fetch(
+        `/api/import/search?q=${debouncedQueryTitle[0]}&categories=${generateQueryCategories()}&take=12&excludeExisting=true`
+      ).then(res => res.json()),
+    queryKey: [
+      'externalSearch',
+      debouncedQueryTitle,
+      generateQueryCategories(),
+    ],
+  });
 
-  const importMedia = async (foreignId: string, category: Category) => {
-    setImporting(foreignId);
-
-    fetch(
-      `/api/import/${category.toLowerCase()}?${category === 'Book' ? 'olId' : 'tmdbId'}=${foreignId}`
-    )
-      .then(data => data.json())
-      .then(data => {
-        if (data.message) {
-          setImporting(undefined);
-
-          addAction(data.entry.id);
-        } else {
-          toast.error(data.error);
-        }
-      })
-      .catch(e => {
-        toast.error(`Failed to import media! ${e.message}`);
-      });
-  };
+  const importMedia = useMutation({
+    mutationKey: ['importMedia'],
+    mutationFn: (data: { foreignId: string; category: Category }) =>
+      fetch(
+        `/api/import/${data.category.toLowerCase()}?${data.category === 'Book' ? 'olId' : 'tmdbId'}=${data.foreignId}`
+      ),
+    onMutate: data => setImporting(data.foreignId),
+    onSuccess: async (result, variables, context) => {
+      const data = await result.json();
+      setImporting(undefined);
+      if (data.message) {
+        addAction(data.entry.id!);
+      } else {
+        toast.error(data.error);
+      }
+    },
+    onError: async (error, variables, context) => {
+      toast.error(error.message);
+    },
+  });
 
   const [importing, setImporting] = useState<string | undefined>(undefined);
 
@@ -269,6 +290,7 @@ const AddLogContent = ({
         </Toggle>
       </div>
       {!queryIsLoading &&
+        !queryIsError &&
         !externalQueryIsLoading &&
         queryResults &&
         externalQueryResults &&
@@ -298,6 +320,16 @@ const AddLogContent = ({
                 />
               ))}
         </div>
+        {externalIsError && (
+          <div className="relative flex justify-center text-xs uppercase">
+            {externalQueryError.message}
+          </div>
+        )}
+        {queryIsError && (
+          <div className="relative flex justify-center text-xs uppercase">
+            {queryError.message}
+          </div>
+        )}
         {(externalQueryIsLoading || queryIsLoading) && (
           <div className="relative flex justify-center text-xs uppercase">
             <Loader2 className="animate-spin" />
@@ -348,7 +380,10 @@ const AddLogContent = ({
                           importing === e.foreignId.toString(),
                       })}
                       onClick={() => {
-                        importMedia(e.foreignId.toString(), e.category);
+                        importMedia.mutate({
+                          foreignId: e.foreignId.toString(),
+                          category: e.category,
+                        });
                       }}
                     />
                     {importing === e.foreignId.toString() && (
