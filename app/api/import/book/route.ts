@@ -19,6 +19,7 @@ export const GET = async (request: NextRequest) => {
     headers: {
       accept: 'application/json',
     },
+    timeout: 60_000,
   };
 
   const work = (
