@@ -42,14 +42,13 @@ import {
 } from '@/components/ui/select';
 import { useEffect, useState } from 'react';
 import { FilterStyle, useDashboardStore } from './state';
-import useSwr from 'swr';
-import fetcher from '@/client/fetcher';
 import ModifyUserEntry from '@/components/modifyUserEntry';
 import UserEntryCard, { UserEntryCardObject } from '@/components/userEntryCard';
 import { useMediaQuery } from 'usehooks-ts';
 import { toast } from 'sonner';
 import { Drawer, DrawerContent } from '@/components/ui/drawer';
 import SmallRating from '@/components/smallRating';
+import { useQuery } from '@tanstack/react-query';
 
 const Dashboard = ({
   userEntries: originalUserEntries,
@@ -85,10 +84,11 @@ const Dashboard = ({
     data: queryResults,
     error: queryError,
     isLoading: queryIsLoading,
-  } = useSwr<number[], { error: string }>(
-    `/api/user/entries?q=${filterTitle}`,
-    fetcher
-  );
+  } = useQuery({
+    queryKey: ['searchQuery'],
+    queryFn: () =>
+      fetch(`/api/user/entries?q=${filterTitle}`).then(res => res.json()),
+  });
 
   // Shortcut for search
 
