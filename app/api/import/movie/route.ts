@@ -1,12 +1,10 @@
 import prisma from '@/server/db';
+import axios from 'axios';
 import { NextRequest } from 'next/server';
-import { fetch, setGlobalDispatcher, Agent } from 'undici';
 
 export const dynamic = 'force-dynamic';
 
 export const GET = async (request: NextRequest) => {
-  setGlobalDispatcher(new Agent({ connect: { timeout: 50_000 } }));
-
   const id = request.nextUrl.searchParams.get('tmdbId');
 
   if (id === null) {
@@ -21,43 +19,42 @@ export const GET = async (request: NextRequest) => {
   }
 
   const options = {
-    method: 'GET',
     headers: {
       accept: 'application/json',
       Authorization: `Bearer ${process.env.TMDB_ACCESS_TOKEN}`,
     },
   };
 
-  const details = await fetch(
+  const details = await axios.get(
     `https://api.themoviedb.org/3/movie/${id}?language=en-US`,
     options
   );
-  const altTitles: any = await fetch(
+  const altTitles = await axios.get(
     `https://api.themoviedb.org/3/movie/${id}/alternative_titles?language=en-US`,
     options
   );
-  const credits: any = await fetch(
+  const credits = await axios.get(
     `https://api.themoviedb.org/3/movie/${id}/credits?language=en-US`,
     options
   );
-  const watchProviders: any = await fetch(
+  const watchProviders = await axios.get(
     `https://api.themoviedb.org/3/movie/${id}/watch/providers?language=en-US`,
     options
   );
 
-  const creditsData: any = await credits.json();
+  const creditsData = credits.data;
 
-  const data: any = await details.json();
+  const data: any = details.data;
   if (data.status_message) {
     return Response.json({
       error: data.status_message,
     });
   }
 
-  data['alternative_titles'] = (await altTitles.json())['titles'];
+  data['alternative_titles'] = altTitles.data['titles'];
   data['cast'] = creditsData['cast'];
   data['crew'] = creditsData['crew'];
-  data['watch_providers'] = (await watchProviders.json())['results'];
+  data['watch_providers'] = watchProviders.data['results'];
 
   let entry = await prisma.entry.findFirst({
     where: {

@@ -1,12 +1,10 @@
 import prisma from '@/server/db';
+import axios from 'axios';
 import { NextRequest } from 'next/server';
-import { fetch, setGlobalDispatcher, Agent } from 'undici';
 
 export const dynamic = 'force-dynamic';
 
 export const GET = async (request: NextRequest) => {
-  setGlobalDispatcher(new Agent({ connect: { timeout: 50_000 } }));
-
   const id = request.nextUrl.searchParams.get('olId');
 
   if (id === null) {
@@ -23,13 +21,16 @@ export const GET = async (request: NextRequest) => {
     },
   };
 
-  const work: any = await (
-    await fetch(`https://openlibrary.org/works/${id}.json`, options)
-  ).json();
+  const work = (
+    await axios.get(`https://openlibrary.org/works/${id}.json`, options)
+  ).data;
 
-  let editionsData: any = await (
-    await fetch(`https://openlibrary.org/works/${id}/editions.json`, options)
-  ).json();
+  let editionsData = (
+    await axios.get(
+      `https://openlibrary.org/works/${id}/editions.json`,
+      options
+    )
+  ).data;
 
   if (work.error) {
     return Response.json({
@@ -40,12 +41,12 @@ export const GET = async (request: NextRequest) => {
   let editions = editionsData.entries;
 
   for (let offset = 50; offset < editionsData.size; offset += 50) {
-    editionsData = await (
-      await fetch(
+    editionsData = (
+      await axios.get(
         `https://openlibrary.org/works/${id}/editions.json?offset=${offset}`,
         options
       )
-    ).json();
+    ).data;
 
     editions = [...editions, ...editionsData.entries];
   }

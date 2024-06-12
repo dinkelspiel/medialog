@@ -2,6 +2,7 @@ import prisma from '@/server/db';
 import { Category } from '@prisma/client';
 import { NextRequest } from 'next/server';
 import { fetch, setGlobalDispatcher, Agent } from 'undici';
+import axios from 'axios';
 
 export const dynamic = 'force-dynamic';
 
@@ -22,12 +23,10 @@ export const GET = async (request: NextRequest) => {
   }
 
   const openLibrary = (
-    (await (
-      await fetch(
-        `https://openlibrary.org/search.json?title=${search.replace(' ', '+')}&limit=${take}`
-      )
-    ).json()) as any
-  ).docs
+    await axios.get(
+      `https://openlibrary.org/search.json?title=${search.replace(' ', '+')}&limit=${take}`
+    )
+  ).data.docs
     .map((ol: any) => {
       let lowestReleaseDate = new Date();
       let releaseDateFallback: string | undefined = undefined;
@@ -60,7 +59,6 @@ export const GET = async (request: NextRequest) => {
     .filter(() => categories.includes('Book'));
 
   const options = {
-    method: 'GET',
     headers: {
       accept: 'application/json',
       Authorization: `Bearer ${process.env.TMDB_ACCESS_TOKEN}`,
@@ -68,13 +66,11 @@ export const GET = async (request: NextRequest) => {
   };
 
   const tmdb = (
-    (await (
-      await fetch(
-        `https://api.themoviedb.org/3/search/multi?query=${search}&include_adult=false&language=en-US&page=1`,
-        options
-      )
-    ).json()) as any
-  ).results
+    await axios.get(
+      `https://api.themoviedb.org/3/search/multi?query=${search}&include_adult=false&language=en-US&page=1`,
+      options
+    )
+  ).data.results
     .map((tmdb: any) => ({
       title: tmdb.original_title ?? tmdb.name,
       category: tmdb.media_type === 'tv' ? 'Series' : 'Movie',

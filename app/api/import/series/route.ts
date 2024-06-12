@@ -1,13 +1,11 @@
 import prisma from '@/server/db';
+import axios from 'axios';
 import { AnySrvRecord } from 'dns';
 import { NextRequest } from 'next/server';
-import { fetch, setGlobalDispatcher, Agent } from 'undici';
 
 export const dynamic = 'force-dynamic';
 
 export const GET = async (request: NextRequest) => {
-  setGlobalDispatcher(new Agent({ connect: { timeout: 50_000 } }));
-
   const id = request.nextUrl.searchParams.get('tmdbId');
 
   if (id === null) {
@@ -29,28 +27,28 @@ export const GET = async (request: NextRequest) => {
     },
   };
 
-  const details: any = await fetch(
+  const details = await axios.get(
     `https://api.themoviedb.org/3/tv/${id}?language=en-US`,
     options
   );
-  const altTitles: any = await fetch(
+  const altTitles = await axios.get(
     `https://api.themoviedb.org/3/tv/${id}/alternative_titles?language=en-US`,
     options
   );
-  const watchProviders: any = await fetch(
+  const watchProviders = await axios.get(
     `https://api.themoviedb.org/3/tv/${id}/watch/providers?language=en-US`,
     options
   );
 
-  const data: any = await details.json();
+  const data: any = details.data;
   if (data.status_message) {
     return Response.json({
       error: data.status_message,
     });
   }
 
-  data['alternative_titles'] = (await altTitles.json())['results'];
-  data['watch_providers'] = (await watchProviders.json())['results'];
+  data['alternative_titles'] = altTitles.data['results'];
+  data['watch_providers'] = watchProviders.data['results'];
 
   for (var i = 0; i < data.seasons.length; i++) {
     const credits = await fetch(
