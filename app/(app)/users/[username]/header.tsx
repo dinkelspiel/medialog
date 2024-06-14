@@ -69,18 +69,22 @@ export const ProfileHeader = ({
         <div className="grid w-full grid-cols-[1fr,1fr,2fr] justify-between px-6 sm:flex sm:w-max sm:flex-row sm:justify-start sm:gap-6 sm:px-0">
           <div className="flex flex-col">
             <div className="text-center text-2xl font-semibold">
-              {profileUser.userEntries.length}
+              {
+                profileUser.userEntries.filter(e => e.status === 'completed')
+                  .length
+              }
             </div>
             <div className="text-center text-sm text-slate-500">Watched</div>
           </div>
           <div className="flex flex-col">
             <div className="text-center text-2xl font-semibold">
               {
-                profileUser.userEntries.filter(e =>
-                  e.watchedAt
-                    ? e.watchedAt?.getTime() >
-                      new Date(new Date().getFullYear().toString()).getTime()
-                    : false
+                profileUser.userEntries.filter(
+                  e =>
+                    (e.watchedAt
+                      ? e.watchedAt?.getTime() >
+                        new Date(new Date().getFullYear().toString()).getTime()
+                      : false) && e.status === 'completed'
                 ).length
               }
             </div>
