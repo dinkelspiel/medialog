@@ -12,7 +12,7 @@ const Header = ({ user }: { user: User | null }) => {
 
   return (
     <>
-      <header className="fixed top-4 flex w-[calc(100dvw-2rem)] gap-6 rounded-2xl border border-solid border-neutral-700 bg-neutral-800 p-1 shadow-xl md:mx-0 md:w-fit">
+      <header className="fixed top-4 z-10 flex w-[calc(100dvw-2rem)] gap-6 rounded-2xl border border-solid border-neutral-700 bg-neutral-800 p-1 shadow-xl md:mx-0 md:w-fit">
         <div className="flex h-9 w-full items-center justify-between gap-0 md:justify-start">
           <div className="mr-2 flex h-9 w-9 items-center justify-center rounded-xl">
             <Logo className="size-9 rounded-xl" />
