@@ -1,12 +1,6 @@
 import React, { ReactNode } from 'react';
 import { numberSuffix } from '@/lib/numberSuffix';
 import Link from 'next/link';
-import {
-  Tooltip,
-  TooltipContent,
-  TooltipProvider,
-  TooltipTrigger,
-} from '@/components/ui/tooltip';
 import { validateSessionToken } from '@/server/auth/validateSession';
 import prisma from '@/server/db';
 import UserEntryCard from '@/components/userEntryCard';
