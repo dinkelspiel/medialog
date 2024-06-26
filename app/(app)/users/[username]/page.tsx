@@ -220,7 +220,7 @@ const Profile = async ({ params }: { params: { username: string } }) => {
     }
   }
 
-  ratings[0] += ratings[-1] ?? 0;
+  ratings[0] = (ratings[0] ?? 0) + (ratings[-1] ?? 0);
   delete ratings[-1];
 
   const diary = await getUserDiary(profileUser.id);
