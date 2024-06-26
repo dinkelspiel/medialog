@@ -40,8 +40,7 @@ const Layout = async ({ children }: { children: ReactNode }) => {
           <SidebarFooter>
             <div className="text-sm font-normal text-neutral-400">
               {process.env.GIT_COMMIT
-                ? `${process.env.GIT_COMMIT}@
-              ${process.env.GIT_BRANCH}`
+                ? `${process.env.GIT_COMMIT}@${process.env.GIT_BRANCH}`
                 : 'dev'}
             </div>
             <AddLog>
