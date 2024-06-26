@@ -38,6 +38,12 @@ const Layout = async ({ children }: { children: ReactNode }) => {
             Community
           </SidebarButton>
           <SidebarFooter>
+            <div className="text-sm font-normal text-neutral-400">
+              {process.env.GIT_COMMIT
+                ? `${process.env.GIT_COMMIT}@
+              ${process.env.GIT_BRANCH}`
+                : 'dev'}
+            </div>
             <AddLog>
               <Button className="hidden lg:flex">
                 <Plus />
