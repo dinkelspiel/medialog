@@ -39,6 +39,7 @@ var List = class {
     }
     return desired === 0;
   }
+  // @internal
   countLength() {
     let length5 = 0;
     for (let _ of this)
@@ -173,6 +174,7 @@ function makeError(variant, module, line2, fn, message, extra) {
   error.gleam_error = variant;
   error.module = module;
   error.line = line2;
+  error.function = fn;
   error.fn = fn;
   for (let k in extra)
     error[k] = extra[k];
@@ -1316,6 +1318,9 @@ function element(tag, attrs, children2) {
 function namespaced(namespace2, tag, attrs, children2) {
   return new Element("", namespace2, tag, attrs, children2, false, false);
 }
+function text(content) {
+  return new Text(content);
+}
 
 // build/dev/javascript/gleam_stdlib/gleam/set.mjs
 var Set2 = class extends CustomType {
@@ -2252,12 +2257,21 @@ function start2(app, selector, flags) {
 }
 
 // build/dev/javascript/lustre/lustre/element/html.mjs
+function text2(content) {
+  return text(content);
+}
 function div(attrs, children2) {
   return element("div", attrs, children2);
+}
+function button(attrs, children2) {
+  return element("button", attrs, children2);
 }
 
 // build/dev/javascript/lustre/lustre/element/svg.mjs
 var namespace = "http://www.w3.org/2000/svg";
+function circle(attrs) {
+  return namespaced(namespace, "circle", attrs, toList([]));
+}
 function svg(attrs, children2) {
   return namespaced(namespace, "svg", attrs, children2);
 }
@@ -2266,6 +2280,55 @@ function path(attrs) {
 }
 
 // build/dev/javascript/lucide_lustre/lucide_lustre.mjs
+function ellipsis(attributes) {
+  return svg(
+    prepend(
+      attribute("stroke-linejoin", "round"),
+      prepend(
+        attribute("stroke-linecap", "round"),
+        prepend(
+          attribute("stroke-width", "2"),
+          prepend(
+            attribute("stroke", "currentColor"),
+            prepend(
+              attribute("fill", "none"),
+              prepend(
+                attribute("viewBox", "0 0 24 24"),
+                prepend(
+                  attribute("height", "24"),
+                  prepend(attribute("width", "24"), attributes)
+                )
+              )
+            )
+          )
+        )
+      )
+    ),
+    toList([
+      circle(
+        toList([
+          attribute("r", "1"),
+          attribute("cy", "12"),
+          attribute("cx", "12")
+        ])
+      ),
+      circle(
+        toList([
+          attribute("r", "1"),
+          attribute("cy", "12"),
+          attribute("cx", "19")
+        ])
+      ),
+      circle(
+        toList([
+          attribute("r", "1"),
+          attribute("cy", "12"),
+          attribute("cx", "5")
+        ])
+      )
+    ])
+  );
+}
 function library(attributes) {
   return svg(
     prepend(
@@ -2322,30 +2385,54 @@ function view(model) {
     ]),
     toList([
       div(
-        toList([class$("border-e border-e-zinc-200 flex flex-col px-3 py-4")]),
+        toList([
+          class$("border-e border-e-zinc-200 flex flex-col px-3 py-4 gap-3")
+        ]),
         toList([
           div(
-            toList([class$("flex px-0.5")]),
+            toList([
+              class$(
+                "flex px-0.5 justify-between items-center pb-4 border-b border-b-zinc-300 border-dashed"
+              )
+            ]),
             toList([
               div(
-                toList([
-                  class$(
-                    "size-[26px] rounded-md border border-zinc-200 bg-white p-0.5"
-                  )
-                ]),
+                toList([class$("flex gap-3 items-center")]),
                 toList([
                   div(
                     toList([
                       class$(
-                        "rounded bg-black w-full h-full flex items-center justify-center"
+                        "size-[26px] rounded-md shadow-sm border border-zinc-200 bg-white p-0.5"
                       )
                     ]),
-                    toList([library(toList([class$("stroke-white size-4")]))])
+                    toList([
+                      div(
+                        toList([
+                          class$(
+                            "rounded bg-black w-full h-full flex items-center justify-center"
+                          )
+                        ]),
+                        toList([
+                          library(toList([class$("stroke-white size-4")]))
+                        ])
+                      )
+                    ])
+                  ),
+                  div(
+                    toList([class$("text-sm font-semibold")]),
+                    toList([text2("Medialog")])
                   )
                 ])
+              ),
+              button(
+                toList([
+                  class$("w-[28px] h-full flex items-center justify-center")
+                ]),
+                toList([ellipsis(toList([class$("stroke-zinc-400 size-4")]))])
               )
             ])
-          )
+          ),
+          div(toList([class$("flex flex-col")]), toList([]))
         ])
       ),
       div(
@@ -2369,11 +2456,11 @@ function register() {
   let $ = make_lustre_client_component(page, "route-dashboard");
   if (!$.isOk()) {
     throw makeError(
-      "assignment_no_match",
+      "let_assert",
       "routes/dashboard",
-      15,
+      16,
       "register",
-      "Assignment pattern did not match",
+      "Pattern match failed, no pattern matched the value.",
       { value: $ }
     );
   }
@@ -2401,11 +2488,11 @@ function main() {
   let $ = register();
   if (!$.isOk()) {
     throw makeError(
-      "assignment_no_match",
+      "let_assert",
       "frontend",
       14,
       "main",
-      "Assignment pattern did not match",
+      "Pattern match failed, no pattern matched the value.",
       { value: $ }
     );
   }
@@ -2413,11 +2500,11 @@ function main() {
   let $1 = start2(app, "#app", void 0);
   if (!$1.isOk()) {
     throw makeError(
-      "assignment_no_match",
+      "let_assert",
       "frontend",
       17,
       "main",
-      "Assignment pattern did not match",
+      "Pattern match failed, no pattern matched the value.",
       { value: $1 }
     );
   }
