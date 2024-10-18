@@ -169,11 +169,11 @@ function structurallyCompatibleObjects(a, b) {
     return false;
   return a.constructor === b.constructor;
 }
-function makeError(variant, module, line2, fn, message, extra) {
+function makeError(variant, module, line, fn, message, extra) {
   let error = new globalThis.Error(message);
   error.gleam_error = variant;
   error.module = module;
-  error.line = line2;
+  error.line = line;
   error.function = fn;
   error.fn = fn;
   for (let k in extra)
@@ -2279,7 +2279,39 @@ function path(attrs) {
   return namespaced(namespace, "path", attrs, toList([]));
 }
 
-// build/dev/javascript/lucide_lustre/lucide_lustre.mjs
+// build/dev/javascript/frontend/lucide_lustre.mjs
+function library(attributes) {
+  return svg(
+    prepend(
+      attribute("stroke-linejoin", "round"),
+      prepend(
+        attribute("stroke-linecap", "round"),
+        prepend(
+          attribute("stroke-width", "2"),
+          prepend(
+            attribute("stroke", "currentColor"),
+            prepend(
+              attribute("fill", "none"),
+              prepend(
+                attribute("viewBox", "0 0 24 24"),
+                prepend(
+                  attribute("height", "24"),
+                  prepend(attribute("width", "24"), attributes)
+                )
+              )
+            )
+          )
+        )
+      )
+    ),
+    toList([
+      path(toList([attribute("d", "m16 6 4 14")])),
+      path(toList([attribute("d", "M12 6v14")])),
+      path(toList([attribute("d", "M8 8v12")])),
+      path(toList([attribute("d", "M4 4v16")]))
+    ])
+  );
+}
 function ellipsis(attributes) {
   return svg(
     prepend(
@@ -2329,49 +2361,16 @@ function ellipsis(attributes) {
     ])
   );
 }
-function library(attributes) {
-  return svg(
-    prepend(
-      attribute("stroke-linejoin", "round"),
-      prepend(
-        attribute("stroke-linecap", "round"),
-        prepend(
-          attribute("stroke-width", "2"),
-          prepend(
-            attribute("stroke", "currentColor"),
-            prepend(
-              attribute("fill", "none"),
-              prepend(
-                attribute("viewBox", "0 0 24 24"),
-                prepend(
-                  attribute("height", "24"),
-                  prepend(attribute("width", "24"), attributes)
-                )
-              )
-            )
-          )
-        )
-      )
-    ),
-    toList([
-      path(toList([attribute("d", "m16 6 4 14")])),
-      path(toList([attribute("d", "M12 6v14")])),
-      path(toList([attribute("d", "M8 8v12")])),
-      path(toList([attribute("d", "M4 4v16")]))
-    ])
-  );
-}
 
 // build/dev/javascript/frontend/routes/dashboard.mjs
 var Model2 = class extends CustomType {
-  constructor(count, cats) {
+  constructor(more_options_open) {
     super();
-    this.count = count;
-    this.cats = cats;
+    this.more_options_open = more_options_open;
   }
 };
 function init2(_) {
-  return [new Model2(0, toList([])), none()];
+  return [new Model2(false), none()];
 }
 function update(model, msg) {
   {
@@ -2392,7 +2391,7 @@ function view(model) {
           div(
             toList([
               class$(
-                "flex px-0.5 justify-between items-center pb-4 border-b border-b-zinc-300 border-dashed"
+                "flex px-0.5 justify-between items-center pb-[15px] border-b border-b-zinc-300 border-dashed"
               )
             ]),
             toList([
@@ -2424,11 +2423,24 @@ function view(model) {
                   )
                 ])
               ),
-              button(
+              div(
+                toList([class$("relative")]),
                 toList([
-                  class$("w-[28px] h-full flex items-center justify-center")
-                ]),
-                toList([ellipsis(toList([class$("stroke-zinc-400 size-4")]))])
+                  button(
+                    toList([
+                      class$("w-[28px] h-full flex items-center justify-center")
+                    ]),
+                    toList([
+                      ellipsis(toList([class$("stroke-zinc-400 size-4")]))
+                    ])
+                  ),
+                  div(
+                    toList([
+                      class$("absolute size-6 bg-black rounded-md shadow-sm")
+                    ]),
+                    toList([])
+                  )
+                ])
               )
             ])
           ),

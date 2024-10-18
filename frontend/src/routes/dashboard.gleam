@@ -17,13 +17,13 @@ pub fn register() {
 }
 
 pub type Model {
-  Model(count: Int, cats: List(String))
+  Model(more_options_open: Bool)
 }
 
 pub type Msg
 
 fn init(_flags) -> #(Model, effect.Effect(Msg)) {
-  #(Model(0, []), effect.none())
+  #(Model(more_options_open: False), effect.none())
 }
 
 pub fn update(model: Model, msg: Msg) -> #(Model, effect.Effect(Msg)) {
@@ -38,7 +38,7 @@ pub fn view(model: Model) -> element.Element(Msg) {
       div(
         [
           class(
-            "flex px-0.5 justify-between items-center pb-4 border-b border-b-zinc-300 border-dashed",
+            "flex px-0.5 justify-between items-center pb-[15px] border-b border-b-zinc-300 border-dashed",
           ),
         ],
         [
@@ -62,8 +62,11 @@ pub fn view(model: Model) -> element.Element(Msg) {
             ),
             div([class("text-sm font-semibold")], [text("Medialog")]),
           ]),
-          button([class("w-[28px] h-full flex items-center justify-center")], [
-            ellipsis([class("stroke-zinc-400 size-4")]),
+          div([class("relative")], [
+            button([class("w-[28px] h-full flex items-center justify-center")], [
+              ellipsis([class("stroke-zinc-400 size-4")]),
+            ]),
+            div([class("absolute size-6 bg-black rounded-md shadow-sm")], []),
           ]),
         ],
       ),
