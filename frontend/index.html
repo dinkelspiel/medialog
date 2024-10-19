@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
@@ -7,11 +7,22 @@
     <title>🚧 frontend</title>
 
     <!-- Uncomment this if you add the TailwindCSS integration -->
-    <link rel="stylesheet" href="/priv/static/frontend.css">
+    <link rel="stylesheet" href="/priv/static/styles.css" />
+    <link rel="stylesheet" href="/priv/static/frontend.css" />
     <script type="module" src="/priv/static/frontend.mjs"></script>
   </head>
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap");
 
-  <body>
+    .font-inter {
+      font-family: "Inter", sans-serif;
+      font-optical-sizing: auto;
+      font-weight: 400;
+      font-style: normal;
+    }
+  </style>
+
+  <body class="font-inter">
     <div id="app"></div>
   </body>
 </html>

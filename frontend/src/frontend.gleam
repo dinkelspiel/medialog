@@ -1,3 +1,4 @@
+import components/popover
 import gleam/dynamic
 import gleam/int
 import gleam/list
