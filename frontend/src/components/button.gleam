@@ -5,6 +5,7 @@ import lustre/element/html
 
 pub type ButtonVariant {
   Default
+  Secondary
   Outline
   Ghost
 }
@@ -23,6 +24,8 @@ pub fn button(
           case variant {
             Default ->
               "bg-primary text-primary-foreground shadow hover:bg-primary/90"
+            Secondary ->
+              "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80"
             Outline ->
               "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground"
             Ghost ->

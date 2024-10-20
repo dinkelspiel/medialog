@@ -4,7 +4,9 @@ import glailwind_merge.{tw_merge}
 import gleam/dynamic
 import gleam/int
 import gleam/list
-import lucide_lustre.{command, ellipsis, library, panel_left, search}
+import lucide_lustre.{
+  command, ellipsis, grip_vertical, library, panel_left, search,
+}
 import lustre
 import lustre/attribute.{class}
 import lustre/effect
@@ -45,7 +47,7 @@ pub fn view(model: Model) -> element.Element(Msg) {
     [
       class(
         glailwind_merge.tw_merge([
-          "grid grid-cols-[230px,1fr] transition-all duration-200 bg-zinc-50 w-screen min-h-screen",
+          "grid grid-cols-[230px,1fr] transition-all duration-300 bg-zinc-50 w-screen min-h-screen",
           case model.sidebar_open {
             True -> ""
             False -> "grid-cols-[0px,1fr]"
@@ -58,7 +60,7 @@ pub fn view(model: Model) -> element.Element(Msg) {
         [
           class(
             tw_merge([
-              "border-e overflow-x-clip transition-all duration-200 border-e-zinc-200 flex flex-col py-4 gap-3",
+              "border-e overflow-x-clip transition-all duration-300 border-e-zinc-200 flex flex-col py-4 gap-3",
               case model.sidebar_open {
                 True -> "px-3"
                 False -> "px-0"
@@ -70,7 +72,7 @@ pub fn view(model: Model) -> element.Element(Msg) {
           div(
             [
               class(
-                "flex px-0.5 justify-between items-center pb-[15px] border-b border-b-zinc-300 border-dashed",
+                "flex px-0.5 justify-between items-center pb-[11px] border-b border-b-zinc-300 border-dashed",
               ),
             ],
             [
@@ -207,8 +209,46 @@ pub fn view(model: Model) -> element.Element(Msg) {
           ],
         ),
         div([class("grid grid-cols-[1fr,300px]")], [
-          div([], []),
-          div([class("border-s border-s-zinc-200")], []),
+          div([class("flex justify-center")], [
+            div([], [
+              div(
+                [
+                  class(
+                    "h-[calc(100vh-58px)] sticky top-[58px] group flex items-center",
+                  ),
+                ],
+                [
+                  div(
+                    [
+                      class(
+                        "w-[1px] pointer-events-none bg-zinc-100 absolute -translate-x-1/2 left-1/2 h-[calc(100vh-58px)] group-hover:opacity-100 opacity-0",
+                      ),
+                    ],
+                    [],
+                  ),
+                  button.button(
+                    [grip_vertical([class("cursor-pointer")])],
+                    [],
+                    [
+                      "px-0 py-2 h-min absolute left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 [&_svg]:size-3",
+                    ],
+                    button.Secondary,
+                  ),
+                ],
+              ),
+              div([class("grid grid-cols-3 gap-3")], []),
+            ]),
+          ]),
+          div([class("border-s border-s-zinc-200 flex flex-col gap-3 p-3")], [
+            div(
+              [
+                class(
+                  "rounded-md border border-zinc-200 sadow-sm bg-white px-6 py-4",
+                ),
+              ],
+              [],
+            ),
+          ]),
         ]),
       ]),
     ],

@@ -4778,6 +4778,8 @@ var doTwMerge = (params) => {
 // build/dev/javascript/frontend/components/button.mjs
 var Default = class extends CustomType {
 };
+var Secondary = class extends CustomType {
+};
 var Outline = class extends CustomType {
 };
 var Ghost = class extends CustomType {
@@ -4793,6 +4795,8 @@ function button2(children2, attrs, classes, variant) {
               (() => {
                 if (variant instanceof Default) {
                   return "bg-primary text-primary-foreground shadow hover:bg-primary/90";
+                } else if (variant instanceof Secondary) {
+                  return "bg-secondary text-secondary-foreground shadow-sm hover:bg-secondary/80";
                 } else if (variant instanceof Outline) {
                   return "border border-input bg-background shadow-sm hover:bg-accent hover:text-accent-foreground";
                 } else {
@@ -5129,6 +5133,72 @@ function command(attributes) {
     ])
   );
 }
+function grip_vertical(attributes) {
+  return svg(
+    prepend(
+      attribute("stroke-linejoin", "round"),
+      prepend(
+        attribute("stroke-linecap", "round"),
+        prepend(
+          attribute("stroke-width", "2"),
+          prepend(
+            attribute("stroke", "currentColor"),
+            prepend(
+              attribute("fill", "none"),
+              prepend(
+                attribute("viewBox", "0 0 24 24"),
+                prepend(
+                  attribute("height", "24"),
+                  prepend(attribute("width", "24"), attributes)
+                )
+              )
+            )
+          )
+        )
+      )
+    ),
+    toList([
+      circle(
+        toList([
+          attribute("r", "1"),
+          attribute("cy", "12"),
+          attribute("cx", "9")
+        ])
+      ),
+      circle(
+        toList([attribute("r", "1"), attribute("cy", "5"), attribute("cx", "9")])
+      ),
+      circle(
+        toList([
+          attribute("r", "1"),
+          attribute("cy", "19"),
+          attribute("cx", "9")
+        ])
+      ),
+      circle(
+        toList([
+          attribute("r", "1"),
+          attribute("cy", "12"),
+          attribute("cx", "15")
+        ])
+      ),
+      circle(
+        toList([
+          attribute("r", "1"),
+          attribute("cy", "5"),
+          attribute("cx", "15")
+        ])
+      ),
+      circle(
+        toList([
+          attribute("r", "1"),
+          attribute("cy", "19"),
+          attribute("cx", "15")
+        ])
+      )
+    ])
+  );
+}
 
 // build/dev/javascript/frontend/routes/dashboard.mjs
 var Model2 = class extends CustomType {
@@ -5158,7 +5228,7 @@ function view(model) {
       class$(
         doTwMerge(
           toList([
-            "grid grid-cols-[230px,1fr] transition-all duration-200 bg-zinc-50 w-screen min-h-screen",
+            "grid grid-cols-[230px,1fr] transition-all duration-300 bg-zinc-50 w-screen min-h-screen",
             (() => {
               let $ = model.sidebar_open;
               if ($) {
@@ -5177,7 +5247,7 @@ function view(model) {
           class$(
             doTwMerge(
               toList([
-                "border-e overflow-x-clip transition-all duration-200 border-e-zinc-200 flex flex-col py-4 gap-3",
+                "border-e overflow-x-clip transition-all duration-300 border-e-zinc-200 flex flex-col py-4 gap-3",
                 (() => {
                   let $ = model.sidebar_open;
                   if ($) {
@@ -5194,7 +5264,7 @@ function view(model) {
           div(
             toList([
               class$(
-                "flex px-0.5 justify-between items-center pb-[15px] border-b border-b-zinc-300 border-dashed"
+                "flex px-0.5 justify-between items-center pb-[11px] border-b border-b-zinc-300 border-dashed"
               )
             ]),
             toList([
@@ -5375,8 +5445,62 @@ function view(model) {
           div(
             toList([class$("grid grid-cols-[1fr,300px]")]),
             toList([
-              div(toList([]), toList([])),
-              div(toList([class$("border-s border-s-zinc-200")]), toList([]))
+              div(
+                toList([class$("flex justify-center")]),
+                toList([
+                  div(
+                    toList([]),
+                    toList([
+                      div(
+                        toList([
+                          class$(
+                            "h-[calc(100vh-58px)] sticky top-[58px] group flex items-center"
+                          )
+                        ]),
+                        toList([
+                          div(
+                            toList([
+                              class$(
+                                "w-[1px] pointer-events-none bg-zinc-100 absolute -translate-x-1/2 left-1/2 h-[calc(100vh-58px)] group-hover:opacity-100 opacity-0"
+                              )
+                            ]),
+                            toList([])
+                          ),
+                          button2(
+                            toList([
+                              grip_vertical(toList([class$("cursor-pointer")]))
+                            ]),
+                            toList([]),
+                            toList([
+                              "px-0 py-2 h-min absolute left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 [&_svg]:size-3"
+                            ]),
+                            new Secondary()
+                          )
+                        ])
+                      ),
+                      div(
+                        toList([class$("grid grid-cols-3 gap-3")]),
+                        toList([])
+                      )
+                    ])
+                  )
+                ])
+              ),
+              div(
+                toList([
+                  class$("border-s border-s-zinc-200 flex flex-col gap-3 p-3")
+                ]),
+                toList([
+                  div(
+                    toList([
+                      class$(
+                        "rounded-md border border-zinc-200 sadow-sm bg-white px-6 py-4"
+                      )
+                    ]),
+                    toList([])
+                  )
+                ])
+              )
             ])
           )
         ])
@@ -5391,7 +5515,7 @@ function register() {
     throw makeError(
       "let_assert",
       "routes/dashboard",
-      18,
+      20,
       "register",
       "Pattern match failed, no pattern matched the value.",
       { value: $ }
