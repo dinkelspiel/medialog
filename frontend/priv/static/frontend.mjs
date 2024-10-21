@@ -39,6 +39,7 @@ var List = class {
     }
     return desired === 0;
   }
+  // @internal
   countLength() {
     let length5 = 0;
     for (let _ of this)
@@ -237,6 +238,7 @@ function makeError(variant, module, line, fn, message, extra) {
   error.gleam_error = variant;
   error.module = module;
   error.line = line;
+  error.function = fn;
   error.fn = fn;
   for (let k in extra)
     error[k] = extra[k];
@@ -5959,11 +5961,11 @@ function register() {
   let $ = make_lustre_client_component(page, "route-dashboard");
   if (!$.isOk()) {
     throw makeError(
-      "assignment_no_match",
+      "let_assert",
       "routes/dashboard",
       24,
       "register",
-      "Assignment pattern did not match",
+      "Pattern match failed, no pattern matched the value.",
       { value: $ }
     );
   }
@@ -5991,11 +5993,11 @@ function main() {
   let $ = register();
   if (!$.isOk()) {
     throw makeError(
-      "assignment_no_match",
+      "let_assert",
       "frontend",
       15,
       "main",
-      "Assignment pattern did not match",
+      "Pattern match failed, no pattern matched the value.",
       { value: $ }
     );
   }
@@ -6003,11 +6005,11 @@ function main() {
   let $1 = start2(app, "#app", void 0);
   if (!$1.isOk()) {
     throw makeError(
-      "assignment_no_match",
+      "let_assert",
       "frontend",
       18,
       "main",
-      "Assignment pattern did not match",
+      "Pattern match failed, no pattern matched the value.",
       { value: $1 }
     );
   }
