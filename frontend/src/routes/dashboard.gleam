@@ -7,8 +7,10 @@ import gleam/float
 import gleam/int
 import gleam/io
 import gleam/list
+import gleam/option.{type Option, None, Some}
 import gleam/result
 import lib/dom
+import lib/local_storage
 import lucide_lustre.{
   command, ellipsis, grip_vertical, library, panel_left, search,
 }
@@ -27,25 +29,52 @@ pub fn register() {
 }
 
 pub type Model {
-  Model(sidebar_open: Bool, columns: Int, columns_grab_x: Int, grabbing: Bool)
+  Model(
+    sidebar_open: Bool,
+    columns: Int,
+    requested_columns_grab_x: Int,
+    columns_grab_x: Int,
+    grabbing: Bool,
+    scroll_y: Int,
+  )
 }
 
 pub type Msg {
   RequestToggleSidebar
-  RequestUpdateColumnsGrabX(grab_x: Int)
+  RequestUpdateColumnsGrabX(grab_x: Option(Int))
   RequestGrab(grab: Bool)
+  UpdateScrollY(y: Int)
 }
 
 fn init(_flags) -> #(Model, effect.Effect(Msg)) {
+  let requested_columns_grab_x = case
+    local_storage.get_requested_columns_grab_x()
+  {
+    Ok(value) -> value
+    Error(_) -> 0
+  }
+
   #(
-    Model(sidebar_open: True, columns: 4, columns_grab_x: 0, grabbing: False),
+    Model(
+      sidebar_open: True,
+      columns: 4,
+      columns_grab_x: requested_columns_grab_x,
+      requested_columns_grab_x:,
+      grabbing: False,
+      scroll_y: 0,
+    ),
     effect.from(fn(dispatch) {
       window.add_event_listener("resize", fn(_) {
-        dispatch(RequestUpdateColumnsGrabX(0))
+        dispatch(RequestUpdateColumnsGrabX(None))
         Nil
       })
       window.add_event_listener("load", fn(_) {
         dispatch(RequestGrab(False))
+        dispatch(RequestUpdateColumnsGrabX(None))
+        Nil
+      })
+      window.add_event_listener("scroll", fn(_) {
+        dispatch(UpdateScrollY(window.scroll_y(window.self())))
         Nil
       })
     }),
@@ -56,9 +85,14 @@ pub fn update(model: Model, msg: Msg) -> #(Model, effect.Effect(Msg)) {
   case msg {
     RequestToggleSidebar -> #(
       Model(..model, sidebar_open: !model.sidebar_open),
-      effect.none(),
+      effect.from(fn(dispatch) { dispatch(RequestUpdateColumnsGrabX(None)) }),
     )
-    RequestUpdateColumnsGrabX(columns_grab_x) -> {
+    RequestUpdateColumnsGrabX(columns_grab_x_original) -> {
+      let columns_grab_x = case columns_grab_x_original {
+        Some(a) -> a
+        None -> model.requested_columns_grab_x
+      }
+
       let x = int.to_float(columns_grab_x) |> float.absolute_value
 
       let columns =
@@ -73,7 +107,23 @@ pub fn update(model: Model, msg: Msg) -> #(Model, effect.Effect(Msg)) {
       #(
         Model(
           ..model,
-          columns_grab_x:,
+          columns_grab_x: int.clamp(
+            columns_grab_x,
+            float.round(main_container_width) / -2,
+            float.round(main_container_width) / 2,
+          ),
+          requested_columns_grab_x: case columns_grab_x_original {
+            Some(a) -> {
+              local_storage.set_requested_columns_grab_x(a)
+              a
+            }
+            None -> {
+              local_storage.set_requested_columns_grab_x(
+                model.requested_columns_grab_x,
+              )
+              model.requested_columns_grab_x
+            }
+          },
           columns: int.clamp(columns, 1, max_columns),
         ),
         effect.none(),
@@ -96,6 +146,7 @@ pub fn update(model: Model, msg: Msg) -> #(Model, effect.Effect(Msg)) {
         True -> #(Model(..model, grabbing: grab), effect.none())
       }
     }
+    UpdateScrollY(scroll_y) -> #(Model(..model, scroll_y:), effect.none())
     _ -> #(model, effect.none())
   }
 }
@@ -117,7 +168,7 @@ fn request_modify_media_columns(
   //   False -> float.round(media_container.width) / 2
   // }
 
-  Ok(RequestUpdateColumnsGrabX(value))
+  Ok(RequestUpdateColumnsGrabX(Some(value)))
 }
 
 fn for(value: a, amount: Int) {
@@ -313,7 +364,17 @@ pub fn view(model: Model) -> element.Element(Msg) {
                 div(
                   [
                     class(
-                      "w-[1px] pointer-events-none transition-opacity duration-200 bg-zinc-200 absolute -translate-x-1/2 h-[calc(100vh-58px)] group-hover:opacity-100 opacity-0",
+                      tw_merge([
+                        "w-[1px] pointer-events-none transition-opacity duration-200 bg-zinc-200 absolute -translate-x-1/2 opacity-0 h-[calc(100vh-58px)]",
+                        case model.grabbing {
+                          False -> "group-hover:opacity-100"
+                          True -> "opacity-100"
+                        },
+                        case model.scroll_y > 58 {
+                          True -> "h-[100dvh] top-0 fixed"
+                          False -> ""
+                        },
+                      ]),
                     ),
                     attribute.style([
                       #("left", int.to_string(model.columns_grab_x) <> "px"),
@@ -327,10 +388,16 @@ pub fn view(model: Model) -> element.Element(Msg) {
                     event.on("mousedown", fn(_) { Ok(RequestGrab(True)) }),
                     attribute.style([
                       #("left", int.to_string(model.columns_grab_x) <> "px"),
+                      #(
+                        "top",
+                        "calc(45dvh + "
+                          <> int.to_string(model.scroll_y)
+                          <> "px)",
+                      ),
                     ]),
                   ],
                   [
-                    "px-0 py-2 h-min absolute -translate-x-1/2 [&_svg]:size-3 group-hover:opacity-100 opacity-50 transition-opacity duration-200",
+                    "px-0 py-2 h-min absolute -translate-x-1/2 -translate-y-1/2 [&_svg]:size-3 group-hover:opacity-100 opacity-50 transition-opacity duration-200",
                   ],
                   button.Secondary,
                 ),
@@ -351,7 +418,26 @@ pub fn view(model: Model) -> element.Element(Msg) {
                     ),
                   ]),
                 ],
-                div([class("w-[148px] h-[223px] bg-blue-500")], []) |> for(12),
+                div([], [
+                  div(
+                    [
+                      class(
+                        "w-[148px] h-[223px] rounded-md shadow-md border border-zinc-200 bg-blue-500",
+                      ),
+                    ],
+                    [],
+                  ),
+                  div(
+                    [
+                      class(
+                        "break-words w-[148px] text-left text-sm font-semibold text-black",
+                      ),
+                    ],
+                    [],
+                    // [text("葬送のフリーレン: Season 1")],
+                  ),
+                ])
+                  |> for(12),
               ),
             ]),
           ]),

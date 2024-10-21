@@ -39,6 +39,7 @@ var List = class {
     }
     return desired === 0;
   }
+  // @internal
   countLength() {
     let length5 = 0;
     for (let _ of this)
@@ -232,6 +233,9 @@ function structurallyCompatibleObjects(a, b) {
     return false;
   return a.constructor === b.constructor;
 }
+function divideInt(a, b) {
+  return Math.trunc(divideFloat(a, b));
+}
 function divideFloat(a, b) {
   if (b === 0) {
     return 0;
@@ -244,6 +248,7 @@ function makeError(variant, module, line, fn, message, extra) {
   error.gleam_error = variant;
   error.module = module;
   error.line = line;
+  error.function = fn;
   error.fn = fn;
   for (let k in extra)
     error[k] = extra[k];
@@ -971,6 +976,13 @@ var NOT_FOUND = {};
 function identity(x) {
   return x;
 }
+function parse_int(value) {
+  if (/^[-+]?(\d+)$/.test(value)) {
+    return new Ok(parseInt(value));
+  } else {
+    return new Error(Nil);
+  }
+}
 function to_string(term) {
   return term.toString();
 }
@@ -1187,6 +1199,9 @@ function round2(x) {
 }
 
 // build/dev/javascript/gleam_stdlib/gleam/int.mjs
+function parse(string4) {
+  return parse_int(string4);
+}
 function to_string2(x) {
   return to_string(x);
 }
@@ -5354,6 +5369,18 @@ var DOMRect = class extends CustomType {
   }
 };
 
+// build/dev/javascript/frontend/lib/local_storage_ffi.mjs
+var setLocalStorage = (key2, value) => localStorage.setItem(key2, value);
+var getLocalStorage = (key2) => localStorage.getItem(key2);
+
+// build/dev/javascript/frontend/lib/local_storage.mjs
+function set_requested_columns_grab_x(value) {
+  return setLocalStorage("requested_columns_grab_x", value);
+}
+function get_requested_columns_grab_x() {
+  return parse(getLocalStorage("requested_columns_grab_x"));
+}
+
 // build/dev/javascript/lustre/lustre/element/svg.mjs
 var namespace = "http://www.w3.org/2000/svg";
 function circle(attrs) {
@@ -5742,12 +5769,14 @@ function grip_vertical(attributes) {
 
 // build/dev/javascript/frontend/routes/dashboard.mjs
 var Model2 = class extends CustomType {
-  constructor(sidebar_open, columns, columns_grab_x, grabbing) {
+  constructor(sidebar_open, columns, requested_columns_grab_x, columns_grab_x, grabbing, scroll_y) {
     super();
     this.sidebar_open = sidebar_open;
     this.columns = columns;
+    this.requested_columns_grab_x = requested_columns_grab_x;
     this.columns_grab_x = columns_grab_x;
     this.grabbing = grabbing;
+    this.scroll_y = scroll_y;
   }
 };
 var RequestToggleSidebar = class extends CustomType {
@@ -5764,22 +5793,52 @@ var RequestGrab = class extends CustomType {
     this.grab = grab;
   }
 };
+var UpdateScrollY = class extends CustomType {
+  constructor(y) {
+    super();
+    this.y = y;
+  }
+};
 function init2(_) {
+  let requested_columns_grab_x = (() => {
+    let $ = get_requested_columns_grab_x();
+    if ($.isOk()) {
+      let value = $[0];
+      return value;
+    } else {
+      return 0;
+    }
+  })();
   return [
-    new Model2(true, 4, 0, false),
+    new Model2(
+      true,
+      4,
+      requested_columns_grab_x,
+      requested_columns_grab_x,
+      false,
+      0
+    ),
     from(
       (dispatch) => {
         addEventListener(
           "resize",
           (_2) => {
-            dispatch(new RequestUpdateColumnsGrabX(0));
+            dispatch(new RequestUpdateColumnsGrabX(new None()));
+            return void 0;
+          }
+        );
+        addEventListener(
+          "load",
+          (_2) => {
+            dispatch(new RequestGrab(false));
+            dispatch(new RequestUpdateColumnsGrabX(new None()));
             return void 0;
           }
         );
         return addEventListener(
-          "load",
+          "scroll",
           (_2) => {
-            dispatch(new RequestGrab(false));
+            dispatch(new UpdateScrollY(scrollY(self())));
             return void 0;
           }
         );
@@ -5791,10 +5850,22 @@ function update(model, msg) {
   if (msg instanceof RequestToggleSidebar) {
     return [
       model.withFields({ sidebar_open: !model.sidebar_open }),
-      none()
+      from(
+        (dispatch) => {
+          return dispatch(new RequestUpdateColumnsGrabX(new None()));
+        }
+      )
     ];
   } else if (msg instanceof RequestUpdateColumnsGrabX) {
-    let columns_grab_x = msg.grab_x;
+    let columns_grab_x_original = msg.grab_x;
+    let columns_grab_x = (() => {
+      if (columns_grab_x_original instanceof Some) {
+        let a = columns_grab_x_original[0];
+        return a;
+      } else {
+        return model.requested_columns_grab_x;
+      }
+    })();
     let x = (() => {
       let _pipe = to_float(columns_grab_x);
       return absolute_value(_pipe);
@@ -5815,7 +5886,23 @@ function update(model, msg) {
     })();
     return [
       model.withFields({
-        columns_grab_x,
+        columns_grab_x: clamp(
+          columns_grab_x,
+          divideInt(round2(main_container_width), -2),
+          divideInt(round2(main_container_width), 2)
+        ),
+        requested_columns_grab_x: (() => {
+          if (columns_grab_x_original instanceof Some) {
+            let a = columns_grab_x_original[0];
+            set_requested_columns_grab_x(a);
+            return a;
+          } else {
+            set_requested_columns_grab_x(
+              model.requested_columns_grab_x
+            );
+            return model.requested_columns_grab_x;
+          }
+        })(),
         columns: clamp(columns, 1, max_columns)
       }),
       none()
@@ -5841,6 +5928,9 @@ function update(model, msg) {
     } else {
       return [model.withFields({ grabbing: grab }), none()];
     }
+  } else if (msg instanceof UpdateScrollY) {
+    let scroll_y = msg.y;
+    return [model.withFields({ scroll_y }), none()];
   } else {
     return [model, none()];
   }
@@ -5857,7 +5947,7 @@ function request_modify_media_columns(model, event2) {
           let value = x - round2(
             media_container.x + divideFloat(media_container.width, 2)
           );
-          return new Ok(new RequestUpdateColumnsGrabX(value));
+          return new Ok(new RequestUpdateColumnsGrabX(new Some(value)));
         }
       );
     }
@@ -6126,7 +6216,27 @@ function view(model) {
                       div(
                         toList([
                           class$(
-                            "w-[1px] pointer-events-none transition-opacity duration-200 bg-zinc-200 absolute -translate-x-1/2 h-[calc(100vh-58px)] group-hover:opacity-100 opacity-0"
+                            doTwMerge(
+                              toList([
+                                "w-[1px] pointer-events-none transition-opacity duration-200 bg-zinc-200 absolute -translate-x-1/2 opacity-0 h-[calc(100vh-58px)]",
+                                (() => {
+                                  let $ = model.grabbing;
+                                  if (!$) {
+                                    return "group-hover:opacity-100";
+                                  } else {
+                                    return "opacity-100";
+                                  }
+                                })(),
+                                (() => {
+                                  let $ = model.scroll_y > 58;
+                                  if ($) {
+                                    return "h-[100dvh] top-0 fixed";
+                                  } else {
+                                    return "";
+                                  }
+                                })()
+                              ])
+                            )
                           ),
                           style(
                             toList([
@@ -6155,12 +6265,18 @@ function view(model) {
                               [
                                 "left",
                                 to_string2(model.columns_grab_x) + "px"
+                              ],
+                              [
+                                "top",
+                                "calc(45dvh + " + to_string2(
+                                  model.scroll_y
+                                ) + "px)"
                               ]
                             ])
                           )
                         ]),
                         toList([
-                          "px-0 py-2 h-min absolute -translate-x-1/2 [&_svg]:size-3 group-hover:opacity-100 opacity-50 transition-opacity duration-200"
+                          "px-0 py-2 h-min absolute -translate-x-1/2 -translate-y-1/2 [&_svg]:size-3 group-hover:opacity-100 opacity-50 transition-opacity duration-200"
                         ]),
                         new Secondary()
                       )
@@ -6185,8 +6301,25 @@ function view(model) {
                         ]),
                         (() => {
                           let _pipe = div(
-                            toList([class$("w-[148px] h-[223px] bg-blue-500")]),
-                            toList([])
+                            toList([]),
+                            toList([
+                              div(
+                                toList([
+                                  class$(
+                                    "w-[148px] h-[223px] rounded-md shadow-md border border-zinc-200 bg-blue-500"
+                                  )
+                                ]),
+                                toList([])
+                              ),
+                              div(
+                                toList([
+                                  class$(
+                                    "break-words w-[148px] text-left text-sm font-semibold text-black"
+                                  )
+                                ]),
+                                toList([])
+                              )
+                            ])
                           );
                           return for$(_pipe, 12);
                         })()
@@ -6222,11 +6355,11 @@ function register() {
   let $ = make_lustre_client_component(page, "route-dashboard");
   if (!$.isOk()) {
     throw makeError(
-      "assignment_no_match",
+      "let_assert",
       "routes/dashboard",
-      26,
+      28,
       "register",
-      "Assignment pattern did not match",
+      "Pattern match failed, no pattern matched the value.",
       { value: $ }
     );
   }
@@ -6254,11 +6387,11 @@ function main2() {
   let $ = register();
   if (!$.isOk()) {
     throw makeError(
-      "assignment_no_match",
+      "let_assert",
       "frontend",
       15,
       "main",
-      "Assignment pattern did not match",
+      "Pattern match failed, no pattern matched the value.",
       { value: $ }
     );
   }
@@ -6266,11 +6399,11 @@ function main2() {
   let $1 = start2(app, "#app", void 0);
   if (!$1.isOk()) {
     throw makeError(
-      "assignment_no_match",
+      "let_assert",
       "frontend",
       18,
       "main",
-      "Assignment pattern did not match",
+      "Pattern match failed, no pattern matched the value.",
       { value: $1 }
     );
   }
