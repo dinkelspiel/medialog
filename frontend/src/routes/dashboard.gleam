@@ -25,17 +25,21 @@ pub fn register() {
 }
 
 pub type Model {
-  Model(sidebar_open: Bool, columns: Int, columns_grab_x: Int)
+  Model(sidebar_open: Bool, columns: Int, columns_grab_x: Int, grabbing: Bool)
 }
 
 pub type Msg {
   RequestToggleSidebar
   RequestModifyMediaColumns(columns: Int)
   RequestUpdateColumnsGrabX(grab_x: Int)
+  RequestGrab(grab: Bool)
 }
 
 fn init(_flags) -> #(Model, effect.Effect(Msg)) {
-  #(Model(sidebar_open: True, columns: 4, columns_grab_x: 0), effect.none())
+  #(
+    Model(sidebar_open: True, columns: 4, columns_grab_x: 0, grabbing: False),
+    effect.none(),
+  )
 }
 
 pub fn update(model: Model, msg: Msg) -> #(Model, effect.Effect(Msg)) {
@@ -52,6 +56,7 @@ pub fn update(model: Model, msg: Msg) -> #(Model, effect.Effect(Msg)) {
       Model(..model, columns_grab_x:),
       effect.none(),
     )
+    RequestGrab(grab) -> #(Model(..model, grabbing: grab), effect.none())
     _ -> #(model, effect.none())
   }
 }
@@ -60,10 +65,16 @@ fn request_modify_media_columns(event) -> Result(Msg, List(dynamic.DecodeError))
   use x <- result.try(dynamic.field("clientX", dynamic.int)(event))
   use y <- result.try(dynamic.field("clientY", dynamic.int)(event))
   use target <- result.try(dynamic.field("target", dynamic.dynamic)(event))
+
+  io.debug(target)
+
   let bounding_rect = dom.get_bounding_client_rect(target)
   let media_container = dom.get_media_container()
 
-  Ok(RequestUpdateColumnsGrabX(float.round(media_container.left) - x))
+  io.debug(media_container)
+  io.debug(float.round(media_container.left) - x)
+
+  Ok(RequestUpdateColumnsGrabX(x - float.round(media_container.left)))
 }
 
 fn for(value: a, amount: Int) {
@@ -259,12 +270,7 @@ pub fn view(model: Model) -> element.Element(Msg) {
                         "w-[1px] pointer-events-none transition-opacity duration-200 bg-zinc-200 absolute -translate-x-1/2 h-[calc(100vh-58px)] group-hover:opacity-100 opacity-0",
                       ),
                       attribute.style([
-                        #(
-                          "left",
-                          "calc(50%-"
-                            <> int.to_string(model.columns_grab_x)
-                            <> "px)",
-                        ),
+                        #("left", int.to_string(model.columns_grab_x) <> "px"),
                       ]),
                     ],
                     [],
@@ -272,7 +278,7 @@ pub fn view(model: Model) -> element.Element(Msg) {
                   button.button(
                     [grip_vertical([class("cursor-pointer")])],
                     [
-                      event.on("click", request_modify_media_columns),
+                      event.on("mousedown", request_modify_media_columns),
                       attribute.style([
                         #("left", int.to_string(model.columns_grab_x) <> "px"),
                       ]),

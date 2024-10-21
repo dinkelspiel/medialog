@@ -1,23 +1,22 @@
 import { DOMRect } from "./dom.mjs";
 
-export const getBoundingClientRect = (target) => {
+export const getBoundingClientRect = (element) => {
   return new DOMRect(
-    target.x,
-    target.y,
-    target.width,
-    target.height,
-    target.top,
-    target.right,
-    target.bottom,
-    target.left
+    element.x,
+    element.y,
+    element.width,
+    element.height,
+    element.top,
+    element.right,
+    element.bottom,
+    element.left
   );
 };
 
 export const getMediaContainer = () => {
-  const routeDashboard = document.getElementsByTagName("route-dashboard");
-  const mediaContainer = document.getElementById("media-container");
+  const mediaContainer = document
+    .getElementsByTagName("route-dashboard")[0]
+    .shadowRoot.getElementById("media-container");
 
-  console.log(document);
-
-  return getBoundingClientRect(mediaContainer);
+  return getBoundingClientRect(mediaContainer.getBoundingClientRect());
 };

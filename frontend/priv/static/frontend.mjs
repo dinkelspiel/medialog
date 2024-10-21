@@ -39,7 +39,6 @@ var List = class {
     }
     return desired === 0;
   }
-  // @internal
   countLength() {
     let length5 = 0;
     for (let _ of this)
@@ -107,6 +106,11 @@ var BitArray = class _BitArray {
   // @internal
   sliceAfter(index3) {
     return new _BitArray(this.buffer.slice(index3));
+  }
+};
+var UtfCodepoint = class {
+  constructor(value) {
+    this.value = value;
   }
 };
 function byteArrayToInt(byteArray, start3, end, isBigEndian, isSigned) {
@@ -238,7 +242,6 @@ function makeError(variant, module, line, fn, message, extra) {
   error.gleam_error = variant;
   error.module = module;
   error.line = line;
-  error.function = fn;
   error.fn = fn;
   for (let k in extra)
     error[k] = extra[k];
@@ -1026,6 +1029,15 @@ var unicode_whitespaces = [
 ].join("");
 var left_trim_regex = new RegExp(`^([${unicode_whitespaces}]*)`, "g");
 var right_trim_regex = new RegExp(`([${unicode_whitespaces}]*)$`, "g");
+function print_debug(string3) {
+  if (typeof process === "object" && process.stderr?.write) {
+    process.stderr.write(string3 + "\n");
+  } else if (typeof Deno === "object") {
+    Deno.stderr.writeSync(new TextEncoder().encode(string3 + "\n"));
+  } else {
+    console.log(string3);
+  }
+}
 function round(float3) {
   return Math.round(float3);
 }
@@ -1106,6 +1118,117 @@ function try_get_field(value, field2, or_else) {
   } catch {
     return or_else();
   }
+}
+function inspect(v) {
+  const t = typeof v;
+  if (v === true)
+    return "True";
+  if (v === false)
+    return "False";
+  if (v === null)
+    return "//js(null)";
+  if (v === void 0)
+    return "Nil";
+  if (t === "string")
+    return inspectString(v);
+  if (t === "bigint" || t === "number")
+    return v.toString();
+  if (Array.isArray(v))
+    return `#(${v.map(inspect).join(", ")})`;
+  if (v instanceof List)
+    return inspectList(v);
+  if (v instanceof UtfCodepoint)
+    return inspectUtfCodepoint(v);
+  if (v instanceof BitArray)
+    return inspectBitArray(v);
+  if (v instanceof CustomType)
+    return inspectCustomType(v);
+  if (v instanceof Dict)
+    return inspectDict(v);
+  if (v instanceof Set)
+    return `//js(Set(${[...v].map(inspect).join(", ")}))`;
+  if (v instanceof RegExp)
+    return `//js(${v})`;
+  if (v instanceof Date)
+    return `//js(Date("${v.toISOString()}"))`;
+  if (v instanceof Function) {
+    const args = [];
+    for (const i of Array(v.length).keys())
+      args.push(String.fromCharCode(i + 97));
+    return `//fn(${args.join(", ")}) { ... }`;
+  }
+  return inspectObject(v);
+}
+function inspectString(str) {
+  let new_str = '"';
+  for (let i = 0; i < str.length; i++) {
+    let char = str[i];
+    switch (char) {
+      case "\n":
+        new_str += "\\n";
+        break;
+      case "\r":
+        new_str += "\\r";
+        break;
+      case "	":
+        new_str += "\\t";
+        break;
+      case "\f":
+        new_str += "\\f";
+        break;
+      case "\\":
+        new_str += "\\\\";
+        break;
+      case '"':
+        new_str += '\\"';
+        break;
+      default:
+        if (char < " " || char > "~" && char < "\xA0") {
+          new_str += "\\u{" + char.charCodeAt(0).toString(16).toUpperCase().padStart(4, "0") + "}";
+        } else {
+          new_str += char;
+        }
+    }
+  }
+  new_str += '"';
+  return new_str;
+}
+function inspectDict(map6) {
+  let body = "dict.from_list([";
+  let first3 = true;
+  map6.forEach((value, key) => {
+    if (!first3)
+      body = body + ", ";
+    body = body + "#(" + inspect(key) + ", " + inspect(value) + ")";
+    first3 = false;
+  });
+  return body + "])";
+}
+function inspectObject(v) {
+  const name = Object.getPrototypeOf(v)?.constructor?.name || "Object";
+  const props = [];
+  for (const k of Object.keys(v)) {
+    props.push(`${inspect(k)}: ${inspect(v[k])}`);
+  }
+  const body = props.length ? " " + props.join(", ") + " " : "";
+  const head = name === "Object" ? "" : name + " ";
+  return `//js(${head}{${body}})`;
+}
+function inspectCustomType(record) {
+  const props = Object.keys(record).map((label) => {
+    const value = inspect(record[label]);
+    return isNaN(parseInt(label)) ? `${label}: ${value}` : value;
+  }).join(", ");
+  return props ? `${record.constructor.name}(${props})` : record.constructor.name;
+}
+function inspectList(list2) {
+  return `[${list2.toArray().map(inspect).join(", ")}]`;
+}
+function inspectBitArray(bits) {
+  return `<<${Array.from(bits.buffer).join(", ")}>>`;
+}
+function inspectUtfCodepoint(codepoint2) {
+  return `//utfcodepoint(${String.fromCodePoint(codepoint2.value)})`;
 }
 
 // build/dev/javascript/gleam_stdlib/gleam/dict.mjs
@@ -1368,6 +1491,10 @@ function drop_left(string3, num_graphemes) {
   } else {
     return slice(string3, num_graphemes, length2(string3) - num_graphemes);
   }
+}
+function inspect2(term) {
+  let _pipe = inspect(term);
+  return to_string3(_pipe);
 }
 
 // build/dev/javascript/gleam_stdlib/gleam/dynamic.mjs
@@ -5087,6 +5214,14 @@ var doTwMerge = (params) => {
   return twMerge(...params);
 };
 
+// build/dev/javascript/gleam_stdlib/gleam/io.mjs
+function debug(term) {
+  let _pipe = term;
+  let _pipe$1 = inspect2(_pipe);
+  print_debug(_pipe$1);
+  return term;
+}
+
 // build/dev/javascript/frontend/components/button.mjs
 var Default = class extends CustomType {
 };
@@ -5127,23 +5262,21 @@ function button2(children2, attrs, classes, variant) {
 }
 
 // build/dev/javascript/frontend/lib/dom_ffi.mjs
-var getBoundingClientRect = (target) => {
+var getBoundingClientRect = (element2) => {
   return new DOMRect(
-    target.x,
-    target.y,
-    target.width,
-    target.height,
-    target.top,
-    target.right,
-    target.bottom,
-    target.left
+    element2.x,
+    element2.y,
+    element2.width,
+    element2.height,
+    element2.top,
+    element2.right,
+    element2.bottom,
+    element2.left
   );
 };
 var getMediaContainer = () => {
-  const routeDashboard = document.getElementsByTagName("route-dashboard");
-  const mediaContainer = document.getElementById("media-container");
-  console.log(document);
-  return getBoundingClientRect(mediaContainer);
+  const mediaContainer = document.getElementsByTagName("route-dashboard")[0].shadowRoot.getElementById("media-container");
+  return getBoundingClientRect(mediaContainer.getBoundingClientRect());
 };
 
 // build/dev/javascript/frontend/lib/dom.mjs
@@ -5549,11 +5682,12 @@ function grip_vertical(attributes) {
 
 // build/dev/javascript/frontend/routes/dashboard.mjs
 var Model2 = class extends CustomType {
-  constructor(sidebar_open, columns, columns_grab_x) {
+  constructor(sidebar_open, columns, columns_grab_x, grabbing) {
     super();
     this.sidebar_open = sidebar_open;
     this.columns = columns;
     this.columns_grab_x = columns_grab_x;
+    this.grabbing = grabbing;
   }
 };
 var RequestToggleSidebar = class extends CustomType {
@@ -5570,8 +5704,14 @@ var RequestUpdateColumnsGrabX = class extends CustomType {
     this.grab_x = grab_x;
   }
 };
+var RequestGrab = class extends CustomType {
+  constructor(grab) {
+    super();
+    this.grab = grab;
+  }
+};
 function init2(_) {
-  return [new Model2(true, 4, 0), none()];
+  return [new Model2(true, 4, 0, false), none()];
 }
 function update(model, msg) {
   if (msg instanceof RequestToggleSidebar) {
@@ -5588,6 +5728,9 @@ function update(model, msg) {
       model.withFields({ columns_grab_x }),
       none()
     ];
+  } else if (msg instanceof RequestGrab) {
+    let grab = msg.grab;
+    return [model.withFields({ grabbing: grab }), none()];
   } else {
     return [model, none()];
   }
@@ -5602,11 +5745,14 @@ function request_modify_media_columns(event2) {
           return try$(
             field("target", dynamic)(event2),
             (target) => {
+              debug(target);
               let bounding_rect = getBoundingClientRect(target);
               let media_container = getMediaContainer();
+              debug(media_container);
+              debug(round2(media_container.left) - x);
               return new Ok(
                 new RequestUpdateColumnsGrabX(
-                  round2(media_container.left) - x
+                  x - round2(media_container.left)
                 )
               );
             }
@@ -5879,9 +6025,7 @@ function view(model) {
                                 toList([
                                   [
                                     "left",
-                                    "calc(50%-" + to_string2(
-                                      model.columns_grab_x
-                                    ) + "px)"
+                                    to_string2(model.columns_grab_x) + "px"
                                   ]
                                 ])
                               )
@@ -5893,7 +6037,10 @@ function view(model) {
                               grip_vertical(toList([class$("cursor-pointer")]))
                             ]),
                             toList([
-                              on2("click", request_modify_media_columns),
+                              on2(
+                                "mousedown",
+                                request_modify_media_columns
+                              ),
                               style(
                                 toList([
                                   [
@@ -5961,11 +6108,11 @@ function register() {
   let $ = make_lustre_client_component(page, "route-dashboard");
   if (!$.isOk()) {
     throw makeError(
-      "let_assert",
+      "assignment_no_match",
       "routes/dashboard",
       24,
       "register",
-      "Pattern match failed, no pattern matched the value.",
+      "Assignment pattern did not match",
       { value: $ }
     );
   }
@@ -5993,11 +6140,11 @@ function main() {
   let $ = register();
   if (!$.isOk()) {
     throw makeError(
-      "let_assert",
+      "assignment_no_match",
       "frontend",
       15,
       "main",
-      "Pattern match failed, no pattern matched the value.",
+      "Assignment pattern did not match",
       { value: $ }
     );
   }
@@ -6005,11 +6152,11 @@ function main() {
   let $1 = start2(app, "#app", void 0);
   if (!$1.isOk()) {
     throw makeError(
-      "let_assert",
+      "assignment_no_match",
       "frontend",
       18,
       "main",
-      "Pattern match failed, no pattern matched the value.",
+      "Assignment pattern did not match",
       { value: $1 }
     );
   }
