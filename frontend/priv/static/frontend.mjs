@@ -108,11 +108,6 @@ var BitArray = class _BitArray {
     return new _BitArray(this.buffer.slice(index3));
   }
 };
-var UtfCodepoint = class {
-  constructor(value) {
-    this.value = value;
-  }
-};
 function byteArrayToInt(byteArray, start3, end, isBigEndian, isSigned) {
   let value = 0;
   if (isBigEndian) {
@@ -237,6 +232,13 @@ function structurallyCompatibleObjects(a, b) {
     return false;
   return a.constructor === b.constructor;
 }
+function divideFloat(a, b) {
+  if (b === 0) {
+    return 0;
+  } else {
+    return a / b;
+  }
+}
 function makeError(variant, module, line, fn, message, extra) {
   let error = new globalThis.Error(message);
   error.gleam_error = variant;
@@ -306,9 +308,9 @@ function hashObject(o) {
   const proto = Object.getPrototypeOf(o);
   if (proto !== null && typeof proto.hashCode === "function") {
     try {
-      const code = o.hashCode(o);
-      if (typeof code === "number") {
-        return code;
+      const code2 = o.hashCode(o);
+      if (typeof code2 === "number") {
+        return code2;
       }
     } catch {
     }
@@ -461,17 +463,17 @@ function createNode(shift, key1, val1, key2hash, key2, val2) {
     addedLeaf
   );
 }
-function assoc(root, shift, hash, key, val, addedLeaf) {
+function assoc(root, shift, hash, key2, val, addedLeaf) {
   switch (root.type) {
     case ARRAY_NODE:
-      return assocArray(root, shift, hash, key, val, addedLeaf);
+      return assocArray(root, shift, hash, key2, val, addedLeaf);
     case INDEX_NODE:
-      return assocIndex(root, shift, hash, key, val, addedLeaf);
+      return assocIndex(root, shift, hash, key2, val, addedLeaf);
     case COLLISION_NODE:
-      return assocCollision(root, shift, hash, key, val, addedLeaf);
+      return assocCollision(root, shift, hash, key2, val, addedLeaf);
   }
 }
-function assocArray(root, shift, hash, key, val, addedLeaf) {
+function assocArray(root, shift, hash, key2, val, addedLeaf) {
   const idx = mask(hash, shift);
   const node = root.array[idx];
   if (node === void 0) {
@@ -479,11 +481,11 @@ function assocArray(root, shift, hash, key, val, addedLeaf) {
     return {
       type: ARRAY_NODE,
       size: root.size + 1,
-      array: cloneAndSet(root.array, idx, { type: ENTRY, k: key, v: val })
+      array: cloneAndSet(root.array, idx, { type: ENTRY, k: key2, v: val })
     };
   }
   if (node.type === ENTRY) {
-    if (isEqual(key, node.k)) {
+    if (isEqual(key2, node.k)) {
       if (val === node.v) {
         return root;
       }
@@ -492,7 +494,7 @@ function assocArray(root, shift, hash, key, val, addedLeaf) {
         size: root.size,
         array: cloneAndSet(root.array, idx, {
           type: ENTRY,
-          k: key,
+          k: key2,
           v: val
         })
       };
@@ -504,11 +506,11 @@ function assocArray(root, shift, hash, key, val, addedLeaf) {
       array: cloneAndSet(
         root.array,
         idx,
-        createNode(shift + SHIFT, node.k, node.v, hash, key, val)
+        createNode(shift + SHIFT, node.k, node.v, hash, key2, val)
       )
     };
   }
-  const n = assoc(node, shift + SHIFT, hash, key, val, addedLeaf);
+  const n = assoc(node, shift + SHIFT, hash, key2, val, addedLeaf);
   if (n === node) {
     return root;
   }
@@ -518,13 +520,13 @@ function assocArray(root, shift, hash, key, val, addedLeaf) {
     array: cloneAndSet(root.array, idx, n)
   };
 }
-function assocIndex(root, shift, hash, key, val, addedLeaf) {
+function assocIndex(root, shift, hash, key2, val, addedLeaf) {
   const bit = bitpos(hash, shift);
   const idx = index(root.bitmap, bit);
   if ((root.bitmap & bit) !== 0) {
     const node = root.array[idx];
     if (node.type !== ENTRY) {
-      const n = assoc(node, shift + SHIFT, hash, key, val, addedLeaf);
+      const n = assoc(node, shift + SHIFT, hash, key2, val, addedLeaf);
       if (n === node) {
         return root;
       }
@@ -535,7 +537,7 @@ function assocIndex(root, shift, hash, key, val, addedLeaf) {
       };
     }
     const nodeKey = node.k;
-    if (isEqual(key, nodeKey)) {
+    if (isEqual(key2, nodeKey)) {
       if (val === node.v) {
         return root;
       }
@@ -544,7 +546,7 @@ function assocIndex(root, shift, hash, key, val, addedLeaf) {
         bitmap: root.bitmap,
         array: cloneAndSet(root.array, idx, {
           type: ENTRY,
-          k: key,
+          k: key2,
           v: val
         })
       };
@@ -556,7 +558,7 @@ function assocIndex(root, shift, hash, key, val, addedLeaf) {
       array: cloneAndSet(
         root.array,
         idx,
-        createNode(shift + SHIFT, nodeKey, node.v, hash, key, val)
+        createNode(shift + SHIFT, nodeKey, node.v, hash, key2, val)
       )
     };
   } else {
@@ -564,7 +566,7 @@ function assocIndex(root, shift, hash, key, val, addedLeaf) {
     if (n >= MAX_INDEX_NODE) {
       const nodes = new Array(32);
       const jdx = mask(hash, shift);
-      nodes[jdx] = assocIndex(EMPTY, shift + SHIFT, hash, key, val, addedLeaf);
+      nodes[jdx] = assocIndex(EMPTY, shift + SHIFT, hash, key2, val, addedLeaf);
       let j = 0;
       let bitmap = root.bitmap;
       for (let i = 0; i < 32; i++) {
@@ -582,7 +584,7 @@ function assocIndex(root, shift, hash, key, val, addedLeaf) {
     } else {
       const newArray = spliceIn(root.array, idx, {
         type: ENTRY,
-        k: key,
+        k: key2,
         v: val
       });
       addedLeaf.val = true;
@@ -594,9 +596,9 @@ function assocIndex(root, shift, hash, key, val, addedLeaf) {
     }
   }
 }
-function assocCollision(root, shift, hash, key, val, addedLeaf) {
+function assocCollision(root, shift, hash, key2, val, addedLeaf) {
   if (hash === root.hash) {
-    const idx = collisionIndexOf(root, key);
+    const idx = collisionIndexOf(root, key2);
     if (idx !== -1) {
       const entry = root.array[idx];
       if (entry.v === val) {
@@ -605,7 +607,7 @@ function assocCollision(root, shift, hash, key, val, addedLeaf) {
       return {
         type: COLLISION_NODE,
         hash,
-        array: cloneAndSet(root.array, idx, { type: ENTRY, k: key, v: val })
+        array: cloneAndSet(root.array, idx, { type: ENTRY, k: key2, v: val })
       };
     }
     const size = root.array.length;
@@ -613,7 +615,7 @@ function assocCollision(root, shift, hash, key, val, addedLeaf) {
     return {
       type: COLLISION_NODE,
       hash,
-      array: cloneAndSet(root.array, size, { type: ENTRY, k: key, v: val })
+      array: cloneAndSet(root.array, size, { type: ENTRY, k: key2, v: val })
     };
   }
   return assoc(
@@ -624,45 +626,45 @@ function assocCollision(root, shift, hash, key, val, addedLeaf) {
     },
     shift,
     hash,
-    key,
+    key2,
     val,
     addedLeaf
   );
 }
-function collisionIndexOf(root, key) {
+function collisionIndexOf(root, key2) {
   const size = root.array.length;
   for (let i = 0; i < size; i++) {
-    if (isEqual(key, root.array[i].k)) {
+    if (isEqual(key2, root.array[i].k)) {
       return i;
     }
   }
   return -1;
 }
-function find(root, shift, hash, key) {
+function find(root, shift, hash, key2) {
   switch (root.type) {
     case ARRAY_NODE:
-      return findArray(root, shift, hash, key);
+      return findArray(root, shift, hash, key2);
     case INDEX_NODE:
-      return findIndex(root, shift, hash, key);
+      return findIndex(root, shift, hash, key2);
     case COLLISION_NODE:
-      return findCollision(root, key);
+      return findCollision(root, key2);
   }
 }
-function findArray(root, shift, hash, key) {
+function findArray(root, shift, hash, key2) {
   const idx = mask(hash, shift);
   const node = root.array[idx];
   if (node === void 0) {
     return void 0;
   }
   if (node.type !== ENTRY) {
-    return find(node, shift + SHIFT, hash, key);
+    return find(node, shift + SHIFT, hash, key2);
   }
-  if (isEqual(key, node.k)) {
+  if (isEqual(key2, node.k)) {
     return node;
   }
   return void 0;
 }
-function findIndex(root, shift, hash, key) {
+function findIndex(root, shift, hash, key2) {
   const bit = bitpos(hash, shift);
   if ((root.bitmap & bit) === 0) {
     return void 0;
@@ -670,31 +672,31 @@ function findIndex(root, shift, hash, key) {
   const idx = index(root.bitmap, bit);
   const node = root.array[idx];
   if (node.type !== ENTRY) {
-    return find(node, shift + SHIFT, hash, key);
+    return find(node, shift + SHIFT, hash, key2);
   }
-  if (isEqual(key, node.k)) {
+  if (isEqual(key2, node.k)) {
     return node;
   }
   return void 0;
 }
-function findCollision(root, key) {
-  const idx = collisionIndexOf(root, key);
+function findCollision(root, key2) {
+  const idx = collisionIndexOf(root, key2);
   if (idx < 0) {
     return void 0;
   }
   return root.array[idx];
 }
-function without(root, shift, hash, key) {
+function without(root, shift, hash, key2) {
   switch (root.type) {
     case ARRAY_NODE:
-      return withoutArray(root, shift, hash, key);
+      return withoutArray(root, shift, hash, key2);
     case INDEX_NODE:
-      return withoutIndex(root, shift, hash, key);
+      return withoutIndex(root, shift, hash, key2);
     case COLLISION_NODE:
-      return withoutCollision(root, key);
+      return withoutCollision(root, key2);
   }
 }
-function withoutArray(root, shift, hash, key) {
+function withoutArray(root, shift, hash, key2) {
   const idx = mask(hash, shift);
   const node = root.array[idx];
   if (node === void 0) {
@@ -702,11 +704,11 @@ function withoutArray(root, shift, hash, key) {
   }
   let n = void 0;
   if (node.type === ENTRY) {
-    if (!isEqual(node.k, key)) {
+    if (!isEqual(node.k, key2)) {
       return root;
     }
   } else {
-    n = without(node, shift + SHIFT, hash, key);
+    n = without(node, shift + SHIFT, hash, key2);
     if (n === node) {
       return root;
     }
@@ -755,7 +757,7 @@ function withoutArray(root, shift, hash, key) {
     array: cloneAndSet(root.array, idx, n)
   };
 }
-function withoutIndex(root, shift, hash, key) {
+function withoutIndex(root, shift, hash, key2) {
   const bit = bitpos(hash, shift);
   if ((root.bitmap & bit) === 0) {
     return root;
@@ -763,7 +765,7 @@ function withoutIndex(root, shift, hash, key) {
   const idx = index(root.bitmap, bit);
   const node = root.array[idx];
   if (node.type !== ENTRY) {
-    const n = without(node, shift + SHIFT, hash, key);
+    const n = without(node, shift + SHIFT, hash, key2);
     if (n === node) {
       return root;
     }
@@ -783,7 +785,7 @@ function withoutIndex(root, shift, hash, key) {
       array: spliceOut(root.array, idx)
     };
   }
-  if (isEqual(key, node.k)) {
+  if (isEqual(key2, node.k)) {
     if (root.bitmap === bit) {
       return void 0;
     }
@@ -795,8 +797,8 @@ function withoutIndex(root, shift, hash, key) {
   }
   return root;
 }
-function withoutCollision(root, key) {
-  const idx = collisionIndexOf(root, key);
+function withoutCollision(root, key2) {
+  const idx = collisionIndexOf(root, key2);
   if (idx < 0) {
     return root;
   }
@@ -871,11 +873,11 @@ var Dict = class _Dict {
    * @param {NotFound} notFound
    * @returns {NotFound | V}
    */
-  get(key, notFound) {
+  get(key2, notFound) {
     if (this.root === void 0) {
       return notFound;
     }
-    const found = find(this.root, 0, getHash(key), key);
+    const found = find(this.root, 0, getHash(key2), key2);
     if (found === void 0) {
       return notFound;
     }
@@ -886,10 +888,10 @@ var Dict = class _Dict {
    * @param {V} val
    * @returns {Dict<K,V>}
    */
-  set(key, val) {
+  set(key2, val) {
     const addedLeaf = { val: false };
     const root = this.root === void 0 ? EMPTY : this.root;
-    const newRoot = assoc(root, 0, getHash(key), key, val, addedLeaf);
+    const newRoot = assoc(root, 0, getHash(key2), key2, val, addedLeaf);
     if (newRoot === this.root) {
       return this;
     }
@@ -899,11 +901,11 @@ var Dict = class _Dict {
    * @param {K} key
    * @returns {Dict<K,V>}
    */
-  delete(key) {
+  delete(key2) {
     if (this.root === void 0) {
       return this;
     }
-    const newRoot = without(this.root, 0, getHash(key), key);
+    const newRoot = without(this.root, 0, getHash(key2), key2);
     if (newRoot === this.root) {
       return this;
     }
@@ -916,11 +918,11 @@ var Dict = class _Dict {
    * @param {K} key
    * @returns {boolean}
    */
-  has(key) {
+  has(key2) {
     if (this.root === void 0) {
       return false;
     }
-    return find(this.root, 0, getHash(key), key) !== void 0;
+    return find(this.root, 0, getHash(key2), key2) !== void 0;
   }
   /**
    * @returns {[K,V][]}
@@ -972,11 +974,11 @@ function identity(x) {
 function to_string(term) {
   return term.toString();
 }
-function string_length(string3) {
-  if (string3 === "") {
+function string_length(string4) {
+  if (string4 === "") {
     return 0;
   }
-  const iterator = graphemes_iterator(string3);
+  const iterator = graphemes_iterator(string4);
   if (iterator) {
     let i = 0;
     for (const _ of iterator) {
@@ -984,20 +986,20 @@ function string_length(string3) {
     }
     return i;
   } else {
-    return string3.match(/./gsu).length;
+    return string4.match(/./gsu).length;
   }
 }
-function graphemes(string3) {
-  const iterator = graphemes_iterator(string3);
+function graphemes(string4) {
+  const iterator = graphemes_iterator(string4);
   if (iterator) {
     return List.fromArray(Array.from(iterator).map((item) => item.segment));
   } else {
-    return List.fromArray(string3.match(/./gsu));
+    return List.fromArray(string4.match(/./gsu));
   }
 }
-function graphemes_iterator(string3) {
+function graphemes_iterator(string4) {
   if (globalThis.Intl && Intl.Segmenter) {
-    return new Intl.Segmenter().segment(string3)[Symbol.iterator]();
+    return new Intl.Segmenter().segment(string4)[Symbol.iterator]();
   }
 }
 function concat(xs) {
@@ -1029,14 +1031,8 @@ var unicode_whitespaces = [
 ].join("");
 var left_trim_regex = new RegExp(`^([${unicode_whitespaces}]*)`, "g");
 var right_trim_regex = new RegExp(`([${unicode_whitespaces}]*)$`, "g");
-function print_debug(string3) {
-  if (typeof process === "object" && process.stderr?.write) {
-    process.stderr.write(string3 + "\n");
-  } else if (typeof Deno === "object") {
-    Deno.stderr.writeSync(new TextEncoder().encode(string3 + "\n"));
-  } else {
-    console.log(string3);
-  }
+function floor(float3) {
+  return Math.floor(float3);
 }
 function round(float3) {
   return Math.round(float3);
@@ -1047,15 +1043,15 @@ function new_map() {
 function map_to_list(map6) {
   return List.fromArray(map6.entries());
 }
-function map_get(map6, key) {
-  const value = map6.get(key, NOT_FOUND);
+function map_get(map6, key2) {
+  const value = map6.get(key2, NOT_FOUND);
   if (value === NOT_FOUND) {
     return new Error(Nil);
   }
   return new Ok(value);
 }
-function map_insert(key, value, map6) {
-  return map6.set(key, value);
+function map_insert(key2, value, map6) {
+  return map6.set(key2, value);
 }
 function classify_dynamic(data) {
   if (typeof data === "string") {
@@ -1119,124 +1115,13 @@ function try_get_field(value, field2, or_else) {
     return or_else();
   }
 }
-function inspect(v) {
-  const t = typeof v;
-  if (v === true)
-    return "True";
-  if (v === false)
-    return "False";
-  if (v === null)
-    return "//js(null)";
-  if (v === void 0)
-    return "Nil";
-  if (t === "string")
-    return inspectString(v);
-  if (t === "bigint" || t === "number")
-    return v.toString();
-  if (Array.isArray(v))
-    return `#(${v.map(inspect).join(", ")})`;
-  if (v instanceof List)
-    return inspectList(v);
-  if (v instanceof UtfCodepoint)
-    return inspectUtfCodepoint(v);
-  if (v instanceof BitArray)
-    return inspectBitArray(v);
-  if (v instanceof CustomType)
-    return inspectCustomType(v);
-  if (v instanceof Dict)
-    return inspectDict(v);
-  if (v instanceof Set)
-    return `//js(Set(${[...v].map(inspect).join(", ")}))`;
-  if (v instanceof RegExp)
-    return `//js(${v})`;
-  if (v instanceof Date)
-    return `//js(Date("${v.toISOString()}"))`;
-  if (v instanceof Function) {
-    const args = [];
-    for (const i of Array(v.length).keys())
-      args.push(String.fromCharCode(i + 97));
-    return `//fn(${args.join(", ")}) { ... }`;
-  }
-  return inspectObject(v);
-}
-function inspectString(str) {
-  let new_str = '"';
-  for (let i = 0; i < str.length; i++) {
-    let char = str[i];
-    switch (char) {
-      case "\n":
-        new_str += "\\n";
-        break;
-      case "\r":
-        new_str += "\\r";
-        break;
-      case "	":
-        new_str += "\\t";
-        break;
-      case "\f":
-        new_str += "\\f";
-        break;
-      case "\\":
-        new_str += "\\\\";
-        break;
-      case '"':
-        new_str += '\\"';
-        break;
-      default:
-        if (char < " " || char > "~" && char < "\xA0") {
-          new_str += "\\u{" + char.charCodeAt(0).toString(16).toUpperCase().padStart(4, "0") + "}";
-        } else {
-          new_str += char;
-        }
-    }
-  }
-  new_str += '"';
-  return new_str;
-}
-function inspectDict(map6) {
-  let body = "dict.from_list([";
-  let first3 = true;
-  map6.forEach((value, key) => {
-    if (!first3)
-      body = body + ", ";
-    body = body + "#(" + inspect(key) + ", " + inspect(value) + ")";
-    first3 = false;
-  });
-  return body + "])";
-}
-function inspectObject(v) {
-  const name = Object.getPrototypeOf(v)?.constructor?.name || "Object";
-  const props = [];
-  for (const k of Object.keys(v)) {
-    props.push(`${inspect(k)}: ${inspect(v[k])}`);
-  }
-  const body = props.length ? " " + props.join(", ") + " " : "";
-  const head = name === "Object" ? "" : name + " ";
-  return `//js(${head}{${body}})`;
-}
-function inspectCustomType(record) {
-  const props = Object.keys(record).map((label) => {
-    const value = inspect(record[label]);
-    return isNaN(parseInt(label)) ? `${label}: ${value}` : value;
-  }).join(", ");
-  return props ? `${record.constructor.name}(${props})` : record.constructor.name;
-}
-function inspectList(list2) {
-  return `[${list2.toArray().map(inspect).join(", ")}]`;
-}
-function inspectBitArray(bits) {
-  return `<<${Array.from(bits.buffer).join(", ")}>>`;
-}
-function inspectUtfCodepoint(codepoint2) {
-  return `//utfcodepoint(${String.fromCodePoint(codepoint2.value)})`;
-}
 
 // build/dev/javascript/gleam_stdlib/gleam/dict.mjs
 function new$() {
   return new_map();
 }
-function insert(dict, key, value) {
-  return map_insert(key, value, dict);
+function insert(dict, key2, value) {
+  return map_insert(key2, value, dict);
 }
 function reverse_and_concat(loop$remaining, loop$accumulator) {
   while (true) {
@@ -1275,6 +1160,17 @@ function keys(dict) {
 }
 
 // build/dev/javascript/gleam_stdlib/gleam/float.mjs
+function floor2(x) {
+  return floor(x);
+}
+function absolute_value(x) {
+  let $ = x >= 0;
+  if ($) {
+    return x;
+  } else {
+    return 0 - x;
+  }
+}
 function negate(x) {
   return -1 * x;
 }
@@ -1293,6 +1189,30 @@ function round2(x) {
 // build/dev/javascript/gleam_stdlib/gleam/int.mjs
 function to_string2(x) {
   return to_string(x);
+}
+function to_float(x) {
+  return identity(x);
+}
+function min(a, b) {
+  let $ = a < b;
+  if ($) {
+    return a;
+  } else {
+    return b;
+  }
+}
+function max(a, b) {
+  let $ = a > b;
+  if ($) {
+    return a;
+  } else {
+    return b;
+  }
+}
+function clamp(x, min_bound, max_bound) {
+  let _pipe = x;
+  let _pipe$1 = min(_pipe, max_bound);
+  return max(_pipe$1, min_bound);
 }
 
 // build/dev/javascript/gleam_stdlib/gleam/list.mjs
@@ -1450,51 +1370,47 @@ function to_string3(builder) {
 }
 
 // build/dev/javascript/gleam_stdlib/gleam/string.mjs
-function length2(string3) {
-  return string_length(string3);
+function length2(string4) {
+  return string_length(string4);
 }
 function concat2(strings) {
   let _pipe = strings;
   let _pipe$1 = from_strings(_pipe);
   return to_string3(_pipe$1);
 }
-function do_slice(string3, idx, len) {
-  let _pipe = string3;
+function do_slice(string4, idx, len) {
+  let _pipe = string4;
   let _pipe$1 = graphemes(_pipe);
   let _pipe$2 = drop(_pipe$1, idx);
   let _pipe$3 = take(_pipe$2, len);
   return concat2(_pipe$3);
 }
-function slice(string3, idx, len) {
+function slice(string4, idx, len) {
   let $ = len < 0;
   if ($) {
     return "";
   } else {
     let $1 = idx < 0;
     if ($1) {
-      let translated_idx = length2(string3) + idx;
+      let translated_idx = length2(string4) + idx;
       let $2 = translated_idx < 0;
       if ($2) {
         return "";
       } else {
-        return do_slice(string3, translated_idx, len);
+        return do_slice(string4, translated_idx, len);
       }
     } else {
-      return do_slice(string3, idx, len);
+      return do_slice(string4, idx, len);
     }
   }
 }
-function drop_left(string3, num_graphemes) {
+function drop_left(string4, num_graphemes) {
   let $ = num_graphemes < 0;
   if ($) {
-    return string3;
+    return string4;
   } else {
-    return slice(string3, num_graphemes, length2(string3) - num_graphemes);
+    return slice(string4, num_graphemes, length2(string4) - num_graphemes);
   }
-}
-function inspect2(term) {
-  let _pipe = inspect(term);
-  return to_string3(_pipe);
 }
 
 // build/dev/javascript/gleam_stdlib/gleam/dynamic.mjs
@@ -1506,9 +1422,6 @@ var DecodeError = class extends CustomType {
     this.path = path2;
   }
 };
-function dynamic(value) {
-  return new Ok(value);
-}
 function classify(data) {
   return classify_dynamic(data);
 }
@@ -1537,7 +1450,7 @@ function any(decoders) {
 function push_path(error, name) {
   let name$1 = identity(name);
   let decoder = any(
-    toList([string, (x) => {
+    toList([string2, (x) => {
       return map2(int(x), to_string2);
     }])
   );
@@ -1562,7 +1475,7 @@ function map_errors(result, f) {
     }
   );
 }
-function string(data) {
+function string2(data) {
   return decode_string(data);
 }
 function field(name, inner_type) {
@@ -1601,6 +1514,20 @@ var Effect = class extends CustomType {
     this.all = all;
   }
 };
+function custom(run) {
+  return new Effect(
+    toList([
+      (actions) => {
+        return run(actions.dispatch, actions.emit, actions.select);
+      }
+    ])
+  );
+}
+function from(effect) {
+  return custom((dispatch, _, _1) => {
+    return effect(dispatch);
+  });
+}
 function none() {
   return new Effect(toList([]));
 }
@@ -1613,9 +1540,9 @@ var Text = class extends CustomType {
   }
 };
 var Element = class extends CustomType {
-  constructor(key, namespace2, tag, attrs, children2, self_closing, void$) {
+  constructor(key2, namespace2, tag, attrs, children2, self_closing, void$) {
     super();
-    this.key = key;
+    this.key = key2;
     this.namespace = namespace2;
     this.tag = tag;
     this.attrs = attrs;
@@ -1638,7 +1565,7 @@ var Attribute = class extends CustomType {
     this.as_property = as_property;
   }
 };
-var Event = class extends CustomType {
+var Event2 = class extends CustomType {
   constructor(x0, x1) {
     super();
     this[0] = x0;
@@ -1655,12 +1582,12 @@ function attribute_to_event_handler(attribute2) {
     return new Ok([name$1, handler]);
   }
 }
-function do_element_list_handlers(elements2, handlers2, key) {
+function do_element_list_handlers(elements2, handlers2, key2) {
   return index_fold(
     elements2,
     handlers2,
     (handlers3, element2, index3) => {
-      let key$1 = key + "-" + to_string2(index3);
+      let key$1 = key2 + "-" + to_string2(index3);
       return do_handlers(element2, handlers3, key$1);
     }
   );
@@ -1669,14 +1596,14 @@ function do_handlers(loop$element, loop$handlers, loop$key) {
   while (true) {
     let element2 = loop$element;
     let handlers2 = loop$handlers;
-    let key = loop$key;
+    let key2 = loop$key;
     if (element2 instanceof Text) {
       return handlers2;
     } else if (element2 instanceof Map2) {
       let subtree = element2.subtree;
       loop$element = subtree();
       loop$handlers = handlers2;
-      loop$key = key;
+      loop$key = key2;
     } else if (element2 instanceof Element) {
       let attrs = element2.attrs;
       let children2 = element2.children;
@@ -1688,16 +1615,16 @@ function do_handlers(loop$element, loop$handlers, loop$key) {
           if ($.isOk()) {
             let name = $[0][0];
             let handler = $[0][1];
-            return insert(handlers3, key + "-" + name, handler);
+            return insert(handlers3, key2 + "-" + name, handler);
           } else {
             return handlers3;
           }
         }
       );
-      return do_element_list_handlers(children2, handlers$1, key);
+      return do_element_list_handlers(children2, handlers$1, key2);
     } else {
       let elements2 = element2.elements;
-      return do_element_list_handlers(elements2, handlers2, key);
+      return do_element_list_handlers(elements2, handlers2, key2);
     }
   }
 }
@@ -1710,7 +1637,7 @@ function attribute(name, value) {
   return new Attribute(name, identity(value), false);
 }
 function on(name, handler) {
-  return new Event("on" + name, handler);
+  return new Event2("on" + name, handler);
 }
 function style(properties) {
   return attribute(
@@ -1849,7 +1776,7 @@ var Emit2 = class extends CustomType {
     this[1] = x1;
   }
 };
-var Event2 = class extends CustomType {
+var Event3 = class extends CustomType {
   constructor(x0, x1) {
     super();
     this[0] = x0;
@@ -2061,14 +1988,14 @@ function createElementNode({ prev, next, dispatch, stack }) {
 }
 var registeredHandlers = /* @__PURE__ */ new WeakMap();
 function lustreGenericEventHandler(event2) {
-  const target = event2.currentTarget;
-  if (!registeredHandlers.has(target)) {
-    target.removeEventListener(event2.type, lustreGenericEventHandler);
+  const target2 = event2.currentTarget;
+  if (!registeredHandlers.has(target2)) {
+    target2.removeEventListener(event2.type, lustreGenericEventHandler);
     return;
   }
-  const handlersForEventTarget = registeredHandlers.get(target);
+  const handlersForEventTarget = registeredHandlers.get(target2);
   if (!handlersForEventTarget.has(event2.type)) {
-    target.removeEventListener(event2.type, lustreGenericEventHandler);
+    target2.removeEventListener(event2.type, lustreGenericEventHandler);
     return;
   }
   handlersForEventTarget.get(event2.type)(event2);
@@ -2108,9 +2035,9 @@ function getKeyedChildren(el) {
   const keyedChildren = /* @__PURE__ */ new Map();
   if (el) {
     for (const child of children(el)) {
-      const key = child?.key || child?.getAttribute?.("data-lustre-key");
-      if (key)
-        keyedChildren.set(key, child);
+      const key2 = child?.key || child?.getAttribute?.("data-lustre-key");
+      if (key2)
+        keyedChildren.set(key2, child);
     }
   }
   return keyedChildren;
@@ -2387,9 +2314,9 @@ var make_lustre_client_component = ({ init: init4, update: update3, view: view3,
      * @param {string} prev
      * @param {string} next
      */
-    attributeChangedCallback(key, prev, next) {
+    attributeChangedCallback(key2, prev, next) {
       if (prev !== next)
-        this[key] = next;
+        this[key2] = next;
     }
     /**
      *
@@ -2596,7 +2523,7 @@ var LustreServerApplication = class _LustreServerApplication {
       for (const [_, renderer] of this.#renderers) {
         renderer(event2);
       }
-    } else if (action instanceof Event2) {
+    } else if (action instanceof Event3) {
       const handler = this.#handlers.get(action[0]);
       if (!handler)
         return;
@@ -2718,6 +2645,9 @@ function text2(content) {
 function h4(attrs, children2) {
   return element("h4", attrs, children2);
 }
+function main(attrs, children2) {
+  return element("main", attrs, children2);
+}
 function div(attrs, children2) {
   return element("div", attrs, children2);
 }
@@ -2837,8 +2767,8 @@ var processClassesRecursively = (classGroup, classPartObject, classGroupId, them
       });
       return;
     }
-    Object.entries(classDefinition).forEach(([key, classGroup2]) => {
-      processClassesRecursively(classGroup2, getPart(classPartObject, key), classGroupId, theme);
+    Object.entries(classDefinition).forEach(([key2, classGroup2]) => {
+      processClassesRecursively(classGroup2, getPart(classPartObject, key2), classGroupId, theme);
     });
   });
 };
@@ -2866,7 +2796,7 @@ var getPrefixedClassGroupEntries = (classGroupEntries, prefix) => {
         return prefix + classDefinition;
       }
       if (typeof classDefinition === "object") {
-        return Object.fromEntries(Object.entries(classDefinition).map(([key, value]) => [prefix + key, value]));
+        return Object.fromEntries(Object.entries(classDefinition).map(([key2, value]) => [prefix + key2, value]));
       }
       return classDefinition;
     });
@@ -2884,8 +2814,8 @@ var createLruCache = (maxCacheSize) => {
   let cacheSize = 0;
   let cache = /* @__PURE__ */ new Map();
   let previousCache = /* @__PURE__ */ new Map();
-  const update3 = (key, value) => {
-    cache.set(key, value);
+  const update3 = (key2, value) => {
+    cache.set(key2, value);
     cacheSize++;
     if (cacheSize > maxCacheSize) {
       cacheSize = 0;
@@ -2894,21 +2824,21 @@ var createLruCache = (maxCacheSize) => {
     }
   };
   return {
-    get(key) {
-      let value = cache.get(key);
+    get(key2) {
+      let value = cache.get(key2);
       if (value !== void 0) {
         return value;
       }
-      if ((value = previousCache.get(key)) !== void 0) {
-        update3(key, value);
+      if ((value = previousCache.get(key2)) !== void 0) {
+        update3(key2, value);
         return value;
       }
     },
-    set(key, value) {
-      if (cache.has(key)) {
-        cache.set(key, value);
+    set(key2, value) {
+      if (cache.has(key2)) {
+        cache.set(key2, value);
       } else {
-        update3(key, value);
+        update3(key2, value);
       }
     }
   };
@@ -3040,32 +2970,32 @@ function twJoin() {
   let index3 = 0;
   let argument;
   let resolvedValue;
-  let string3 = "";
+  let string4 = "";
   while (index3 < arguments.length) {
     if (argument = arguments[index3++]) {
       if (resolvedValue = toValue(argument)) {
-        string3 && (string3 += " ");
-        string3 += resolvedValue;
+        string4 && (string4 += " ");
+        string4 += resolvedValue;
       }
     }
   }
-  return string3;
+  return string4;
 }
 var toValue = (mix) => {
   if (typeof mix === "string") {
     return mix;
   }
   let resolvedValue;
-  let string3 = "";
+  let string4 = "";
   for (let k = 0; k < mix.length; k++) {
     if (mix[k]) {
       if (resolvedValue = toValue(mix[k])) {
-        string3 && (string3 += " ");
-        string3 += resolvedValue;
+        string4 && (string4 += " ");
+        string4 += resolvedValue;
       }
     }
   }
-  return string3;
+  return string4;
 };
 function createTailwindMerge(createConfigFirst, ...createConfigRest) {
   let configUtils;
@@ -3093,8 +3023,8 @@ function createTailwindMerge(createConfigFirst, ...createConfigRest) {
     return functionToCall(twJoin.apply(null, arguments));
   };
 }
-var fromTheme = (key) => {
-  const themeGetter = (theme) => theme[key] || [];
+var fromTheme = (key2) => {
+  const themeGetter = (theme) => theme[key2] || [];
   themeGetter.isThemeGetter = true;
   return themeGetter;
 };
@@ -5214,12 +5144,138 @@ var doTwMerge = (params) => {
   return twMerge(...params);
 };
 
-// build/dev/javascript/gleam_stdlib/gleam/io.mjs
-function debug(term) {
-  let _pipe = term;
-  let _pipe$1 = inspect2(_pipe);
-  print_debug(_pipe$1);
-  return term;
+// build/dev/javascript/plinth/window_ffi.mjs
+function self() {
+  return globalThis;
+}
+function alert(message) {
+  window.alert(message);
+}
+function prompt(message, defaultValue) {
+  let text3 = window.prompt(message, defaultValue);
+  if (text3 !== null) {
+    return new Ok(text3);
+  } else {
+    return new Error();
+  }
+}
+function addEventListener(type, listener) {
+  return window.addEventListener(type, listener);
+}
+async function requestWakeLock() {
+  try {
+    return new Ok(await window.navigator.wakeLock.request("screen"));
+  } catch (error) {
+    return new Error(error.toString());
+  }
+}
+function location() {
+  return window.location.href;
+}
+function locationOf(w) {
+  try {
+    return new Ok(w.location.href);
+  } catch (error) {
+    return new Error(error.toString());
+  }
+}
+function setLocation(w, url) {
+  w.location.href = url;
+}
+function origin() {
+  return window.location.origin;
+}
+function pathname() {
+  return window.location.pathname;
+}
+function reload() {
+  return window.location.reload();
+}
+function reloadOf(w) {
+  return w.location.reload();
+}
+function focus(w) {
+  return w.focus();
+}
+function getHash2() {
+  const hash = window.location.hash;
+  if (hash == "") {
+    return new Error();
+  }
+  return new Ok(decodeURIComponent(hash.slice(1)));
+}
+function getSearch() {
+  const search2 = window.location.search;
+  if (search2 == "") {
+    return new Error();
+  }
+  return new Ok(decodeURIComponent(search2.slice(1)));
+}
+function innerHeight(w) {
+  return w.innerHeight;
+}
+function innerWidth(w) {
+  return w.innerWidth;
+}
+function outerHeight(w) {
+  return w.outerHeight;
+}
+function outerWidth(w) {
+  return w.outerWidth;
+}
+function screenX(w) {
+  return w.screenX;
+}
+function screenY(w) {
+  return w.screenY;
+}
+function screenTop(w) {
+  return w.screenTop;
+}
+function screenLeft(w) {
+  return w.screenLeft;
+}
+function scrollX(w) {
+  return w.scrollX;
+}
+function scrollY(w) {
+  return w.scrollY;
+}
+function open(url, target2, features) {
+  try {
+    return new Ok(window.open(url, target2, features));
+  } catch (error) {
+    return new Error(error.toString());
+  }
+}
+function close(w) {
+  w.close();
+}
+function closed(w) {
+  return w.closed;
+}
+function queueMicrotask(callback) {
+  return window.queueMicrotask(callback);
+}
+function requestAnimationFrame(callback) {
+  return window.requestAnimationFrame(callback);
+}
+function cancelAnimationFrame(callback) {
+  return window.cancelAnimationFrame(callback);
+}
+function eval_(string) {
+  try {
+    return new Ok(eval(string));
+  } catch (error) {
+    return new Error(error.toString());
+  }
+}
+async function import_(string4) {
+  try {
+    return new Ok(await import(string4));
+  } catch (error) {
+    return new Error(error.toString());
+  }
 }
 
 // build/dev/javascript/frontend/components/button.mjs
@@ -5277,6 +5333,10 @@ var getBoundingClientRect = (element2) => {
 var getMediaContainer = () => {
   const mediaContainer = document.getElementsByTagName("route-dashboard")[0].shadowRoot.getElementById("media-container");
   return getBoundingClientRect(mediaContainer.getBoundingClientRect());
+};
+var getMainContainer = () => {
+  const mainContainer = document.getElementsByTagName("route-dashboard")[0].shadowRoot.getElementById("main");
+  return getBoundingClientRect(mainContainer.getBoundingClientRect());
 };
 
 // build/dev/javascript/frontend/lib/dom.mjs
@@ -5692,12 +5752,6 @@ var Model2 = class extends CustomType {
 };
 var RequestToggleSidebar = class extends CustomType {
 };
-var RequestModifyMediaColumns = class extends CustomType {
-  constructor(columns) {
-    super();
-    this.columns = columns;
-  }
-};
 var RequestUpdateColumnsGrabX = class extends CustomType {
   constructor(grab_x) {
     super();
@@ -5711,7 +5765,27 @@ var RequestGrab = class extends CustomType {
   }
 };
 function init2(_) {
-  return [new Model2(true, 4, 0, false), none()];
+  return [
+    new Model2(true, 4, 0, false),
+    from(
+      (dispatch) => {
+        addEventListener(
+          "resize",
+          (_2) => {
+            dispatch(new RequestUpdateColumnsGrabX(0));
+            return void 0;
+          }
+        );
+        return addEventListener(
+          "load",
+          (_2) => {
+            dispatch(new RequestGrab(false));
+            return void 0;
+          }
+        );
+      }
+    )
+  ];
 }
 function update(model, msg) {
   if (msg instanceof RequestToggleSidebar) {
@@ -5719,44 +5793,71 @@ function update(model, msg) {
       model.withFields({ sidebar_open: !model.sidebar_open }),
       none()
     ];
-  } else if (msg instanceof RequestModifyMediaColumns) {
-    let columns = msg.columns;
-    return [model.withFields({ columns }), none()];
   } else if (msg instanceof RequestUpdateColumnsGrabX) {
     let columns_grab_x = msg.grab_x;
+    let x = (() => {
+      let _pipe = to_float(columns_grab_x);
+      return absolute_value(_pipe);
+    })();
+    let columns = (() => {
+      let _pipe = divideFloat(
+        x - (divideFloat(x, 148) * 2 - 1) * 12,
+        148
+      ) * 2;
+      return round2(_pipe);
+    })();
+    let main_container_width = getMainContainer().width - 24;
+    let max_columns = (() => {
+      let _pipe = floor2(
+        divideFloat(main_container_width + 12, 148 + 12)
+      );
+      return round2(_pipe);
+    })();
     return [
-      model.withFields({ columns_grab_x }),
+      model.withFields({
+        columns_grab_x,
+        columns: clamp(columns, 1, max_columns)
+      }),
       none()
     ];
   } else if (msg instanceof RequestGrab) {
     let grab = msg.grab;
-    return [model.withFields({ grabbing: grab }), none()];
+    let media_container = getMediaContainer();
+    if (!grab) {
+      return [
+        model.withFields({
+          grabbing: grab,
+          columns_grab_x: (() => {
+            let $ = model.columns_grab_x > 0;
+            if ($) {
+              return round2(divideFloat(media_container.width, 2));
+            } else {
+              return round2(divideFloat(media_container.width, 2)) * -1;
+            }
+          })()
+        }),
+        none()
+      ];
+    } else {
+      return [model.withFields({ grabbing: grab }), none()];
+    }
   } else {
     return [model, none()];
   }
 }
-function request_modify_media_columns(event2) {
-  return try$(
-    field("clientX", int)(event2),
-    (x) => {
+function request_modify_media_columns(model, event2) {
+  return guard(
+    !model.grabbing,
+    new Error(toList([])),
+    () => {
       return try$(
-        field("clientY", int)(event2),
-        (y) => {
-          return try$(
-            field("target", dynamic)(event2),
-            (target) => {
-              debug(target);
-              let bounding_rect = getBoundingClientRect(target);
-              let media_container = getMediaContainer();
-              debug(media_container);
-              debug(round2(media_container.left) - x);
-              return new Ok(
-                new RequestUpdateColumnsGrabX(
-                  x - round2(media_container.left)
-                )
-              );
-            }
+        field("clientX", int)(event2),
+        (x) => {
+          let media_container = getMediaContainer();
+          let value = x - round2(
+            media_container.x + divideFloat(media_container.width, 2)
           );
+          return new Ok(new RequestUpdateColumnsGrabX(value));
         }
       );
     }
@@ -5783,10 +5884,19 @@ function for$(value, amount) {
 function view(model) {
   return div(
     toList([
+      on2("mouseup", (_) => {
+        return new Ok(new RequestGrab(false));
+      }),
+      on2(
+        "mousemove",
+        (event2) => {
+          return request_modify_media_columns(model, event2);
+        }
+      ),
       class$(
         doTwMerge(
           toList([
-            "grid grid-cols-[230px,1fr] transition-all duration-300 bg-zinc-50 w-screen min-h-screen",
+            "grid grid-cols-[230px,1fr] transition-all duration-300 bg-zinc-50 min-h-screen",
             (() => {
               let $ = model.sidebar_open;
               if ($) {
@@ -6003,63 +6113,67 @@ function view(model) {
           div(
             toList([class$("grid grid-cols-[1fr,300px]")]),
             toList([
-              div(
-                toList([class$("flex justify-center")]),
+              main(
+                toList([class$("flex justify-center"), id("main")]),
                 toList([
+                  div(
+                    toList([
+                      class$(
+                        "h-[calc(100vh-58px)] absolute top-[58px] group flex items-center"
+                      )
+                    ]),
+                    toList([
+                      div(
+                        toList([
+                          class$(
+                            "w-[1px] pointer-events-none transition-opacity duration-200 bg-zinc-200 absolute -translate-x-1/2 h-[calc(100vh-58px)] group-hover:opacity-100 opacity-0"
+                          ),
+                          style(
+                            toList([
+                              [
+                                "left",
+                                to_string2(model.columns_grab_x) + "px"
+                              ]
+                            ])
+                          )
+                        ]),
+                        toList([])
+                      ),
+                      button2(
+                        toList([
+                          grip_vertical(toList([class$("cursor-pointer")]))
+                        ]),
+                        toList([
+                          on2(
+                            "mousedown",
+                            (_) => {
+                              return new Ok(new RequestGrab(true));
+                            }
+                          ),
+                          style(
+                            toList([
+                              [
+                                "left",
+                                to_string2(model.columns_grab_x) + "px"
+                              ]
+                            ])
+                          )
+                        ]),
+                        toList([
+                          "px-0 py-2 h-min absolute -translate-x-1/2 [&_svg]:size-3 group-hover:opacity-100 opacity-50 transition-opacity duration-200"
+                        ]),
+                        new Secondary()
+                      )
+                    ])
+                  ),
                   div(
                     toList([id("media-container")]),
                     toList([
                       div(
                         toList([
                           class$(
-                            "h-[calc(100vh-58px)] absolute top-[58px] group flex items-center"
-                          )
-                        ]),
-                        toList([
-                          div(
-                            toList([
-                              class$(
-                                "w-[1px] pointer-events-none transition-opacity duration-200 bg-zinc-200 absolute -translate-x-1/2 h-[calc(100vh-58px)] group-hover:opacity-100 opacity-0"
-                              ),
-                              style(
-                                toList([
-                                  [
-                                    "left",
-                                    to_string2(model.columns_grab_x) + "px"
-                                  ]
-                                ])
-                              )
-                            ]),
-                            toList([])
+                            "grid gap-3 p-3 transition-[grid-template-columns] duration-500 ease-in-out"
                           ),
-                          button2(
-                            toList([
-                              grip_vertical(toList([class$("cursor-pointer")]))
-                            ]),
-                            toList([
-                              on2(
-                                "mousedown",
-                                request_modify_media_columns
-                              ),
-                              style(
-                                toList([
-                                  [
-                                    "left",
-                                    to_string2(model.columns_grab_x) + "px"
-                                  ]
-                                ])
-                              )
-                            ]),
-                            toList([
-                              "px-0 py-2 h-min absolute -translate-x-1/2 [&_svg]:size-3"
-                            ]),
-                            new Secondary()
-                          )
-                        ])
-                      ),
-                      div(
-                        toList([
-                          class$("grid gap-3 p-3"),
                           style(
                             toList([
                               [
@@ -6110,7 +6224,7 @@ function register() {
     throw makeError(
       "assignment_no_match",
       "routes/dashboard",
-      24,
+      26,
       "register",
       "Assignment pattern did not match",
       { value: $ }
@@ -6136,7 +6250,7 @@ function view2(model) {
     toList([element("route-dashboard", toList([]), toList([]))])
   );
 }
-function main() {
+function main2() {
   let $ = register();
   if (!$.isOk()) {
     throw makeError(
@@ -6164,4 +6278,4 @@ function main() {
 }
 
 // build/.lustre/entry.mjs
-main();
+main2();
