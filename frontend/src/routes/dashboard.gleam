@@ -2,8 +2,12 @@ import components/button
 import components/popover
 import glailwind_merge.{tw_merge}
 import gleam/dynamic
+import gleam/float
 import gleam/int
+import gleam/io
 import gleam/list
+import gleam/result
+import lib/dom
 import lucide_lustre.{
   command, ellipsis, grip_vertical, library, panel_left, search,
 }
@@ -21,15 +25,17 @@ pub fn register() {
 }
 
 pub type Model {
-  Model(sidebar_open: Bool)
+  Model(sidebar_open: Bool, columns: Int, columns_grab_x: Int)
 }
 
 pub type Msg {
   RequestToggleSidebar
+  RequestModifyMediaColumns(columns: Int)
+  RequestUpdateColumnsGrabX(grab_x: Int)
 }
 
 fn init(_flags) -> #(Model, effect.Effect(Msg)) {
-  #(Model(sidebar_open: True), effect.none())
+  #(Model(sidebar_open: True, columns: 4, columns_grab_x: 0), effect.none())
 }
 
 pub fn update(model: Model, msg: Msg) -> #(Model, effect.Effect(Msg)) {
@@ -38,7 +44,36 @@ pub fn update(model: Model, msg: Msg) -> #(Model, effect.Effect(Msg)) {
       Model(..model, sidebar_open: !model.sidebar_open),
       effect.none(),
     )
+    RequestModifyMediaColumns(columns) -> #(
+      Model(..model, columns:),
+      effect.none(),
+    )
+    RequestUpdateColumnsGrabX(columns_grab_x) -> #(
+      Model(..model, columns_grab_x:),
+      effect.none(),
+    )
     _ -> #(model, effect.none())
+  }
+}
+
+fn request_modify_media_columns(event) -> Result(Msg, List(dynamic.DecodeError)) {
+  use x <- result.try(dynamic.field("clientX", dynamic.int)(event))
+  use y <- result.try(dynamic.field("clientY", dynamic.int)(event))
+  use target <- result.try(dynamic.field("target", dynamic.dynamic)(event))
+  let bounding_rect = dom.get_bounding_client_rect(target)
+  let media_container = dom.get_media_container()
+
+  Ok(RequestUpdateColumnsGrabX(float.round(media_container.left) - x))
+}
+
+fn for(value: a, amount: Int) {
+  do_for(value, amount, [])
+}
+
+fn do_for(value: a, amount: Int, acc: List(a)) -> List(a) {
+  case amount {
+    amount if amount == 0 -> acc
+    _ -> do_for(value, amount - 1, [value, ..acc])
   }
 }
 
@@ -161,7 +196,7 @@ pub fn view(model: Model) -> element.Element(Msg) {
         div(
           [
             class(
-              "border-b border-b-zinc-200 grid grid-cols-[1fr_minmax(min-content,_285px)_1fr] items-center ps-2 pe-4 py-3",
+              "border-b border-b-zinc-200 grid grid-cols-[1fr_minmax(min-content,_285px)_1fr] items-center ps-2 pe-4 py-3 pe-[300px]",
             ),
           ],
           [
@@ -210,33 +245,57 @@ pub fn view(model: Model) -> element.Element(Msg) {
         ),
         div([class("grid grid-cols-[1fr,300px]")], [
           div([class("flex justify-center")], [
-            div([], [
+            div([attribute.id("media-container")], [
               div(
                 [
                   class(
-                    "h-[calc(100vh-58px)] sticky top-[58px] group flex items-center",
+                    "h-[calc(100vh-58px)] absolute top-[58px] group flex items-center",
                   ),
                 ],
                 [
                   div(
                     [
                       class(
-                        "w-[1px] pointer-events-none bg-zinc-100 absolute -translate-x-1/2 left-1/2 h-[calc(100vh-58px)] group-hover:opacity-100 opacity-0",
+                        "w-[1px] pointer-events-none transition-opacity duration-200 bg-zinc-200 absolute -translate-x-1/2 h-[calc(100vh-58px)] group-hover:opacity-100 opacity-0",
                       ),
+                      attribute.style([
+                        #(
+                          "left",
+                          "calc(50%-"
+                            <> int.to_string(model.columns_grab_x)
+                            <> "px)",
+                        ),
+                      ]),
                     ],
                     [],
                   ),
                   button.button(
                     [grip_vertical([class("cursor-pointer")])],
-                    [],
                     [
-                      "px-0 py-2 h-min absolute left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 [&_svg]:size-3",
+                      event.on("click", request_modify_media_columns),
+                      attribute.style([
+                        #("left", int.to_string(model.columns_grab_x) <> "px"),
+                      ]),
                     ],
+                    ["px-0 py-2 h-min absolute -translate-x-1/2 [&_svg]:size-3"],
                     button.Secondary,
                   ),
                 ],
               ),
-              div([class("grid grid-cols-3 gap-3")], []),
+              div(
+                [
+                  class("grid gap-3 p-3"),
+                  attribute.style([
+                    #(
+                      "grid-template-columns",
+                      "repeat("
+                        <> int.to_string(model.columns)
+                        <> ", minmax(0, 1fr));",
+                    ),
+                  ]),
+                ],
+                div([class("w-[148px] h-[223px] bg-blue-500")], []) |> for(12),
+              ),
             ]),
           ]),
           div([class("border-s border-s-zinc-200 flex flex-col gap-3 p-3")], [

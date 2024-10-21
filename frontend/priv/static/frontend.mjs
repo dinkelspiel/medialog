@@ -39,7 +39,6 @@ var List = class {
     }
     return desired === 0;
   }
-  // @internal
   countLength() {
     let length5 = 0;
     for (let _ of this)
@@ -77,6 +76,70 @@ var NonEmpty = class extends List {
     this.tail = tail;
   }
 };
+var BitArray = class _BitArray {
+  constructor(buffer) {
+    if (!(buffer instanceof Uint8Array)) {
+      throw "BitArray can only be constructed from a Uint8Array";
+    }
+    this.buffer = buffer;
+  }
+  // @internal
+  get length() {
+    return this.buffer.length;
+  }
+  // @internal
+  byteAt(index3) {
+    return this.buffer[index3];
+  }
+  // @internal
+  floatFromSlice(start3, end, isBigEndian) {
+    return byteArrayToFloat(this.buffer, start3, end, isBigEndian);
+  }
+  // @internal
+  intFromSlice(start3, end, isBigEndian, isSigned) {
+    return byteArrayToInt(this.buffer, start3, end, isBigEndian, isSigned);
+  }
+  // @internal
+  binaryFromSlice(start3, end) {
+    return new _BitArray(this.buffer.slice(start3, end));
+  }
+  // @internal
+  sliceAfter(index3) {
+    return new _BitArray(this.buffer.slice(index3));
+  }
+};
+function byteArrayToInt(byteArray, start3, end, isBigEndian, isSigned) {
+  let value = 0;
+  if (isBigEndian) {
+    for (let i = start3; i < end; i++) {
+      value = value * 256 + byteArray[i];
+    }
+  } else {
+    for (let i = end - 1; i >= start3; i--) {
+      value = value * 256 + byteArray[i];
+    }
+  }
+  if (isSigned) {
+    const byteSize = end - start3;
+    const highBit = 2 ** (byteSize * 8 - 1);
+    if (value >= highBit) {
+      value -= highBit * 2;
+    }
+  }
+  return value;
+}
+function byteArrayToFloat(byteArray, start3, end, isBigEndian) {
+  const view3 = new DataView(byteArray.buffer);
+  const byteSize = end - start3;
+  if (byteSize === 8) {
+    return view3.getFloat64(start3, !isBigEndian);
+  } else if (byteSize === 4) {
+    return view3.getFloat32(start3, !isBigEndian);
+  } else {
+    const msg = `Sized floats must be 32-bit or 64-bit on JavaScript, got size of ${byteSize * 8} bits`;
+    throw new globalThis.Error(msg);
+  }
+}
 var Result = class _Result extends CustomType {
   // @internal
   static isResult(data) {
@@ -174,7 +237,6 @@ function makeError(variant, module, line, fn, message, extra) {
   error.gleam_error = variant;
   error.module = module;
   error.line = line;
-  error.function = fn;
   error.fn = fn;
   for (let k in extra)
     error[k] = extra[k];
@@ -190,6 +252,14 @@ var Some = class extends CustomType {
 };
 var None = class extends CustomType {
 };
+function to_result(option, e) {
+  if (option instanceof Some) {
+    let a = option[0];
+    return new Ok(a);
+  } else {
+    return new Error(e);
+  }
+}
 
 // build/dev/javascript/gleam_stdlib/dict.mjs
 var referenceMap = /* @__PURE__ */ new WeakMap();
@@ -889,6 +959,8 @@ var Dict = class _Dict {
 };
 
 // build/dev/javascript/gleam_stdlib/gleam_stdlib.mjs
+var Nil = void 0;
+var NOT_FOUND = {};
 function identity(x) {
   return x;
 }
@@ -952,14 +1024,86 @@ var unicode_whitespaces = [
 ].join("");
 var left_trim_regex = new RegExp(`^([${unicode_whitespaces}]*)`, "g");
 var right_trim_regex = new RegExp(`([${unicode_whitespaces}]*)$`, "g");
+function round(float3) {
+  return Math.round(float3);
+}
 function new_map() {
   return Dict.new();
 }
 function map_to_list(map6) {
   return List.fromArray(map6.entries());
 }
+function map_get(map6, key) {
+  const value = map6.get(key, NOT_FOUND);
+  if (value === NOT_FOUND) {
+    return new Error(Nil);
+  }
+  return new Ok(value);
+}
 function map_insert(key, value, map6) {
   return map6.set(key, value);
+}
+function classify_dynamic(data) {
+  if (typeof data === "string") {
+    return "String";
+  } else if (typeof data === "boolean") {
+    return "Bool";
+  } else if (data instanceof Result) {
+    return "Result";
+  } else if (data instanceof List) {
+    return "List";
+  } else if (data instanceof BitArray) {
+    return "BitArray";
+  } else if (data instanceof Dict) {
+    return "Dict";
+  } else if (Number.isInteger(data)) {
+    return "Int";
+  } else if (Array.isArray(data)) {
+    return `Tuple of ${data.length} elements`;
+  } else if (typeof data === "number") {
+    return "Float";
+  } else if (data === null) {
+    return "Null";
+  } else if (data === void 0) {
+    return "Nil";
+  } else {
+    const type = typeof data;
+    return type.charAt(0).toUpperCase() + type.slice(1);
+  }
+}
+function decoder_error(expected, got) {
+  return decoder_error_no_classify(expected, classify_dynamic(got));
+}
+function decoder_error_no_classify(expected, got) {
+  return new Error(
+    List.fromArray([new DecodeError(expected, got, List.fromArray([]))])
+  );
+}
+function decode_string(data) {
+  return typeof data === "string" ? new Ok(data) : decoder_error("String", data);
+}
+function decode_int(data) {
+  return Number.isInteger(data) ? new Ok(data) : decoder_error("Int", data);
+}
+function decode_field(value, name) {
+  const not_a_map_error = () => decoder_error("Dict", value);
+  if (value instanceof Dict || value instanceof WeakMap || value instanceof Map) {
+    const entry = map_get(value, name);
+    return new Ok(entry.isOk() ? new Some(entry[0]) : new None());
+  } else if (value === null) {
+    return not_a_map_error();
+  } else if (Object.getPrototypeOf(value) == Object.prototype) {
+    return try_get_field(value, name, () => new Ok(new None()));
+  } else {
+    return try_get_field(value, name, not_a_map_error);
+  }
+}
+function try_get_field(value, field2, or_else) {
+  try {
+    return field2 in value ? new Ok(new Some(value[field2])) : or_else();
+  } catch {
+    return or_else();
+  }
 }
 
 // build/dev/javascript/gleam_stdlib/gleam/dict.mjs
@@ -1005,6 +1149,22 @@ function keys(dict) {
   return do_keys(dict);
 }
 
+// build/dev/javascript/gleam_stdlib/gleam/float.mjs
+function negate(x) {
+  return -1 * x;
+}
+function do_round(x) {
+  let $ = x >= 0;
+  if ($) {
+    return round(x);
+  } else {
+    return 0 - round(negate(x));
+  }
+}
+function round2(x) {
+  return do_round(x);
+}
+
 // build/dev/javascript/gleam_stdlib/gleam/int.mjs
 function to_string2(x) {
   return to_string(x);
@@ -1027,6 +1187,25 @@ function do_reverse(loop$remaining, loop$accumulator) {
 }
 function reverse(xs) {
   return do_reverse(xs, toList([]));
+}
+function do_map(loop$list, loop$fun, loop$acc) {
+  while (true) {
+    let list2 = loop$list;
+    let fun = loop$fun;
+    let acc = loop$acc;
+    if (list2.hasLength(0)) {
+      return reverse(acc);
+    } else {
+      let x = list2.head;
+      let xs = list2.tail;
+      loop$list = xs;
+      loop$fun = fun;
+      loop$acc = prepend(fun(x), acc);
+    }
+  }
+}
+function map(list2, fun) {
+  return do_map(list2, fun, toList([]));
 }
 function drop(loop$list, loop$n) {
   while (true) {
@@ -1108,6 +1287,35 @@ function index_fold(over, initial, fun) {
   return do_index_fold(over, initial, fun, 0);
 }
 
+// build/dev/javascript/gleam_stdlib/gleam/result.mjs
+function map2(result, fun) {
+  if (result.isOk()) {
+    let x = result[0];
+    return new Ok(fun(x));
+  } else {
+    let e = result[0];
+    return new Error(e);
+  }
+}
+function map_error(result, fun) {
+  if (result.isOk()) {
+    let x = result[0];
+    return new Ok(x);
+  } else {
+    let error = result[0];
+    return new Error(fun(error));
+  }
+}
+function try$(result, fun) {
+  if (result.isOk()) {
+    let x = result[0];
+    return fun(x);
+  } else {
+    let e = result[0];
+    return new Error(e);
+  }
+}
+
 // build/dev/javascript/gleam_stdlib/gleam/string_builder.mjs
 function from_strings(strings) {
   return concat(strings);
@@ -1158,6 +1366,94 @@ function drop_left(string3, num_graphemes) {
   } else {
     return slice(string3, num_graphemes, length2(string3) - num_graphemes);
   }
+}
+
+// build/dev/javascript/gleam_stdlib/gleam/dynamic.mjs
+var DecodeError = class extends CustomType {
+  constructor(expected, found, path2) {
+    super();
+    this.expected = expected;
+    this.found = found;
+    this.path = path2;
+  }
+};
+function dynamic(value) {
+  return new Ok(value);
+}
+function classify(data) {
+  return classify_dynamic(data);
+}
+function int(data) {
+  return decode_int(data);
+}
+function any(decoders) {
+  return (data) => {
+    if (decoders.hasLength(0)) {
+      return new Error(
+        toList([new DecodeError("another type", classify(data), toList([]))])
+      );
+    } else {
+      let decoder = decoders.head;
+      let decoders$1 = decoders.tail;
+      let $ = decoder(data);
+      if ($.isOk()) {
+        let decoded = $[0];
+        return new Ok(decoded);
+      } else {
+        return any(decoders$1)(data);
+      }
+    }
+  };
+}
+function push_path(error, name) {
+  let name$1 = identity(name);
+  let decoder = any(
+    toList([string, (x) => {
+      return map2(int(x), to_string2);
+    }])
+  );
+  let name$2 = (() => {
+    let $ = decoder(name$1);
+    if ($.isOk()) {
+      let name$22 = $[0];
+      return name$22;
+    } else {
+      let _pipe = toList(["<", classify(name$1), ">"]);
+      let _pipe$1 = from_strings(_pipe);
+      return to_string3(_pipe$1);
+    }
+  })();
+  return error.withFields({ path: prepend(name$2, error.path) });
+}
+function map_errors(result, f) {
+  return map_error(
+    result,
+    (_capture) => {
+      return map(_capture, f);
+    }
+  );
+}
+function string(data) {
+  return decode_string(data);
+}
+function field(name, inner_type) {
+  return (value) => {
+    let missing_field_error = new DecodeError("field", "nothing", toList([]));
+    return try$(
+      decode_field(value, name),
+      (maybe_inner) => {
+        let _pipe = maybe_inner;
+        let _pipe$1 = to_result(_pipe, toList([missing_field_error]));
+        let _pipe$2 = try$(_pipe$1, inner_type);
+        return map_errors(
+          _pipe$2,
+          (_capture) => {
+            return push_path(_capture, name);
+          }
+        );
+      }
+    );
+  };
 }
 
 // build/dev/javascript/gleam_stdlib/gleam/bool.mjs
@@ -1286,6 +1582,20 @@ function attribute(name, value) {
 }
 function on(name, handler) {
   return new Event("on" + name, handler);
+}
+function style(properties) {
+  return attribute(
+    "style",
+    fold(
+      properties,
+      "",
+      (styles, _use1) => {
+        let name$1 = _use1[0];
+        let value$1 = _use1[1];
+        return styles + name$1 + ":" + value$1 + ";";
+      }
+    )
+  );
 }
 function class$(name) {
   return attribute("class", name);
@@ -1498,7 +1808,7 @@ function createElementNode({ prev, next, dispatch, stack }) {
   const prevHandlers = canMorph ? new Set(handlersForEl.keys()) : null;
   const prevAttributes = canMorph ? new Set(Array.from(prev.attributes, (a) => a.name)) : null;
   let className = null;
-  let style = null;
+  let style2 = null;
   let innerHTML = null;
   if (canMorph && next.tag === "textarea") {
     const innertText = next.children[Symbol.iterator]().next().value?.content;
@@ -1537,7 +1847,7 @@ function createElementNode({ prev, next, dispatch, stack }) {
     } else if (name === "class") {
       className = className === null ? value : className + " " + value;
     } else if (name === "style") {
-      style = style === null ? value : style + value;
+      style2 = style2 === null ? value : style2 + value;
     } else if (name === "dangerous-unescaped-html") {
       innerHTML = value;
     } else {
@@ -1554,8 +1864,8 @@ function createElementNode({ prev, next, dispatch, stack }) {
     if (canMorph)
       prevAttributes.delete("class");
   }
-  if (style !== null) {
-    el.setAttribute("style", style);
+  if (style2 !== null) {
+    el.setAttribute("style", style2);
     if (canMorph)
       prevAttributes.delete("style");
   }
@@ -4814,6 +5124,41 @@ function button2(children2, attrs, classes, variant) {
   );
 }
 
+// build/dev/javascript/frontend/lib/dom_ffi.mjs
+var getBoundingClientRect = (target) => {
+  return new DOMRect(
+    target.x,
+    target.y,
+    target.width,
+    target.height,
+    target.top,
+    target.right,
+    target.bottom,
+    target.left
+  );
+};
+var getMediaContainer = () => {
+  const routeDashboard = document.getElementsByTagName("route-dashboard");
+  const mediaContainer = document.getElementById("media-container");
+  console.log(document);
+  return getBoundingClientRect(mediaContainer);
+};
+
+// build/dev/javascript/frontend/lib/dom.mjs
+var DOMRect = class extends CustomType {
+  constructor(x, y, width, height, top, right, bottom, left) {
+    super();
+    this.x = x;
+    this.y = y;
+    this.width = width;
+    this.height = height;
+    this.top = top;
+    this.right = right;
+    this.bottom = bottom;
+    this.left = left;
+  }
+};
+
 // build/dev/javascript/lustre/lustre/element/svg.mjs
 var namespace = "http://www.w3.org/2000/svg";
 function circle(attrs) {
@@ -5202,15 +5547,29 @@ function grip_vertical(attributes) {
 
 // build/dev/javascript/frontend/routes/dashboard.mjs
 var Model2 = class extends CustomType {
-  constructor(sidebar_open) {
+  constructor(sidebar_open, columns, columns_grab_x) {
     super();
     this.sidebar_open = sidebar_open;
+    this.columns = columns;
+    this.columns_grab_x = columns_grab_x;
   }
 };
 var RequestToggleSidebar = class extends CustomType {
 };
+var RequestModifyMediaColumns = class extends CustomType {
+  constructor(columns) {
+    super();
+    this.columns = columns;
+  }
+};
+var RequestUpdateColumnsGrabX = class extends CustomType {
+  constructor(grab_x) {
+    super();
+    this.grab_x = grab_x;
+  }
+};
 function init2(_) {
-  return [new Model2(true), none()];
+  return [new Model2(true, 4, 0), none()];
 }
 function update(model, msg) {
   if (msg instanceof RequestToggleSidebar) {
@@ -5218,9 +5577,60 @@ function update(model, msg) {
       model.withFields({ sidebar_open: !model.sidebar_open }),
       none()
     ];
+  } else if (msg instanceof RequestModifyMediaColumns) {
+    let columns = msg.columns;
+    return [model.withFields({ columns }), none()];
+  } else if (msg instanceof RequestUpdateColumnsGrabX) {
+    let columns_grab_x = msg.grab_x;
+    return [
+      model.withFields({ columns_grab_x }),
+      none()
+    ];
   } else {
     return [model, none()];
   }
+}
+function request_modify_media_columns(event2) {
+  return try$(
+    field("clientX", int)(event2),
+    (x) => {
+      return try$(
+        field("clientY", int)(event2),
+        (y) => {
+          return try$(
+            field("target", dynamic)(event2),
+            (target) => {
+              let bounding_rect = getBoundingClientRect(target);
+              let media_container = getMediaContainer();
+              return new Ok(
+                new RequestUpdateColumnsGrabX(
+                  round2(media_container.left) - x
+                )
+              );
+            }
+          );
+        }
+      );
+    }
+  );
+}
+function do_for(loop$value, loop$amount, loop$acc) {
+  while (true) {
+    let value = loop$value;
+    let amount = loop$amount;
+    let acc = loop$acc;
+    if (amount === 0) {
+      let amount$1 = amount;
+      return acc;
+    } else {
+      loop$value = value;
+      loop$amount = amount - 1;
+      loop$acc = prepend(value, acc);
+    }
+  }
+}
+function for$(value, amount) {
+  return do_for(value, amount, toList([]));
 }
 function view(model) {
   return div(
@@ -5379,7 +5789,7 @@ function view(model) {
           div(
             toList([
               class$(
-                "border-b border-b-zinc-200 grid grid-cols-[1fr_minmax(min-content,_285px)_1fr] items-center ps-2 pe-4 py-3"
+                "border-b border-b-zinc-200 grid grid-cols-[1fr_minmax(min-content,_285px)_1fr] items-center ps-2 pe-4 py-3 pe-[300px]"
               )
             ]),
             toList([
@@ -5449,19 +5859,29 @@ function view(model) {
                 toList([class$("flex justify-center")]),
                 toList([
                   div(
-                    toList([]),
+                    toList([id("media-container")]),
                     toList([
                       div(
                         toList([
                           class$(
-                            "h-[calc(100vh-58px)] sticky top-[58px] group flex items-center"
+                            "h-[calc(100vh-58px)] absolute top-[58px] group flex items-center"
                           )
                         ]),
                         toList([
                           div(
                             toList([
                               class$(
-                                "w-[1px] pointer-events-none bg-zinc-100 absolute -translate-x-1/2 left-1/2 h-[calc(100vh-58px)] group-hover:opacity-100 opacity-0"
+                                "w-[1px] pointer-events-none transition-opacity duration-200 bg-zinc-200 absolute -translate-x-1/2 h-[calc(100vh-58px)] group-hover:opacity-100 opacity-0"
+                              ),
+                              style(
+                                toList([
+                                  [
+                                    "left",
+                                    "calc(50%-" + to_string2(
+                                      model.columns_grab_x
+                                    ) + "px)"
+                                  ]
+                                ])
                               )
                             ]),
                             toList([])
@@ -5470,17 +5890,43 @@ function view(model) {
                             toList([
                               grip_vertical(toList([class$("cursor-pointer")]))
                             ]),
-                            toList([]),
                             toList([
-                              "px-0 py-2 h-min absolute left-1/2 -translate-x-1/2 opacity-0 group-hover:opacity-100 [&_svg]:size-3"
+                              on2("click", request_modify_media_columns),
+                              style(
+                                toList([
+                                  [
+                                    "left",
+                                    to_string2(model.columns_grab_x) + "px"
+                                  ]
+                                ])
+                              )
+                            ]),
+                            toList([
+                              "px-0 py-2 h-min absolute -translate-x-1/2 [&_svg]:size-3"
                             ]),
                             new Secondary()
                           )
                         ])
                       ),
                       div(
-                        toList([class$("grid grid-cols-3 gap-3")]),
-                        toList([])
+                        toList([
+                          class$("grid gap-3 p-3"),
+                          style(
+                            toList([
+                              [
+                                "grid-template-columns",
+                                "repeat(" + to_string2(model.columns) + ", minmax(0, 1fr));"
+                              ]
+                            ])
+                          )
+                        ]),
+                        (() => {
+                          let _pipe = div(
+                            toList([class$("w-[148px] h-[223px] bg-blue-500")]),
+                            toList([])
+                          );
+                          return for$(_pipe, 12);
+                        })()
                       )
                     ])
                   )
@@ -5513,11 +5959,11 @@ function register() {
   let $ = make_lustre_client_component(page, "route-dashboard");
   if (!$.isOk()) {
     throw makeError(
-      "let_assert",
+      "assignment_no_match",
       "routes/dashboard",
-      20,
+      24,
       "register",
-      "Pattern match failed, no pattern matched the value.",
+      "Assignment pattern did not match",
       { value: $ }
     );
   }
@@ -5545,11 +5991,11 @@ function main() {
   let $ = register();
   if (!$.isOk()) {
     throw makeError(
-      "let_assert",
+      "assignment_no_match",
       "frontend",
       15,
       "main",
-      "Pattern match failed, no pattern matched the value.",
+      "Assignment pattern did not match",
       { value: $ }
     );
   }
@@ -5557,11 +6003,11 @@ function main() {
   let $1 = start2(app, "#app", void 0);
   if (!$1.isOk()) {
     throw makeError(
-      "let_assert",
+      "assignment_no_match",
       "frontend",
       18,
       "main",
-      "Pattern match failed, no pattern matched the value.",
+      "Assignment pattern did not match",
       { value: $1 }
     );
   }
