@@ -602,9 +602,19 @@ video {
   height: 1rem;
 }
 
+.size-6 {
+  width: 1.5rem;
+  height: 1.5rem;
+}
+
 .size-\[26px\] {
   width: 26px;
   height: 26px;
+}
+
+.size-\[30px\] {
+  width: 30px;
+  height: 30px;
 }
 
 .h-5 {
@@ -740,6 +750,10 @@ video {
   gap: 1rem;
 }
 
+.gap-6 {
+  gap: 1.5rem;
+}
+
 .gap-\[1px\] {
   gap: 1px;
 }
@@ -776,6 +790,10 @@ video {
 
 .rounded-full {
   border-radius: 9999px;
+}
+
+.rounded-lg {
+  border-radius: var(--radius);
 }
 
 .rounded-md {
@@ -891,6 +909,10 @@ video {
 
 .stroke-zinc-600 {
   stroke: #52525b;
+}
+
+.stroke-zinc-950 {
+  stroke: #09090b;
 }
 
 .p-0 {

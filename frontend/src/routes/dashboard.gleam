@@ -12,7 +12,7 @@ import gleam/result
 import lib/dom
 import lib/local_storage
 import lucide_lustre.{
-  command, ellipsis, grip_vertical, library, panel_left, search,
+  command, ellipsis, grip_vertical, library, newspaper, panel_left, search,
 }
 import lustre
 import lustre/attribute.{class}
@@ -445,10 +445,48 @@ pub fn view(model: Model) -> element.Element(Msg) {
             div(
               [
                 class(
-                  "rounded-md border border-zinc-200 sadow-sm bg-white px-6 py-4",
+                  "rounded-lg flex flex-col gap-6 border border-zinc-200 sadow-sm bg-white px-6 py-4",
                 ),
               ],
-              [],
+              [
+                div(
+                  [
+                    class(
+                      "flex items-center gap-3 text-sm font-medium text-zinc-600",
+                    ),
+                  ],
+                  [
+                    div(
+                      [
+                        class(
+                          "rounded-lg shadow-sm border border-zinc-200 bg-white size-[30px] flex items-center justify-center",
+                        ),
+                      ],
+                      [
+                        div(
+                          [
+                            class(
+                              "size-6 bg-zinc-100 rounded-md flex items-center justify-center",
+                            ),
+                          ],
+                          [newspaper([class("size-4 stroke-zinc-950")])],
+                        ),
+                      ],
+                    ),
+                    text("News"),
+                  ],
+                ),
+                div([class("flex flex-col gap-3")], [
+                  div([class("flex gap-2 items-center text-sm")], [
+                    div([class("bg-blue-500 size-4 rounded")], []),
+                    text("Frieren: Beyond..."),
+                  ]),
+                  div([class("flex gap-2 items-center text-sm")], [
+                    div([class("bg-blue-500 size-4 rounded")], []),
+                    text("Bocchi The Rock"),
+                  ]),
+                ]),
+              ],
             ),
           ]),
         ]),

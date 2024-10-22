@@ -251,3 +251,30 @@ pub fn grip_vertical(attributes: List(Attribute(a))) {
     ],
   )
 }
+
+pub fn newspaper(attributes: List(Attribute(a))) {
+  svg.svg(
+    [
+      attribute("stroke-linejoin", "round"),
+      attribute("stroke-linecap", "round"),
+      attribute("stroke-width", "2"),
+      attribute("stroke", "currentColor"),
+      attribute("fill", "none"),
+      attribute("viewBox", "0 0 24 24"),
+      attribute("height", "24"),
+      attribute("width", "24"),
+      ..attributes
+    ],
+    [
+      svg.path([
+        attribute(
+          "d",
+          "M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2",
+        ),
+      ]),
+      svg.path([attribute("d", "M18 14h-8")]),
+      svg.path([attribute("d", "M15 18h-5")]),
+      svg.path([attribute("d", "M10 6h8v4h-8V6Z")]),
+    ],
+  )
+}

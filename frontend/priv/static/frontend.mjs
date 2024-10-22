@@ -5766,6 +5766,45 @@ function grip_vertical(attributes) {
     ])
   );
 }
+function newspaper(attributes) {
+  return svg(
+    prepend(
+      attribute("stroke-linejoin", "round"),
+      prepend(
+        attribute("stroke-linecap", "round"),
+        prepend(
+          attribute("stroke-width", "2"),
+          prepend(
+            attribute("stroke", "currentColor"),
+            prepend(
+              attribute("fill", "none"),
+              prepend(
+                attribute("viewBox", "0 0 24 24"),
+                prepend(
+                  attribute("height", "24"),
+                  prepend(attribute("width", "24"), attributes)
+                )
+              )
+            )
+          )
+        )
+      )
+    ),
+    toList([
+      path(
+        toList([
+          attribute(
+            "d",
+            "M4 22h16a2 2 0 0 0 2-2V4a2 2 0 0 0-2-2H8a2 2 0 0 0-2 2v16a2 2 0 0 1-2 2Zm0 0a2 2 0 0 1-2-2v-9c0-1.1.9-2 2-2h2"
+          )
+        ])
+      ),
+      path(toList([attribute("d", "M18 14h-8")])),
+      path(toList([attribute("d", "M15 18h-5")])),
+      path(toList([attribute("d", "M10 6h8v4h-8V6Z")]))
+    ])
+  );
+}
 
 // build/dev/javascript/frontend/routes/dashboard.mjs
 var Model2 = class extends CustomType {
@@ -6336,10 +6375,67 @@ function view(model) {
                   div(
                     toList([
                       class$(
-                        "rounded-md border border-zinc-200 sadow-sm bg-white px-6 py-4"
+                        "rounded-lg flex flex-col gap-6 border border-zinc-200 sadow-sm bg-white px-6 py-4"
                       )
                     ]),
-                    toList([])
+                    toList([
+                      div(
+                        toList([
+                          class$(
+                            "flex items-center gap-3 text-sm font-medium text-zinc-600"
+                          )
+                        ]),
+                        toList([
+                          div(
+                            toList([
+                              class$(
+                                "rounded-lg shadow-sm border border-zinc-200 bg-white size-[30px] flex items-center justify-center"
+                              )
+                            ]),
+                            toList([
+                              div(
+                                toList([
+                                  class$(
+                                    "size-6 bg-zinc-100 rounded-md flex items-center justify-center"
+                                  )
+                                ]),
+                                toList([
+                                  newspaper(
+                                    toList([class$("size-4 stroke-zinc-950")])
+                                  )
+                                ])
+                              )
+                            ])
+                          ),
+                          text2("News")
+                        ])
+                      ),
+                      div(
+                        toList([class$("flex flex-col gap-3")]),
+                        toList([
+                          div(
+                            toList([class$("flex gap-2 items-center text-sm")]),
+                            toList([
+                              div(
+                                toList([class$("bg-blue-500 size-4 rounded")]),
+                                toList([])
+                              ),
+                              text2("Frieren: Beyond...")
+                            ])
+                          ),
+                          div(
+                            toList([class$("flex gap-2 items-center text-sm")]),
+                            toList([
+                              div(
+                                toList([class$("bg-blue-500 size-4 rounded")]),
+                                toList([])
+                              ),
+                              text2("Bocchi The Rock")
+                            ])
+                          )
+                        ])
+                      )
+                    ])
                   )
                 ])
               )
