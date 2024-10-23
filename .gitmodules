@@ -1,0 +1,4 @@
+[submodule "plinth"]
+	path = plinth
+	url = git@github.com:dinkelspiel/plinth
+    branch = new-functions
