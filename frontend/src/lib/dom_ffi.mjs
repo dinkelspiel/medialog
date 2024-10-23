@@ -29,6 +29,14 @@ export const getMainContainer = () => {
   return getBoundingClientRect(mainContainer.getBoundingClientRect());
 };
 
+export const getElementInRouteById = () => {
+  const mainContainer = document
+    .getElementsByTagName("route-dashboard")[0]
+    .shadowRoot.getElementById("main");
+
+  return getBoundingClientRect(mainContainer.getBoundingClientRect());
+};
+
 export const wrapGrid = (querySelector, duration) => {
   const grid = document.querySelector(".grid");
   animateCSSGrid.wrapGrid(grid, { duration });

@@ -21,6 +21,9 @@ import lustre/element
 import lustre/element/html.{button, div, h4, input, main, p, text}
 import lustre/event
 import lustre_http
+import plinth/browser/document
+import plinth/browser/element as el
+import plinth/browser/event as ev
 import plinth/browser/window
 
 pub fn register() {
@@ -68,7 +71,7 @@ fn init(_flags) -> #(Model, effect.Effect(Msg)) {
         dispatch(RequestUpdateColumnsGrabX(None))
         Nil
       })
-      window.add_event_listener("load", fn(_) {
+      window.add_event_listener("load", fn(e) {
         dispatch(RequestGrab(False))
         dispatch(RequestUpdateColumnsGrabX(None))
         Nil
@@ -76,6 +79,18 @@ fn init(_flags) -> #(Model, effect.Effect(Msg)) {
       window.add_event_listener("scroll", fn(_) {
         dispatch(UpdateScrollY(window.scroll_y(window.self())))
         Nil
+      })
+      window.add_event_listener("keydown", fn(e) {
+        case ev.ctrl_key(e), ev.key(e) {
+          True, "k" -> {
+            ev.prevent_default(e)
+            let assert Ok(elements) =
+              document.get_elements_by_tag_name("route-dashboard")
+            let assert Ok(a) = list.first(elements)
+            el.focus(a)
+          }
+          _, _ -> Nil
+        }
       })
     }),
   )
@@ -344,6 +359,7 @@ pub fn view(model: Model) -> element.Element(Msg) {
               ),
               html.input([
                 attribute.placeholder("Search"),
+                attribute.id("search"),
                 class(
                   "rounded-full outline-none focus:ring-offset-2 focus:ring-2 transition-[box-shadow] duration-200 ps-8 pe-[44px] flex w-full border-zinc-200 items-center border h-[34px] justify-between p-2 placeholder-zinc-400 text-sm",
                 ),

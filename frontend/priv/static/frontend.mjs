@@ -39,7 +39,6 @@ var List = class {
     }
     return desired === 0;
   }
-  // @internal
   countLength() {
     let length5 = 0;
     for (let _ of this)
@@ -110,24 +109,24 @@ var BitArray = class _BitArray {
   }
 };
 function byteArrayToInt(byteArray, start3, end, isBigEndian, isSigned) {
-  let value = 0;
+  let value2 = 0;
   if (isBigEndian) {
     for (let i = start3; i < end; i++) {
-      value = value * 256 + byteArray[i];
+      value2 = value2 * 256 + byteArray[i];
     }
   } else {
     for (let i = end - 1; i >= start3; i--) {
-      value = value * 256 + byteArray[i];
+      value2 = value2 * 256 + byteArray[i];
     }
   }
   if (isSigned) {
     const byteSize = end - start3;
     const highBit = 2 ** (byteSize * 8 - 1);
-    if (value >= highBit) {
-      value -= highBit * 2;
+    if (value2 >= highBit) {
+      value2 -= highBit * 2;
     }
   }
-  return value;
+  return value2;
 }
 function byteArrayToFloat(byteArray, start3, end, isBigEndian) {
   const view3 = new DataView(byteArray.buffer);
@@ -148,9 +147,9 @@ var Result = class _Result extends CustomType {
   }
 };
 var Ok = class extends Result {
-  constructor(value) {
+  constructor(value2) {
     super();
-    this[0] = value;
+    this[0] = value2;
   }
   // @internal
   isOk() {
@@ -248,7 +247,6 @@ function makeError(variant, module, line, fn, message, extra) {
   error.gleam_error = variant;
   error.module = module;
   error.line = line;
-  error.function = fn;
   error.fn = fn;
   for (let k in extra)
     error[k] = extra[k];
@@ -976,9 +974,9 @@ var NOT_FOUND = {};
 function identity(x) {
   return x;
 }
-function parse_int(value) {
-  if (/^[-+]?(\d+)$/.test(value)) {
-    return new Ok(parseInt(value));
+function parse_int(value2) {
+  if (/^[-+]?(\d+)$/.test(value2)) {
+    return new Ok(parseInt(value2));
   } else {
     return new Error(Nil);
   }
@@ -1056,14 +1054,14 @@ function map_to_list(map6) {
   return List.fromArray(map6.entries());
 }
 function map_get(map6, key2) {
-  const value = map6.get(key2, NOT_FOUND);
-  if (value === NOT_FOUND) {
+  const value2 = map6.get(key2, NOT_FOUND);
+  if (value2 === NOT_FOUND) {
     return new Error(Nil);
   }
-  return new Ok(value);
+  return new Ok(value2);
 }
-function map_insert(key2, value, map6) {
-  return map6.set(key2, value);
+function map_insert(key2, value2, map6) {
+  return map6.set(key2, value2);
 }
 function classify_dynamic(data) {
   if (typeof data === "string") {
@@ -1107,22 +1105,22 @@ function decode_string(data) {
 function decode_int(data) {
   return Number.isInteger(data) ? new Ok(data) : decoder_error("Int", data);
 }
-function decode_field(value, name) {
-  const not_a_map_error = () => decoder_error("Dict", value);
-  if (value instanceof Dict || value instanceof WeakMap || value instanceof Map) {
-    const entry = map_get(value, name);
+function decode_field(value2, name) {
+  const not_a_map_error = () => decoder_error("Dict", value2);
+  if (value2 instanceof Dict || value2 instanceof WeakMap || value2 instanceof Map) {
+    const entry = map_get(value2, name);
     return new Ok(entry.isOk() ? new Some(entry[0]) : new None());
-  } else if (value === null) {
+  } else if (value2 === null) {
     return not_a_map_error();
-  } else if (Object.getPrototypeOf(value) == Object.prototype) {
-    return try_get_field(value, name, () => new Ok(new None()));
+  } else if (Object.getPrototypeOf(value2) == Object.prototype) {
+    return try_get_field(value2, name, () => new Ok(new None()));
   } else {
-    return try_get_field(value, name, not_a_map_error);
+    return try_get_field(value2, name, not_a_map_error);
   }
 }
-function try_get_field(value, field2, or_else) {
+function try_get_field(value2, field2, or_else) {
   try {
-    return field2 in value ? new Ok(new Some(value[field2])) : or_else();
+    return field2 in value2 ? new Ok(new Some(value2[field2])) : or_else();
   } catch {
     return or_else();
   }
@@ -1132,8 +1130,8 @@ function try_get_field(value, field2, or_else) {
 function new$() {
   return new_map();
 }
-function insert(dict, key2, value) {
-  return map_insert(key2, value, dict);
+function insert(dict, key2, value2) {
+  return map_insert(key2, value2, dict);
 }
 function reverse_and_concat(loop$remaining, loop$accumulator) {
   while (true) {
@@ -1247,6 +1245,14 @@ function do_reverse(loop$remaining, loop$accumulator) {
 }
 function reverse(xs) {
   return do_reverse(xs, toList([]));
+}
+function first(list2) {
+  if (list2.hasLength(0)) {
+    return new Error(void 0);
+  } else {
+    let x = list2.head;
+    return new Ok(x);
+  }
 }
 function do_map(loop$list, loop$fun, loop$acc) {
   while (true) {
@@ -1494,10 +1500,10 @@ function string2(data) {
   return decode_string(data);
 }
 function field(name, inner_type) {
-  return (value) => {
+  return (value2) => {
     let missing_field_error = new DecodeError("field", "nothing", toList([]));
     return try$(
-      decode_field(value, name),
+      decode_field(value2, name),
       (maybe_inner) => {
         let _pipe = maybe_inner;
         let _pipe$1 = to_result(_pipe, toList([missing_field_error]));
@@ -1554,7 +1560,7 @@ var Text = class extends CustomType {
     this.content = content;
   }
 };
-var Element = class extends CustomType {
+var Element2 = class extends CustomType {
   constructor(key2, namespace2, tag, attrs, children2, self_closing, void$) {
     super();
     this.key = key2;
@@ -1619,7 +1625,7 @@ function do_handlers(loop$element, loop$handlers, loop$key) {
       loop$element = subtree();
       loop$handlers = handlers2;
       loop$key = key2;
-    } else if (element2 instanceof Element) {
+    } else if (element2 instanceof Element2) {
       let attrs = element2.attrs;
       let children2 = element2.children;
       let handlers$1 = fold(
@@ -1648,8 +1654,8 @@ function handlers(element2) {
 }
 
 // build/dev/javascript/lustre/lustre/attribute.mjs
-function attribute(name, value) {
-  return new Attribute(name, identity(value), false);
+function attribute(name, value2) {
+  return new Attribute(name, identity(value2), false);
 }
 function on(name, handler) {
   return new Event2("on" + name, handler);
@@ -1681,39 +1687,39 @@ function placeholder(text3) {
 // build/dev/javascript/lustre/lustre/element.mjs
 function element(tag, attrs, children2) {
   if (tag === "area") {
-    return new Element("", "", tag, attrs, toList([]), false, true);
+    return new Element2("", "", tag, attrs, toList([]), false, true);
   } else if (tag === "base") {
-    return new Element("", "", tag, attrs, toList([]), false, true);
+    return new Element2("", "", tag, attrs, toList([]), false, true);
   } else if (tag === "br") {
-    return new Element("", "", tag, attrs, toList([]), false, true);
+    return new Element2("", "", tag, attrs, toList([]), false, true);
   } else if (tag === "col") {
-    return new Element("", "", tag, attrs, toList([]), false, true);
+    return new Element2("", "", tag, attrs, toList([]), false, true);
   } else if (tag === "embed") {
-    return new Element("", "", tag, attrs, toList([]), false, true);
+    return new Element2("", "", tag, attrs, toList([]), false, true);
   } else if (tag === "hr") {
-    return new Element("", "", tag, attrs, toList([]), false, true);
+    return new Element2("", "", tag, attrs, toList([]), false, true);
   } else if (tag === "img") {
-    return new Element("", "", tag, attrs, toList([]), false, true);
+    return new Element2("", "", tag, attrs, toList([]), false, true);
   } else if (tag === "input") {
-    return new Element("", "", tag, attrs, toList([]), false, true);
+    return new Element2("", "", tag, attrs, toList([]), false, true);
   } else if (tag === "link") {
-    return new Element("", "", tag, attrs, toList([]), false, true);
+    return new Element2("", "", tag, attrs, toList([]), false, true);
   } else if (tag === "meta") {
-    return new Element("", "", tag, attrs, toList([]), false, true);
+    return new Element2("", "", tag, attrs, toList([]), false, true);
   } else if (tag === "param") {
-    return new Element("", "", tag, attrs, toList([]), false, true);
+    return new Element2("", "", tag, attrs, toList([]), false, true);
   } else if (tag === "source") {
-    return new Element("", "", tag, attrs, toList([]), false, true);
+    return new Element2("", "", tag, attrs, toList([]), false, true);
   } else if (tag === "track") {
-    return new Element("", "", tag, attrs, toList([]), false, true);
+    return new Element2("", "", tag, attrs, toList([]), false, true);
   } else if (tag === "wbr") {
-    return new Element("", "", tag, attrs, toList([]), false, true);
+    return new Element2("", "", tag, attrs, toList([]), false, true);
   } else {
-    return new Element("", "", tag, attrs, children2, false, false);
+    return new Element2("", "", tag, attrs, children2, false, false);
   }
 }
 function namespaced(namespace2, tag, attrs, children2) {
-  return new Element("", namespace2, tag, attrs, children2, false, false);
+  return new Element2("", namespace2, tag, attrs, children2, false, false);
 }
 function text(content) {
   return new Text(content);
@@ -1889,15 +1895,15 @@ function createElementNode({ prev, next, dispatch, stack }) {
   const delegated = [];
   for (const attr of next.attrs) {
     const name = attr[0];
-    const value = attr[1];
+    const value2 = attr[1];
     if (attr.as_property) {
-      if (el[name] !== value)
-        el[name] = value;
+      if (el[name] !== value2)
+        el[name] = value2;
       if (canMorph)
         prevAttributes.delete(name);
     } else if (name.startsWith("on")) {
       const eventName = name.slice(2);
-      const callback = dispatch(value, eventName === "input");
+      const callback = dispatch(value2, eventName === "input");
       if (!handlersForEl.has(eventName)) {
         el.addEventListener(eventName, lustreGenericEventHandler);
       }
@@ -1911,21 +1917,21 @@ function createElementNode({ prev, next, dispatch, stack }) {
         el.addEventListener(eventName, lustreGenericEventHandler);
       }
       handlersForEl.set(eventName, callback);
-      el.setAttribute(name, value);
+      el.setAttribute(name, value2);
     } else if (name.startsWith("delegate:data-") || name.startsWith("delegate:aria-")) {
-      el.setAttribute(name, value);
-      delegated.push([name.slice(10), value]);
+      el.setAttribute(name, value2);
+      delegated.push([name.slice(10), value2]);
     } else if (name === "class") {
-      className = className === null ? value : className + " " + value;
+      className = className === null ? value2 : className + " " + value2;
     } else if (name === "style") {
-      style2 = style2 === null ? value : style2 + value;
+      style2 = style2 === null ? value2 : style2 + value2;
     } else if (name === "dangerous-unescaped-html") {
-      innerHTML = value;
+      innerHTML = value2;
     } else {
-      if (el.getAttribute(name) !== value)
-        el.setAttribute(name, value);
+      if (el.getAttribute(name) !== value2)
+        el.setAttribute(name, value2);
       if (name === "value" || name === "selected")
-        el[name] = value;
+        el[name] = value2;
       if (canMorph)
         prevAttributes.delete(name);
     }
@@ -1952,9 +1958,9 @@ function createElementNode({ prev, next, dispatch, stack }) {
   if (next.tag === "slot") {
     window.queueMicrotask(() => {
       for (const child of el.assignedElements()) {
-        for (const [name, value] of delegated) {
+        for (const [name, value2] of delegated) {
           if (!child.hasAttribute(name)) {
-            child.setAttribute(name, value);
+            child.setAttribute(name, value2);
           }
         }
       }
@@ -2296,12 +2302,12 @@ var make_lustre_client_component = ({ init: init4, update: update3, view: view3,
             get() {
               return this[`__mirrored__${name2}`];
             },
-            set(value) {
+            set(value2) {
               const prev = this[`__mirrored__${name2}`];
-              if (this.#connected && isEqual(prev, value))
+              if (this.#connected && isEqual(prev, value2))
                 return;
-              this[`__mirrorred__${name2}`] = value;
-              const decoded = decoder(value);
+              this[`__mirrorred__${name2}`] = value2;
+              const decoded = decoder(value2);
               if (decoded instanceof Error)
                 return;
               this.#queue.push(decoded[0]);
@@ -2811,7 +2817,7 @@ var getPrefixedClassGroupEntries = (classGroupEntries, prefix) => {
         return prefix + classDefinition;
       }
       if (typeof classDefinition === "object") {
-        return Object.fromEntries(Object.entries(classDefinition).map(([key2, value]) => [prefix + key2, value]));
+        return Object.fromEntries(Object.entries(classDefinition).map(([key2, value2]) => [prefix + key2, value2]));
       }
       return classDefinition;
     });
@@ -2829,8 +2835,8 @@ var createLruCache = (maxCacheSize) => {
   let cacheSize = 0;
   let cache = /* @__PURE__ */ new Map();
   let previousCache = /* @__PURE__ */ new Map();
-  const update3 = (key2, value) => {
-    cache.set(key2, value);
+  const update3 = (key2, value2) => {
+    cache.set(key2, value2);
     cacheSize++;
     if (cacheSize > maxCacheSize) {
       cacheSize = 0;
@@ -2840,20 +2846,20 @@ var createLruCache = (maxCacheSize) => {
   };
   return {
     get(key2) {
-      let value = cache.get(key2);
-      if (value !== void 0) {
-        return value;
+      let value2 = cache.get(key2);
+      if (value2 !== void 0) {
+        return value2;
       }
-      if ((value = previousCache.get(key2)) !== void 0) {
-        update3(key2, value);
-        return value;
+      if ((value2 = previousCache.get(key2)) !== void 0) {
+        update3(key2, value2);
+        return value2;
       }
     },
-    set(key2, value) {
+    set(key2, value2) {
       if (cache.has(key2)) {
-        cache.set(key2, value);
+        cache.set(key2, value2);
       } else {
-        update3(key2, value);
+        update3(key2, value2);
       }
     }
   };
@@ -3051,23 +3057,23 @@ var lengthUnitRegex = /\d+(%|px|r?em|[sdl]?v([hwib]|min|max)|pt|pc|in|cm|mm|cap|
 var colorFunctionRegex = /^(rgba?|hsla?|hwb|(ok)?(lab|lch))\(.+\)$/;
 var shadowRegex = /^(inset_)?-?((\d+)?\.?(\d+)[a-z]+|0)_-?((\d+)?\.?(\d+)[a-z]+|0)/;
 var imageRegex = /^(url|image|image-set|cross-fade|element|(repeating-)?(linear|radial|conic)-gradient)\(.+\)$/;
-var isLength = (value) => isNumber(value) || stringLengths.has(value) || fractionRegex.test(value);
-var isArbitraryLength = (value) => getIsArbitraryValue(value, "length", isLengthOnly);
-var isNumber = (value) => Boolean(value) && !Number.isNaN(Number(value));
-var isArbitraryNumber = (value) => getIsArbitraryValue(value, "number", isNumber);
-var isInteger = (value) => Boolean(value) && Number.isInteger(Number(value));
-var isPercent = (value) => value.endsWith("%") && isNumber(value.slice(0, -1));
-var isArbitraryValue = (value) => arbitraryValueRegex.test(value);
-var isTshirtSize = (value) => tshirtUnitRegex.test(value);
+var isLength = (value2) => isNumber(value2) || stringLengths.has(value2) || fractionRegex.test(value2);
+var isArbitraryLength = (value2) => getIsArbitraryValue(value2, "length", isLengthOnly);
+var isNumber = (value2) => Boolean(value2) && !Number.isNaN(Number(value2));
+var isArbitraryNumber = (value2) => getIsArbitraryValue(value2, "number", isNumber);
+var isInteger = (value2) => Boolean(value2) && Number.isInteger(Number(value2));
+var isPercent = (value2) => value2.endsWith("%") && isNumber(value2.slice(0, -1));
+var isArbitraryValue = (value2) => arbitraryValueRegex.test(value2);
+var isTshirtSize = (value2) => tshirtUnitRegex.test(value2);
 var sizeLabels = /* @__PURE__ */ new Set(["length", "size", "percentage"]);
-var isArbitrarySize = (value) => getIsArbitraryValue(value, sizeLabels, isNever);
-var isArbitraryPosition = (value) => getIsArbitraryValue(value, "position", isNever);
+var isArbitrarySize = (value2) => getIsArbitraryValue(value2, sizeLabels, isNever);
+var isArbitraryPosition = (value2) => getIsArbitraryValue(value2, "position", isNever);
 var imageLabels = /* @__PURE__ */ new Set(["image", "url"]);
-var isArbitraryImage = (value) => getIsArbitraryValue(value, imageLabels, isImage);
-var isArbitraryShadow = (value) => getIsArbitraryValue(value, "", isShadow);
+var isArbitraryImage = (value2) => getIsArbitraryValue(value2, imageLabels, isImage);
+var isArbitraryShadow = (value2) => getIsArbitraryValue(value2, "", isShadow);
 var isAny = () => true;
-var getIsArbitraryValue = (value, label, testValue) => {
-  const result = arbitraryValueRegex.exec(value);
+var getIsArbitraryValue = (value2, label, testValue) => {
+  const result = arbitraryValueRegex.exec(value2);
   if (result) {
     if (result[1]) {
       return typeof label === "string" ? result[1] === label : label.has(result[1]);
@@ -3076,15 +3082,15 @@ var getIsArbitraryValue = (value, label, testValue) => {
   }
   return false;
 };
-var isLengthOnly = (value) => (
+var isLengthOnly = (value2) => (
   // `colorFunctionRegex` check is necessary because color functions can have percentages in them which which would be incorrectly classified as lengths.
   // For example, `hsl(0 0% 0%)` would be classified as a length without this check.
   // I could also use lookbehind assertion in `lengthUnitRegex` but that isn't supported widely enough.
-  lengthUnitRegex.test(value) && !colorFunctionRegex.test(value)
+  lengthUnitRegex.test(value2) && !colorFunctionRegex.test(value2)
 );
 var isNever = () => false;
-var isShadow = (value) => shadowRegex.test(value);
-var isImage = (value) => imageRegex.test(value);
+var isShadow = (value2) => shadowRegex.test(value2);
+var isImage = (value2) => imageRegex.test(value2);
 var getDefaultConfig = () => {
   const colors = fromTheme("colors");
   const spacing = fromTheme("spacing");
@@ -5159,6 +5165,31 @@ var doTwMerge = (params) => {
   return twMerge(...params);
 };
 
+// build/dev/javascript/plinth/document_ffi.mjs
+function getElementsByTagName(tagName) {
+  let found = document.getElementsByTagName(tagName);
+  if (!found) {
+    return new Error();
+  }
+  return new Ok(toList(found));
+}
+
+// build/dev/javascript/plinth/element_ffi.mjs
+function focus(element2) {
+  element2.focus();
+}
+
+// build/dev/javascript/plinth/event_ffi.mjs
+function preventDefault(event2) {
+  return event2.preventDefault();
+}
+function ctrlKey(event2) {
+  return event2.ctrlKey;
+}
+function key(event2) {
+  return event2.key;
+}
+
 // build/dev/javascript/plinth/window_ffi.mjs
 function self() {
   return globalThis;
@@ -5174,7 +5205,7 @@ function prompt(message, defaultValue) {
     return new Error();
   }
 }
-function addEventListener(type, listener) {
+function addEventListener3(type, listener) {
   return window.addEventListener(type, listener);
 }
 async function requestWakeLock() {
@@ -5209,7 +5240,7 @@ function reload() {
 function reloadOf(w) {
   return w.location.reload();
 }
-function focus(w) {
+function focus2(w) {
   return w.focus();
 }
 function getHash2() {
@@ -5292,6 +5323,9 @@ async function import_(string4) {
     return new Error(error.toString());
   }
 }
+function setTimeout(callback, delay) {
+  window.setTimeout(callback, delay);
+}
 
 // build/dev/javascript/frontend/components/button.mjs
 var Default = class extends CustomType {
@@ -5370,12 +5404,12 @@ var DOMRect = class extends CustomType {
 };
 
 // build/dev/javascript/frontend/lib/local_storage_ffi.mjs
-var setLocalStorage = (key2, value) => localStorage.setItem(key2, value);
+var setLocalStorage = (key2, value2) => localStorage.setItem(key2, value2);
 var getLocalStorage = (key2) => localStorage.getItem(key2);
 
 // build/dev/javascript/frontend/lib/local_storage.mjs
-function set_requested_columns_grab_x(value) {
-  return setLocalStorage("requested_columns_grab_x", value);
+function set_requested_columns_grab_x(value2) {
+  return setLocalStorage("requested_columns_grab_x", value2);
 }
 function get_requested_columns_grab_x() {
   return parse(getLocalStorage("requested_columns_grab_x"));
@@ -5842,8 +5876,8 @@ function init2(_) {
   let requested_columns_grab_x = (() => {
     let $ = get_requested_columns_grab_x();
     if ($.isOk()) {
-      let value = $[0];
-      return value;
+      let value2 = $[0];
+      return value2;
     } else {
       return 0;
     }
@@ -5859,26 +5893,63 @@ function init2(_) {
     ),
     from(
       (dispatch) => {
-        addEventListener(
+        addEventListener3(
           "resize",
           (_2) => {
             dispatch(new RequestUpdateColumnsGrabX(new None()));
             return void 0;
           }
         );
-        addEventListener(
+        addEventListener3(
           "load",
-          (_2) => {
+          (e) => {
             dispatch(new RequestGrab(false));
             dispatch(new RequestUpdateColumnsGrabX(new None()));
             return void 0;
           }
         );
-        return addEventListener(
+        addEventListener3(
           "scroll",
           (_2) => {
             dispatch(new UpdateScrollY(scrollY(self())));
             return void 0;
+          }
+        );
+        return addEventListener3(
+          "keydown",
+          (e) => {
+            let $ = ctrlKey(e);
+            let $1 = key(e);
+            if ($ && $1 === "k") {
+              preventDefault(e);
+              let $2 = getElementsByTagName("route-dashboard");
+              if (!$2.isOk()) {
+                throw makeError(
+                  "assignment_no_match",
+                  "routes/dashboard",
+                  87,
+                  "",
+                  "Assignment pattern did not match",
+                  { value: $2 }
+                );
+              }
+              let elements2 = $2[0];
+              let $3 = first(elements2);
+              if (!$3.isOk()) {
+                throw makeError(
+                  "assignment_no_match",
+                  "routes/dashboard",
+                  89,
+                  "",
+                  "Assignment pattern did not match",
+                  { value: $3 }
+                );
+              }
+              let a = $3[0];
+              return focus(a);
+            } else {
+              return void 0;
+            }
           }
         );
       }
@@ -5983,10 +6054,10 @@ function request_modify_media_columns(model, event2) {
         field("clientX", int)(event2),
         (x) => {
           let media_container = getMediaContainer();
-          let value = x - round2(
+          let value2 = x - round2(
             media_container.x + divideFloat(media_container.width, 2)
           );
-          return new Ok(new RequestUpdateColumnsGrabX(new Some(value)));
+          return new Ok(new RequestUpdateColumnsGrabX(new Some(value2)));
         }
       );
     }
@@ -5994,21 +6065,21 @@ function request_modify_media_columns(model, event2) {
 }
 function do_for(loop$value, loop$amount, loop$acc) {
   while (true) {
-    let value = loop$value;
+    let value2 = loop$value;
     let amount = loop$amount;
     let acc = loop$acc;
     if (amount === 0) {
       let amount$1 = amount;
       return acc;
     } else {
-      loop$value = value;
+      loop$value = value2;
       loop$amount = amount - 1;
-      loop$acc = prepend(value, acc);
+      loop$acc = prepend(value2, acc);
     }
   }
 }
-function for$(value, amount) {
-  return do_for(value, amount, toList([]));
+function for$(value2, amount) {
+  return do_for(value2, amount, toList([]));
 }
 function view(model) {
   return div(
@@ -6229,6 +6300,7 @@ function view(model) {
                   input(
                     toList([
                       placeholder("Search"),
+                      id("search"),
                       class$(
                         "rounded-full outline-none focus:ring-offset-2 focus:ring-2 transition-[box-shadow] duration-200 ps-8 pe-[44px] flex w-full border-zinc-200 items-center border h-[34px] justify-between p-2 placeholder-zinc-400 text-sm"
                       )
@@ -6451,11 +6523,11 @@ function register() {
   let $ = make_lustre_client_component(page, "route-dashboard");
   if (!$.isOk()) {
     throw makeError(
-      "let_assert",
+      "assignment_no_match",
       "routes/dashboard",
-      28,
+      31,
       "register",
-      "Pattern match failed, no pattern matched the value.",
+      "Assignment pattern did not match",
       { value: $ }
     );
   }
@@ -6483,11 +6555,11 @@ function main2() {
   let $ = register();
   if (!$.isOk()) {
     throw makeError(
-      "let_assert",
+      "assignment_no_match",
       "frontend",
       15,
       "main",
-      "Pattern match failed, no pattern matched the value.",
+      "Assignment pattern did not match",
       { value: $ }
     );
   }
@@ -6495,11 +6567,11 @@ function main2() {
   let $1 = start2(app, "#app", void 0);
   if (!$1.isOk()) {
     throw makeError(
-      "let_assert",
+      "assignment_no_match",
       "frontend",
       18,
       "main",
-      "Pattern match failed, no pattern matched the value.",
+      "Assignment pattern did not match",
       { value: $1 }
     );
   }
