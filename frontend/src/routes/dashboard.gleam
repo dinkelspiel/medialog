@@ -6,6 +6,7 @@ import gleam/dynamic
 import gleam/float
 import gleam/int
 import gleam/io
+import gleam/javascript/array
 import gleam/list
 import gleam/option.{type Option, None, Some}
 import gleam/result
@@ -84,8 +85,8 @@ fn init(_flags) -> #(Model, effect.Effect(Msg)) {
         case ev.ctrl_key(e), ev.key(e) {
           True, "k" -> {
             ev.prevent_default(e)
-            let assert Ok(elements) =
-              document.get_elements_by_tag_name("route-dashboard")
+            let elements =
+              array.to_list(document.get_elements_by_tag_name("route-dashboard"))
             let assert Ok(a) = list.first(elements)
             el.focus(a)
           }
@@ -299,12 +300,6 @@ pub fn view(model: Model) -> element.Element(Msg) {
               button.Outline,
             ),
             button.button(
-              [lucide_lustre.list([class("stroke-zinc-600")]), text("Lists")],
-              [],
-              ["justify-start"],
-              button.Ghost,
-            ),
-            button.button(
               [
                 lucide_lustre.users_round([class("stroke-zinc-600")]),
                 text("Community"),
@@ -313,6 +308,12 @@ pub fn view(model: Model) -> element.Element(Msg) {
               ["justify-start"],
               button.Ghost,
             ),
+          ]),
+          // border-t border-t-zinc-300 border-dashed pt-[11px]
+          div([class("")], [
+            div([class("text-zinc-400 text-xs font-[525] px-3")], [
+              text("Lists"),
+            ]),
           ]),
         ],
       ),
@@ -435,10 +436,10 @@ pub fn view(model: Model) -> element.Element(Msg) {
                   ]),
                 ],
                 div([], [
-                  div(
+                  button(
                     [
                       class(
-                        "w-[148px] h-[223px] rounded-md shadow-md border border-zinc-200 bg-blue-500",
+                        "w-[148px] focus:ring-offset-2 focus:ring-2 hover:-translate-y-1 cursor-pointer hover:shadow-lg duration-200 transition-all h-[223px] rounded-md shadow-md border border-zinc-200 bg-blue-500",
                       ),
                     ],
                     [],

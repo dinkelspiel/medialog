@@ -19,6 +19,7 @@ lustre = ">= 4.5.1 and < 5.0.0"
 lustre_http = ">= 0.5.2 and < 1.0.0"
 glailwind_merge = ">= 1.0.0"
 plinth = { path = "../plinth" }
+gleam_javascript = ">= 0.13.0 and < 1.0.0"
 
 [dev-dependencies]
 lucide_lustre = ">= 2.0.0"

@@ -39,6 +39,7 @@ var List = class {
     }
     return desired === 0;
   }
+  // @internal
   countLength() {
     let length5 = 0;
     for (let _ of this)
@@ -247,6 +248,7 @@ function makeError(variant, module, line, fn, message, extra) {
   error.gleam_error = variant;
   error.module = module;
   error.line = line;
+  error.function = fn;
   error.fn = fn;
   for (let k in extra)
     error[k] = extra[k];
@@ -1149,13 +1151,13 @@ function reverse_and_concat(loop$remaining, loop$accumulator) {
 }
 function do_keys_acc(loop$list, loop$acc) {
   while (true) {
-    let list2 = loop$list;
+    let list = loop$list;
     let acc = loop$acc;
-    if (list2.hasLength(0)) {
+    if (list.hasLength(0)) {
       return reverse_and_concat(acc, toList([]));
     } else {
-      let x = list2.head;
-      let xs = list2.tail;
+      let x = list.head;
+      let xs = list.tail;
       loop$list = xs;
       loop$acc = prepend(x[0], acc);
     }
@@ -1246,45 +1248,45 @@ function do_reverse(loop$remaining, loop$accumulator) {
 function reverse(xs) {
   return do_reverse(xs, toList([]));
 }
-function first(list2) {
-  if (list2.hasLength(0)) {
+function first(list) {
+  if (list.hasLength(0)) {
     return new Error(void 0);
   } else {
-    let x = list2.head;
+    let x = list.head;
     return new Ok(x);
   }
 }
 function do_map(loop$list, loop$fun, loop$acc) {
   while (true) {
-    let list2 = loop$list;
+    let list = loop$list;
     let fun = loop$fun;
     let acc = loop$acc;
-    if (list2.hasLength(0)) {
+    if (list.hasLength(0)) {
       return reverse(acc);
     } else {
-      let x = list2.head;
-      let xs = list2.tail;
+      let x = list.head;
+      let xs = list.tail;
       loop$list = xs;
       loop$fun = fun;
       loop$acc = prepend(fun(x), acc);
     }
   }
 }
-function map(list2, fun) {
-  return do_map(list2, fun, toList([]));
+function map(list, fun) {
+  return do_map(list, fun, toList([]));
 }
 function drop(loop$list, loop$n) {
   while (true) {
-    let list2 = loop$list;
+    let list = loop$list;
     let n = loop$n;
     let $ = n <= 0;
     if ($) {
-      return list2;
+      return list;
     } else {
-      if (list2.hasLength(0)) {
+      if (list.hasLength(0)) {
         return toList([]);
       } else {
-        let xs = list2.tail;
+        let xs = list.tail;
         loop$list = xs;
         loop$n = n - 1;
       }
@@ -1293,18 +1295,18 @@ function drop(loop$list, loop$n) {
 }
 function do_take(loop$list, loop$n, loop$acc) {
   while (true) {
-    let list2 = loop$list;
+    let list = loop$list;
     let n = loop$n;
     let acc = loop$acc;
     let $ = n <= 0;
     if ($) {
       return reverse(acc);
     } else {
-      if (list2.hasLength(0)) {
+      if (list.hasLength(0)) {
         return reverse(acc);
       } else {
-        let x = list2.head;
-        let xs = list2.tail;
+        let x = list.head;
+        let xs = list.tail;
         loop$list = xs;
         loop$n = n - 1;
         loop$acc = prepend(x, acc);
@@ -1312,19 +1314,19 @@ function do_take(loop$list, loop$n, loop$acc) {
     }
   }
 }
-function take(list2, n) {
-  return do_take(list2, n, toList([]));
+function take(list, n) {
+  return do_take(list, n, toList([]));
 }
 function fold(loop$list, loop$initial, loop$fun) {
   while (true) {
-    let list2 = loop$list;
+    let list = loop$list;
     let initial = loop$initial;
     let fun = loop$fun;
-    if (list2.hasLength(0)) {
+    if (list.hasLength(0)) {
       return initial;
     } else {
-      let x = list2.head;
-      let rest$1 = list2.tail;
+      let x = list.head;
+      let rest$1 = list.tail;
       loop$list = rest$1;
       loop$initial = fun(initial, x);
       loop$fun = fun;
@@ -2690,6 +2692,22 @@ function on_click(msg) {
   return on2("click", (_) => {
     return new Ok(msg);
   });
+}
+
+// build/dev/javascript/gleam_javascript/gleam_javascript_ffi.mjs
+function reduceRight(thing, acc, fn) {
+  return thing.reduceRight(fn, acc);
+}
+
+// build/dev/javascript/gleam_javascript/gleam/javascript/array.mjs
+function to_list3(items) {
+  return reduceRight(
+    items,
+    toList([]),
+    (list, item) => {
+      return prepend(item, list);
+    }
+  );
 }
 
 // build/dev/javascript/frontend/components/popover.mjs
@@ -5167,11 +5185,7 @@ var doTwMerge = (params) => {
 
 // build/dev/javascript/plinth/document_ffi.mjs
 function getElementsByTagName(tagName) {
-  let found = document.getElementsByTagName(tagName);
-  if (!found) {
-    return new Error();
-  }
-  return new Ok(toList(found));
+  return Array.from(document.getElementsByTagName(tagName));
 }
 
 // build/dev/javascript/plinth/element_ffi.mjs
@@ -5322,9 +5336,6 @@ async function import_(string4) {
   } catch (error) {
     return new Error(error.toString());
   }
-}
-function setTimeout(callback, delay) {
-  window.setTimeout(callback, delay);
 }
 
 // build/dev/javascript/frontend/components/button.mjs
@@ -5548,40 +5559,6 @@ function house(attributes) {
           )
         ])
       )
-    ])
-  );
-}
-function list(attributes) {
-  return svg(
-    prepend(
-      attribute("stroke-linejoin", "round"),
-      prepend(
-        attribute("stroke-linecap", "round"),
-        prepend(
-          attribute("stroke-width", "2"),
-          prepend(
-            attribute("stroke", "currentColor"),
-            prepend(
-              attribute("fill", "none"),
-              prepend(
-                attribute("viewBox", "0 0 24 24"),
-                prepend(
-                  attribute("height", "24"),
-                  prepend(attribute("width", "24"), attributes)
-                )
-              )
-            )
-          )
-        )
-      )
-    ),
-    toList([
-      path(toList([attribute("d", "M3 12h.01")])),
-      path(toList([attribute("d", "M3 18h.01")])),
-      path(toList([attribute("d", "M3 6h.01")])),
-      path(toList([attribute("d", "M8 12h13")])),
-      path(toList([attribute("d", "M8 18h13")])),
-      path(toList([attribute("d", "M8 6h13")]))
     ])
   );
 }
@@ -5922,30 +5899,21 @@ function init2(_) {
             let $1 = key(e);
             if ($ && $1 === "k") {
               preventDefault(e);
-              let $2 = getElementsByTagName("route-dashboard");
+              let elements2 = to_list3(
+                getElementsByTagName("route-dashboard")
+              );
+              let $2 = first(elements2);
               if (!$2.isOk()) {
                 throw makeError(
-                  "assignment_no_match",
+                  "let_assert",
                   "routes/dashboard",
-                  87,
+                  90,
                   "",
-                  "Assignment pattern did not match",
+                  "Pattern match failed, no pattern matched the value.",
                   { value: $2 }
                 );
               }
-              let elements2 = $2[0];
-              let $3 = first(elements2);
-              if (!$3.isOk()) {
-                throw makeError(
-                  "assignment_no_match",
-                  "routes/dashboard",
-                  89,
-                  "",
-                  "Assignment pattern did not match",
-                  { value: $3 }
-                );
-              }
-              let a = $3[0];
+              let a = $2[0];
               return focus(a);
             } else {
               return void 0;
@@ -6219,15 +6187,6 @@ function view(model) {
               ),
               button2(
                 toList([
-                  list(toList([class$("stroke-zinc-600")])),
-                  text2("Lists")
-                ]),
-                toList([]),
-                toList(["justify-start"]),
-                new Ghost()
-              ),
-              button2(
-                toList([
                   users_round(
                     toList([class$("stroke-zinc-600")])
                   ),
@@ -6236,6 +6195,15 @@ function view(model) {
                 toList([]),
                 toList(["justify-start"]),
                 new Ghost()
+              )
+            ])
+          ),
+          div(
+            toList([class$("")]),
+            toList([
+              div(
+                toList([class$("text-zinc-400 text-xs font-[525] px-3")]),
+                toList([text2("Lists")])
               )
             ])
           )
@@ -6414,10 +6382,10 @@ function view(model) {
                           let _pipe = div(
                             toList([]),
                             toList([
-                              div(
+                              button(
                                 toList([
                                   class$(
-                                    "w-[148px] h-[223px] rounded-md shadow-md border border-zinc-200 bg-blue-500"
+                                    "w-[148px] focus:ring-offset-2 focus:ring-2 hover:-translate-y-1 cursor-pointer hover:shadow-lg duration-200 transition-all h-[223px] rounded-md shadow-md border border-zinc-200 bg-blue-500"
                                   )
                                 ]),
                                 toList([])
@@ -6523,11 +6491,11 @@ function register() {
   let $ = make_lustre_client_component(page, "route-dashboard");
   if (!$.isOk()) {
     throw makeError(
-      "assignment_no_match",
+      "let_assert",
       "routes/dashboard",
-      31,
+      32,
       "register",
-      "Assignment pattern did not match",
+      "Pattern match failed, no pattern matched the value.",
       { value: $ }
     );
   }
@@ -6555,11 +6523,11 @@ function main2() {
   let $ = register();
   if (!$.isOk()) {
     throw makeError(
-      "assignment_no_match",
+      "let_assert",
       "frontend",
       15,
       "main",
-      "Assignment pattern did not match",
+      "Pattern match failed, no pattern matched the value.",
       { value: $ }
     );
   }
@@ -6567,11 +6535,11 @@ function main2() {
   let $1 = start2(app, "#app", void 0);
   if (!$1.isOk()) {
     throw makeError(
-      "assignment_no_match",
+      "let_assert",
       "frontend",
       18,
       "main",
-      "Assignment pattern did not match",
+      "Pattern match failed, no pattern matched the value.",
       { value: $1 }
     );
   }
