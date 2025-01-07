@@ -1,11 +1,24 @@
-# Medialog
+# medialog
 
-# Credits
+[![Package Version](https://img.shields.io/hexpm/v/medialog)](https://hex.pm/packages/medialog)
+[![Hex Docs](https://img.shields.io/badge/hex-docs-ffaff3)](https://hexdocs.pm/medialog/)
 
-## TMDB
+```sh
+gleam add medialog@1
+```
+```gleam
+import medialog
 
-This website uses TMDB and the TMDB APIs but is not endorsed, certified, or otherwise approved by TMDB.
+pub fn main() {
+  // TODO: An example of the project in use
+}
+```
 
-## JustWatch
+Further documentation can be found at <https://hexdocs.pm/medialog>.
 
-All data related to Watch Providers for Movies and Series are provided by JustWatch
+## Development
+
+```sh
+gleam run   # Run the project
+gleam test  # Run the tests
+```
