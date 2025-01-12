@@ -6,7 +6,7 @@ import gleam/list
 import gleam/result
 import lucide_lustre.{book, ellipsis, house, library, panel_left, users_round, x}
 import lustre
-import lustre/attribute.{class}
+import lustre/attribute.{attribute, class}
 import lustre/effect
 import lustre/element.{type Element}
 import lustre/element/html.{div, text}
@@ -71,15 +71,6 @@ fn button(type_: Button, attributes, children) {
 
 fn view(model: Model) -> Element(Msg) {
   use <- popcicle.initialize(popcicle.default_config())
-
-  let close_parent_popcicle = fn(event: dynamic.Dynamic) -> Result(
-    Msg,
-    List(dynamic.DecodeError),
-  ) {
-    use event <- result.try(pl_element.cast(event) |> result.replace_error([]))
-
-    Error([])
-  }
 
   div(
     [
@@ -242,12 +233,7 @@ fn view(model: Model) -> Element(Msg) {
                               "absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none",
                             ),
                           ],
-                          [
-                            x([
-                              event.on("click", close_parent_popcicle),
-                              class("size-4"),
-                            ]),
-                          ],
+                          [x([popcicle.close_on_click(True), class("size-4")])],
                         ),
                       ],
                     ),

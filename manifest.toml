@@ -41,7 +41,7 @@ packages = [
   { name = "mist", version = "4.0.3", build_tools = ["gleam"], requirements = ["gleam_erlang", "gleam_http", "gleam_otp", "gleam_stdlib", "gleam_yielder", "glisten", "gramps", "hpack_erl", "logging"], otp_app = "mist", source = "hex", outer_checksum = "DC01F9A8AA4FFC7D911C1A2C64CD60870471F3A374E9EBC4683DD7E7FB7770BA" },
   { name = "platform", version = "1.0.0", build_tools = ["gleam"], requirements = [], otp_app = "platform", source = "hex", outer_checksum = "8339420A95AD89AAC0F82F4C3DB8DD401041742D6C3F46132A8739F6AEB75391" },
   { name = "plinth", version = "0.5.6", build_tools = ["gleam"], requirements = ["conversation", "gleam_javascript", "gleam_json", "gleam_stdlib"], otp_app = "plinth", source = "hex", outer_checksum = "7A9BEAB98F4BC6859803D5ABCD0F3B4C3578A747F12BF32F9E234F8325F5F0E0" },
-  { name = "popcicle", version = "1.0.7", build_tools = ["gleam"], requirements = ["gleam_stdlib", "lustre", "plinth"], otp_app = "popcicle", source = "hex", outer_checksum = "0B9C2BF7C3DF945D9851A4133425081BC97C2313D00A6CFBEA9080A71D027837" },
+  { name = "popcicle", version = "1.1.0", build_tools = ["gleam"], requirements = ["gleam_stdlib", "lustre", "plinth"], otp_app = "popcicle", source = "hex", outer_checksum = "E068D913A344C907ADA518B78FA9B05A30BA40B2A14DBAD65DC669FE273FCF1B" },
   { name = "repeatedly", version = "2.1.2", build_tools = ["gleam"], requirements = [], otp_app = "repeatedly", source = "hex", outer_checksum = "93AE1938DDE0DC0F7034F32C1BF0D4E89ACEBA82198A1FE21F604E849DA5F589" },
   { name = "simplifile", version = "2.2.0", build_tools = ["gleam"], requirements = ["filepath", "gleam_stdlib"], otp_app = "simplifile", source = "hex", outer_checksum = "0DFABEF7DC7A9E2FF4BB27B108034E60C81BEBFCB7AB816B9E7E18ED4503ACD8" },
   { name = "snag", version = "1.1.0", build_tools = ["gleam"], requirements = ["gleam_stdlib"], otp_app = "snag", source = "hex", outer_checksum = "7E9F06390040EB5FAB392CE642771484136F2EC103A92AE11BA898C8167E6E17" },
@@ -58,4 +58,4 @@ lucide_lustre = { version = ">= 2.0.0 and < 3.0.0" }
 lustre = { version = ">= 4.6.3 and < 5.0.0" }
 lustre_dev_tools = { version = ">= 1.6.5 and < 2.0.0" }
 plinth = { version = ">= 0.5.6 and < 1.0.0" }
-popcicle = { version = ">= 1.0.7 and < 2.0.0" }
+popcicle = { version = ">= 1.1.0 and < 2.0.0" }
