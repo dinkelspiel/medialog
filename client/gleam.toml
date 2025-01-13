@@ -1,4 +1,4 @@
-name = "medialog"
+name = "client"
 target = "javascript"
 version = "1.0.0"
 
