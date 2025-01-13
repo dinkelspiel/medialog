@@ -1,6 +1,9 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 .font-inter {
   font-family: "Inter", sans;
   font-optical-sizing: auto;
   font-style: normal;
 }
-

@@ -58,7 +58,7 @@ fn button(type_: Button, attributes, children) {
       case type_ {
         Primary -> [
           class(
-            "border-zinc-200 bg-white shadow-sm text-zinc-900 hover:bg-zinc-50",
+            "border-zinc-200 bg-white shadow-sm text-zinc-900 hover:bg-zinc-50 ring-4",
           ),
         ]
         Ghost -> [class("border-transparent hover:bg-zinc-100 text-zinc-600")]
