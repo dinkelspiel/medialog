@@ -4,7 +4,7 @@ import gleam/int
 import gleam/io
 import gleam/list
 import gleam/result
-import lucide_lustre.{book, ellipsis, house, library, panel_left, users_round, x}
+import lucide_lustre.{ellipsis, house, library, panel_left, users_round, x}
 import lustre
 import lustre/attribute.{attribute, class}
 import lustre/effect
@@ -36,7 +36,7 @@ pub opaque type Msg {
 fn update(model: Model, msg: Msg) -> #(Model, effect.Effect(Msg)) {
   case msg {
     UserToggledSidebar -> #(
-      Model(..model, sidebar_open: !model.sidebar_open),
+      Model(sidebar_open: !model.sidebar_open),
       effect.none(),
     )
   }
