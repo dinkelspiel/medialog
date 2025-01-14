@@ -4,25 +4,30 @@ import gleam/result
 import gleam/string
 import gleam_community/ansi
 import gleamyshell
+import server/router as route
 import simplifile
 
 pub fn main() {
+  let router = route.router([])
+
   let res = {
     use _ <- result.try(
-      gleamyshell.execute("gleam", in: "../client", args: ["clean"])
+      gleamyshell.execute("gleam", in: router.project, args: ["clean"])
       |> result.replace_error("Failed to clean client"),
     )
     use _ <- result.try(
-      gleamyshell.execute("gleam", in: "../client", args: ["build"])
+      gleamyshell.execute("gleam", in: router.project, args: ["build"])
       |> result.replace_error("Failed to build Gleam"),
     )
     use files <- result.try(
-      simplifile.get_files("../client/build/dev/javascript/client/routes")
+      simplifile.get_files(
+        router.project <> "build/dev/javascript/client/client/routes",
+      )
       |> result.replace_error("Failed to get routes"),
     )
     let _ = simplifile.create_directory_all("./build/routes")
     list.map(files, fn(file) {
-      let route = string.split(file, "/routes")
+      let route = string.split(file, router.route_folder)
       let assert Ok(route) = list.last(route)
       let assert Ok(contents) = simplifile.read(file)
       let _ = simplifile.write(file, contents <> "; main();")
@@ -32,7 +37,7 @@ pub fn main() {
           file,
           "--bundle",
           "--minify",
-          "--outfile=./build/routes" <> route,
+          "--outfile=./build/routes/" <> route,
         ])
 
       let assert Ok(css_route) = list.first(string.split(route, "."))
@@ -41,10 +46,10 @@ pub fn main() {
       let _ =
         gleamyshell.execute("tailwind", in: ".", args: [
           file,
-          "--input=../client/priv/static/styles.css",
+          "--input=" <> router.project <> "priv/static/styles.css",
           "--minify",
-          "--content=./build/routes" <> route,
-          "--output=./build/routes" <> css_route,
+          "--content=./build/routes/" <> route,
+          "--output=./build/routes/" <> css_route,
         ])
     })
 
