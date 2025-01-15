@@ -1,3 +1,4 @@
+import gleam/bool
 import gleam/io
 import gleam/list
 import gleam/result
@@ -14,16 +15,23 @@ pub fn main() {
     io.println("Compiling clients..." |> ansi.blue())
     use _ <- result.try(
       gleamyshell.execute("rm", in: ".", args: ["-rf ./build/routes"])
-      |> result.replace_error("Failed to remove ./build/routes")
+      |> result.replace_error("Failed to remove ./build/routes"),
     )
-    use _ <- result.try(
+    use build_result <- result.try(
       gleamyshell.execute("gleam", in: router.project, args: ["build"])
-      |> result.replace_error("Failed to build Gleam"),
+      |> io.debug
+      |> result.replace_error("Failed executing gleam build"),
     )
+    use <- bool.guard(
+      build_result.exit_code != 0,
+      Error("Failed to build client:\n" <> build_result.output),
+    )
+
     use files <- result.try(
       simplifile.get_files(
         router.project <> "build/dev/javascript/client/client/routes",
       )
+      |> io.debug
       |> result.replace_error("Failed to get routes"),
     )
     let _ = simplifile.create_directory_all("./build/routes")

@@ -2,21 +2,25 @@ import client/components/button.{button}
 import client/components/input.{input}
 import dropdown_menu
 import gleam/dynamic
+import gleam/dynamic/decode
+import gleam/float
 import gleam/int
 import gleam/io
+import gleam/json
 import gleam/list
+import gleam/option
 import gleam/result
 import lucide_lustre.{ellipsis, house, library, panel_left, users_round, x}
 import lustre
 import lustre/attribute.{attribute, class, href}
 import lustre/effect
 import lustre/element.{type Element}
-import lustre/element/html.{div, h1, span, text, a}
+import lustre/element/html.{a, div, h1, span, text}
 import lustre/event
 import plinth/browser/element as pl_element
 import popcicle
-import lustre_http
-import gleam/json
+import rsvp
+import shared/database
 
 pub fn main() {
   let app = lustre.application(init, update, view)
@@ -26,24 +30,53 @@ pub fn main() {
 }
 
 type Model {
-  Model(email: String, password: String)
+  Model(
+    email: String,
+    password: String,
+    user_entries: AsyncResult(List(database.UserEntry), String),
+  )
+}
+
+type AsyncResult(ok, err) {
+  Pending
+  Output(Result(ok, err))
 }
 
 fn init(_: Int) -> #(Model, effect.Effect(Msg)) {
-  #(Model(email: "", password: ""), effect.none())
+  #(Model(email: "", password: "", user_entries: Pending), effect.none())
 }
 
 pub opaque type Msg {
   UserRequestedLogin
   UserUpdatedEmail(String)
   UserUpdatedPassword(String)
+  ApiRecievedUserEntry(Result(List(database.UserEntry), rsvp.Error))
 }
 
 fn update(model: Model, msg: Msg) -> #(Model, effect.Effect(Msg)) {
   case msg {
-    UserRequestedLogin -> #(model, lustre_http.post("/api/auth/login", json.object([]), lustre_http.expect_json())) 
+    UserRequestedLogin -> #(
+      model,
+      rsvp.post(
+        "/api/auth/login",
+        json.object([]),
+        rsvp.expect_json(
+          decode.list(database.user_entry_decoder()),
+          ApiRecievedUserEntry,
+        ),
+      ),
+    )
     UserUpdatedEmail(email) -> #(Model(..model, email:), effect.none())
     UserUpdatedPassword(password) -> #(Model(..model, password:), effect.none())
+    ApiRecievedUserEntry(user_entries) -> #(
+      Model(
+        ..model,
+        user_entries: Output(
+          user_entries |> result.replace_error("Failed to parse data"),
+        ),
+      ),
+      effect.none(),
+    )
   }
 }
 
@@ -51,7 +84,7 @@ fn view(model: Model) -> Element(Msg) {
   use <- popcicle.initialize(popcicle.default_config())
 
   div([class("min-h-screen w-screen flex justify-center items-center")], [
-      div([class("max-w-[350px] flex flex-col gap-8")], [
+    div([class("max-w-[350px] flex flex-col gap-8")], [
       div([class("flex flex-col gap-2")], [
         div([class("size-[44px] flex justify-center items-center")], [
           div(
@@ -86,12 +119,12 @@ fn view(model: Model) -> Element(Msg) {
           input(input.Primary, [
             attribute.placeholder("Email"),
             attribute.type_("email"),
-            event.on_input(UserUpdatedEmail)
+            event.on_input(UserUpdatedEmail),
           ]),
           input(input.Primary, [
             attribute.placeholder("Password"),
             attribute.type_("password"),
-            event.on_input(UserUpdatedPassword)
+            event.on_input(UserUpdatedPassword),
           ]),
         ]),
         button(button.Primary, [class("justify-center")], [text("Log in")]),

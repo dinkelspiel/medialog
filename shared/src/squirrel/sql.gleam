@@ -41,23 +41,22 @@ pub fn get_user_entries_by_user_id(db, arg_1) {
     use progress <- decode.field(7, decode.int)
     use created_at <- decode.field(8, pog.timestamp_decoder())
     use updated_at <- decode.field(9, pog.timestamp_decoder())
-    decode.success(
-      GetUserEntriesByUserIdRow(
-        id:,
-        user_id:,
-        entry_id:,
-        rating:,
-        notes:,
-        watched_at:,
-        status:,
-        progress:,
-        created_at:,
-        updated_at:,
-      ),
-    )
+    decode.success(GetUserEntriesByUserIdRow(
+      id:,
+      user_id:,
+      entry_id:,
+      rating:,
+      notes:,
+      watched_at:,
+      status:,
+      progress:,
+      created_at:,
+      updated_at:,
+    ))
   }
 
-  let query = "SELECT *
+  let query =
+    "SELECT *
 FROM user_entry
 WHERE user_id = $1
 "
