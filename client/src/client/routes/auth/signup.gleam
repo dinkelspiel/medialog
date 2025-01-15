@@ -11,7 +11,7 @@ import lustre
 import lustre/attribute.{attribute, class, href}
 import lustre/effect
 import lustre/element.{type Element}
-import lustre/element/html.{div, h1, span, text, a}
+import lustre/element/html.{a, div, h1, span, text}
 import lustre/event
 import plinth/browser/element as pl_element
 import popcicle
@@ -93,7 +93,9 @@ fn view(model: Model) -> Element(Msg) {
             attribute.type_("password"),
           ]),
         ]),
-        button(button.Primary, [class("justify-center")], [text("Create my account")]),
+        button(button.Primary, [class("justify-center")], [
+          text("Create my account"),
+        ]),
         span([], [
           span([class("text-sm tracking-[-0.4px]")], [
             span([class("text-zinc-400")], [text("Already have an account? ")]),

@@ -1,3 +1,4 @@
+import server/routes/auth/login
 import wisp.{type Request, type Response}
 
 pub type Router {
@@ -15,6 +16,9 @@ pub fn router(path: List(String)) {
     ["dashboard"] -> Client("dashboard.gleam")
     ["auth", "login"] -> Client("auth/login.gleam")
     ["auth", "signup"] -> Client("auth/signup.gleam")
+
+    ["api", "auth", "login"] -> Server(login.login)
+
     _ -> NotFound
   }
   |> Router(
