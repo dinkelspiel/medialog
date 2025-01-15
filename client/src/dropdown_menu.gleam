@@ -18,7 +18,7 @@ pub fn dropdown_menu(
       list.flatten([
         [
           class(
-            "p-1 min-w-[8rem] outline-none shadow-md bg-white rounded-md border border-zinc-200 overflow-hidden w-56",
+            "p-1 min-w-[8rem] outline-none shadow-md bg-white rounded-xl border border-zinc-200 overflow-hidden w-56",
           ),
         ],
         attributes,
@@ -37,7 +37,7 @@ pub fn item(
     list.flatten([
       [
         class(
-          "relative flex cursor-pointer hover:bg-zinc-100 text-zinc-900 select-none items-center gap-2 rounded-sm px-2 py-1.5 text-sm outline-none transition-colors focus:bg-zinc-50 focus:text-zinc-800 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&>svg]:size-4 [&>svg]:shrink-0",
+          "relative flex cursor-pointer hover:bg-zinc-100 tracking-[-0.7px] text-zinc-900 select-none items-center gap-2 rounded-lg px-3 py-1 text-sm outline-none transition-colors focus:bg-zinc-50 focus:text-zinc-800 data-[disabled]:pointer-events-none data-[disabled]:opacity-50 [&>svg]:size-4 [&>svg]:shrink-0",
         ),
       ],
       attributes,

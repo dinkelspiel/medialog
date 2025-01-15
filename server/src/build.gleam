@@ -11,9 +11,10 @@ pub fn main() {
   let router = route.router([])
 
   let res = {
+    io.println("Compiling clients..." |> ansi.blue())
     use _ <- result.try(
-      gleamyshell.execute("gleam", in: router.project, args: ["clean"])
-      |> result.replace_error("Failed to clean client"),
+      gleamyshell.execute("rm", in: ".", args: ["-rf ./build/routes"])
+      |> result.replace_error("Failed to remove ./build/routes")
     )
     use _ <- result.try(
       gleamyshell.execute("gleam", in: router.project, args: ["build"])
@@ -53,7 +54,7 @@ pub fn main() {
         ])
     })
 
-    Ok("Successfully compiled routes")
+    Ok("Successfully compiled client")
   }
 
   case res {

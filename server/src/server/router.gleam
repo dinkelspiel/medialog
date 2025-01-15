@@ -13,7 +13,8 @@ pub type Route {
 pub fn router(path: List(String)) {
   case path {
     ["dashboard"] -> Client("dashboard.gleam")
-    ["login"] -> Client("login.gleam")
+    ["auth", "login"] -> Client("auth/login.gleam")
+    ["auth", "signup"] -> Client("auth/signup.gleam")
     _ -> NotFound
   }
   |> Router(
