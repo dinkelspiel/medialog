@@ -50,7 +50,7 @@ pub opaque type Msg {
   UserRequestedLogin
   UserUpdatedEmail(String)
   UserUpdatedPassword(String)
-  ApiRecievedUserEntry(Result(List(database.UserEntry), rsvp.Error))
+  ApiCreatedSession(Result(List(database.UserEntry), rsvp.Error))
 }
 
 fn update(model: Model, msg: Msg) -> #(Model, effect.Effect(Msg)) {
@@ -62,13 +62,13 @@ fn update(model: Model, msg: Msg) -> #(Model, effect.Effect(Msg)) {
         json.object([]),
         rsvp.expect_json(
           decode.list(database.user_entry_decoder()),
-          ApiRecievedUserEntry,
+          ApiCreatedSession,
         ),
       ),
     )
     UserUpdatedEmail(email) -> #(Model(..model, email:), effect.none())
     UserUpdatedPassword(password) -> #(Model(..model, password:), effect.none())
-    ApiRecievedUserEntry(user_entries) -> #(
+    ApiCreatedSession(user_entries) -> #(
       Model(
         ..model,
         user_entries: Output(

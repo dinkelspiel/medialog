@@ -1,3 +1,6 @@
-SELECT *
-FROM user_entry
-WHERE user_id = $1
+SELECT
+    *
+FROM
+    user_entry
+WHERE
+    user_id = $1
