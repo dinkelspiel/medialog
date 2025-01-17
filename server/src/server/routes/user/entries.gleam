@@ -14,9 +14,11 @@ import server/token
 import shared/api/request
 import squirrel/sql
 import wisp.{type Request, type Response}
+import server/middleware/authenticated
 
-pub fn login(req: Request) -> Response {
+pub fn entries(req: Request) -> Response {
   use json <- wisp.require_json(req)
+  use <- 
 
   let result = {
     use db_conn <- db.get_connection

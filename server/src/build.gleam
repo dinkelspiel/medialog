@@ -45,7 +45,7 @@ pub fn main() {
         gleamyshell.execute("esbuild", in: ".", args: [
           file,
           "--bundle",
-          "--minify",
+          //"--minify",
           "--outfile=./build/routes/" <> route,
         ])
 

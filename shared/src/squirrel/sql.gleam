@@ -11,7 +11,8 @@ import pog
 pub fn create_user_session(db, arg_1, arg_2, arg_3, arg_4, arg_5) {
   let decoder = decode.map(decode.dynamic, fn(_) { Nil })
 
-  let query = "INSERT INTO
+  let query =
+    "INSERT INTO
     session (token, user_id, expiry, ip_address, user_agent)
 VALUES
     ($1, $2, $3, $4, $5)"
@@ -69,25 +70,24 @@ pub fn get_user_by_id(db, arg_1) {
     use invited_by_id <- decode.field(9, decode.optional(decode.int))
     use created_at <- decode.field(10, pog.timestamp_decoder())
     use updated_at <- decode.field(11, pog.timestamp_decoder())
-    decode.success(
-      GetUserByIdRow(
-        id:,
-        username:,
-        email:,
-        password:,
-        rating_style:,
-        daily_streak_started:,
-        daily_streak_updated:,
-        daily_streak_length:,
-        daily_streak_longest:,
-        invited_by_id:,
-        created_at:,
-        updated_at:,
-      ),
-    )
+    decode.success(GetUserByIdRow(
+      id:,
+      username:,
+      email:,
+      password:,
+      rating_style:,
+      daily_streak_started:,
+      daily_streak_updated:,
+      daily_streak_length:,
+      daily_streak_longest:,
+      invited_by_id:,
+      created_at:,
+      updated_at:,
+    ))
   }
 
-  let query = "SELECT
+  let query =
+    "SELECT
     *
 FROM
     \"user\"
@@ -139,23 +139,22 @@ pub fn get_user_entries_by_user_id(db, arg_1) {
     use progress <- decode.field(7, decode.int)
     use created_at <- decode.field(8, pog.timestamp_decoder())
     use updated_at <- decode.field(9, pog.timestamp_decoder())
-    decode.success(
-      GetUserEntriesByUserIdRow(
-        id:,
-        user_id:,
-        entry_id:,
-        rating:,
-        notes:,
-        watched_at:,
-        status:,
-        progress:,
-        created_at:,
-        updated_at:,
-      ),
-    )
+    decode.success(GetUserEntriesByUserIdRow(
+      id:,
+      user_id:,
+      entry_id:,
+      rating:,
+      notes:,
+      watched_at:,
+      status:,
+      progress:,
+      created_at:,
+      updated_at:,
+    ))
   }
 
-  let query = "SELECT
+  let query =
+    "SELECT
     *
 FROM
     user_entry
@@ -211,25 +210,24 @@ pub fn get_user_by_email(db, arg_1) {
     use invited_by_id <- decode.field(9, decode.optional(decode.int))
     use created_at <- decode.field(10, pog.timestamp_decoder())
     use updated_at <- decode.field(11, pog.timestamp_decoder())
-    decode.success(
-      GetUserByEmailRow(
-        id:,
-        username:,
-        email:,
-        password:,
-        rating_style:,
-        daily_streak_started:,
-        daily_streak_updated:,
-        daily_streak_length:,
-        daily_streak_longest:,
-        invited_by_id:,
-        created_at:,
-        updated_at:,
-      ),
-    )
+    decode.success(GetUserByEmailRow(
+      id:,
+      username:,
+      email:,
+      password:,
+      rating_style:,
+      daily_streak_started:,
+      daily_streak_updated:,
+      daily_streak_length:,
+      daily_streak_longest:,
+      invited_by_id:,
+      created_at:,
+      updated_at:,
+    ))
   }
 
-  let query = "SELECT
+  let query =
+    "SELECT
     *
 FROM
     \"user\"
@@ -261,7 +259,9 @@ fn rating_style_decoder() {
     "stars" -> decode.success(Stars)
     _ -> decode.failure(Range, "RatingStyle")
   }
-}/// Corresponds to the Postgres `user_entry_status` enum.
+}
+
+/// Corresponds to the Postgres `user_entry_status` enum.
 ///
 /// > 🐿️ This type definition was generated automatically using v2.1.0 of the
 /// > [squirrel package](https://github.com/giacomocavalieri/squirrel).

@@ -20,6 +20,7 @@ import lustre/event
 import plinth/browser/element as pl_element
 import popcicle
 import rsvp
+import shared/api/response
 import shared/database
 
 pub fn main() {
@@ -30,11 +31,7 @@ pub fn main() {
 }
 
 type Model {
-  Model(
-    email: String,
-    password: String,
-    user_entries: AsyncResult(List(database.UserEntry), String),
-  )
+  Model(email: String, password: String, error: option.Option(String))
 }
 
 type AsyncResult(ok, err) {
@@ -43,14 +40,14 @@ type AsyncResult(ok, err) {
 }
 
 fn init(_: Int) -> #(Model, effect.Effect(Msg)) {
-  #(Model(email: "", password: "", user_entries: Pending), effect.none())
+  #(Model(email: "", password: "", error: option.None), effect.none())
 }
 
 pub opaque type Msg {
   UserRequestedLogin
   UserUpdatedEmail(String)
   UserUpdatedPassword(String)
-  ApiCreatedSession(Result(List(database.UserEntry), rsvp.Error))
+  ApiCreatedSession(Result(response.ApiResponse, rsvp.Error))
 }
 
 fn update(model: Model, msg: Msg) -> #(Model, effect.Effect(Msg)) {
@@ -59,22 +56,33 @@ fn update(model: Model, msg: Msg) -> #(Model, effect.Effect(Msg)) {
       model,
       rsvp.post(
         "/api/auth/login",
-        json.object([]),
-        rsvp.expect_json(
-          decode.list(database.user_entry_decoder()),
-          ApiCreatedSession,
-        ),
+        json.object([
+          #("email", json.string(model.email)),
+          #("password", json.string(model.password)),
+        ]),
+        rsvp.expect_json(response.decode_api_response(), ApiCreatedSession),
       ),
     )
     UserUpdatedEmail(email) -> #(Model(..model, email:), effect.none())
     UserUpdatedPassword(password) -> #(Model(..model, password:), effect.none())
-    ApiCreatedSession(user_entries) -> #(
-      Model(
-        ..model,
-        user_entries: Output(
-          user_entries |> result.replace_error("Failed to parse data"),
-        ),
-      ),
+    ApiCreatedSession(response) -> #(
+      case response {
+        Ok(res) -> {
+          let assert response.SuccessResponse(..) = res
+          model
+        }
+
+        Error(error) -> {
+          case error {
+            rsvp.HttpError(error) -> {
+              let assert Ok(response.ErrorResponse(_, error)) =
+                json.parse(error.body, response.decode_api_response())
+              Model(..model, error: option.Some(error))
+            }
+            _ -> model
+          }
+        }
+      },
       effect.none(),
     )
   }
@@ -82,6 +90,8 @@ fn update(model: Model, msg: Msg) -> #(Model, effect.Effect(Msg)) {
 
 fn view(model: Model) -> Element(Msg) {
   use <- popcicle.initialize(popcicle.default_config())
+
+  //io.debug(model)
 
   div([class("min-h-screen w-screen flex justify-center items-center")], [
     div([class("max-w-[350px] flex flex-col gap-8")], [
@@ -127,7 +137,23 @@ fn view(model: Model) -> Element(Msg) {
             event.on_input(UserUpdatedPassword),
           ]),
         ]),
-        button(button.Primary, [class("justify-center")], [text("Log in")]),
+        case model.error {
+          option.Some(asd) ->
+            div(
+              [
+                class(
+                  "rounded-e-lg border-s-2 text-sm border-s-red-300 bg-red-200/40 p-3",
+                ),
+              ],
+              [text(asd)],
+            )
+          option.None -> element.none()
+        },
+        button(
+          button.Primary,
+          [class("justify-center"), event.on_click(UserRequestedLogin)],
+          [text("Log in")],
+        ),
         span([], [
           span([class("text-sm tracking-[-0.4px]")], [
             span([class("text-zinc-400")], [text("Don't have an account? ")]),
