@@ -2,31 +2,6 @@ import gleam/dynamic/decode
 import gleam/option.{type Option}
 import pog
 
-/// Runs the `create_user_session` query
-/// defined in `./src/squirrel/sql/create_user_session.sql`.
-///
-/// > 🐿️ This function was generated automatically using v2.1.0 of
-/// > the [squirrel package](https://github.com/giacomocavalieri/squirrel).
-///
-pub fn create_user_session(db, arg_1, arg_2, arg_3, arg_4, arg_5) {
-  let decoder = decode.map(decode.dynamic, fn(_) { Nil })
-
-  let query =
-    "INSERT INTO
-    session (token, user_id, expiry, ip_address, user_agent)
-VALUES
-    ($1, $2, $3, $4, $5)"
-
-  pog.query(query)
-  |> pog.parameter(pog.text(arg_1))
-  |> pog.parameter(pog.int(arg_2))
-  |> pog.parameter(pog.timestamp(arg_3))
-  |> pog.parameter(pog.text(arg_4))
-  |> pog.parameter(pog.text(arg_5))
-  |> pog.returning(decoder)
-  |> pog.execute(db)
-}
-
 /// A row you get from running the `get_user_by_id` query
 /// defined in `./src/squirrel/sql/get_user_by_id.sql`.
 ///
@@ -70,24 +45,25 @@ pub fn get_user_by_id(db, arg_1) {
     use invited_by_id <- decode.field(9, decode.optional(decode.int))
     use created_at <- decode.field(10, pog.timestamp_decoder())
     use updated_at <- decode.field(11, pog.timestamp_decoder())
-    decode.success(GetUserByIdRow(
-      id:,
-      username:,
-      email:,
-      password:,
-      rating_style:,
-      daily_streak_started:,
-      daily_streak_updated:,
-      daily_streak_length:,
-      daily_streak_longest:,
-      invited_by_id:,
-      created_at:,
-      updated_at:,
-    ))
+    decode.success(
+      GetUserByIdRow(
+        id:,
+        username:,
+        email:,
+        password:,
+        rating_style:,
+        daily_streak_started:,
+        daily_streak_updated:,
+        daily_streak_length:,
+        daily_streak_longest:,
+        invited_by_id:,
+        created_at:,
+        updated_at:,
+      ),
+    )
   }
 
-  let query =
-    "SELECT
+  let query = "SELECT
     *
 FROM
     \"user\"
@@ -100,6 +76,92 @@ WHERE
   |> pog.execute(db)
 }
 
+/// Runs the `create_session` query
+/// defined in `./src/squirrel/sql/create_session.sql`.
+///
+/// > 🐿️ This function was generated automatically using v2.1.0 of
+/// > the [squirrel package](https://github.com/giacomocavalieri/squirrel).
+///
+pub fn create_session(db, arg_1, arg_2, arg_3, arg_4, arg_5) {
+  let decoder = decode.map(decode.dynamic, fn(_) { Nil })
+
+  let query = "INSERT INTO
+    session (token, user_id, expiry, ip_address, user_agent)
+VALUES
+    ($1, $2, $3, $4, $5)"
+
+  pog.query(query)
+  |> pog.parameter(pog.text(arg_1))
+  |> pog.parameter(pog.int(arg_2))
+  |> pog.parameter(pog.timestamp(arg_3))
+  |> pog.parameter(pog.text(arg_4))
+  |> pog.parameter(pog.text(arg_5))
+  |> pog.returning(decoder)
+  |> pog.execute(db)
+}
+
+/// A row you get from running the `get_session_by_token` query
+/// defined in `./src/squirrel/sql/get_session_by_token.sql`.
+///
+/// > 🐿️ This type definition was generated automatically using v2.1.0 of the
+/// > [squirrel package](https://github.com/giacomocavalieri/squirrel).
+///
+pub type GetSessionByTokenRow {
+  GetSessionByTokenRow(
+    id: Int,
+    token: String,
+    user_id: Int,
+    expiry: Option(pog.Timestamp),
+    ip_address: String,
+    user_agent: String,
+    created_at: pog.Timestamp,
+    updated_at: pog.Timestamp,
+  )
+}
+
+/// Runs the `get_session_by_token` query
+/// defined in `./src/squirrel/sql/get_session_by_token.sql`.
+///
+/// > 🐿️ This function was generated automatically using v2.1.0 of
+/// > the [squirrel package](https://github.com/giacomocavalieri/squirrel).
+///
+pub fn get_session_by_token(db, arg_1) {
+  let decoder = {
+    use id <- decode.field(0, decode.int)
+    use token <- decode.field(1, decode.string)
+    use user_id <- decode.field(2, decode.int)
+    use expiry <- decode.field(3, decode.optional(pog.timestamp_decoder()))
+    use ip_address <- decode.field(4, decode.string)
+    use user_agent <- decode.field(5, decode.string)
+    use created_at <- decode.field(6, pog.timestamp_decoder())
+    use updated_at <- decode.field(7, pog.timestamp_decoder())
+    decode.success(
+      GetSessionByTokenRow(
+        id:,
+        token:,
+        user_id:,
+        expiry:,
+        ip_address:,
+        user_agent:,
+        created_at:,
+        updated_at:,
+      ),
+    )
+  }
+
+  let query = "SELECT
+    *
+FROM
+    session
+WHERE
+    token = $1"
+
+  pog.query(query)
+  |> pog.parameter(pog.text(arg_1))
+  |> pog.returning(decoder)
+  |> pog.execute(db)
+}
+
 /// A row you get from running the `get_user_entries_by_user_id` query
 /// defined in `./src/squirrel/sql/get_user_entries_by_user_id.sql`.
 ///
@@ -108,16 +170,30 @@ WHERE
 ///
 pub type GetUserEntriesByUserIdRow {
   GetUserEntriesByUserIdRow(
-    id: Int,
-    user_id: Int,
+    user_entry_id: Int,
+    user_entry_user_id: Int,
+    user_entry_entry_id: Int,
+    user_entry_rating: Int,
+    user_entry_notes: String,
+    user_entry_watched_at: Option(pog.Timestamp),
+    user_entry_status: UserEntryStatus,
+    user_entry_progress: Int,
+    user_entry_created_at: pog.Timestamp,
+    user_entry_updated_at: pog.Timestamp,
     entry_id: Int,
-    rating: Int,
-    notes: String,
-    watched_at: Option(pog.Timestamp),
-    status: UserEntryStatus,
-    progress: Int,
-    created_at: pog.Timestamp,
-    updated_at: pog.Timestamp,
+    entry_collection_id: Option(Int),
+    entry_category: EntryCategory,
+    entry_original_language_id: Int,
+    entry_poster_path: String,
+    entry_tagline: String,
+    entry_original_title: String,
+    entry_overview: String,
+    entry_backdrop_path: String,
+    entry_length: Int,
+    entry_created_at: pog.Timestamp,
+    entry_updated_at: pog.Timestamp,
+    entry_foreign_id: String,
+    entry_release_date: pog.Timestamp,
   )
 }
 
@@ -129,37 +205,95 @@ pub type GetUserEntriesByUserIdRow {
 ///
 pub fn get_user_entries_by_user_id(db, arg_1) {
   let decoder = {
-    use id <- decode.field(0, decode.int)
-    use user_id <- decode.field(1, decode.int)
-    use entry_id <- decode.field(2, decode.int)
-    use rating <- decode.field(3, decode.int)
-    use notes <- decode.field(4, decode.string)
-    use watched_at <- decode.field(5, decode.optional(pog.timestamp_decoder()))
-    use status <- decode.field(6, user_entry_status_decoder())
-    use progress <- decode.field(7, decode.int)
-    use created_at <- decode.field(8, pog.timestamp_decoder())
-    use updated_at <- decode.field(9, pog.timestamp_decoder())
-    decode.success(GetUserEntriesByUserIdRow(
-      id:,
-      user_id:,
-      entry_id:,
-      rating:,
-      notes:,
-      watched_at:,
-      status:,
-      progress:,
-      created_at:,
-      updated_at:,
-    ))
+    use user_entry_id <- decode.field(0, decode.int)
+    use user_entry_user_id <- decode.field(1, decode.int)
+    use user_entry_entry_id <- decode.field(2, decode.int)
+    use user_entry_rating <- decode.field(3, decode.int)
+    use user_entry_notes <- decode.field(4, decode.string)
+    use user_entry_watched_at <- decode.field(
+      5,
+      decode.optional(pog.timestamp_decoder()),
+    )
+    use user_entry_status <- decode.field(6, user_entry_status_decoder())
+    use user_entry_progress <- decode.field(7, decode.int)
+    use user_entry_created_at <- decode.field(8, pog.timestamp_decoder())
+    use user_entry_updated_at <- decode.field(9, pog.timestamp_decoder())
+    use entry_id <- decode.field(10, decode.int)
+    use entry_collection_id <- decode.field(11, decode.optional(decode.int))
+    use entry_category <- decode.field(12, entry_category_decoder())
+    use entry_original_language_id <- decode.field(13, decode.int)
+    use entry_poster_path <- decode.field(14, decode.string)
+    use entry_tagline <- decode.field(15, decode.string)
+    use entry_original_title <- decode.field(16, decode.string)
+    use entry_overview <- decode.field(17, decode.string)
+    use entry_backdrop_path <- decode.field(18, decode.string)
+    use entry_length <- decode.field(19, decode.int)
+    use entry_created_at <- decode.field(20, pog.timestamp_decoder())
+    use entry_updated_at <- decode.field(21, pog.timestamp_decoder())
+    use entry_foreign_id <- decode.field(22, decode.string)
+    use entry_release_date <- decode.field(23, pog.timestamp_decoder())
+    decode.success(
+      GetUserEntriesByUserIdRow(
+        user_entry_id:,
+        user_entry_user_id:,
+        user_entry_entry_id:,
+        user_entry_rating:,
+        user_entry_notes:,
+        user_entry_watched_at:,
+        user_entry_status:,
+        user_entry_progress:,
+        user_entry_created_at:,
+        user_entry_updated_at:,
+        entry_id:,
+        entry_collection_id:,
+        entry_category:,
+        entry_original_language_id:,
+        entry_poster_path:,
+        entry_tagline:,
+        entry_original_title:,
+        entry_overview:,
+        entry_backdrop_path:,
+        entry_length:,
+        entry_created_at:,
+        entry_updated_at:,
+        entry_foreign_id:,
+        entry_release_date:,
+      ),
+    )
   }
 
-  let query =
-    "SELECT
-    *
+  let query = "SELECT
+    user_entry.id AS \"user_entry_id\",
+    user_entry.user_id AS \"user_entry_user_id\",
+    user_entry.entry_id AS \"user_entry_entry_id\",
+    user_entry.rating AS \"user_entry_rating\",
+    user_entry.notes AS \"user_entry_notes\",
+    user_entry.watched_at AS \"user_entry_watched_at\",
+    user_entry.status AS \"user_entry_status\",
+    user_entry.progress AS \"user_entry_progress\",
+    user_entry.created_at AS \"user_entry_created_at\",
+    user_entry.updated_at AS \"user_entry_updated_at\",
+    \"entry\".id AS \"entry_id\",
+    \"entry\".collection_id AS \"entry_collection_id\",
+    \"entry\".category AS \"entry_category\",
+    \"entry\".original_language_id AS \"entry_original_language_id\",
+    \"entry\".poster_path AS \"entry_poster_path\",
+    \"entry\".tagline AS \"entry_tagline\",
+    \"entry\".original_title AS \"entry_original_title\",
+    \"entry\".overview AS \"entry_overview\",
+    \"entry\".backdrop_path AS \"entry_backdrop_path\",
+    \"entry\".\"length\" AS \"entry_length\",
+    \"entry\".created_at AS \"entry_created_at\",
+    \"entry\".updated_at AS \"entry_updated_at\",
+    \"entry\".foreign_id AS \"entry_foreign_id\",
+    \"entry\".release_date AS \"entry_release_date\"
 FROM
     user_entry
+    -- LEFT JOIN \"user\" ON \"user\".id = user_entry.id
+    -- LEFT JOIN \"collection\" ON \"collection\".id = entry.collection_id
+    INNER JOIN \"entry\" ON \"entry\".id = user_entry.entry_id
 WHERE
-    user_id = $1"
+    user_entry.user_id = $1"
 
   pog.query(query)
   |> pog.parameter(pog.int(arg_1))
@@ -210,24 +344,25 @@ pub fn get_user_by_email(db, arg_1) {
     use invited_by_id <- decode.field(9, decode.optional(decode.int))
     use created_at <- decode.field(10, pog.timestamp_decoder())
     use updated_at <- decode.field(11, pog.timestamp_decoder())
-    decode.success(GetUserByEmailRow(
-      id:,
-      username:,
-      email:,
-      password:,
-      rating_style:,
-      daily_streak_started:,
-      daily_streak_updated:,
-      daily_streak_length:,
-      daily_streak_longest:,
-      invited_by_id:,
-      created_at:,
-      updated_at:,
-    ))
+    decode.success(
+      GetUserByEmailRow(
+        id:,
+        username:,
+        email:,
+        password:,
+        rating_style:,
+        daily_streak_started:,
+        daily_streak_updated:,
+        daily_streak_length:,
+        daily_streak_longest:,
+        invited_by_id:,
+        created_at:,
+        updated_at:,
+      ),
+    )
   }
 
-  let query =
-    "SELECT
+  let query = "SELECT
     *
 FROM
     \"user\"
@@ -242,7 +377,26 @@ WHERE
 
 // --- Enums -------------------------------------------------------------------
 
-/// Corresponds to the Postgres `rating_style` enum.
+/// Corresponds to the Postgres `entry_category` enum.
+///
+/// > 🐿️ This type definition was generated automatically using v2.1.0 of the
+/// > [squirrel package](https://github.com/giacomocavalieri/squirrel).
+///
+pub type EntryCategory {
+  Book
+  Movie
+  Series
+}
+
+fn entry_category_decoder() {
+  use variant <- decode.then(decode.string)
+  case variant {
+    "book" -> decode.success(Book)
+    "movie" -> decode.success(Movie)
+    "series" -> decode.success(Series)
+    _ -> decode.failure(Book, "EntryCategory")
+  }
+}/// Corresponds to the Postgres `rating_style` enum.
 ///
 /// > 🐿️ This type definition was generated automatically using v2.1.0 of the
 /// > [squirrel package](https://github.com/giacomocavalieri/squirrel).
@@ -259,9 +413,7 @@ fn rating_style_decoder() {
     "stars" -> decode.success(Stars)
     _ -> decode.failure(Range, "RatingStyle")
   }
-}
-
-/// Corresponds to the Postgres `user_entry_status` enum.
+}/// Corresponds to the Postgres `user_entry_status` enum.
 ///
 /// > 🐿️ This type definition was generated automatically using v2.1.0 of the
 /// > [squirrel package](https://github.com/giacomocavalieri/squirrel).

@@ -1,3 +1,4 @@
+import client
 import client/components/button.{button}
 import client/components/input.{input}
 import dropdown_menu
@@ -66,9 +67,10 @@ fn update(model: Model, msg: Msg) -> #(Model, effect.Effect(Msg)) {
     UserUpdatedEmail(email) -> #(Model(..model, email:), effect.none())
     UserUpdatedPassword(password) -> #(Model(..model, password:), effect.none())
     ApiCreatedSession(response) -> #(
-      case response {
+      case response |> io.debug {
         Ok(res) -> {
           let assert response.SuccessResponse(..) = res
+          client.redirect("/dashboard")
           model
         }
 

@@ -22,18 +22,18 @@ pub fn login(req: Request) -> Response {
     use db_conn <- db.get_connection
     use login <- result.try(
       request.decode_login(json)
-      |> result.replace_error("Failed to decode body"),
+      |> result.replace_error("Body must contain email and password"),
     )
-    use pog.Returned(count, rows) <- result.try(
+    use pog.Returned(_, rows) <- result.try(
       sql.get_user_by_email(db_conn, login.email)
       |> result.replace_error("Couldn't get user by email from db"),
     )
 
-    // Fail if anything other than 1 user was returned
-    use <- bool.guard(count != 1, Error("Invalid email or password"))
+    // If list.first fails we know no user was found so we fail
     use user <- result.try(
       list.first(rows)
-      |> result.replace_error("Unreachable since we checked for >1 user above"),
+      |> io.debug
+      |> result.replace_error("Invalid email or password"),
     )
     use <- bool.guard(
       !beecrypt.verify(login.password, user.password),
@@ -64,7 +64,7 @@ pub fn login(req: Request) -> Response {
       |> result.unwrap("No user agent found")
 
     use _ <- result.try(
-      sql.create_user_session(
+      sql.create_session(
         db_conn,
         token,
         user.id,

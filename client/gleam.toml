@@ -21,6 +21,7 @@ plinth = ">= 0.5.6 and < 1.0.0"
 popcicle = ">= 1.1.0 and < 2.0.0"
 shared = { path = "../shared" }
 rsvp = ">= 1.0.1 and < 2.0.0"
+birl = ">= 1.8.0 and < 2.0.0"
 
 [dev-dependencies]
 gleeunit = ">= 1.0.0 and < 2.0.0"

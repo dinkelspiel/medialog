@@ -14,7 +14,8 @@ pub fn main() {
   let res = {
     io.println("Compiling clients..." |> ansi.blue())
     use _ <- result.try(
-      gleamyshell.execute("rm", in: ".", args: ["-rf ./build/routes"])
+      gleamyshell.execute("rm", in: ".", args: ["-rf", "./build/routes"])
+      |> io.debug
       |> result.replace_error("Failed to remove ./build/routes"),
     )
     use build_result <- result.try(
@@ -48,7 +49,7 @@ pub fn main() {
           //"--minify",
           "--outfile=./build/routes/" <> route,
         ])
-
+      |> io.debug
       let assert Ok(css_route) = list.first(string.split(route, "."))
       let css_route = css_route <> ".css"
 
@@ -60,6 +61,7 @@ pub fn main() {
           "--content=./build/routes/" <> route,
           "--output=./build/routes/" <> css_route,
         ])
+      |> io.debug
     })
 
     Ok("Successfully compiled client")

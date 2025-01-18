@@ -1,5 +1,8 @@
+import hermodr/handler
 import server/routes/auth/login
-import server/routes/user/entries
+
+// import server/routes/user/entries
+import hermodr/messages/user_entries
 
 import wisp.{type Request, type Response}
 
@@ -20,7 +23,8 @@ pub fn router(path: List(String)) {
     ["auth", "signup"] -> Client("auth/signup.gleam")
 
     ["api", "auth", "login"] -> Server(login.login)
-    ["api", "user", "entries"] -> Server(entries.entries)
+    ["api", "user", "entries"] ->
+      Server(user_entries.get |> handler.into_handler())
     _ -> NotFound
   }
   |> Router(

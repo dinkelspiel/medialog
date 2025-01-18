@@ -1,5 +1,9 @@
 import client/components/button.{Ghost, Primary, button}
 import dropdown_menu
+import gleam/http.{Get}
+import gleam/http/request
+import gleam/json
+import gleam/option
 import lucide_lustre.{ellipsis, house, library, panel_left, users_round, x}
 import lustre
 import lustre/attribute.{attribute, class}
@@ -8,6 +12,9 @@ import lustre/element.{type Element}
 import lustre/element/html.{div, text}
 import lustre/event
 import popcicle
+import rsvp
+import shared/api/response
+import shared/database
 
 pub fn main() {
   let app = lustre.application(init, update, view)
@@ -17,23 +24,42 @@ pub fn main() {
 }
 
 type Model {
-  Model(sidebar_open: Bool)
+  Model(
+    sidebar_open: Bool,
+    user_entries: List(#(database.UserEntry, database.Entry)),
+  )
 }
 
 fn init(_: Int) -> #(Model, effect.Effect(Msg)) {
-  #(Model(sidebar_open: True), effect.none())
+  #(
+    Model(sidebar_open: True, user_entries: []),
+    rsvp.get(
+      "/api/users/entries",
+      rsvp.expect_json(response.decode_api_response(), ApiReturnedUserEntries),
+    ),
+  )
 }
 
 pub opaque type Msg {
   UserToggledSidebar
+  ApiReturnedUserEntries(Result(response.ApiResponse, rsvp.Error))
 }
 
 fn update(model: Model, msg: Msg) -> #(Model, effect.Effect(Msg)) {
   case msg {
     UserToggledSidebar -> #(
-      Model(sidebar_open: !model.sidebar_open),
+      Model(..model, sidebar_open: !model.sidebar_open),
       effect.none(),
     )
+    ApiReturnedUserEntries(response) ->
+      case response {
+        Ok(response.SuccessResponse(
+          _,
+          _,
+          option.Some(response.GetUserEntriesData(user_entries)),
+        )) -> #(Model(..model, user_entries:), effect.none())
+        _ -> #(model, effect.none())
+      }
   }
 }
 
