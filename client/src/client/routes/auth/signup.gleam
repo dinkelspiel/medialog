@@ -72,7 +72,7 @@ fn view(model: Model) -> Element(Msg) {
         h1([class("font-bold text-[22px] tracking-[-0.4px]")], [
           text("Sign up to Medialog"),
         ]),
-        span([class("text-zinc-400 text-sm tracking-[-0.4px]")], [
+        span([class("text-zinc-500 text-sm tracking-[-0.4px]")], [
           text("Welcome to "),
           html.i([], [text("your")]),
           text(" website for rating Movies, Books, and TV Shows"),
@@ -98,7 +98,7 @@ fn view(model: Model) -> Element(Msg) {
         ]),
         span([], [
           span([class("text-sm tracking-[-0.4px]")], [
-            span([class("text-zinc-400")], [text("Already have an account? ")]),
+            span([class("text-zinc-500")], [text("Already have an account? ")]),
             a([class("text-primary"), href("/auth/login")], [text("Login")]),
           ]),
         ]),

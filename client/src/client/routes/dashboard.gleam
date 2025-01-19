@@ -1,9 +1,14 @@
+import client
 import client/components/button.{Ghost, Primary, button}
 import dropdown_menu
 import gleam/http.{Get}
 import gleam/http/request
+import gleam/io
 import gleam/json
+import gleam/list
 import gleam/option
+import gleam/order
+import hermodr/messages/user_entries
 import lucide_lustre.{ellipsis, house, library, panel_left, users_round, x}
 import lustre
 import lustre/attribute.{attribute, class}
@@ -13,6 +18,7 @@ import lustre/element/html.{div, text}
 import lustre/event
 import popcicle
 import rsvp
+import shared/api
 import shared/api/response
 import shared/database
 
@@ -24,25 +30,21 @@ pub fn main() {
 }
 
 type Model {
-  Model(
-    sidebar_open: Bool,
-    user_entries: List(#(database.UserEntry, database.Entry)),
-  )
+  Model(sidebar_open: Bool, user_entries: List(api.UserEntryEntry))
 }
 
 fn init(_: Int) -> #(Model, effect.Effect(Msg)) {
   #(
     Model(sidebar_open: True, user_entries: []),
-    rsvp.get(
-      "/api/users/entries",
-      rsvp.expect_json(response.decode_api_response(), ApiReturnedUserEntries),
-    ),
+    user_entries.get(ApiReturnedUserEntries),
   )
 }
 
 pub opaque type Msg {
   UserToggledSidebar
-  ApiReturnedUserEntries(Result(response.ApiResponse, rsvp.Error))
+  ApiReturnedUserEntries(
+    Result(user_entries.HermodrResponse(List(api.UserEntryEntry)), rsvp.Error),
+  )
 }
 
 fn update(model: Model, msg: Msg) -> #(Model, effect.Effect(Msg)) {
@@ -53,12 +55,15 @@ fn update(model: Model, msg: Msg) -> #(Model, effect.Effect(Msg)) {
     )
     ApiReturnedUserEntries(response) ->
       case response {
-        Ok(response.SuccessResponse(
-          _,
-          _,
-          option.Some(response.GetUserEntriesData(user_entries)),
-        )) -> #(Model(..model, user_entries:), effect.none())
-        _ -> #(model, effect.none())
+        Ok(user_entries.SuccessResponse(_, data)) -> #(
+          Model(..model, user_entries: data),
+          effect.none(),
+        )
+        _ -> {
+          let _ = io.debug(response)
+          client.redirect("/auth/login")
+          #(model, effect.none())
+        }
       }
   }
 }
@@ -201,69 +206,84 @@ fn view(model: Model) -> Element(Msg) {
             div([class("font-[525] text-xs text-zinc-400")], [text("My Media")]),
           ]),
         ]),
-        div([class("grid grid-cols-[1fr,295px] divide-x divide-x-zinc-200")], [
-          div([class("w-full flex justify-center")], [
-            div([class("grid grid-cols-4 gap-3 p-3 w-fit h-fit")], [
-              popcicle.popcicle(
-                div([class("w-[148px] h-[223px] rounded-md bg-red-500")], []),
-                popcicle.Custom(0, 0),
-                div(
-                  [
-                    class(
-                      "w-[100dvw] fixed top-0 left-0 h-[100dvh] bg-[#000000cc]",
-                    ),
-                  ],
-                  [
+        div(
+          [
+            class(
+              "grid grid-cols-[1fr,295px] divide-x divide-x-zinc-200 overflow-scroll h-[calc(100vh-58px)]",
+            ),
+          ],
+          [
+            div([class("w-full flex justify-center")], [
+              div(
+                [class("grid grid-cols-4 gap-3 p-3 w-fit h-fit")],
+                model.user_entries
+                  |> list.sort(fn(a, b) {
+                    case
+                      a.user_entry.rating < b.user_entry.rating,
+                      a.user_entry.rating == b.user_entry.rating
+                    {
+                      _, True -> order.Eq
+                      True, _ -> order.Lt
+                      False, _ -> order.Gt
+                    }
+                  })
+                  |> list.reverse
+                  |> list.map(fn(user_entry) {
                     div(
                       [
                         class(
-                          "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-white p-6 shadow-lg duration-200 sm:rounded-lg sm:max-w-[425px]",
+                          "w-[148px] h-[223px] rounded-md bg-cover border border-zinc-200 shadow-sm",
                         ),
+                        attribute.style([
+                          #(
+                            "background-image",
+                            "url(" <> user_entry.entry.poster_path <> ")",
+                          ),
+                        ]),
                       ],
-                      [
-                        html.button(
-                          [
-                            class(
-                              "absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none",
-                            ),
-                          ],
-                          [x([popcicle.close_on_click(True), class("size-4")])],
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-                popcicle.Click,
-              ),
-              popcicle.popcicle(
-                div([class("w-[148px] h-[223px] rounded-md bg-red-500")], []),
-                popcicle.BottomCenter,
-                text("Test"),
-                popcicle.Click,
-              ),
-              popcicle.popcicle(
-                div([class("w-[148px] h-[223px] rounded-md bg-red-500")], []),
-                popcicle.BottomCenter,
-                text("Test"),
-                popcicle.Click,
-              ),
-              popcicle.popcicle(
-                div([class("w-[148px] h-[223px] rounded-md bg-red-500")], []),
-                popcicle.BottomCenter,
-                text("Test"),
-                popcicle.Click,
-              ),
-              popcicle.popcicle(
-                div([class("w-[148px] h-[223px] rounded-md bg-red-500")], []),
-                popcicle.BottomCenter,
-                text("Test"),
-                popcicle.Click,
+                      [],
+                    )
+                  }),
               ),
             ]),
-          ]),
-          div([class("p-3")], []),
-        ]),
+            div([class("p-3")], []),
+          ],
+        ),
       ]),
+      popcicle.popcicle(
+        div(
+          [
+            class(
+              "w-[148px] h-[223px] rounded-md bg-red-500 border border-zinc-200 shadow-sm",
+            ),
+          ],
+          [],
+        ),
+        popcicle.Custom(0, 0),
+        div([class("w-[100dvw] fixed top-0 left-0 h-[100dvh] bg-[#000000cc]")], [
+          div(
+            [
+              class(
+                "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-white p-6 shadow-lg duration-200 sm:rounded-lg sm:max-w-[425px]",
+              ),
+            ],
+            [
+              html.button(
+                [
+                  class(
+                    "absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none",
+                  ),
+                ],
+                [
+                  x([popcicle.close_on_click(True), class("size-4")]),
+                  div([class("sr-only")], [text("Close dialog")]),
+                ],
+              ),
+            ],
+          ),
+        ]),
+        popcicle.Click,
+      ),
     ],
   )
 }

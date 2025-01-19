@@ -1,3 +1,4 @@
+import gleam/dynamic/decode
 import hermodr/handler
 import server/routes/auth/login
 
@@ -23,8 +24,11 @@ pub fn router(path: List(String)) {
     ["auth", "signup"] -> Client("auth/signup.gleam")
 
     ["api", "auth", "login"] -> Server(login.login)
-    ["api", "user", "entries"] ->
-      Server(user_entries.get |> handler.into_handler())
+    ["api", "users", "entries"] ->
+      Server(
+        user_entries.get
+        |> handler.into_handler(user_entries.get_encoder),
+      )
     _ -> NotFound
   }
   |> Router(

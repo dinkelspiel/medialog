@@ -46,10 +46,10 @@ pub fn main() {
         gleamyshell.execute("esbuild", in: ".", args: [
           file,
           "--bundle",
-          //"--minify",
+          "--minify",
           "--outfile=./build/routes/" <> route,
         ])
-      |> io.debug
+        |> io.debug
       let assert Ok(css_route) = list.first(string.split(route, "."))
       let css_route = css_route <> ".css"
 
@@ -61,7 +61,7 @@ pub fn main() {
           "--content=./build/routes/" <> route,
           "--output=./build/routes/" <> css_route,
         ])
-      |> io.debug
+        |> io.debug
     })
 
     Ok("Successfully compiled client")

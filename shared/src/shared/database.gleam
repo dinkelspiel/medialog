@@ -1,7 +1,6 @@
 import birl
 import gleam/dynamic
 import gleam/dynamic/decode
-import gleam/float
 import gleam/int
 import gleam/json
 import gleam/list
@@ -11,55 +10,6 @@ import gleam/string_tree
 import pog
 import squirrel/sql
 
-pub fn date_decoder() -> decode.Decoder(Date) {
-  use year <- decode.field(0, decode.int)
-  use month <- decode.field(1, decode.int)
-  use day <- decode.field(2, decode.int)
-  decode.success(Date(year:, month:, day:))
-}
-
-pub fn time_decoder() -> decode.Decoder(Time) {
-  use hours <- decode.field(0, decode.int)
-  use minutes <- decode.field(1, decode.int)
-  use #(seconds, microseconds) <- decode.field(2, seconds_decoder())
-  decode.success(Time(hours:, minutes:, seconds:, microseconds:))
-}
-
-fn seconds_decoder() -> decode.Decoder(#(Int, Int)) {
-  let int = {
-    decode.int
-    |> decode.map(fn(i) { #(i, 0) })
-  }
-  let float = {
-    decode.float
-    |> decode.map(fn(f) {
-      let floored = float.floor(f)
-      let seconds = float.round(floored)
-      let microseconds = float.round({ f -. floored } *. 1_000_000.0)
-      #(seconds, microseconds)
-    })
-  }
-  decode.one_of(int, [float])
-}
-
-pub type Time {
-  Time(hours: Int, minutes: Int, seconds: Int, microseconds: Int)
-}
-
-pub type Date {
-  Date(year: Int, month: Int, day: Int)
-}
-
-pub type Timestamp {
-  Timestamp(date: Date, time: Time)
-}
-
-pub fn timestamp_decoder() -> decode.Decoder(Timestamp) {
-  use date <- decode.field(0, date_decoder())
-  use time <- decode.field(1, time_decoder())
-  decode.success(Timestamp(date, time))
-}
-
 pub type UserEntry {
   UserEntry(
     id: Int,
@@ -67,11 +17,11 @@ pub type UserEntry {
     entry_id: Int,
     rating: Int,
     notes: String,
-    watched_at: Option(Timestamp),
+    watched_at: Option(birl.Time),
     status: sql.UserEntryStatus,
     progress: Int,
-    created_at: Timestamp,
-    updated_at: Timestamp,
+    created_at: birl.Time,
+    updated_at: birl.Time,
   )
 }
 
@@ -87,10 +37,10 @@ pub type Entry {
     overview: String,
     backdrop_path: String,
     length: Int,
-    created_at: Timestamp,
-    updated_at: Timestamp,
+    created_at: birl.Time,
+    updated_at: birl.Time,
     foreign_id: String,
-    release_date: Timestamp,
+    release_date: birl.Time,
   )
 }
 
@@ -202,15 +152,13 @@ pub fn user_entry_encoder(user_entry: UserEntry) -> json.Json {
         #("progress", json.int(user_entry.progress)),
         #(
           "created_at",
-          timestamp_to_birl(user_entry.created_at)
-            |> result.unwrap(birl.now())
+          user_entry.created_at
             |> birl.to_unix
             |> json.int,
         ),
         #(
           "updated_at",
-          timestamp_to_birl(user_entry.updated_at)
-            |> result.unwrap(birl.now())
+          user_entry.updated_at
             |> birl.to_unix
             |> json.int,
         ),
@@ -219,8 +167,7 @@ pub fn user_entry_encoder(user_entry: UserEntry) -> json.Json {
         option.Some(w) -> [
           #(
             "watched_at",
-            timestamp_to_birl(w)
-              |> result.unwrap(birl.now())
+            w
               |> birl.to_unix
               |> json.int,
           ),
@@ -248,8 +195,6 @@ pub fn entry_encoder(entry: Entry) -> json.Json {
           "created_at",
           json.int(
             entry.created_at
-            |> timestamp_to_birl
-            |> result.unwrap(birl.now())
             |> birl.to_unix,
           ),
         ),
@@ -257,8 +202,6 @@ pub fn entry_encoder(entry: Entry) -> json.Json {
           "updated_at",
           json.int(
             entry.updated_at
-            |> timestamp_to_birl
-            |> result.unwrap(birl.now())
             |> birl.to_unix,
           ),
         ),
@@ -267,8 +210,6 @@ pub fn entry_encoder(entry: Entry) -> json.Json {
           "release_date",
           json.int(
             entry.release_date
-            |> timestamp_to_birl
-            |> result.unwrap(birl.now())
             |> birl.to_unix,
           ),
         ),
@@ -299,7 +240,7 @@ pub fn entry_category_encoder(a: sql.EntryCategory) {
   }
 }
 
-pub fn timestamp_to_birl(a: Timestamp) {
+pub fn pog_timestamp_to_timestamp(a: pog.Timestamp) {
   birl.parse(
     string_tree.new()
     |> string_tree.append(a.date.year |> int.to_string)
@@ -316,18 +257,7 @@ pub fn timestamp_to_birl(a: Timestamp) {
     |> string_tree.append("Z")
     |> string_tree.to_string,
   )
-}
-
-pub fn pog_timestamp_to_timestamp(a: pog.Timestamp) {
-  Timestamp(a.date |> pog_date_to_date, a.time |> pog_time_to_time)
-}
-
-pub fn pog_date_to_date(a: pog.Date) {
-  Date(a.year, a.month, a.day)
-}
-
-pub fn pog_time_to_time(a: pog.Time) {
-  Time(a.hours, a.minutes, a.seconds, a.microseconds)
+  |> result.unwrap(birl.now())
 }
 
 pub fn get_user_entries_by_user_id_to_user_entry(
@@ -367,4 +297,68 @@ pub fn get_user_entries_by_user_id_to_entry(
     row.entry_foreign_id,
     row.entry_release_date |> pog_timestamp_to_timestamp,
   )
+}
+
+pub fn user_entry_decoder() {
+  use id <- decode.field("id", decode.int)
+  use user_id <- decode.field("user_id", decode.int)
+  use entry_id <- decode.field("entry_id", decode.int)
+  use rating <- decode.field("rating", decode.int)
+  use notes <- decode.field("notes", decode.string)
+  use watched_at <- decode.optional_field("watched_at", -1, decode.int)
+  use status <- decode.field("status", user_entry_status_decoder())
+  use progress <- decode.field("progress", decode.int)
+  use created_at <- decode.field("created_at", decode.int)
+  use updated_at <- decode.field("updated_at", decode.int)
+  decode.success(UserEntry(
+    id:,
+    user_id:,
+    entry_id:,
+    rating:,
+    notes:,
+    watched_at: case watched_at {
+      -1 -> option.None
+      _ -> option.Some(birl.from_unix(watched_at))
+    },
+    status:,
+    progress:,
+    created_at: birl.from_unix(created_at),
+    updated_at: birl.from_unix(updated_at),
+  ))
+}
+
+pub fn entry_decoder() {
+  use id <- decode.field("id", decode.int)
+  use collection_id <- decode.optional_field("collection_id", -1, decode.int)
+  use category <- decode.field("category", entry_category_decoder())
+  use original_language_id <- decode.field("original_language_id", decode.int)
+  use poster_path <- decode.field("poster_path", decode.string)
+  use tagline <- decode.field("tagline", decode.string)
+  use original_title <- decode.field("original_title", decode.string)
+  use overview <- decode.field("overview", decode.string)
+  use backdrop_path <- decode.field("backdrop_path", decode.string)
+  use length <- decode.field("length", decode.int)
+  use created_at <- decode.field("created_at", decode.int)
+  use updated_at <- decode.field("updated_at", decode.int)
+  use foreign_id <- decode.field("foreign_id", decode.string)
+  use release_date <- decode.field("release_date", decode.int)
+  decode.success(Entry(
+    id:,
+    collection_id: case collection_id {
+      -1 -> option.None
+      _ -> option.Some(collection_id)
+    },
+    category:,
+    original_language_id:,
+    poster_path:,
+    tagline:,
+    original_title:,
+    overview:,
+    backdrop_path:,
+    length:,
+    created_at: birl.from_unix(created_at),
+    updated_at: birl.from_unix(updated_at),
+    foreign_id:,
+    release_date: birl.from_unix(release_date),
+  ))
 }

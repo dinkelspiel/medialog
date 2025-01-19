@@ -1,1 +1,1 @@
-DB_HOST=localhost DB_PASSWORD=medialog DB_PORT=5432 DB_USER=medialog DB_NAME=medialog watchexec --verbose --wrap-process=session --stop-signal SIGTERM --debounce 500ms -w=../client/src -w=./src -r -e=gleam -- gleam run
+DB_HOST=localhost DB_PASSWORD=medialog DB_PORT=5432 DB_USER=medialog DB_NAME=medialog watchexec --verbose --wrap-process=session --stop-signal SIGTERM --debounce 500ms -w=../client/src -w=./src -w=../shared/src -r -e=gleam -- gleam run
