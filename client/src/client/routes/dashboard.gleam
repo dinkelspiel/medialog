@@ -30,18 +30,19 @@ pub fn main() {
 }
 
 type Model {
-  Model(sidebar_open: Bool, user_entries: List(api.UserEntryEntry))
+  Model(sidebar_open: Bool, user_entries: List(api.UserEntryEntry), edit_media_open: Bool, edit_media: option.Option(api.UserEntryEntry))
 }
 
 fn init(_: Int) -> #(Model, effect.Effect(Msg)) {
   #(
-    Model(sidebar_open: True, user_entries: []),
+    Model(sidebar_open: True, user_entries: [], edit_media_open: False, edit_media: option.None),
     user_entries.get(ApiReturnedUserEntries),
   )
 }
 
 pub opaque type Msg {
   UserToggledSidebar
+  UserUpdatedEditMediaOpen(Bool, option.Option(api.UserEntryEntry))
   ApiReturnedUserEntries(
     Result(user_entries.HermodrResponse(List(api.UserEntryEntry)), rsvp.Error),
   )
@@ -52,6 +53,10 @@ fn update(model: Model, msg: Msg) -> #(Model, effect.Effect(Msg)) {
     UserToggledSidebar -> #(
       Model(..model, sidebar_open: !model.sidebar_open),
       effect.none(),
+    )
+    UserUpdatedEditMediaOpen(open, uee) -> #(
+      Model(..model, edit_media_open: open, edit_media: uee),
+      effect.none()
     )
     ApiReturnedUserEntries(response) ->
       case response {
@@ -240,6 +245,7 @@ fn view(model: Model) -> Element(Msg) {
                             "url(" <> user_entry.entry.poster_path <> ")",
                           ),
                         ]),
+                        event.on_click(UserUpdatedEditMediaOpen(True, option.Some(user_entry)))
                       ],
                       [],
                     )
@@ -250,17 +256,17 @@ fn view(model: Model) -> Element(Msg) {
           ],
         ),
       ]),
-      popcicle.popcicle(
-        div(
-          [
-            class(
-              "w-[148px] h-[223px] rounded-md bg-red-500 border border-zinc-200 shadow-sm",
-            ),
-          ],
-          [],
-        ),
-        popcicle.Custom(0, 0),
-        div([class("w-[100dvw] fixed top-0 left-0 h-[100dvh] bg-[#000000cc]")], [
+      div(
+        [
+          class(
+            "w-[100dvw] fixed top-0 left-0 h-[100dvh] bg-[#000000cc] duration-200 transition-opacity "
+            <> case model.edit_media_open {
+              True -> "opacity-100"
+              False -> "pointer-events-none opacity-0"
+            },
+          ),
+        ],
+        [
           div(
             [
               class(
@@ -273,6 +279,7 @@ fn view(model: Model) -> Element(Msg) {
                   class(
                     "absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none",
                   ),
+                  event.on_click(UserUpdatedEditMediaOpen(False, option.None))
                 ],
                 [
                   x([popcicle.close_on_click(True), class("size-4")]),
@@ -281,8 +288,7 @@ fn view(model: Model) -> Element(Msg) {
               ),
             ],
           ),
-        ]),
-        popcicle.Click,
+        ],
       ),
     ],
   )

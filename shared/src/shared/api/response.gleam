@@ -21,10 +21,6 @@ pub fn optional_string_decoder() -> decode.Decoder(option.Option(String)) {
   })
 }
 
-pub fn decode_api_data() {
-  todo
-}
-
 pub fn decode_api_response() {
   use message <- decode.optional_field(
     "message",
@@ -36,7 +32,6 @@ pub fn decode_api_response() {
     option.None,
     optional_string_decoder(),
   )
-  use data <- decode.optional_field("data", option.None, decode_api_data())
 
   case message {
     option.Some(message) ->
