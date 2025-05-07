@@ -60,7 +60,7 @@ export const ProfileHeader = ({
 
   return (
     <Header
-      title={
+      titleComponent={
         authUser.username === profileUser.username
           ? 'Your profile'
           : `${profileUser.username}'s profile`
