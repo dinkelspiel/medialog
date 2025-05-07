@@ -1,3 +1,5 @@
+'use client';
+
 import { cn } from '../lib/utils';
 import React, { ReactNode } from 'react';
 import { Button } from './ui/button';
@@ -15,7 +17,7 @@ export const Header = ({
   sidebarContent,
   ...props
 }: React.HTMLAttributes<HTMLDivElement> & {
-  title: string;
+  title: ReactNode;
   sidebarContent: ReactNode;
 }) => {
   const user = useAuthUser();

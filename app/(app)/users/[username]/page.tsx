@@ -222,10 +222,10 @@ const Profile = async ({ params }: { params: { username: string } }) => {
   const diary = await getUserDiary(profileUser.id);
 
   return (
-    <div className="grid grid-rows-[max-content,1fr] gap-4 pb-8 2xl:grid-rows-[73px,1fr]">
+    <div className="grid h-screen grid-rows-[max-content,1fr] gap-4 overflow-y-scroll pb-8 2xl:grid-rows-[73px,1fr]">
       <ProfileHeader user={user} profileUser={profileUser as any} />
       <div className="col-span-2 mx-auto">
-        <div className="py-2">
+        <div className="block py-2 lg:hidden">
           <Stats user={user} profileUser={profileUser as any} />
         </div>
         <div className="grid w-fit grid-cols-1 gap-16 min-[1330px]:grid-cols-[1fr,250px]">
