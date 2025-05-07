@@ -2,6 +2,18 @@
 @tailwind components;
 @tailwind utilities;
 
+@font-face {
+  font-family: 'Geist';
+  src: url('/Geist[wght].ttf') format('truetype');
+  font-weight: 100 200 300 400 500 600 700 800 900; /* Adjust range based on font capabilities */
+  font-style: normal;
+  font-display: swap;
+}
+
+.font-geist {
+  font-family: 'Geist', sans-serif;
+}
+
 .scrollable-grid-item {
   max-height: calc(100vh - 1.5rem);
   /* Adjust as needed based on your layout */

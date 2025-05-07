@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import UserDisplay from '@/components/userDisplay';
 import { validateSessionToken } from '@/server/auth/validateSession';
 import { Home, Plus, UsersRound } from 'lucide-react';
+import { revalidateTag } from 'next/cache';
 import { redirect } from 'next/navigation';
 import { ReactNode } from 'react';
 import { Toaster } from 'sonner';
@@ -30,7 +31,7 @@ const Layout = async ({ children }: { children: ReactNode }) => {
           headerProps={{ className: '[&>svg]:size-7 p-0' }}
         >
           <SidebarButton href="/dashboard">
-            <Home className="size-3" />
+            <Home className="size-4 stroke-slate-600" />
             Home
           </SidebarButton>
           <SidebarButton href="/community">
@@ -44,8 +45,8 @@ const Layout = async ({ children }: { children: ReactNode }) => {
                 : 'dev'}
             </div>
             <AddLog>
-              <Button className="hidden lg:flex">
-                <Plus />
+              <Button className="hidden lg:flex" size="sm" variant={'outline'}>
+                <Plus className="size-4 stroke-slate-600" />
                 Log Media
               </Button>
             </AddLog>

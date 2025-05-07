@@ -3,7 +3,7 @@
 import { cn } from '../lib/utils';
 import React, { ReactNode, useState } from 'react';
 import Link from 'next/link';
-import { Menu } from 'lucide-react';
+import { Library, Menu } from 'lucide-react';
 import { Sheet, SheetContent } from './ui/sheet';
 import { Button } from './ui/button';
 import { usePathname } from 'next/navigation';
@@ -22,31 +22,22 @@ export const Sidebar = ({
 
   return (
     <div
-      id="sidebar"
       className={cn(
-        `sticky top-0 z-40 h-auto w-full transition-transform lg:h-[100dvh]`,
-        className
+        'sticky top-0 flex h-[100dvh] w-0 flex-col overflow-hidden border-r border-r-slate-200 bg-slate-50 p-0 py-3 transition-all duration-200',
+        {
+          'w-[250px] px-3': true, //open,
+        }
       )}
-      {...props}
-      aria-label="Sidebar"
     >
-      <div className="flex h-[75px] flex-col justify-center overflow-y-auto border-b border-e border-gray-300 bg-neutral-100 px-3 py-4 shadow-gray-200 dark:border-slate-700 dark:bg-slate-900 lg:h-full lg:justify-start lg:border-b-0 lg:shadow-md lg:shadow-gray-300">
-        <SidebarHeader {...headerProps}>
-          {header}
-          <button className="flex justify-end px-2 lg:hidden">
-            <div className="sr-only">Öppna meny</div>
-            <Menu onClick={() => setSheetOpen(true)} className="h-5 w-5" />
-          </button>
-        </SidebarHeader>
-        <ul className="hidden h-full flex-col space-y-2 text-sm font-medium lg:flex">
-          {children}
-        </ul>
-        <Sheet open={sheetOpen} onOpenChange={setSheetOpen}>
-          <SheetContent className="flex list-none flex-col gap-2 bg-neutral-100 pt-12">
-            {children}
-          </SheetContent>
-        </Sheet>
+      <div className="flex h-[52px] w-[250px] items-center gap-3 border-b border-dashed border-b-slate-200 pb-3">
+        <div className="flex size-[40px] items-center justify-center rounded-lg border border-slate-200 p-1 shadow-sm">
+          <div className="flex h-full w-full items-center justify-center rounded-[4px] bg-slate-900">
+            <Library className="flex size-4 items-center justify-center stroke-white" />
+          </div>
+        </div>
+        <div className="text-sm font-medium">Medialog</div>
       </div>
+      <ul className="box-border flex h-full flex-col pt-3">{children}</ul>
     </div>
   );
 };
@@ -91,7 +82,7 @@ export const SidebarFooter = ({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
-    className={cn(`flex flex-1 flex-col justify-end gap-2`, className)}
+    className={cn(`flex h-full flex-col justify-end gap-2`, className)}
     {...props}
   >
     {children}
@@ -108,25 +99,34 @@ const ClientSidebarButton = ({
   href: string;
   selectedVariant?: string;
 }) => {
-  const pathname = usePathname();
+  const path = usePathname();
 
   return (
+    // <Button
+    //   variant={
+    //     pathname.endsWith(href)
+    //       ? ((selectedVariant as any) ?? 'default')
+    //       : 'ghost'
+    //   }
+    //   className={cn(
+    //     `w-full select-none justify-start`,
+    //     {
+    //       'text-white': pathname.endsWith(href),
+    //       'text-muted-foreground': !pathname.endsWith(href),
+    //     },
+    //     className
+    //   )}
+    //   tabIndex={-1}
+    //   {...props}
+    // >
+    //   {children}
+    // </Button>
     <Button
-      variant={
-        pathname.endsWith(href)
-          ? (selectedVariant as any) ?? 'default'
-          : 'ghost'
-      }
-      className={cn(
-        `w-full select-none justify-start`,
-        {
-          'text-white': pathname.endsWith(href),
-          'text-muted-foreground': !pathname.endsWith(href),
-        },
-        className
-      )}
-      tabIndex={-1}
-      {...props}
+      variant={path.includes(href ?? '') ? 'outline' : 'ghost'}
+      size={'sm'}
+      className={cn('w-full justify-start gap-3', {
+        'text-slate-600': !path.includes(href ?? ''),
+      })}
     >
       {children}
     </Button>

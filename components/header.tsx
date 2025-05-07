@@ -1,20 +1,35 @@
 import { cn } from '../lib/utils';
 import React from 'react';
+import { Button } from './ui/button';
+import { PanelLeft, Settings, UserRound } from 'lucide-react';
 
 export const Header = ({
   className,
+  title,
   children,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) => {
+}: React.HTMLAttributes<HTMLDivElement> & { title: string }) => {
   return (
-    <div
-      className={cn(
-        'sticky top-[75px] z-10 flex flex-row border-b border-b-gray-200 bg-white px-4 py-3 lg:top-0',
-        className
-      )}
-      {...props}
-    >
+    <div className="sticky top-0 z-10 flex h-16 items-center justify-between gap-3 border-b border-b-slate-200 bg-slate-50 p-3">
+      <div className="flex items-center gap-3">
+        <Button
+          size={'icon'}
+          variant={'ghost'}
+          onClick={() => 'setOpen(!open)'}
+        >
+          <PanelLeft className="stroke-slate-600" />
+        </Button>
+        <div className="text-sm font-medium text-slate-600">{title}</div>
+      </div>
       {children}
+      <div className="flex items-center gap-3">
+        <Button size={'icon'} variant={'ghost'}>
+          <Settings className="stroke-slate-600" />
+        </Button>
+        <Button variant={'outline'}>
+          <UserRound className="size-4" /> {'Test'}
+        </Button>
+      </div>
     </div>
   );
 };
@@ -25,7 +40,10 @@ export const HeaderHeader = ({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => {
   return (
-    <div className={cn('flex w-full flex-col xl:w-max', className)} {...props}>
+    <div className={cn('flex items-center gap-3', className)} {...props}>
+      <Button size={'icon'} variant={'ghost'} onClick={() => 'setOpen(!open)'}>
+        <PanelLeft className="stroke-slate-600" />
+      </Button>
       {children}
     </div>
   );
@@ -38,10 +56,7 @@ export const HeaderTitle = ({
 }: React.HTMLAttributes<HTMLDivElement>) => {
   return (
     <div
-      className={cn(
-        'w-full scroll-m-20 text-2xl font-semibold tracking-tight xl:w-max',
-        className
-      )}
+      className={cn('text-sm font-medium text-slate-600', className)}
       {...props}
     >
       {children}
