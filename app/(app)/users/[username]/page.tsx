@@ -12,6 +12,7 @@ import { getDailyStreak } from '@/server/user/user';
 import { getUserDiary } from './_components/diary';
 import { Sheet, SheetTrigger } from '@/components/ui/sheet';
 import { Stats } from './_components/stats';
+import HeaderLayout from '@/components/layouts/header';
 
 const Profile404 = async () => {
   const user = await validateSessionToken();
@@ -222,7 +223,7 @@ const Profile = async ({ params }: { params: { username: string } }) => {
   const diary = await getUserDiary(profileUser.id);
 
   return (
-    <div className="grid h-screen grid-rows-[max-content,1fr] gap-4 overflow-y-scroll pb-8 2xl:grid-rows-[73px,1fr]">
+    <HeaderLayout>
       <ProfileHeader user={user} profileUser={profileUser as any} />
       <div className="col-span-2 mx-auto">
         <div className="block py-2 lg:hidden">
@@ -344,7 +345,7 @@ const Profile = async ({ params }: { params: { username: string } }) => {
           />
         </div>
       </div>
-    </div>
+    </HeaderLayout>
   );
 };
 

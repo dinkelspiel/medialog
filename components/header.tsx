@@ -12,7 +12,7 @@ import AddLog from './addLog';
 
 export const Header = ({
   className,
-  title,
+  titleComponent,
   children,
   sidebarContent,
   ...props
@@ -38,7 +38,7 @@ export const Header = ({
           <PanelLeft className="stroke-neutral-600" />
         </Button>
         <div className="whitespace-nowrap text-sm font-medium text-neutral-600">
-          {title}
+          {titleComponent}
         </div>
       </div>
       {children}
