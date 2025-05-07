@@ -362,16 +362,12 @@ const Dashboard = ({
 
   return (
     <HeaderLayout className="gap-0">
-      <Header
-        className="col-span-2"
-        titleComponent="My Media"
-        sidebarContent={<SidebarButtons />}
-      >
+      <Header titleComponent="My Media" sidebarContent={<SidebarButtons />}>
         <FilterView className="hidden lg:flex" />
       </Header>
       <div
         ref={userEntriesRef}
-        className="col-span-2 grid justify-center bg-neutral-100 p-4 xl:col-span-1"
+        className="grid justify-center bg-neutral-100 p-4 xl:col-span-1"
       >
         <FilterView className="flex pb-4 lg:hidden" />
         <div
