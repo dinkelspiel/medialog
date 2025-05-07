@@ -1,8 +1,20 @@
+import { cn } from '@/lib/utils';
 import React, { ReactNode } from 'react';
 
-const HeaderLayout = ({ children }: { children: ReactNode }) => {
+const HeaderLayout = ({
+  children,
+  className,
+}: {
+  children: ReactNode;
+  className?: string;
+}) => {
   return (
-    <div className="grid h-screen grid-rows-[max-content,1fr] gap-4 overflow-y-scroll 2xl:grid-rows-[73px,1fr]">
+    <div
+      className={cn(
+        'grid h-screen grid-rows-[max-content,1fr] gap-4 overflow-y-scroll 2xl:grid-rows-[73px,1fr]',
+        className
+      )}
+    >
       {children}
     </div>
   );
