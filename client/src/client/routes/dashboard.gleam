@@ -33,26 +33,20 @@ type Model {
   Model(
     sidebar_open: Bool,
     user_entries: List(api.UserEntryEntry),
-    edit_media_open: Bool,
     edit_media: option.Option(api.UserEntryEntry),
   )
 }
 
 fn init(_: Int) -> #(Model, effect.Effect(Msg)) {
   #(
-    Model(
-      sidebar_open: True,
-      user_entries: [],
-      edit_media_open: False,
-      edit_media: option.None,
-    ),
+    Model(sidebar_open: True, user_entries: [], edit_media: option.None),
     user_entries.get(ApiReturnedUserEntries),
   )
 }
 
 pub opaque type Msg {
   UserToggledSidebar
-  UserUpdatedEditMediaOpen(Bool, option.Option(api.UserEntryEntry))
+  UserUpdatedEditMediaOpen(option.Option(api.UserEntryEntry))
   ApiReturnedUserEntries(
     Result(user_entries.HermodrResponse(List(api.UserEntryEntry)), rsvp.Error),
   )
@@ -64,8 +58,8 @@ fn update(model: Model, msg: Msg) -> #(Model, effect.Effect(Msg)) {
       Model(..model, sidebar_open: !model.sidebar_open),
       effect.none(),
     )
-    UserUpdatedEditMediaOpen(open, uee) -> #(
-      Model(..model, edit_media_open: open, edit_media: uee),
+    UserUpdatedEditMediaOpen(uee) -> #(
+      Model(..model, edit_media: uee),
       effect.none(),
     )
     ApiReturnedUserEntries(response) ->
@@ -258,10 +252,9 @@ fn view(model: Model) -> Element(Msg) {
                           "url(" <> user_entry.entry.poster_path <> ")",
                         ),
                       ]),
-                      event.on_click(UserUpdatedEditMediaOpen(
-                        True,
-                        option.Some(user_entry),
-                      )),
+                      event.on_click(
+                        UserUpdatedEditMediaOpen(option.Some(user_entry)),
+                      ),
                     ],
                     [],
                   )
@@ -274,36 +267,73 @@ fn view(model: Model) -> Element(Msg) {
       div(
         [
           class(
-            "w-[100dvw] fixed top-0 left-0 h-[100dvh] bg-[#000000cc] duration-200 transition-opacity "
-            <> case model.edit_media_open {
-              True -> "opacity-100"
-              False -> "pointer-events-none opacity-0"
+            "w-[calc(100dvw+2px)] fixed top-0 left-[-1px] h-[100dvh] bg-[#000000cc] duration-200 transition-opacity "
+            <> case model.edit_media {
+              option.None -> "opacity-100"
+              option.Some(_) -> "pointer-events-none opacity-0"
             },
           ),
         ],
-        [
-          div(
-            [
-              class(
-                "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-white p-6 shadow-lg duration-200 sm:rounded-lg sm:max-w-[425px]",
-              ),
-            ],
-            [
-              html.button(
-                [
-                  class(
-                    "absolute right-4 top-4 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none",
-                  ),
-                  event.on_click(UserUpdatedEditMediaOpen(False, option.None)),
-                ],
-                [
-                  x([popcicle.close_on_click(True), class("size-4")]),
-                  div([class("sr-only")], [text("Close dialog")]),
-                ],
-              ),
-            ],
-          ),
-        ],
+        case model.edit_media {
+          option.None -> []
+          option.Some(edit_media) -> [
+            div(
+              [
+                class(
+                  "fixed left-[50%] top-[50%] z-50 grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border bg-white overflow-clip shadow-lg duration-200 sm:rounded-lg sm:max-w-[425px]",
+                ),
+              ],
+              [
+                div(
+                  [
+                    class(
+                      "px-6 flex items-end h-[151px] w-full bg-red-600 top-0 left-0",
+                    ),
+                  ],
+                  [
+                    div([class("h-[151px] w-[102px]")], [
+                      div(
+                        [
+                          class(
+                            "mt-6 h-[151px] w-[102px] rounded-lg shadow-sm bg-red-500 border border-zinc-200",
+                          ),
+                        ],
+                        [],
+                      ),
+                    ]),
+                    div(
+                      [class("flex justify-between items-end w-full py-3 ps-3")],
+                      [
+                        div([class("font-semibold text-white")], [
+                          text(edit_media.entry.original_title),
+                        ]),
+                        div([class("flex gap-3")], [
+                          button(button.Primary, [], [text("Save")]),
+                        ]),
+                      ],
+                    ),
+                  ],
+                ),
+                div([class("p-6")], []),
+                html.button(
+                  [
+                    class(
+                      "absolute right-6 top-6 rounded-sm opacity-70 ring-offset-background transition-opacity hover:opacity-100 focus:outline-none focus:ring-2 focus:ring-ring focus:ring-offset-2 disabled:pointer-events-none",
+                    ),
+                    event.on_click(UserUpdatedEditMediaOpen(option.None)),
+                  ],
+                  [
+                    x([
+                      popcicle.close_on_click(True),
+                      class("size-4 stroke-white"),
+                    ]),
+                    div([class("sr-only")], [text("Close dialog")]),
+                  ],
+                ),
+              ],
+            ),
+          ]
+        },
       ),
     ],
   )
