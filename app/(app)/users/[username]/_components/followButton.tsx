@@ -56,6 +56,7 @@ const FollowButton = ({
     <Button
       variant={following ? 'destructive' : 'outline'}
       onClick={() => toggleFollow()}
+      className="w-[92px]"
     >
       {following ? 'Unfollow' : 'Follow'}
     </Button>

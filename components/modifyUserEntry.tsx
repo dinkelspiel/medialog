@@ -270,6 +270,7 @@ const ModifyUserEntry = ({
           <PopoverTrigger asChild>
             <Button
               variant="outline"
+              size="sm"
               role="combobox"
               aria-expanded={addListsOpen}
             >
@@ -368,7 +369,7 @@ const ModifyUserEntry = ({
             <input type="hidden" value={userEntry.id} name="userEntryId" />
             <input type="hidden" value={rating} name="rating" />
             <input type="hidden" value={notes} name="notes" />
-            <SubmitButton className="w-max px-6" size={'default'}>
+            <SubmitButton className="w-max px-6" size={'sm'}>
               <Save className="size-3" />
               Save
             </SubmitButton>

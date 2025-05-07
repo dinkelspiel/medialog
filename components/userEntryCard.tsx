@@ -34,7 +34,7 @@ const UserEntryCard = ({
       style={{ backgroundImage: `url(${backgroundImage})` }}
       {...props}
     >
-      <div className="absolute top-0 flex h-[20%] w-full flex-col justify-end rounded-bl-lg rounded-br-lg bg-gradient-to-b from-slate-900/50 to-transparent"></div>
+      <div className="absolute top-0 flex h-[20%] w-full flex-col justify-end rounded-bl-lg rounded-br-lg bg-gradient-to-b from-neutral-900/50 to-transparent"></div>
       <div className="absolute top-0 p-2">
         {(() => {
           switch (category) {
@@ -54,12 +54,12 @@ const UserEntryCard = ({
       )}
 
       <div className="select-none text-transparent">{title}</div>
-      <div className="absolute top-[40%] flex h-[60%] w-full flex-col justify-end rounded-bl-lg rounded-br-lg bg-gradient-to-t from-slate-900 to-transparent object-cover p-2">
+      <div className="absolute top-[40%] flex h-[60%] w-full flex-col justify-end rounded-bl-lg rounded-br-lg bg-gradient-to-t from-neutral-900 to-transparent object-cover p-2">
         <div className="text-left text-sm font-semibold text-white sm:text-base">
           {title}
         </div>
         <div className="flex flex-row items-center justify-between">
-          <div className="text-sm text-slate-400">
+          <div className="text-sm text-neutral-400">
             {releaseDate.getFullYear()}
           </div>
           {!!customStars && customStars}
