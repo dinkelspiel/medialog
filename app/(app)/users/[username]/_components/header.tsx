@@ -61,9 +61,11 @@ export const ProfileHeader = ({
   return (
     <Header
       titleComponent={
-        authUser.username === profileUser.username
-          ? 'Your profile'
-          : `${profileUser.username}'s profile`
+        <div>
+          {authUser.username === profileUser.username
+            ? 'Your profile'
+            : `${profileUser.username}'s profile`}
+        </div>
       }
       className="col-span-2"
       sidebarContent={<SidebarButtons />}

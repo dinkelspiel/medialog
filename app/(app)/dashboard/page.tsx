@@ -77,6 +77,7 @@ import { Label } from '@/components/ui/label';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 import { SidebarButtons } from '../_components/sidebar';
+import HeaderLayout from '@/components/layouts/header';
 
 const Page = () => {
   const {
@@ -360,7 +361,7 @@ const Dashboard = ({
   );
 
   return (
-    <>
+    <HeaderLayout>
       <Header titleComponent="My Media" sidebarContent={<SidebarButtons />}>
         <FilterView className="hidden lg:flex" />
       </Header>
@@ -485,7 +486,7 @@ const Dashboard = ({
           )}
         </DialogContent>
       </Dialog>
-    </>
+    </HeaderLayout>
   );
 };
 
