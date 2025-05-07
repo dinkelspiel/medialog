@@ -361,7 +361,7 @@ const Dashboard = ({
 
   return (
     <>
-      <Header title="My Media" sidebarContent={<SidebarButtons />}>
+      <Header titleComponent="My Media" sidebarContent={<SidebarButtons />}>
         <FilterView className="hidden lg:flex" />
       </Header>
       <div

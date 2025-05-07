@@ -79,13 +79,13 @@ const Page = async ({
   return (
     <>
       <Header
-        title={
-          <>
+        titleComponent={
+          <div>
             {authUser && authUser?.id === targetUser.id && (
               <EditableName userList={list} />
             )}
             {!(authUser && authUser?.id === targetUser.id) && list.name}
-          </>
+          </div>
         }
         sidebarContent={<SidebarButtons />}
       >

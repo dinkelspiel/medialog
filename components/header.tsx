@@ -17,7 +17,7 @@ export const Header = ({
   sidebarContent,
   ...props
 }: React.HTMLAttributes<HTMLDivElement> & {
-  title: ReactNode;
+  titleComponent: ReactNode;
   sidebarContent: ReactNode;
 }) => {
   const user = useAuthUser();
