@@ -25,6 +25,7 @@ import {
   PanelLeft,
   Pen,
   Settings,
+  SlidersHorizontal,
   Star,
   UserRound,
 } from 'lucide-react';
@@ -54,6 +55,28 @@ import { Drawer, DrawerContent } from '@/components/ui/drawer';
 import SmallRating from '@/components/smallRating';
 import { useQuery } from '@tanstack/react-query';
 import { api } from '@/trpc/react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuLabel,
+  DropdownMenuRadioGroup,
+  DropdownMenuRadioItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from '@/components/ui/dropdown-menu';
+import {
+  Sheet,
+  SheetContent,
+  SheetDescription,
+  SheetHeader,
+  SheetTitle,
+  SheetTrigger,
+} from '@/components/ui/sheet';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import { Label } from '@/components/ui/label';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { cn } from '@/lib/utils';
+import { SidebarButtons } from '../_components/sidebar';
 
 const Page = () => {
   const {
@@ -67,7 +90,7 @@ const Page = () => {
   }
 
   if (!data) {
-    return <div>{JSON.stringify(dataError.message)}</div>;
+    return <div>Error fetching data</div>;
   }
 
   return (
@@ -123,6 +146,7 @@ const Dashboard = ({
   const [userEntriesWidth, setUserEntriesWidth] = useState(0);
 
   useEffect(() => {
+    setUserEntriesWidth((userEntriesRef.current as any).clientWidth ?? 0);
     const handleResize = () =>
       setUserEntriesWidth((userEntriesRef.current as any).clientWidth ?? 0);
     window.addEventListener('resize', handleResize);
@@ -131,7 +155,7 @@ const Dashboard = ({
 
   // Shortcut for search
 
-  const [filterOpen, setFilterOpen] = useState(false);
+  const searchTitleRef = useRef(null);
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -144,9 +168,7 @@ const Dashboard = ({
         e.preventDefault();
         e.stopPropagation();
 
-        setFilterOpen(currentValue => {
-          return !currentValue;
-        });
+        (searchTitleRef.current as any).focus();
       }
     }
 
@@ -195,90 +217,6 @@ const Dashboard = ({
     fetchUserLists();
   };
 
-  const InformationView = () => {
-    const CustomStars = ({ rating }: { rating: number }) => (
-      <>
-        <div className="hidden text-white 2xl:block">
-          <SmallRating rating={rating} />
-        </div>
-        <div className="flex items-center gap-1 text-white 2xl:hidden">
-          <span className="text-sm">{(rating / 20).toFixed(1)}</span>
-          <Star strokeWidth={0} className="size-4 fill-primary" />
-        </div>
-      </>
-    );
-
-    if (selectedUserEntry) {
-      return (
-        <ModifyUserEntry
-          userEntry={userEntries.find(e => e.id == selectedUserEntry)!}
-          setOpen={() => {
-            setSelectedUserEntry(undefined);
-          }}
-          setUserEntry={setUserEntry}
-          removeUserEntry={removeUserEntry}
-          userLists={userLists ?? []}
-          userListsWithEntry={listsWithUserEntry}
-          refetchUserLists={async () => {
-            fetchUserLists();
-            fetchUserListsWithEntry(selectedUserEntry);
-          }}
-        />
-      );
-    } else {
-      return (
-        <div className="flex flex-col gap-6">
-          <div className="flex flex-col gap-4">
-            <h2 className="text-xl font-medium">
-              Highest rated media you haven’t completed
-            </h2>
-            <div className="grid grid-cols-3 gap-4">
-              {topRatedNotCompleted?.map(e => (
-                <UserEntryCard
-                  key={'tr' + e.id}
-                  {...{
-                    title: e.originalTitle,
-                    backgroundImage: e.posterPath,
-                    category: e.category,
-                    releaseDate: new Date(e.releaseDate),
-                    rating: (e as any).average,
-                    customStars: <CustomStars rating={(e as any).average} />,
-                  }}
-                />
-              ))}
-            </div>
-            {/* <div className="flex w-full justify-end">
-              <div className="text-sm">See more</div>
-            </div> */}
-          </div>
-          <div className="flex flex-col gap-4">
-            <h2 className="text-xl font-medium">
-              Most popular media you haven’t completed
-            </h2>
-            <div className="grid grid-cols-3 gap-4">
-              {topCompletedNotCompleted?.map(e => (
-                <UserEntryCard
-                  key={'tc' + e.id}
-                  {...{
-                    title: e.originalTitle,
-                    backgroundImage: e.posterPath,
-                    category: e.category,
-                    releaseDate: new Date(e.releaseDate),
-                    rating: 0,
-                    customStars: <CustomStars rating={(e as any).average} />,
-                  }}
-                />
-              ))}
-            </div>
-            {/* <div className="flex w-full justify-end">
-              <div className="text-sm">See more</div>
-            </div> */}
-          </div>
-        </div>
-      );
-    }
-  };
-
   // Mobile
 
   const isXl = useMediaQuery('(min-width: 1280px)');
@@ -308,96 +246,133 @@ const Dashboard = ({
     setInformationViewOpen(false);
   }, []);
 
-  return (
-    <>
-      <Header title="My Media">
-        <Tabs
-          value={filterStyle}
-          onValueChange={e => setFilterStyle(e as FilterStyle)}
-          className="hidden lg:block"
-        >
-          <TabsList>
-            <TabsTrigger value={'rating'}>
-              <Star className="size-3" />
-              Rating
-            </TabsTrigger>
-            <TabsTrigger value={'az'}>
-              <AArrowDown className="size-3" />
-              A-Z
-            </TabsTrigger>
-            <TabsTrigger value={'completed'}>
-              <Eye className="size-3" />
+  const FilterView = ({ className }: { className: string }) => (
+    <div className={cn('flex items-center gap-3', className)}>
+      <div className="relative w-full lg:w-[356px]">
+        <Input
+          ref={searchTitleRef}
+          value={filterTitle}
+          onChange={e => setFilterTitle(e.target.value)}
+          className="flex w-full lg:w-[356px]"
+          placeholder="Search by title..."
+        />
+        <div className="absolute right-[5.2px] top-1/2 hidden -translate-y-1/2 items-center gap-1 rounded-md border border-gray-200 bg-white px-2 py-0.5 text-xs font-medium text-gray-600 lg:flex">
+          <Command className="size-3" /> K
+        </div>
+      </div>
+      <DropdownMenu>
+        <DropdownMenuTrigger asChild>
+          <Button size={'sm'} variant={'outline'}>
+            Sort
+          </Button>
+        </DropdownMenuTrigger>
+        <DropdownMenuContent align="end" className="w-56">
+          <DropdownMenuLabel>Sort by</DropdownMenuLabel>
+          <DropdownMenuSeparator />
+          <DropdownMenuRadioGroup
+            value={filterStyle}
+            onValueChange={e => setFilterStyle(e as FilterStyle)}
+          >
+            <DropdownMenuRadioItem value="rating">
+              Rating (High to Low)
+            </DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value="az">A-Z</DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value="completed">
               Completed
-            </TabsTrigger>
-            <TabsTrigger value={'updated'}>
-              <Pen className="size-3" />
-              Updated
-            </TabsTrigger>
-          </TabsList>
-        </Tabs>
-        <Popover open={filterOpen} onOpenChange={setFilterOpen}>
-          <PopoverTrigger asChild>
-            <Button
-              variant={'outline'}
-              size={'icon'}
-              className="size-9 [&>svg]:size-4"
-            >
-              <Filter />
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="z-50 me-4">
-            <div className="grid gap-2">
-              <div className="relative">
-                <Input
-                  placeholder="Title"
-                  name="title"
-                  value={filterTitle}
-                  onChange={e => setFilterTitle(e.target.value)}
-                />
-                <div className="absolute right-[5.2px] top-1/2 flex -translate-y-1/2 items-center gap-1 rounded-md border border-gray-200 bg-white px-2 py-0.5 text-xs font-medium text-gray-600">
-                  <Command className="size-3" /> K
-                </div>
-              </div>
-              <Select
+            </DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value="updated">
+              Recently Updated
+            </DropdownMenuRadioItem>
+          </DropdownMenuRadioGroup>
+        </DropdownMenuContent>
+      </DropdownMenu>
+      <Sheet>
+        <SheetTrigger asChild>
+          <Button size={'sm'} variant={'outline'}>
+            <SlidersHorizontal className="stroke-neutral-600" />
+            Filter
+          </Button>
+        </SheetTrigger>
+        <SheetContent>
+          <SheetHeader>
+            <SheetTitle>Filter Entries</SheetTitle>
+            <SheetDescription>
+              Customize shown entries these filters
+            </SheetDescription>
+          </SheetHeader>
+
+          <div className="space-y-6 py-6">
+            <div className="space-y-3">
+              <h3 className="text-sm font-medium">Status</h3>
+              <RadioGroup
                 value={filterStatus}
                 onValueChange={e =>
                   setFilterStatus(e as UserEntryStatus | undefined)
                 }
               >
-                <SelectTrigger>
-                  <SelectValue placeholder="Select a status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectGroup>
-                    <SelectItem value="planning">Planning</SelectItem>
-                    <SelectItem value="watching">Watching</SelectItem>
-                    <SelectItem value="dnf">Did not finish</SelectItem>
-                    <SelectItem value="paused">Paused</SelectItem>
-                    <SelectItem value="completed">Completed</SelectItem>
-                  </SelectGroup>
-                  <SelectSeparator />
-                  <Button
-                    variant={'ghost'}
-                    size={'sm'}
-                    className="w-full"
-                    onClick={() => setFilterStatus(undefined)}
-                  >
-                    Clear
-                  </Button>
-                </SelectContent>
-              </Select>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="all" id="all" />
+                  <Label htmlFor="all">All</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="planning" id="planning" />
+                  <Label htmlFor="planning">Planning</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="watching" id="watching" />
+                  <Label htmlFor="watching">Watching</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="paused" id="paused" />
+                  <Label htmlFor="paused">Paused</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="dnf" id="dnf" />
+                  <Label htmlFor="dnf">Did not finish</Label>
+                </div>
+                <div className="flex items-center space-x-2">
+                  <RadioGroupItem value="completed" id="completed" />
+                  <Label htmlFor="completed">Completed</Label>
+                </div>
+              </RadioGroup>
             </div>
-          </PopoverContent>
-        </Popover>
+
+            {/* <div className="space-y-3">
+            <div className="flex justify-between">
+              <h3 className="text-sm font-medium">Rating Range</h3>
+              <span className="text-sm text-muted-foreground">
+                {ratingRange[0]} - {ratingRange[1]}
+              </span>
+            </div>
+            <Slider
+              defaultValue={[0, 10]}
+              max={10}
+              step={0.5}
+              value={ratingRange}
+              onValueChange={setRatingRange}
+              className="py-4"
+            />
+          </div> */}
+          </div>
+        </SheetContent>
+      </Sheet>
+    </div>
+  );
+
+  return (
+    <>
+      <Header title="My Media" sidebarContent={<SidebarButtons />}>
+        <FilterView className="hidden lg:flex" />
       </Header>
       <div
         ref={userEntriesRef}
-        className="col-span-2 grid justify-center p-4 xl:col-span-1"
+        className="col-span-2 grid justify-center bg-neutral-100 p-4 xl:col-span-1"
       >
+        <FilterView className="flex pb-4 lg:hidden" />
         <div
-          className="grid w-fit gap-3"
+          className="grid w-fit max-w-[1024px] gap-3"
           style={{
-            gridTemplateColumns: `repeat(${Math.floor(userEntriesWidth / 148)}, minmax(0, 1fr))`,
+            gridTemplateColumns: `repeat(${Math.max(3, Math.floor(Math.min(userEntriesWidth, 1024) / 148))}, minmax(0, 1fr))`,
           }}
         >
           {userEntries &&
@@ -461,7 +436,7 @@ const Dashboard = ({
                 // }
 
                 if (
-                  filterStatus !== undefined &&
+                  filterStatus !== 'all' &&
                   userEntry.status !== filterStatus
                 ) {
                   return;
@@ -476,19 +451,40 @@ const Dashboard = ({
                       setListsWithUserEntry([]);
                       fetchUserListsWithEntry(userEntry.id);
                     }}
+                    className={
+                      userEntry.status === 'planning' && filterStatus === 'all'
+                        ? 'opacity-70'
+                        : 'opacity-100'
+                    }
                   />
                 );
               })}
         </div>
       </div>
-      <div className="sticky top-[81px] hidden h-[calc(100dvh-81px)] bg-[#F5F5F5] p-4 shadow-[inset_0_0px_8px_0_rgb(0_0_0_/_0.02)] shadow-gray-200 xl:block">
-        <InformationView />
-      </div>
-      <Drawer open={informationViewOpen} onOpenChange={setInformationViewOpen}>
-        <DrawerContent className="top-[50px] mt-0 p-6">
-          <InformationView />
-        </DrawerContent>
-      </Drawer>
+
+      <Dialog
+        open={!!selectedUserEntry}
+        onOpenChange={() => setSelectedUserEntry(undefined)}
+      >
+        <DialogContent className="h-full w-full max-w-[800px] min-[600px]:h-[600px] min-[800px]:w-[800px]">
+          {selectedUserEntry && (
+            <ModifyUserEntry
+              userEntry={userEntries.find(e => e.id == selectedUserEntry)!}
+              setOpen={() => {
+                setSelectedUserEntry(undefined);
+              }}
+              setUserEntry={setUserEntry}
+              removeUserEntry={removeUserEntry}
+              userLists={userLists ?? []}
+              userListsWithEntry={listsWithUserEntry}
+              refetchUserLists={async () => {
+                fetchUserLists();
+                fetchUserListsWithEntry(selectedUserEntry ?? 0);
+              }}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </>
   );
 };

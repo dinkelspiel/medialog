@@ -28,7 +28,10 @@ const Header = ({ user }: { user: User | null }) => {
             </span>
           </Link>
           <div className="flex h-full w-fit items-center gap-x-2">
-            <Link className="inline h-full" href={'/dashboard'}>
+            <Link
+              className="inline h-full"
+              href={user ? '/dashboard' : '/auth/login'}
+            >
               <span className="ml-2 flex h-full cursor-pointer items-center rounded-xl bg-white px-3 text-sm font-medium leading-[130%] tracking-[-0.005em] text-black hover:opacity-80">
                 {user ? 'Go to app' : 'Sign in'}
               </span>

@@ -47,9 +47,9 @@ export const ProfileSidebar = ({
   return (
     <div className={cn('flex flex-col gap-6', className)}>
       <div className="flex flex-col gap-4">
-        <div className="flex justify-between border-b border-b-slate-200 pb-2 text-lg font-medium">
+        <div className="flex justify-between border-b border-b-neutral-200 pb-2 text-lg font-medium">
           Watchlist
-          <span className="ms-auto text-slate-500">
+          <span className="ms-auto text-neutral-500">
             {
               profileUser.userEntries.filter(e => e.status === 'planning')
                 .length
@@ -76,9 +76,9 @@ export const ProfileSidebar = ({
         {profileUser.userEntries.filter(e => e.status === 'watching').length >
           0 && (
           <div className="flex flex-col gap-4">
-            <div className="flex w-full justify-between border-b border-b-slate-200 pb-2 text-lg font-medium">
+            <div className="flex w-full justify-between border-b border-b-neutral-200 pb-2 text-lg font-medium">
               In Progress
-              <span className="ms-auto text-slate-500">
+              <span className="ms-auto text-neutral-500">
                 {
                   profileUser.userEntries.filter(e => e.status === 'watching')
                     .length
@@ -99,17 +99,17 @@ export const ProfileSidebar = ({
         )}
       </div>
       <div className="flex flex-col items-center gap-4 lg:items-start">
-        <div className="flex w-full justify-between border-b border-b-slate-200 pb-2 text-lg font-medium">
+        <div className="flex w-full justify-between border-b border-b-neutral-200 pb-2 text-lg font-medium">
           Ratings
-          <span className="ms-auto text-slate-500">{totalRatings}</span>
+          <span className="ms-auto text-neutral-500">{totalRatings}</span>
         </div>
         <div className="flex w-full flex-row items-end justify-between gap-2 2xl:w-[250px]">
           <SmallRating rating={20} className="pb-1" />
-          <div className="flex w-[135px] flex-row items-end gap-0.5 border-b border-b-slate-200 pb-1">
+          <div className="flex w-[135px] flex-row items-end gap-0.5 border-b border-b-neutral-200 pb-1">
             {ratings.map((ratingPercentage, idx) => (
               <div
                 key={idx}
-                className="w-full bg-slate-300"
+                className="w-full bg-neutral-300"
                 style={{ height: 110 * ratingPercentage }}
               ></div>
             ))}
@@ -126,9 +126,9 @@ export const ProfileSidebar = ({
               Daily streak hasn't been updated
             </div>
           )}
-        <div className="flex w-full justify-between border-b border-b-slate-200 pb-2 text-lg font-medium">
+        <div className="flex w-full justify-between border-b border-b-neutral-200 pb-2 text-lg font-medium">
           Diary
-          <span className="ms-auto text-slate-500">
+          <span className="ms-auto text-neutral-500">
             {profileUser.dailyStreakLength} Day Streak
           </span>
         </div>
@@ -159,7 +159,7 @@ export const ProfileSidebar = ({
                   <Fragment
                     key={month + (JSON.stringify(day) + '') + day.title}
                   >
-                    <div className="text-slate-500">{day.day}</div>
+                    <div className="text-neutral-500">{day.day}</div>
                     <div className="whitespace-break-spaces">{day.title}</div>
                   </Fragment>
                 ))}

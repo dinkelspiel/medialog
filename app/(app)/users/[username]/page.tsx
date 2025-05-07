@@ -6,10 +6,12 @@ import prisma from '@/server/db';
 import UserEntryCard from '@/components/userEntryCard';
 import SmallRating from '@/components/smallRating';
 import { Entry, UserActivity, UserEntryStatus } from '@prisma/client';
-import { ProfileHeader } from './header';
-import { ProfileSidebar } from './sidebar';
+import { ProfileHeader } from './_components/header';
+import { ProfileSidebar } from './_components/sidebar';
 import { getDailyStreak } from '@/server/user/user';
-import { getUserDiary } from './diary';
+import { getUserDiary } from './_components/diary';
+import { Sheet, SheetTrigger } from '@/components/ui/sheet';
+import { Stats } from './_components/stats';
 
 const Profile404 = async () => {
   const user = await validateSessionToken();
@@ -23,7 +25,7 @@ const Profile404 = async () => {
 
         {user !== null && (
           <Link href={`/@${user.username}`}>
-            <span className="text-base text-slate-500">
+            <span className="text-base text-neutral-500">
               Return to your profile
             </span>
           </Link>
@@ -71,8 +73,8 @@ const Profile = async ({ params }: { params: { username: string } }) => {
             }
             break;
           case 'paused':
-            if (rewatch === -1) {
-              text = 'Paused';
+            if (rewatch === 0) {
+              text = 'Paused watching';
             } else {
               text = `Paused their ${numberSuffix(rewatch)} rewatch`;
             }
@@ -223,10 +225,13 @@ const Profile = async ({ params }: { params: { username: string } }) => {
     <div className="grid grid-rows-[max-content,1fr] gap-4 pb-8 2xl:grid-rows-[73px,1fr]">
       <ProfileHeader user={user} profileUser={profileUser as any} />
       <div className="col-span-2 mx-auto">
+        <div className="py-2">
+          <Stats user={user} profileUser={profileUser as any} />
+        </div>
         <div className="grid w-fit grid-cols-1 gap-16 min-[1330px]:grid-cols-[1fr,250px]">
           <div className="flex flex-col gap-6 px-4 md:w-[716px]">
             <div className="flex flex-col gap-4">
-              <div className="flex w-full justify-between border-b border-b-slate-200 pb-2 text-lg font-medium">
+              <div className="flex w-full justify-between border-b border-b-neutral-200 pb-2 text-lg font-medium">
                 Favorites
               </div>
               {favorites.length > 0 && (
@@ -282,7 +287,7 @@ const Profile = async ({ params }: { params: { username: string } }) => {
               diary={diary}
             />
             <div className="flex flex-col gap-4">
-              <div className="flex w-full justify-between border-b border-b-slate-200 pb-2 text-lg font-medium">
+              <div className="flex w-full justify-between border-b border-b-neutral-200 pb-2 text-lg font-medium">
                 Recent Activity
               </div>
               {activity.length > 0 && (
@@ -302,7 +307,7 @@ const Profile = async ({ params }: { params: { username: string } }) => {
                             <span className="text-lg font-semibold 2xl:text-2xl">
                               {activity.entry.originalTitle}
                             </span>
-                            <span className="text-sm font-medium text-slate-500">
+                            <span className="text-sm font-medium text-neutral-500">
                               {activity.entry.releaseDate.getFullYear()}
                             </span>
                           </div>

@@ -125,9 +125,9 @@ const Page = async ({
 
           {authUser && (
             <div className="flex flex-col gap-4">
-              <div className="flex justify-between border-b border-b-slate-200 pb-2 text-lg font-semibold">
+              <div className="flex justify-between border-b border-b-neutral-200 pb-2 text-lg font-semibold">
                 You've completed
-                <span className="ms-auto font-normal text-slate-500">
+                <span className="ms-auto font-normal text-neutral-500">
                   {((completed / list!.entries.length) * 100).toFixed(0)}%
                 </span>
               </div>
