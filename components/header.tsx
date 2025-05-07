@@ -22,11 +22,11 @@ export const Header = ({
   return (
     <div
       className={cn(
-        'sticky top-0 z-10 flex h-16 items-center justify-between gap-3 border-b border-b-neutral-200 bg-neutral-50 p-3',
+        'sticky top-0 z-10 flex h-16 items-center justify-between gap-2 border-b border-b-neutral-200 bg-neutral-50 p-4',
         className
       )}
     >
-      <div className="flex items-center gap-3">
+      <div className="flex items-center gap-2">
         <Button
           size={'icon'}
           variant={'ghost'}
@@ -40,7 +40,7 @@ export const Header = ({
         </div>
       </div>
       {children}
-      <div className="hidden items-center gap-3 lg:flex">
+      <div className="hidden items-center gap-2 lg:flex">
         <Button size={'icon'} variant={'ghost'}>
           <Settings className="stroke-neutral-600" />
         </Button>
@@ -50,7 +50,7 @@ export const Header = ({
           </Button>
         </Link>
       </div>
-      <div className="flex items-center gap-3 lg:hidden">
+      <div className="flex items-center gap-2 lg:hidden">
         <AddLog>
           <Button className="flex lg:hidden" size="sm" variant={'outline'}>
             <Plus className="size-4 stroke-neutral-600" />
