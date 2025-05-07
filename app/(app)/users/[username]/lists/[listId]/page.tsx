@@ -8,12 +8,13 @@ import UserEntryCard from '@/components/userEntryCard';
 import { validateSessionToken } from '@/server/auth/validateSession';
 import prisma from '@/server/db';
 import Link from 'next/link';
-import CompletionProgress from './progress';
+import CompletionProgress from './_components/progress';
 import { Button } from '@/components/ui/button';
 import { Plus, X } from 'lucide-react';
-import EditableDescription from './editableDescription';
-import AddMedia from './addMedia';
-import EditableName from './editableName';
+import EditableDescription from './_components/editableDescription';
+import AddMedia from './_components/addMedia';
+import EditableName from './_components/editableName';
+import { SidebarButtons } from '@/app/(app)/_components/sidebar';
 
 const Page = async ({
   params,
@@ -77,21 +78,23 @@ const Page = async ({
 
   return (
     <>
-      <Header>
-        <HeaderHeader>
-          <HeaderTitle>
+      <Header
+        titleComponent={
+          <div>
             {authUser && authUser?.id === targetUser.id && (
               <EditableName userList={list} />
             )}
             {!(authUser && authUser?.id === targetUser.id) && list.name}
-          </HeaderTitle>
-          <HeaderDescription>
-            A list by{' '}
-            <Link href={`/@${targetUser.username}`} className="text-sky-500">
-              @{targetUser.username}
-            </Link>
-          </HeaderDescription>
-        </HeaderHeader>
+          </div>
+        }
+        sidebarContent={<SidebarButtons />}
+      >
+        <HeaderDescription>
+          A list by{' '}
+          <Link href={`/@${targetUser.username}`} className="text-sky-500">
+            @{targetUser.username}
+          </Link>
+        </HeaderDescription>
       </Header>
       <div className="mx-auto flex w-full flex-col-reverse gap-16 pb-8 pt-4 md:w-fit min-[1330px]:grid min-[1330px]:grid-cols-[1fr,250px]">
         <div className="grid w-full grid-cols-3 gap-4 px-4 ps-4  md:grid-cols-4 min-[1330px]:w-[716px] min-[1330px]:pe-4">
@@ -125,9 +128,9 @@ const Page = async ({
 
           {authUser && (
             <div className="flex flex-col gap-4">
-              <div className="flex justify-between border-b border-b-slate-200 pb-2 text-lg font-semibold">
+              <div className="flex justify-between border-b border-b-neutral-200 pb-2 text-lg font-semibold">
                 You've completed
-                <span className="ms-auto font-normal text-slate-500">
+                <span className="ms-auto font-normal text-neutral-500">
                   {((completed / list!.entries.length) * 100).toFixed(0)}%
                 </span>
               </div>

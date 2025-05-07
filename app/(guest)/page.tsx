@@ -80,15 +80,21 @@ const Page = async () => {
               </CardDescription>
             </CardHeader>
             <CardContent className="grid grid-cols-3 gap-3 lg:gap-6">
-              <UserEntryCardObject
-                userEntry={{ entry: randomMovie } as ExtendedUserEntry}
-              />
-              <UserEntryCardObject
-                userEntry={{ entry: randomBook } as ExtendedUserEntry}
-              />
-              <UserEntryCardObject
-                userEntry={{ entry: randomSeries } as ExtendedUserEntry}
-              />
+              {randomMovie && (
+                <UserEntryCardObject
+                  userEntry={{ entry: randomMovie } as ExtendedUserEntry}
+                />
+              )}
+              {randomBook && (
+                <UserEntryCardObject
+                  userEntry={{ entry: randomBook } as ExtendedUserEntry}
+                />
+              )}
+              {randomSeries && (
+                <UserEntryCardObject
+                  userEntry={{ entry: randomSeries } as ExtendedUserEntry}
+                />
+              )}
             </CardContent>
           </Card>
           <Card>

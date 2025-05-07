@@ -2,6 +2,7 @@ import { Metadata, Viewport } from 'next';
 import '@/styles/globals.css';
 import BaseLayout from '@/components/layouts/base';
 import Providers from './providers';
+import { TRPCReactProvider } from '@/trpc/react';
 
 export default function RootLayout({
   children,
@@ -9,9 +10,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <BaseLayout>
-      <Providers>{children}</Providers>
-    </BaseLayout>
+    <TRPCReactProvider>
+      <BaseLayout>
+        <Providers>{children}</Providers>
+      </BaseLayout>
+    </TRPCReactProvider>
   );
 }
 

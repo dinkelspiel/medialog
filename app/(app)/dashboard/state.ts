@@ -5,7 +5,7 @@ export type FilterStyle = 'rating' | 'az' | 'completed' | 'updated';
 export type ExtendedUserEntry = UserEntry & { entry: Entry } & { user: User };
 
 type DashboardStore = {
-  filterStatus: UserEntryStatus | undefined;
+  filterStatus: UserEntryStatus | 'all';
   setFilterStatus: (status: UserEntryStatus | undefined) => void;
   filterTitle: string;
   setFilterTitle: (title: string) => void;
@@ -22,7 +22,7 @@ type DashboardStore = {
 };
 
 export const useDashboardStore = create<DashboardStore>(set => ({
-  filterStatus: undefined,
+  filterStatus: 'all',
   setFilterStatus: (status: UserEntryStatus | undefined) =>
     set(() => ({ filterStatus: status })),
   filterTitle: '',

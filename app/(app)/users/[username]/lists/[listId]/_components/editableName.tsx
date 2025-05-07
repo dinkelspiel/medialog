@@ -1,4 +1,5 @@
 'use client';
+import { Input } from '@/components/ui/input';
 import { UserList } from '@prisma/client';
 import React, { createRef, useEffect, useState } from 'react';
 import { toast } from 'sonner';
@@ -28,7 +29,7 @@ const EditableName = ({ userList }: { userList: UserList }) => {
   };
 
   return (
-    <input
+    <Input
       value={name}
       onChange={e => setName(e.target.value)}
       onBlur={() => {
