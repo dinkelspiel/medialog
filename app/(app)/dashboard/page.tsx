@@ -371,7 +371,7 @@ const Dashboard = ({
       >
         <FilterView className="flex pb-4 lg:hidden" />
         <div
-          className="grid w-fit max-w-[1024px] gap-3"
+          className="grid h-fit w-fit max-w-[1024px] gap-3"
           style={{
             gridTemplateColumns: `repeat(${Math.max(3, Math.floor(Math.min(userEntriesWidth, 1024) / 148))}, minmax(0, 1fr))`,
           }}
