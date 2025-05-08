@@ -11,6 +11,8 @@ type DashboardStore = {
   setFilterTitle: (title: string) => void;
   filterStyle: FilterStyle;
   setFilterStyle: (style: FilterStyle) => void;
+  filterRating: number[];
+  setFilterRating: (ratings: number[]) => void;
 
   userEntries: ExtendedUserEntry[];
   setUserEntries: (userEntries: ExtendedUserEntry[]) => void;
@@ -29,6 +31,9 @@ export const useDashboardStore = create<DashboardStore>(set => ({
   setFilterTitle: (title: string) => set(() => ({ filterTitle: title })),
   filterStyle: 'rating',
   setFilterStyle: (style: FilterStyle) => set(() => ({ filterStyle: style })),
+  filterRating: [0, 10],
+  setFilterRating: (ratings: number[]) =>
+    set(() => ({ filterRating: ratings })),
 
   userEntries: [],
   setUserEntries: (userEntries: ExtendedUserEntry[]) =>

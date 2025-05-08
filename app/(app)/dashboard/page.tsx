@@ -78,6 +78,7 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 import { SidebarButtons } from '../_components/sidebar';
 import HeaderLayout from '@/components/layouts/header';
+import { DualRangeSlider } from '@/components/ui/dual-range-slider';
 
 const Page = () => {
   const {
@@ -119,6 +120,8 @@ const Dashboard = ({
     setFilterTitle,
     filterStyle,
     setFilterStyle,
+    filterRating,
+    setFilterRating,
 
     userEntries,
     setUserEntries,
@@ -132,6 +135,8 @@ const Dashboard = ({
   useEffect(() => {
     setUserEntries(originalUserEntries);
   }, [originalUserEntries]);
+
+  const [fr, setFR] = useState([0, 10]);
 
   const {
     data: queryResults,
@@ -288,8 +293,14 @@ const Dashboard = ({
         </DropdownMenuContent>
       </DropdownMenu>
       <Sheet>
+        <SheetTrigger>Asd</SheetTrigger>
+        <SheetContent>
+          <input onChange={() => setFR([2, 2])} />
+        </SheetContent>
+      </Sheet>
+      <Sheet>
         <SheetTrigger asChild>
-          <Button size={'sm'} variant={'outline'}>
+          <Button size={'sm'} variant={'outline'} type="button">
             <SlidersHorizontal className="stroke-neutral-600" />
             Filter
           </Button>
@@ -338,22 +349,22 @@ const Dashboard = ({
               </RadioGroup>
             </div>
 
-            {/* <div className="space-y-3">
-            <div className="flex justify-between">
-              <h3 className="text-sm font-medium">Rating Range</h3>
-              <span className="text-sm text-muted-foreground">
-                {ratingRange[0]} - {ratingRange[1]}
-              </span>
+            <div className="space-y-3">
+              <div className="flex justify-between">
+                <h3 className="text-sm font-medium">Rating Range</h3>
+                <span className="text-sm text-muted-foreground">
+                  {fr[0]} - {fr[1]}
+                </span>
+              </div>
+              <DualRangeSlider
+                defaultValue={[0, 10]}
+                max={10}
+                step={0.5}
+                value={fr}
+                onValueChange={setFR}
+                className="py-4"
+              />
             </div>
-            <Slider
-              defaultValue={[0, 10]}
-              max={10}
-              step={0.5}
-              value={ratingRange}
-              onValueChange={setRatingRange}
-              className="py-4"
-            />
-          </div> */}
           </div>
         </SheetContent>
       </Sheet>
