@@ -225,7 +225,7 @@ const Profile = async ({ params }: { params: { username: string } }) => {
   return (
     <HeaderLayout>
       <ProfileHeader user={user} profileUser={profileUser as any} />
-      <div className="col-span-2 mx-auto">
+      <div className="col-span-2 mx-auto pb-4">
         <div className="block py-2 lg:hidden">
           <Stats user={user} profileUser={profileUser as any} />
         </div>
