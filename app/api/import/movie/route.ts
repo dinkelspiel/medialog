@@ -117,7 +117,7 @@ export const GET = async (request: NextRequest) => {
       originalLanguageId: (
         await prisma.language.findFirst({
           where: {
-            iso_639_1: data.original_language,
+            iso_639_1: data.original_language ?? 'en',
           },
         })
       )?.id!,
