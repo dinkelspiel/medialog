@@ -14,9 +14,8 @@ RUN chmod 744 ./prisma/schema.prisma
 RUN pnpm install
 RUN pnpm dlx prisma generate
 RUN apt-get update && apt-get install -y git && apt-get clean
-
 RUN export GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 RUN export GIT_COMMIT=$(git rev-parse --short HEAD)
-
+RUN rm -rf .git
 RUN pnpm build
 CMD ["pnpm", "start"]
