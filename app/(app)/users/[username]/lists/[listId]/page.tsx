@@ -121,16 +121,16 @@ const Page = async ({
             <EditableDescription userList={list} />
           )}
           {!(authUser && authUser?.id === targetUser.id) && (
-            <div className="h-max text-base text-gray-700">
+            <div className="text-base-700 h-max text-base">
               {list.description}
             </div>
           )}
 
           {authUser && (
             <div className="flex flex-col gap-4">
-              <div className="flex justify-between border-b border-b-neutral-200 pb-2 text-lg font-semibold">
+              <div className="border-b-base-200 flex justify-between border-b pb-2 text-lg font-semibold">
                 You've completed
-                <span className="ms-auto font-normal text-neutral-500">
+                <span className="text-base-500 ms-auto font-normal">
                   {((completed / list!.entries.length) * 100).toFixed(0)}%
                 </span>
               </div>

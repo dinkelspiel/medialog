@@ -34,7 +34,7 @@ const Client = ({
         <h3 className="text-[22px] font-bold leading-7 tracking-[-0.02em]">
           Reset password for {forgotPassword.user.username}
         </h3>
-        <p className="text-sm text-muted-foreground">
+        <p className="text-base-500 text-sm">
           Here you can reset the password for your account
         </p>
       </div>

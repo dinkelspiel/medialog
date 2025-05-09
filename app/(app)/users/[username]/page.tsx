@@ -26,7 +26,7 @@ const Profile404 = async () => {
 
         {user !== null && (
           <Link href={`/@${user.username}`}>
-            <span className="text-base text-neutral-500">
+            <span className="text-base-500 text-base">
               Return to your profile
             </span>
           </Link>
@@ -230,9 +230,9 @@ const Profile = async ({ params }: { params: { username: string } }) => {
           <Stats user={user} profileUser={profileUser as any} />
         </div>
         <div className="grid w-fit grid-cols-1 gap-16 min-[1330px]:grid-cols-[1fr,250px]">
-          <div className="flex flex-col gap-6 px-4 md:w-[716px]">
+          <div className="flex flex-col gap-6 px-4 md:w-[710px]">
             <div className="flex flex-col gap-4">
-              <div className="flex w-full justify-between border-b border-b-neutral-200 pb-2 text-lg font-medium">
+              <div className="border-b-base-200 flex w-full justify-between border-b pb-2 text-lg font-medium">
                 Favorites
               </div>
               {favorites.length > 0 && (
@@ -288,7 +288,7 @@ const Profile = async ({ params }: { params: { username: string } }) => {
               diary={diary}
             />
             <div className="flex flex-col gap-4">
-              <div className="flex w-full justify-between border-b border-b-neutral-200 pb-2 text-lg font-medium">
+              <div className="border-b-base-200 flex w-full justify-between border-b pb-2 text-lg font-medium">
                 Recent Activity
               </div>
               {activity.length > 0 && (
@@ -308,7 +308,7 @@ const Profile = async ({ params }: { params: { username: string } }) => {
                             <span className="text-lg font-semibold 2xl:text-2xl">
                               {activity.entry.originalTitle}
                             </span>
-                            <span className="text-sm font-medium text-neutral-500">
+                            <span className="text-base-500 text-sm font-medium">
                               {activity.entry.releaseDate.getFullYear()}
                             </span>
                           </div>

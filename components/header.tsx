@@ -1,7 +1,7 @@
 'use client';
 
 import { cn } from '../lib/utils';
-import React, { ReactNode } from 'react';
+import React, { ReactNode, useState } from 'react';
 import { Button } from './ui/button';
 import { Menu, PanelLeft, Plus, Settings, UserRound } from 'lucide-react';
 import { useAuthUser } from '@/app/(app)/_components/AuthUserContext';
@@ -9,6 +9,8 @@ import Link from 'next/link';
 import { Sheet, SheetTrigger } from './ui/sheet';
 import { Drawer, DrawerContent, DrawerTrigger } from './ui/drawer';
 import AddLog from './addLog';
+import { Dialog, DialogContent, DialogTitle } from './ui/dialog';
+import SettingsView from '@/components/islands/settings';
 
 export const Header = ({
   className,
@@ -21,10 +23,11 @@ export const Header = ({
   sidebarContent: ReactNode;
 }) => {
   const user = useAuthUser();
+  const [settingsOpen, setSettingsOpen] = useState(false);
   return (
     <div
       className={cn(
-        'sticky top-0 z-10 flex h-16 items-center justify-between gap-2 border-b border-b-neutral-200 bg-neutral-50 p-4',
+        'sticky top-0 z-10 flex h-16 items-center justify-between gap-2 border-b border-b-base-200 bg-base-50 p-4',
         className
       )}
     >
@@ -35,16 +38,20 @@ export const Header = ({
           className="hidden lg:flex"
           onClick={() => 'setOpen(!open)'}
         >
-          <PanelLeft className="stroke-neutral-600" />
+          <PanelLeft className="stroke-base-600" />
         </Button>
-        <div className="whitespace-nowrap text-sm font-medium text-neutral-600">
+        <div className="whitespace-nowrap text-sm font-medium text-base-600">
           {titleComponent}
         </div>
       </div>
       {children}
       <div className="hidden items-center gap-2 lg:flex">
-        <Button size={'icon'} variant={'ghost'}>
-          <Settings className="stroke-neutral-600" />
+        <Button
+          size={'icon'}
+          variant={'ghost'}
+          onClick={() => setSettingsOpen(true)}
+        >
+          <Settings className="stroke-base-600" />
         </Button>
         <Link href={`/@${user && user.username}`}>
           <Button variant={'outline'}>
@@ -55,7 +62,7 @@ export const Header = ({
       <div className="flex items-center gap-2 lg:hidden">
         <AddLog>
           <Button className="flex lg:hidden" size="sm" variant={'outline'}>
-            <Plus className="size-4 stroke-neutral-600" />
+            <Plus className="size-4 stroke-base-600" />
             Log Media
           </Button>
         </AddLog>
@@ -66,14 +73,23 @@ export const Header = ({
               variant={'ghost'}
               className="flex aspect-square lg:hidden"
             >
-              <Menu className="stroke-neutral-600" />
+              <Menu className="stroke-base-600" />
             </Button>
           </DrawerTrigger>
           <DrawerContent>
             <div className="flex flex-col gap-2 p-4">{sidebarContent}</div>
             <div className="flex flex-col gap-2 p-4">
-              <Button size={'sm'} variant={'outline'}>
-                <Settings className="stroke-neutral-600" /> Settings
+              <div className="text-sm font-normal text-base-400">
+                {process.env.GIT_COMMIT
+                  ? `${process.env.GIT_COMMIT}@${process.env.GIT_BRANCH}`
+                  : 'dev'}
+              </div>
+              <Button
+                size={'sm'}
+                variant={'outline'}
+                onClick={() => setSettingsOpen(true)}
+              >
+                <Settings className="stroke-base-600" /> Settings
               </Button>
               <Link href={`/@${user && user.username}`} className="w-full">
                 <Button variant={'outline'} size="sm" className="w-full">
@@ -83,6 +99,12 @@ export const Header = ({
             </div>
           </DrawerContent>
         </Drawer>
+        <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
+          <DialogContent className="box-border overflow-clip p-0 lg:h-full lg:max-h-[calc(100vh-64px)] lg:max-w-[calc(100vw-64px)]">
+            <DialogTitle className="sr-only">Settings</DialogTitle>
+            <SettingsView />
+          </DialogContent>
+        </Dialog>
       </div>
     </div>
   );
@@ -96,7 +118,7 @@ export const HeaderHeader = ({
   return (
     <div className={cn('flex items-center gap-3', className)} {...props}>
       <Button size={'icon'} variant={'ghost'} onClick={() => 'setOpen(!open)'}>
-        <PanelLeft className="stroke-neutral-600" />
+        <PanelLeft className="stroke-base-600" />
       </Button>
       {children}
     </div>
@@ -110,7 +132,7 @@ export const HeaderTitle = ({
 }: React.HTMLAttributes<HTMLDivElement>) => {
   return (
     <div
-      className={cn('text-sm font-medium text-neutral-600', className)}
+      className={cn('text-sm font-medium text-base-600', className)}
       {...props}
     >
       {children}
@@ -124,10 +146,7 @@ export const HeaderDescription = ({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => {
   return (
-    <div
-      className={cn('w-full text-muted-foreground xl:w-max', className)}
-      {...props}
-    >
+    <div className={cn('w-full text-base-500 xl:w-max', className)} {...props}>
       {children}
     </div>
   );

@@ -41,7 +41,7 @@ const Page = async () => {
   return (
     <div className="flex w-full flex-col items-center bg-white">
       <Header user={user} />
-      <div className="flex w-full flex-col items-center gap-[4rem] bg-neutral-100 px-[1rem] pt-[calc(5rem+45.6px)] md:px-[3rem]">
+      <div className="bg-base-100 flex w-full flex-col items-center gap-[4rem] px-[1rem] pt-[calc(5rem+45.6px)] md:px-[3rem]">
         <div className="flex w-[90%] flex-col items-center gap-12 py-24 text-center lg:w-2/3">
           <div className="text-[3rem] font-medium leading-[1.15] tracking-[-.08rem] md:text-[4rem]">
             <i>Your</i> website for rating{' '}
@@ -60,7 +60,7 @@ const Page = async () => {
           alt="Image of dashboard"
           width={1900}
           height={970}
-          className="rounded-t-2xl border border-gray-200 shadow-2xl shadow-neutral-200"
+          className="shadow-base-200 border-base-200 rounded-t-2xl border shadow-2xl"
         />
       </div>
       <div className="flex w-full flex-col items-center bg-white p-4 shadow-xl lg:p-6">
@@ -109,21 +109,21 @@ const Page = async () => {
           </Card>
         </div>
       </div>
-      <div className="grid w-full grid-cols-1 gap-[4rem] bg-neutral-100 px-4 pb-16 pt-8 md:grid-cols-2 md:px-[3rem]">
+      <div className="bg-base-100 grid w-full grid-cols-1 gap-[4rem] px-4 pb-16 pt-8 md:grid-cols-2 md:px-[3rem]">
         <div className="flex flex-col gap-4">
           <div className="flex flex-row items-center gap-3 text-3xl font-bold tracking-tighter">
             <Logo /> Medialog
           </div>
-          <div className="text-sm font-normal text-gray-400">
+          <div className="text-base-400 text-sm font-normal">
             © 2024. All rights reserved.
           </div>
         </div>
         <div className="flex flex-row flex-wrap justify-start gap-x-4 gap-y-12 md:justify-end">
           <div className="flex w-[160px] flex-col gap-2">
-            <div className="text-xs uppercase text-gray-500">DEVELOPER</div>
+            <div className="text-xs uppercase text-primary">DEVELOPER</div>
             <div>
               <Link
-                className="text-gray-800 hover:opacity-80 "
+                className="text-base-800 hover:opacity-80 "
                 href={'https://github.com/dinkelspiel/medialog'}
               >
                 GitHub
@@ -131,11 +131,11 @@ const Page = async () => {
             </div>
           </div>
           <div className="flex w-[160px] flex-col gap-2">
-            <div className="text-xs uppercase text-gray-500">LEGAL</div>
+            <div className="text-xs uppercase text-primary">LEGAL</div>
             <div>
               <a
                 href="mailto:mail@keii.dev"
-                className="text-gray-800 hover:opacity-80 "
+                className="text-base-800 hover:opacity-80 "
               >
                 Mail me {'(mail@keii.dev)'}
               </a>

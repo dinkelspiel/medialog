@@ -12,7 +12,7 @@ const Header = ({ user }: { user: User | null }) => {
 
   return (
     <>
-      <header className="fixed top-4 z-10 flex w-[calc(100dvw-2rem)] gap-6 rounded-2xl border border-solid border-neutral-700 bg-neutral-800 p-1 shadow-xl md:mx-0 md:w-fit">
+      <header className="border-base-700 bg-base-800 fixed top-4 z-10 flex w-[calc(100dvw-2rem)] gap-6 rounded-2xl border border-solid p-1 shadow-xl md:mx-0 md:w-fit">
         <div className="flex h-9 w-full items-center justify-between gap-0 md:justify-start">
           <div className="mr-2 flex h-9 w-9 items-center justify-center rounded-xl">
             <Logo className="size-9 rounded-xl" />
@@ -38,7 +38,7 @@ const Header = ({ user }: { user: User | null }) => {
             </Link>
             <nav className="flex h-9 w-9 items-center justify-center md:hidden">
               <button
-                className="flex h-9 w-9 items-center justify-center rounded-xl hover:bg-neutral-700/[0.8]"
+                className="hover:bg-base-700/[0.8] flex h-9 w-9 items-center justify-center rounded-xl"
                 onClick={() => setOpen(!open)}
               >
                 <Menu className="size-4 stroke-white" />
@@ -49,15 +49,15 @@ const Header = ({ user }: { user: User | null }) => {
       </header>
       <div
         className={cn(
-          'fixed top-[calc(32px+45.6px)] box-border flex h-0 w-11/12 origin-top select-none  flex-col overflow-hidden rounded-xl bg-[#292929] px-1 shadow-lg duration-500 md:hidden md:w-fit',
+          'box-base-100 fixed top-[calc(32px+45.6px)] flex h-0 w-11/12 origin-top select-none  flex-col overflow-hidden rounded-xl bg-[#292929] px-1 shadow-lg duration-500 md:hidden md:w-fit',
           {
-            'h-fit border border-solid border-neutral-700 py-1 shadow-xl ease-in-out':
+            'border-base-700 h-fit border border-solid py-1 shadow-xl ease-in-out':
               open,
           }
         )}
       >
         <Link className="[&amp;>div]:last:border-none" href="/blog">
-          <div className="box-border flex w-full items-center justify-between gap-x-[2px] border-b border-white/[0.06] px-4 py-3">
+          <div className="box-base-100 flex w-full items-center justify-between gap-x-[2px] border-b border-white/[0.06] px-4 py-3">
             <span className="body-small flex h-full cursor-pointer items-center text-white hover:opacity-[.8]">
               Blog
             </span>
@@ -65,7 +65,7 @@ const Header = ({ user }: { user: User | null }) => {
           <div className="h-full w-full "></div>
         </Link>
         <Link className="[&amp;>div]:last:border-none" href="/about">
-          <div className="box-border flex w-full items-center justify-between gap-x-[2px] px-4 py-3">
+          <div className="box-base-100 flex w-full items-center justify-between gap-x-[2px] px-4 py-3">
             <span className="body-small flex h-full cursor-pointer items-center text-white hover:opacity-[.8]">
               About
             </span>

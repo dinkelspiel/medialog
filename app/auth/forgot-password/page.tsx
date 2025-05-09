@@ -18,7 +18,7 @@ const Page = async ({ searchParams }: { searchParams: { id: string } }) => {
   }
 
   return (
-    <main className="grid h-[100dvh] w-full items-center justify-center bg-neutral-100">
+    <main className="bg-base-100 grid h-[100dvh] w-full items-center justify-center">
       <Client forgotPassword={forgotPassword} />
     </main>
   );

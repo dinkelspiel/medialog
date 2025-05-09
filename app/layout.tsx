@@ -1,19 +1,26 @@
 import { Metadata, Viewport } from 'next';
 import '@/styles/globals.css';
+import '@/styles/themes.css';
 import BaseLayout from '@/components/layouts/base';
 import Providers from './providers';
 import { TRPCReactProvider } from '@/trpc/react';
+import { ThemeProvider } from './_components/ThemeContext';
+import { getTheme } from './_components/theme';
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
+  const theme = await getTheme();
+
   return (
     <TRPCReactProvider>
-      <BaseLayout>
-        <Providers>{children}</Providers>
-      </BaseLayout>
+      <ThemeProvider theme={theme}>
+        <BaseLayout>
+          <Providers>{children}</Providers>
+        </BaseLayout>
+      </ThemeProvider>
     </TRPCReactProvider>
   );
 }

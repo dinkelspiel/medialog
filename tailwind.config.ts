@@ -18,18 +18,30 @@ const config = {
     },
     extend: {
       colors: {
-        border: 'hsl(var(--border))',
-        input: 'hsl(var(--input))',
-        ring: 'hsl(var(--ring))',
-        background: 'hsl(var(--background))',
+        'base-50': 'rgba(var(--base-50), var(--tw-bg-opacity, 1))',
+        'base-100': 'rgba(var(--base-100), var(--tw-bg-opacity, 1))',
+        'base-200': 'rgba(var(--base-200), var(--tw-bg-opacity, 1))',
+        'base-300': 'rgba(var(--base-300), var(--tw-bg-opacity, 1))',
+        'base-400': 'rgba(var(--base-400), var(--tw-bg-opacity, 1))',
+        'base-500': 'rgba(var(--base-500), var(--tw-bg-opacity, 1))',
+        'base-600': 'rgba(var(--base-600), var(--tw-bg-opacity, 1))',
+        'base-700': 'rgba(var(--base-700), var(--tw-bg-opacity, 1))',
+        'base-800': 'rgba(var(--base-800), var(--tw-bg-opacity, 1))',
+        'base-900': 'rgba(var(--base-900), var(--tw-bg-opacity, 1))',
+        'base-950': 'rgba(var(--base-950), var(--tw-bg-opacity, 1))',
+
+        border: 'hsl(var(--base-100))',
+        input: 'hsl(var(--base-100))',
+        ring: 'hsl(var(--base-950))',
+        background: 'hsl(var(--white))',
         foreground: 'hsl(var(--foreground))',
         primary: {
           DEFAULT: 'hsl(var(--primary))',
           foreground: 'hsl(var(--primary-foreground))',
         },
         secondary: {
-          DEFAULT: 'hsl(var(--secondary))',
-          foreground: 'hsl(var(--secondary-foreground))',
+          DEFAULT: 'hsl(var(--base-50))',
+          foreground: 'hsl(var(--base-900))',
         },
         destructive: {
           DEFAULT: 'hsl(var(--destructive))',
@@ -37,19 +49,19 @@ const config = {
         },
         muted: {
           DEFAULT: 'hsl(var(--muted))',
-          foreground: 'hsl(var(--muted-foreground))',
+          foreground: 'hsl(var(--base-500))',
         },
         accent: {
-          DEFAULT: 'hsl(var(--accent))',
-          foreground: 'hsl(var(--accent-foreground))',
+          DEFAULT: 'hsl(var(--base-50))',
+          foreground: 'hsl(var(--base-900))',
         },
         popover: {
-          DEFAULT: 'hsl(var(--popover))',
-          foreground: 'hsl(var(--popover-foreground))',
+          DEFAULT: 'hsl(var(--base-50))',
+          foreground: 'hsl(var(--base-950))',
         },
         card: {
-          DEFAULT: 'hsl(var(--card))',
-          foreground: 'hsl(var(--card-foreground))',
+          DEFAULT: 'hsl(var(--base-50))',
+          foreground: 'hsl(var(--base-950))',
         },
       },
       borderRadius: {

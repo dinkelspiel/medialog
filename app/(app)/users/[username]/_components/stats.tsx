@@ -26,7 +26,7 @@ const UserCard = ({
       <Link href={`/@${user.username}`}>
         <div className="flex flex-col">
           <div className="font-semibold">{user.username}</div>
-          <div className="text-sm text-neutral-500">
+          <div className="text-base-500 text-sm">
             {user.followers.filter(e => e.isFollowing).length} followers,
             following {user.following.filter(e => e.isFollowing).length}
           </div>
@@ -98,7 +98,7 @@ export const Stats = ({
                 .length
             }
           </div>
-          <div className="text-center text-sm text-neutral-500">Watched</div>
+          <div className="text-base-500 text-center text-sm">Watched</div>
         </div>
         <div className="flex flex-col">
           <div className="text-center text-2xl font-semibold">
@@ -112,7 +112,7 @@ export const Stats = ({
               ).length
             }
           </div>
-          <div className="whitespace-nowrap text-center text-sm text-neutral-500">
+          <div className="text-base-500 whitespace-nowrap text-center text-sm">
             This Year
           </div>
         </div>
@@ -126,7 +126,7 @@ export const Stats = ({
                 <div className="text-center text-2xl font-semibold">
                   {profileUser.following.filter(e => e.isFollowing).length}
                 </div>
-                <div className="text-center text-sm text-neutral-500">
+                <div className="text-base-500 text-center text-sm">
                   Following
                 </div>
               </div>
@@ -137,7 +137,7 @@ export const Stats = ({
                 <div className="text-center text-2xl font-semibold">
                   {profileUser.followers.filter(e => e.isFollowing).length}
                 </div>
-                <div className="text-center text-sm text-neutral-500">
+                <div className="text-base-500 text-center text-sm">
                   Followers
                 </div>
               </div>
@@ -148,7 +148,7 @@ export const Stats = ({
               <SheetTitle className="flex flex-row gap-6">
                 <div
                   className={cn(
-                    `cursor-pointer px-2 pb-1 text-lg font-semibold text-neutral-500`,
+                    `text-base-500 cursor-pointer px-2 pb-1 text-lg font-semibold`,
                     {
                       'border-b border-b-black text-black':
                         page === 'Following',
@@ -160,7 +160,7 @@ export const Stats = ({
                 </div>
                 <div
                   className={cn(
-                    `cursor-pointer px-2 pb-1 text-lg font-semibold text-neutral-500`,
+                    `text-base-500 cursor-pointer px-2 pb-1 text-lg font-semibold`,
                     {
                       'border-b border-b-black text-black':
                         page === 'Followers',

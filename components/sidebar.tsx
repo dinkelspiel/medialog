@@ -23,21 +23,22 @@ export const Sidebar = ({
   return (
     <div
       className={cn(
-        'sticky top-0 hidden h-[100dvh] w-0 flex-col overflow-hidden border-r border-r-neutral-200 bg-neutral-50 p-0 py-3 transition-all duration-200 lg:flex',
+        'border-r-base-200 bg-base-50 sticky top-0 hidden h-[100dvh] w-0 flex-col overflow-hidden border-r p-0 py-3 transition-all duration-200 lg:flex',
         {
           'w-[250px] px-3': true, //open,
-        }
+        },
+        className
       )}
     >
-      <div className="flex h-[52px] w-[250px] items-center gap-3 border-b border-dashed border-b-neutral-200 pb-3">
-        <div className="flex size-[40px] items-center justify-center rounded-lg border border-neutral-200 p-1 shadow-sm">
-          <div className="flex h-full w-full items-center justify-center rounded-[4px] bg-neutral-900">
+      <div className="border-b-base-200 flex h-[52px] w-[250px] items-center gap-3 border-b border-dashed pb-3">
+        <div className="border-base-200 flex size-[40px] items-center justify-center rounded-lg border p-1 shadow-sm">
+          <div className="bg-base-900 flex h-full w-full items-center justify-center rounded-[4px]">
             <Library className="flex size-4 items-center justify-center stroke-white" />
           </div>
         </div>
         <div className="text-sm font-medium">Medialog</div>
       </div>
-      <ul className="box-border flex h-full flex-col pt-3">{children}</ul>
+      <ul className="box-base-100 flex h-full flex-col pt-3">{children}</ul>
     </div>
   );
 };
@@ -49,7 +50,7 @@ export const SidebarHeader = ({
 }: React.HTMLAttributes<HTMLDivElement>) => (
   <div
     className={cn(
-      `flex items-center gap-3 whitespace-nowrap rounded-lg text-base font-semibold text-neutral-900 dark:text-white lg:mb-12 [&>svg]:size-3`,
+      `text-base-900 flex items-center gap-3 whitespace-nowrap rounded-lg text-base font-semibold dark:text-white lg:mb-12 [&>svg]:size-3`,
       className
     )}
     {...props}
@@ -112,7 +113,7 @@ const ClientSidebarButton = ({
     //     `w-full select-none justify-start`,
     //     {
     //       'text-white': pathname.endsWith(href),
-    //       'text-muted-foreground': !pathname.endsWith(href),
+    //       'text-base-500': !pathname.endsWith(href),
     //     },
     //     className
     //   )}
@@ -125,7 +126,7 @@ const ClientSidebarButton = ({
       variant={path.includes(href ?? '') ? 'outline' : 'ghost'}
       size={'sm'}
       className={cn('w-full justify-start gap-3', {
-        'text-neutral-600': !path.includes(href ?? ''),
+        'text-base-600': !path.includes(href ?? ''),
       })}
     >
       {children}
