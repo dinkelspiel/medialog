@@ -23,14 +23,14 @@ const Page = () => {
   }, [state]);
 
   return (
-    <main className="grid h-[100dvh] w-full items-center justify-center bg-neutral-100">
+    <main className="bg-base-100 grid h-[100dvh] w-full items-center justify-center">
       <form className="grid w-[350px] gap-8" action={formAction}>
         <div className="grid gap-2">
           <Logo className="mb-2" />
           <h3 className="text-[22px] font-bold leading-7 tracking-[-0.02em]">
             Sign up to Medialog
           </h3>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-base-500 text-sm">
             Welcome to <i>your</i> website for rating Movies, Books, and TV
             Shows
           </p>
@@ -42,7 +42,7 @@ const Page = () => {
             <Input placeholder="Password" type="password" name="password" />
           </div>
           <SubmitButton>Create my account</SubmitButton>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-base-500 text-sm">
             Already have an account?{' '}
             <Link href="/auth/login" className="text-primary">
               Log in

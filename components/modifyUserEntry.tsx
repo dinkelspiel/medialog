@@ -220,12 +220,12 @@ const ModifyUserEntry = ({
           <div className="text-lg font-semibold tracking-tight lg:pt-0">
             {userEntry.entry.originalTitle}
           </div>
-          <div className="pb-[2px] text-sm text-muted-foreground">
+          <div className="text-base-500 pb-[2px] text-sm">
             {userEntry.entry.releaseDate.getFullYear()}
           </div>
         </div>
         {userEntry.entry.tagline && (
-          <div className="text-sm font-normal italic text-muted-foreground">
+          <div className="text-base-500 text-sm font-normal italic">
             "{userEntry.entry.tagline}"
           </div>
         )}
@@ -338,8 +338,8 @@ const ModifyUserEntry = ({
     return (
       <div className="grid h-full grow grid-rows-[max-content,max-content,1fr,max-content]">
         <Header />
-        <div className="flex flex-row items-center gap-3 border-b border-b-gray-200 py-3 text-sm">
-          <div className="w-max text-muted-foreground">Rating</div>
+        <div className="border-b-base-200 flex flex-row items-center gap-3 border-b py-3 text-sm">
+          <div className="text-base-500 w-max">Rating</div>
           <Badge className="min-w-[50px] max-w-[50px] justify-center">
             {rating / 20}
           </Badge>
@@ -412,7 +412,7 @@ const ModifyUserEntry = ({
             </Button>
             <div
               className={cn(
-                'flex h-0 items-center gap-2 overflow-hidden px-2 py-0 text-muted-foreground transition-all duration-500',
+                'text-base-500 flex h-0 items-center gap-2 overflow-hidden px-2 py-0 transition-all duration-500',
                 { 'h-[48px] py-2': userEntry.status === 'watching' }
               )}
             >

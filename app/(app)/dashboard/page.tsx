@@ -257,7 +257,7 @@ const Dashboard = ({
           className="flex w-full lg:w-[356px]"
           placeholder="Search by title..."
         />
-        <div className="absolute right-[5.2px] top-1/2 hidden -translate-y-1/2 items-center gap-1 rounded-md border border-gray-200 bg-white px-2 py-0.5 text-xs font-medium text-gray-600 lg:flex">
+        <div className="border-base-200 text-base-600 absolute right-[5.2px] top-1/2 hidden -translate-y-1/2 items-center gap-1 rounded-md border bg-white px-2 py-0.5 text-xs font-medium lg:flex">
           <Command className="size-3" /> K
         </div>
       </div>
@@ -290,7 +290,7 @@ const Dashboard = ({
       <Sheet>
         <SheetTrigger asChild>
           <Button size={'sm'} variant={'outline'}>
-            <SlidersHorizontal className="stroke-neutral-600" />
+            <SlidersHorizontal className="stroke-base-600" />
             Filter
           </Button>
         </SheetTrigger>
@@ -307,7 +307,7 @@ const Dashboard = ({
               <h3 className="text-sm font-medium">Status</h3>
               <RadioGroup
                 value={filterStatus}
-                onValueChange={e =>
+                onValueChange={(e: any) =>
                   setFilterStatus(e as UserEntryStatus | undefined)
                 }
               >
@@ -341,7 +341,7 @@ const Dashboard = ({
             {/* <div className="space-y-3">
             <div className="flex justify-between">
               <h3 className="text-sm font-medium">Rating Range</h3>
-              <span className="text-sm text-muted-foreground">
+              <span className="text-sm text-base-500">
                 {ratingRange[0]} - {ratingRange[1]}
               </span>
             </div>
@@ -367,7 +367,7 @@ const Dashboard = ({
       </Header>
       <div
         ref={userEntriesRef}
-        className="grid justify-center bg-neutral-100 p-4 xl:col-span-1"
+        className="bg-base-100 grid justify-center p-4 xl:col-span-1"
       >
         <FilterView className="flex pb-4 lg:hidden" />
         <div

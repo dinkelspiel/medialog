@@ -1,16 +1,21 @@
+import { getTheme } from '@/app/_components/theme';
 import { cn } from '@/lib/utils';
 import React, { ReactNode } from 'react';
 
-const BaseLayout = ({
+const BaseLayout = async ({
   children,
   className,
 }: {
   children: ReactNode;
   className?: string;
 }) => {
+  const theme = await getTheme();
+
   return (
     <html lang="en">
-      <body className={cn('font-geist min-h-[100dvh]', className)}>
+      <body
+        className={cn(`theme-${theme} font-geist min-h-[100dvh]`, className)}
+      >
         {children}
       </body>
     </html>

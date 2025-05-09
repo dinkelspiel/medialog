@@ -35,7 +35,7 @@ const Layout = async ({ children }: { children: ReactNode }) => {
           >
             <SidebarButtons />
             <SidebarFooter>
-              <div className="text-sm font-normal text-neutral-400">
+              <div className="text-base-400 text-sm font-normal">
                 {process.env.GIT_COMMIT
                   ? `${process.env.GIT_COMMIT}@${process.env.GIT_BRANCH}`
                   : 'dev'}
@@ -46,7 +46,7 @@ const Layout = async ({ children }: { children: ReactNode }) => {
                   size="sm"
                   variant={'outline'}
                 >
-                  <Plus className="size-4 stroke-neutral-600" />
+                  <Plus className="stroke-base-600 size-4" />
                   Log Media
                 </Button>
               </AddLog>

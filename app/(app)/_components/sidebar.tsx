@@ -4,7 +4,7 @@ import { Home, UsersRound } from 'lucide-react';
 export const SidebarButtons = () => (
   <>
     <SidebarButton href="/dashboard">
-      <Home className="size-4 stroke-neutral-600" />
+      <Home className="stroke-base-600 size-4" />
       Home
     </SidebarButton>
     <SidebarButton href="/community">

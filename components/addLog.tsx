@@ -297,7 +297,7 @@ const AddLogContent = ({
         queryResults.length === 0 &&
         externalQueryResults.length === 0 && (
           <div className="relative flex justify-center pt-4 text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">
+            <span className="text-base-500 bg-white px-2">
               No Results Found
             </span>
           </div>
@@ -348,7 +348,7 @@ const AddLogContent = ({
                   <span className="w-full border-t" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="bg-background px-2 text-muted-foreground">
+                  <span className="text-base-500 bg-white px-2">
                     OR VIA IMPORT
                   </span>
                 </div>
