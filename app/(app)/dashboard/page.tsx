@@ -9,6 +9,7 @@ import {
 } from '@/components/header';
 import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import {
+  Category,
   Entry,
   User,
   UserEntry,
@@ -18,6 +19,7 @@ import {
 import {
   AArrowDown,
   Command,
+  Dices,
   Eye,
   Filter,
   Loader2,
@@ -26,6 +28,7 @@ import {
   Pen,
   Settings,
   SlidersHorizontal,
+  SortDesc,
   Star,
   UserRound,
 } from 'lucide-react';
@@ -78,6 +81,7 @@ import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
 import { SidebarButtons } from '../_components/sidebar';
 import HeaderLayout from '@/components/layouts/header';
+import { Checkbox } from '@/components/ui/checkbox';
 
 const Page = () => {
   const {
@@ -115,6 +119,8 @@ const Dashboard = ({
   const {
     filterStatus,
     setFilterStatus,
+    filterCategories,
+    toggleFilterCategory,
     filterTitle,
     setFilterTitle,
     filterStyle,
@@ -257,13 +263,14 @@ const Dashboard = ({
           className="flex w-full lg:w-[356px]"
           placeholder="Search by title..."
         />
-        <div className="border-base-200 text-base-600 absolute right-[5.2px] top-1/2 hidden -translate-y-1/2 items-center gap-1 rounded-md border bg-white px-2 py-0.5 text-xs font-medium lg:flex">
+        <div className="absolute right-[5.2px] top-1/2 hidden -translate-y-1/2 items-center gap-1 rounded-md border border-base-200 bg-white px-2 py-0.5 text-xs font-medium text-base-600 lg:flex">
           <Command className="size-3" /> K
         </div>
       </div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button size={'sm'} variant={'outline'}>
+            <SortDesc className="stroke-base-600" />
             Sort
           </Button>
         </DropdownMenuTrigger>
@@ -294,7 +301,7 @@ const Dashboard = ({
             Filter
           </Button>
         </SheetTrigger>
-        <SheetContent>
+        <SheetContent className="flex flex-col">
           <SheetHeader>
             <SheetTitle>Filter Entries</SheetTitle>
             <SheetDescription>
@@ -302,7 +309,7 @@ const Dashboard = ({
             </SheetDescription>
           </SheetHeader>
 
-          <div className="space-y-6 py-6">
+          <div className="flex flex-col gap-6 py-6">
             <div className="space-y-3">
               <h3 className="text-sm font-medium">Status</h3>
               <RadioGroup
@@ -337,6 +344,24 @@ const Dashboard = ({
                 </div>
               </RadioGroup>
             </div>
+            <div className="space-y-3">
+              <h3 className="text-sm font-medium">Categories</h3>
+              <div className="grid gap-2">
+                {Object.keys(Category).map(category => (
+                  <div className="flex items-center space-x-2">
+                    <Checkbox
+                      value={category}
+                      id={category}
+                      checked={filterCategories.includes(category as Category)}
+                      onCheckedChange={() =>
+                        toggleFilterCategory(category as Category)
+                      }
+                    />
+                    <Label htmlFor={category}>{category}</Label>
+                  </div>
+                ))}
+              </div>
+            </div>
 
             {/* <div className="space-y-3">
             <div className="flex justify-between">
@@ -355,6 +380,12 @@ const Dashboard = ({
             />
           </div> */}
           </div>
+          {/* <div className="flex h-full flex-col justify-end">
+            <Button className="w-full" size={'sm'} variant={'outline'}>
+              <Dices className="stroke-base-600" />
+              Pick Random
+            </Button>
+          </div> */}
         </SheetContent>
       </Sheet>
     </div>
@@ -367,7 +398,7 @@ const Dashboard = ({
       </Header>
       <div
         ref={userEntriesRef}
-        className="bg-base-100 grid justify-center p-4 xl:col-span-1"
+        className="grid justify-center bg-base-100 p-4 xl:col-span-1"
       >
         <FilterView className="flex pb-4 lg:hidden" />
         <div
@@ -440,6 +471,10 @@ const Dashboard = ({
                   filterStatus !== 'all' &&
                   userEntry.status !== filterStatus
                 ) {
+                  return;
+                }
+
+                if (!filterCategories.includes(userEntry.entry.category)) {
                   return;
                 }
 
