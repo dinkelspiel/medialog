@@ -47,8 +47,6 @@ export const ProfileHeader = ({
     })[];
   };
 }) => {
-  const authUser = useAuthUser();
-
   const FollowEditProfile = () => {
     return (
       user &&
@@ -62,7 +60,7 @@ export const ProfileHeader = ({
     <Header
       titleComponent={
         <div>
-          {authUser.username === profileUser.username
+          {user && user.username === profileUser.username
             ? 'Your profile'
             : `${profileUser.username}'s profile`}
         </div>

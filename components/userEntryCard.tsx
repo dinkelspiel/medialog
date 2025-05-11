@@ -28,13 +28,13 @@ const UserEntryCard = ({
   return (
     <div
       className={cn(
-        'shadow-base-300 group relative aspect-[2/3] w-full cursor-pointer overflow-clip rounded-lg bg-cover shadow-md',
+        'group relative aspect-[2/3] w-full cursor-pointer overflow-clip rounded-lg bg-cover shadow-md shadow-base-300',
         className
       )}
       style={{ backgroundImage: `url(${backgroundImage})` }}
       {...props}
     >
-      <div className="from-base-900 absolute top-0 flex h-[20%] w-full flex-col justify-end rounded-bl-lg rounded-br-lg bg-opacity-50 bg-gradient-to-b to-transparent"></div>
+      <div className="absolute top-0 flex h-[20%] w-full flex-col justify-end rounded-bl-lg rounded-br-lg bg-opacity-50 bg-gradient-to-b from-base-900 to-transparent"></div>
       <div className="absolute top-0 p-2">
         {(() => {
           switch (category) {
@@ -48,18 +48,18 @@ const UserEntryCard = ({
         })()}
       </div>
       {hoverCard && (
-        <div className="duration-400 hover:text-base-900 hover:bg-base-50 border-base-100 absolute right-1 top-1 -translate-y-4 rounded-sm border bg-white bg-white opacity-0 shadow-sm transition-all group-hover:translate-y-0 group-hover:opacity-100">
+        <div className="duration-400 absolute right-1 top-1 -translate-y-4 rounded-sm border border-base-100 bg-white bg-white opacity-0 shadow-sm transition-all hover:bg-base-50 hover:text-base-900 group-hover:translate-y-0 group-hover:opacity-100">
           {hoverCard}
         </div>
       )}
 
       <div className="select-none text-transparent">{title}</div>
-      <div className="from-base-900 absolute top-[40%] flex h-[60%] w-full flex-col justify-end rounded-bl-lg rounded-br-lg bg-gradient-to-t to-transparent object-cover p-2">
+      <div className="absolute top-[40%] flex h-[60%] w-full flex-col justify-end rounded-bl-lg rounded-br-lg bg-gradient-to-t from-base-900 to-transparent object-cover p-2">
         <div className="text-left text-sm font-semibold text-white sm:text-base">
           {title}
         </div>
         <div className="flex flex-row items-center justify-between">
-          <div className="text-base-400 text-sm">
+          <div className="text-sm text-base-400">
             {releaseDate.getFullYear()}
           </div>
           {!!customStars && customStars}

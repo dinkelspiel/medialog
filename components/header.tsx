@@ -3,7 +3,14 @@
 import { cn } from '../lib/utils';
 import React, { ReactNode, useState } from 'react';
 import { Button } from './ui/button';
-import { Menu, PanelLeft, Plus, Settings, UserRound } from 'lucide-react';
+import {
+  LogIn,
+  Menu,
+  PanelLeft,
+  Plus,
+  Settings,
+  UserRound,
+} from 'lucide-react';
 import { useAuthUser } from '@/app/(app)/_components/AuthUserContext';
 import Link from 'next/link';
 import { Sheet, SheetTrigger } from './ui/sheet';
@@ -32,46 +39,70 @@ export const Header = ({
       )}
     >
       <div className="flex items-center gap-2">
-        <Button
-          size={'icon'}
-          variant={'ghost'}
-          className="hidden lg:flex"
-          onClick={() => 'setOpen(!open)'}
-        >
-          <PanelLeft className="stroke-base-600" />
-        </Button>
+        {user && (
+          <Button
+            size={'icon'}
+            variant={'ghost'}
+            className="hidden lg:flex"
+            onClick={() => 'setOpen(!open)'}
+          >
+            <PanelLeft className="stroke-base-600" />
+          </Button>
+        )}
         <div className="whitespace-nowrap text-sm font-medium text-base-600">
           {titleComponent}
         </div>
       </div>
       {children}
       <div className="hidden items-center gap-2 lg:flex">
-        <Button
-          size={'icon'}
-          variant={'ghost'}
-          onClick={() => setSettingsOpen(true)}
-        >
-          <Settings className="stroke-base-600" />
-        </Button>
-        <Link href={`/@${user && user.username}`}>
-          <Button variant={'outline'}>
-            <UserRound className="size-4" /> {user && user.username}
+        {user && (
+          <>
+            {' '}
+            <Button
+              size={'icon'}
+              variant={'ghost'}
+              onClick={() => setSettingsOpen(true)}
+            >
+              <Settings className="stroke-base-600" />
+            </Button>{' '}
+            <Link href={`/@${user && user.username}`}>
+              <Button variant={'outline'}>
+                <UserRound className="size-4" /> {user && user.username}
+              </Button>
+            </Link>
+          </>
+        )}
+        {!user && (
+          <Link href={`/auth/login`}>
+            <Button variant={'default'} size={'sm'}>
+              <LogIn className="size-4" /> Sign in
+            </Button>
+          </Link>
+        )}
+      </div>
+
+      <div className="flex items-center gap-2 lg:hidden">
+        <Link href={`/auth/login`} className="w-full">
+          <Button variant={'default'} size={'sm'} className="w-full">
+            <LogIn className="size-4" /> Sign in
           </Button>
         </Link>
-      </div>
-      <div className="flex items-center gap-2 lg:hidden">
-        <AddLog>
-          <Button className="flex lg:hidden" size="sm" variant={'outline'}>
-            <Plus className="size-4 stroke-base-600" />
-            Log Media
-          </Button>
-        </AddLog>
+        {user && (
+          <AddLog>
+            <Button className="flex lg:hidden" size="sm" variant={'outline'}>
+              <Plus className="size-4 stroke-base-600" />
+              Log Media
+            </Button>
+          </AddLog>
+        )}
         <Drawer>
           <DrawerTrigger asChild>
             <Button
               size={'icon'}
               variant={'ghost'}
-              className="flex aspect-square lg:hidden"
+              className={cn('flex aspect-square lg:hidden', {
+                hidden: !user,
+              })}
             >
               <Menu className="stroke-base-600" />
             </Button>
@@ -84,6 +115,7 @@ export const Header = ({
                   ? `${process.env.GIT_COMMIT}@${process.env.GIT_BRANCH}`
                   : 'dev'}
               </div>
+
               <Button
                 size={'sm'}
                 variant={'outline'}
