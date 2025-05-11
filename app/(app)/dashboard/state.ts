@@ -1,4 +1,10 @@
-import { Entry, User, UserEntry, UserEntryStatus } from '@prisma/client';
+import {
+  Category,
+  Entry,
+  User,
+  UserEntry,
+  UserEntryStatus,
+} from '@prisma/client';
 import { create } from 'zustand';
 
 export type FilterStyle = 'rating' | 'az' | 'completed' | 'updated';
@@ -7,6 +13,9 @@ export type ExtendedUserEntry = UserEntry & { entry: Entry } & { user: User };
 type DashboardStore = {
   filterStatus: UserEntryStatus | 'all';
   setFilterStatus: (status: UserEntryStatus | undefined) => void;
+  filterCategories: Category[];
+  setFilterCategories: (categories: Category[]) => void;
+  toggleFilterCategory: (category: Category) => void;
   filterTitle: string;
   setFilterTitle: (title: string) => void;
   filterStyle: FilterStyle;
@@ -25,6 +34,15 @@ export const useDashboardStore = create<DashboardStore>(set => ({
   filterStatus: 'all',
   setFilterStatus: (status: UserEntryStatus | undefined) =>
     set(() => ({ filterStatus: status })),
+  filterCategories: Object.keys(Category) as Category[],
+  setFilterCategories: (categories: Category[]) =>
+    set(() => ({ filterCategories: categories })),
+  toggleFilterCategory: (category: Category) =>
+    set(state => ({
+      filterCategories: state.filterCategories.includes(category)
+        ? state.filterCategories.filter(c => c !== category)
+        : [...state.filterCategories, category],
+    })),
   filterTitle: '',
   setFilterTitle: (title: string) => set(() => ({ filterTitle: title })),
   filterStyle: 'rating',
