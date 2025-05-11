@@ -17,9 +17,7 @@ export default async function RootLayout({
   return (
     <TRPCReactProvider>
       <ThemeProvider theme={theme}>
-        <BaseLayout>
-          <Providers>{children}</Providers>
-        </BaseLayout>
+        <Providers>{children}</Providers>
       </ThemeProvider>
     </TRPCReactProvider>
   );

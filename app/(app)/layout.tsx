@@ -11,6 +11,7 @@ import { ReactNode } from 'react';
 import { Toaster } from 'sonner';
 import { AuthUserProvider } from './_components/AuthUserContext';
 import { SidebarButtons } from './_components/sidebar';
+import BaseLayout from '@/components/layouts/base';
 
 const Layout = async ({ children }: { children: ReactNode }) => {
   const user = await validateSessionToken();
@@ -35,7 +36,7 @@ const Layout = async ({ children }: { children: ReactNode }) => {
           >
             <SidebarButtons />
             <SidebarFooter>
-              <div className="text-base-400 text-sm font-normal">
+              <div className="text-sm font-normal text-base-400">
                 {process.env.GIT_COMMIT
                   ? `${process.env.GIT_COMMIT}@${process.env.GIT_BRANCH}`
                   : 'dev'}
@@ -46,7 +47,7 @@ const Layout = async ({ children }: { children: ReactNode }) => {
                   size="sm"
                   variant={'outline'}
                 >
-                  <Plus className="stroke-base-600 size-4" />
+                  <Plus className="size-4 stroke-base-600" />
                   Log Media
                 </Button>
               </AddLog>
@@ -60,10 +61,12 @@ const Layout = async ({ children }: { children: ReactNode }) => {
     );
   } else {
     return (
-      <>
-        <main className="flex flex-col gap-4 px-5 py-4">{children}</main>
-        <Toaster />
-      </>
+      <BaseLayout>
+        <AuthUserProvider user={null}>
+          <main className="flex flex-col gap-4">{children}</main>
+          <Toaster />
+        </AuthUserProvider>
+      </BaseLayout>
     );
   }
 };

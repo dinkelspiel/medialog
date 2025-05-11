@@ -11,7 +11,7 @@ export function AuthUserProvider({
   user,
   children,
 }: {
-  user: AuthUser;
+  user: AuthUser | null;
   children: React.ReactNode;
 }) {
   return (
@@ -22,7 +22,7 @@ export function AuthUserProvider({
 export function useAuthUser() {
   const context = useContext(AuthUserContext);
   if (!context) {
-    throw new Error('useAuthUser must be used within a AuthUserProvider');
+    return null;
   }
   return context;
 }
