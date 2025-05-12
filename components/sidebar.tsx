@@ -20,8 +20,6 @@ export const Sidebar = ({
   headerProps?: React.HTMLAttributes<HTMLDivElement>;
   sidebarOpen: boolean;
 }) => {
-  const [sheetOpen, setSheetOpen] = useState(false);
-
   return (
     <div
       className={cn(

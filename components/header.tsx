@@ -69,7 +69,8 @@ export const Header = ({
             </Button>{' '}
             <Link href={`/@${user && user.username}`}>
               <Button variant={'outline'}>
-                <UserRound className="size-4" /> {user && user.username}
+                <UserRound className="size-4 stroke-base-600" />{' '}
+                {user && user.username}
               </Button>
             </Link>
           </>
@@ -129,7 +130,8 @@ export const Header = ({
               </Button>
               <Link href={`/@${user && user.username}`} className="w-full">
                 <Button variant={'outline'} size="sm" className="w-full">
-                  <UserRound className="size-4" /> {user && user.username}
+                  <UserRound className="size-4 stroke-base-600" />{' '}
+                  {user && user.username}
                 </Button>
               </Link>
             </div>
