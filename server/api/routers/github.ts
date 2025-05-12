@@ -20,9 +20,7 @@ export const githubRouter = createTRPCRouter({
         auth: {
           appId: process.env.GITHUB_APP_ID!,
           installationId: process.env.GITHUB_INSTALLATION_ID!,
-          privateKey: process.env
-            .GITHUB_PRIVATE_KEY!.split(String.raw`\n`)
-            .join('\n'),
+          privateKey: process.env.GITHUB_PRIVATE_KEY!.split('\\n').join('\n'),
         },
       });
 
