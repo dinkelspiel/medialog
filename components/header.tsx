@@ -18,6 +18,7 @@ import { Drawer, DrawerContent, DrawerTrigger } from './ui/drawer';
 import AddLog from './addLog';
 import { Dialog, DialogContent, DialogTitle } from './ui/dialog';
 import SettingsView from '@/components/islands/settings';
+import { useAppStore } from '@/app/(app)/state';
 
 export const Header = ({
   className,
@@ -31,6 +32,7 @@ export const Header = ({
 }) => {
   const user = useAuthUser();
   const [settingsOpen, setSettingsOpen] = useState(false);
+  const { setSidebarOpen, sidebarOpen } = useAppStore();
   return (
     <div
       className={cn(
@@ -44,7 +46,7 @@ export const Header = ({
             size={'icon'}
             variant={'ghost'}
             className="hidden lg:flex"
-            onClick={() => 'setOpen(!open)'}
+            onClick={() => setSidebarOpen(!sidebarOpen)}
           >
             <PanelLeft className="stroke-base-600" />
           </Button>
@@ -82,11 +84,13 @@ export const Header = ({
       </div>
 
       <div className="flex items-center gap-2 lg:hidden">
-        <Link href={`/auth/login`} className="w-full">
-          <Button variant={'default'} size={'sm'} className="w-full">
-            <LogIn className="size-4" /> Sign in
-          </Button>
-        </Link>
+        {!user && (
+          <Link href={`/auth/login`} className="w-full">
+            <Button variant={'default'} size={'sm'} className="w-full">
+              <LogIn className="size-4" /> Sign in
+            </Button>
+          </Link>
+        )}
         {user && (
           <AddLog>
             <Button className="flex lg:hidden" size="sm" variant={'outline'}>

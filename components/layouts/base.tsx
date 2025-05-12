@@ -14,7 +14,10 @@ const BaseLayout = async ({
   return (
     <html lang="en">
       <body
-        className={cn(`theme-${theme} font-geist min-h-[100dvh]`, className)}
+        className={cn(
+          `theme-${theme} font-geist min-h-[100dvh] bg-base-50`,
+          className
+        )}
       >
         {children}
       </body>
