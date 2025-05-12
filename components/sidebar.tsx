@@ -1,12 +1,11 @@
 'use client';
 
-import { cn } from '../lib/utils';
-import React, { ReactNode, useState } from 'react';
+import { Library } from 'lucide-react';
 import Link from 'next/link';
-import { Library, Menu } from 'lucide-react';
-import { Sheet, SheetContent } from './ui/sheet';
-import { Button } from './ui/button';
 import { usePathname } from 'next/navigation';
+import React, { ReactNode } from 'react';
+import { cn } from '../lib/utils';
+import { Button } from './ui/button';
 
 export const Sidebar = ({
   children,

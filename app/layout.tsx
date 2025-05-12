@@ -1,11 +1,10 @@
-import { Metadata, Viewport } from 'next';
 import '@/styles/globals.css';
 import '@/styles/themes.css';
-import BaseLayout from '@/components/layouts/base';
-import Providers from './providers';
 import { TRPCReactProvider } from '@/trpc/react';
+import { Metadata, Viewport } from 'next';
 import { ThemeProvider } from './_components/ThemeContext';
 import { getTheme } from './_components/theme';
+import Providers from './providers';
 
 export default async function RootLayout({
   children,

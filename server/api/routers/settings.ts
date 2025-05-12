@@ -1,9 +1,8 @@
 import { createTRPCRouter } from '@/server/api/trpc';
-import { protectedProcedure } from '../trpc';
-import { unstable_cache } from 'next/cache';
 import prisma from '@/server/db';
-import z from 'zod';
 import { Theme } from '@prisma/client';
+import z from 'zod';
+import { protectedProcedure } from '../trpc';
 
 export const settingsRouter = createTRPCRouter({
   setTheme: protectedProcedure

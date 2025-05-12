@@ -1,6 +1,5 @@
 'use client';
 
-import { User } from '@prisma/client';
 import { createContext, useContext } from 'react';
 
 type AuthUser = { id: number; username: string; email: string };

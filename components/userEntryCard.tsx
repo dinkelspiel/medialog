@@ -1,10 +1,9 @@
-import { Book, Film, Star, Tv } from 'lucide-react';
-import SmallRating from './smallRating';
-import { Category } from '@prisma/client';
-import { HTMLProps, ReactElement, ReactNode } from 'react';
-import Image from 'next/image';
-import { cn } from '@/lib/utils';
 import { ExtendedUserEntry } from '@/app/(app)/dashboard/state';
+import { cn } from '@/lib/utils';
+import { Category } from '@prisma/client';
+import { Book, Film, Star, Tv } from 'lucide-react';
+import { HTMLProps, ReactElement } from 'react';
+import SmallRating from './smallRating';
 
 const UserEntryCard = ({
   title,

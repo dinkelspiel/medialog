@@ -1,20 +1,13 @@
-import {
-  Header,
-  HeaderDescription,
-  HeaderHeader,
-  HeaderTitle,
-} from '@/components/header';
+import { SidebarButtons } from '@/app/(app)/_components/sidebar';
+import { Header, HeaderDescription } from '@/components/header';
 import UserEntryCard from '@/components/userEntryCard';
 import { validateSessionToken } from '@/server/auth/validateSession';
 import prisma from '@/server/db';
 import Link from 'next/link';
-import CompletionProgress from './_components/progress';
-import { Button } from '@/components/ui/button';
-import { Plus, X } from 'lucide-react';
-import EditableDescription from './_components/editableDescription';
 import AddMedia from './_components/addMedia';
+import EditableDescription from './_components/editableDescription';
 import EditableName from './_components/editableName';
-import { SidebarButtons } from '@/app/(app)/_components/sidebar';
+import CompletionProgress from './_components/progress';
 
 const Page = async ({
   params,
@@ -121,16 +114,16 @@ const Page = async ({
             <EditableDescription userList={list} />
           )}
           {!(authUser && authUser?.id === targetUser.id) && (
-            <div className="text-base-700 h-max text-base">
+            <div className="h-max text-base text-base-700">
               {list.description}
             </div>
           )}
 
           {authUser && (
             <div className="flex flex-col gap-4">
-              <div className="border-b-base-200 flex justify-between border-b pb-2 text-lg font-semibold">
+              <div className="flex justify-between border-b border-b-base-200 pb-2 text-lg font-semibold">
                 You've completed
-                <span className="text-base-500 ms-auto font-normal">
+                <span className="ms-auto font-normal text-base-500">
                   {((completed / list!.entries.length) * 100).toFixed(0)}%
                 </span>
               </div>

@@ -1,28 +1,17 @@
-import { Sun } from 'lucide-react';
-import { Sidebar } from '../sidebar';
-import { Button } from '../ui/button';
-import { Label } from '../ui/label';
-import { Card, CardContent, CardTitle } from '../ui/card';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuTrigger,
-} from '../ui/dropdown-menu';
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from '../ui/select';
-import { Theme } from '@prisma/client';
+import { useAuthUser } from '@/app/(app)/_components/AuthUserContext';
+import { useTheme } from '@/app/_components/ThemeContext';
 import { capitalizeFirst } from '@/lib/capitalizeFirst';
 import { colors } from '@/lib/colors';
-import { useTheme } from '@/app/_components/ThemeContext';
-import { useEffect, useState } from 'react';
 import { api } from '@/trpc/react';
+import { Theme } from '@prisma/client';
+import { Sun } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { useAuthUser } from '@/app/(app)/_components/AuthUserContext';
+import { useEffect, useState } from 'react';
+import { Sidebar } from '../sidebar';
+import { Button } from '../ui/button';
+import { Card, CardContent } from '../ui/card';
+import { Label } from '../ui/label';
+import { Select, SelectContent, SelectItem, SelectTrigger } from '../ui/select';
 
 const Settings = () => {
   const selectedTheme_ = useTheme();
