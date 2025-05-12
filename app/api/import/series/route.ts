@@ -1,6 +1,5 @@
 import prisma from '@/server/db';
 import axios from 'axios';
-import { AnySrvRecord } from 'dns';
 import { NextRequest } from 'next/server';
 
 export const dynamic = 'force-dynamic';

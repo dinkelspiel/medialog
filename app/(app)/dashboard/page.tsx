@@ -1,63 +1,11 @@
 'use client';
 
-import {
-  Header,
-  HeaderContent,
-  HeaderDescription,
-  HeaderHeader,
-  HeaderTitle,
-} from '@/components/header';
-import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import {
-  Category,
-  Entry,
-  User,
-  UserEntry,
-  UserEntryStatus,
-  UserList,
-} from '@prisma/client';
-import {
-  AArrowDown,
-  Command,
-  Dices,
-  Eye,
-  Filter,
-  Loader2,
-  Menu,
-  PanelLeft,
-  Pen,
-  Settings,
-  SlidersHorizontal,
-  SortDesc,
-  Star,
-  UserRound,
-} from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import { Input } from '@/components/ui/input';
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectSeparator,
-  SelectTrigger,
-  SelectValue,
-} from '@/components/ui/select';
-import { useEffect, useRef, useState } from 'react';
-import { FilterStyle, useDashboardStore } from './state';
+import { Header } from '@/components/header';
+import HeaderLayout from '@/components/layouts/header';
 import ModifyUserEntry from '@/components/modifyUserEntry';
-import UserEntryCard, { UserEntryCardObject } from '@/components/userEntryCard';
-import { useMediaQuery } from 'usehooks-ts';
-import { toast } from 'sonner';
-import { Drawer, DrawerContent } from '@/components/ui/drawer';
-import SmallRating from '@/components/smallRating';
-import { useQuery } from '@tanstack/react-query';
-import { api } from '@/trpc/react';
+import { Button } from '@/components/ui/button';
+import { Checkbox } from '@/components/ui/checkbox';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -67,6 +15,9 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import {
   Sheet,
   SheetContent,
@@ -75,13 +26,24 @@ import {
   SheetTitle,
   SheetTrigger,
 } from '@/components/ui/sheet';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import { Label } from '@/components/ui/label';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { UserEntryCardObject } from '@/components/userEntryCard';
 import { cn } from '@/lib/utils';
+import { api } from '@/trpc/react';
+import {
+  Category,
+  Entry,
+  User,
+  UserEntry,
+  UserEntryStatus,
+  UserList,
+} from '@prisma/client';
+import { useQuery } from '@tanstack/react-query';
+import { Command, Loader2, SlidersHorizontal, SortDesc } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
+import { toast } from 'sonner';
+import { useMediaQuery } from 'usehooks-ts';
 import { SidebarButtons } from '../_components/sidebar';
-import HeaderLayout from '@/components/layouts/header';
-import { Checkbox } from '@/components/ui/checkbox';
+import { FilterStyle, useDashboardStore } from './state';
 
 const Page = () => {
   const {

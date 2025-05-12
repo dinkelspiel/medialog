@@ -1,18 +1,17 @@
-import React, { ReactNode } from 'react';
+import HeaderLayout from '@/components/layouts/header';
+import SmallRating from '@/components/smallRating';
+import UserEntryCard from '@/components/userEntryCard';
 import { numberSuffix } from '@/lib/numberSuffix';
-import Link from 'next/link';
 import { validateSessionToken } from '@/server/auth/validateSession';
 import prisma from '@/server/db';
-import UserEntryCard from '@/components/userEntryCard';
-import SmallRating from '@/components/smallRating';
+import { getDailyStreak } from '@/server/user/user';
 import { Entry, UserActivity, UserEntryStatus } from '@prisma/client';
+import Link from 'next/link';
+import { ReactNode } from 'react';
+import { getUserDiary } from './_components/diary';
 import { ProfileHeader } from './_components/header';
 import { ProfileSidebar } from './_components/sidebar';
-import { getDailyStreak } from '@/server/user/user';
-import { getUserDiary } from './_components/diary';
-import { Sheet, SheetTrigger } from '@/components/ui/sheet';
 import { Stats } from './_components/stats';
-import HeaderLayout from '@/components/layouts/header';
 
 const Profile404 = async () => {
   const user = await validateSessionToken();
@@ -26,7 +25,7 @@ const Profile404 = async () => {
 
         {user !== null && (
           <Link href={`/@${user.username}`}>
-            <span className="text-base-500 text-base">
+            <span className="text-base text-base-500">
               Return to your profile
             </span>
           </Link>
@@ -50,6 +49,7 @@ const Profile = async ({ params }: { params: { username: string } }) => {
     let text = '';
     switch (activity.type) {
       case 'statusUpdate':
+        // eslint-disable-next-line no-case-declarations
         const rewatch = parseInt(activity.additionalData.split('|')[1]!);
         switch (activity.additionalData.split('|')[0] as UserEntryStatus) {
           case 'planning':
@@ -232,7 +232,7 @@ const Profile = async ({ params }: { params: { username: string } }) => {
         <div className="grid w-fit grid-cols-1 gap-16 min-[1330px]:grid-cols-[1fr,250px]">
           <div className="flex flex-col gap-6 px-4 md:w-[710px]">
             <div className="flex flex-col gap-4">
-              <div className="border-b-base-200 flex w-full justify-between border-b pb-2 text-lg font-medium">
+              <div className="flex w-full justify-between border-b border-b-base-200 pb-2 text-lg font-medium">
                 Favorites
               </div>
               {favorites.length > 0 && (
@@ -288,7 +288,7 @@ const Profile = async ({ params }: { params: { username: string } }) => {
               diary={diary}
             />
             <div className="flex flex-col gap-4">
-              <div className="border-b-base-200 flex w-full justify-between border-b pb-2 text-lg font-medium">
+              <div className="flex w-full justify-between border-b border-b-base-200 pb-2 text-lg font-medium">
                 Recent Activity
               </div>
               {activity.length > 0 && (
@@ -308,7 +308,7 @@ const Profile = async ({ params }: { params: { username: string } }) => {
                             <span className="text-lg font-semibold 2xl:text-2xl">
                               {activity.entry.originalTitle}
                             </span>
-                            <span className="text-base-500 text-sm font-medium">
+                            <span className="text-sm font-medium text-base-500">
                               {activity.entry.releaseDate.getFullYear()}
                             </span>
                           </div>

@@ -1,5 +1,6 @@
 'use client';
 
+import { Book, Film, Loader2, Tv } from 'lucide-react';
 import { ReactNode, useState } from 'react';
 import {
   Dialog,
@@ -10,18 +11,17 @@ import {
 } from './ui/dialog';
 import { Input } from './ui/input';
 import { Toggle } from './ui/toggle';
-import { Book, Film, Loader2, Tv } from 'lucide-react';
 
-import { Category, Entry } from '@prisma/client';
-import UserEntryCard from './userEntryCard';
-import { Drawer, DrawerContent, DrawerTrigger } from './ui/drawer';
-import { useDebounceValue, useMediaQuery } from 'usehooks-ts';
-import { cn } from '@/lib/utils';
-import { toast } from 'sonner';
 import { ExtendedUserEntry } from '@/app/(app)/dashboard/state';
-import ExternalUserEntry from './userEntryExternal';
+import { cn } from '@/lib/utils';
+import { Category, Entry } from '@prisma/client';
+import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
-import { dataTagSymbol, useMutation, useQuery } from '@tanstack/react-query';
+import { toast } from 'sonner';
+import { useDebounceValue, useMediaQuery } from 'usehooks-ts';
+import { Drawer, DrawerContent, DrawerTrigger } from './ui/drawer';
+import UserEntryCard from './userEntryCard';
+import ExternalUserEntry from './userEntryExternal';
 
 const AddLog = ({
   children,
@@ -297,7 +297,7 @@ const AddLogContent = ({
         queryResults.length === 0 &&
         externalQueryResults.length === 0 && (
           <div className="relative flex justify-center pt-4 text-xs uppercase">
-            <span className="text-base-500 bg-white px-2">
+            <span className="bg-white px-2 text-base-500">
               No Results Found
             </span>
           </div>
@@ -348,7 +348,7 @@ const AddLogContent = ({
                   <span className="w-full border-t" />
                 </div>
                 <div className="relative flex justify-center text-xs uppercase">
-                  <span className="text-base-500 bg-white px-2">
+                  <span className="bg-white px-2 text-base-500">
                     OR VIA IMPORT
                   </span>
                 </div>

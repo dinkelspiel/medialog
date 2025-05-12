@@ -1,8 +1,8 @@
 'use client';
 
-import { cn } from '../lib/utils';
-import React, { ReactNode, useState } from 'react';
-import { Button } from './ui/button';
+import { useAuthUser } from '@/app/(app)/_components/AuthUserContext';
+import { useAppStore } from '@/app/(app)/state';
+import SettingsView from '@/components/islands/settings';
 import {
   LogIn,
   Menu,
@@ -11,14 +11,13 @@ import {
   Settings,
   UserRound,
 } from 'lucide-react';
-import { useAuthUser } from '@/app/(app)/_components/AuthUserContext';
 import Link from 'next/link';
-import { Sheet, SheetTrigger } from './ui/sheet';
-import { Drawer, DrawerContent, DrawerTrigger } from './ui/drawer';
+import React, { ReactNode, useState } from 'react';
+import { cn } from '../lib/utils';
 import AddLog from './addLog';
+import { Button } from './ui/button';
 import { Dialog, DialogContent, DialogTitle } from './ui/dialog';
-import SettingsView from '@/components/islands/settings';
-import { useAppStore } from '@/app/(app)/state';
+import { Drawer, DrawerContent, DrawerTrigger } from './ui/drawer';
 
 export const Header = ({
   className,
