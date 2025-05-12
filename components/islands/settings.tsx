@@ -22,6 +22,7 @@ import { useTheme } from '@/app/_components/ThemeContext';
 import { useEffect, useState } from 'react';
 import { api } from '@/trpc/react';
 import { useRouter } from 'next/navigation';
+import { useAuthUser } from '@/app/(app)/_components/AuthUserContext';
 
 const Settings = () => {
   const selectedTheme_ = useTheme();
@@ -37,6 +38,8 @@ const Settings = () => {
   useEffect(() => {
     setSelectedTheme(selectedTheme_);
   }, []);
+
+  const user = useAuthUser();
 
   const ThemeComponent = ({ theme }: { theme: string }) => (
     <div className="flex flex-row items-center gap-1">
@@ -60,7 +63,25 @@ const Settings = () => {
 
   return (
     <div className="grid lg:grid-cols-[250px,1fr]">
-      <Sidebar className="h-full" header={<div></div>}>
+      <Sidebar
+        sidebarOpen={true}
+        className="h-full"
+        header={
+          <>
+            <div className="p-1` flex size-[40px] items-center justify-center rounded-lg border border-blue-300/50 bg-blue-200">
+              <div className="flex h-full w-full items-center justify-center rounded-[4px] text-lg font-medium">
+                {user?.username[0]}
+              </div>
+            </div>
+            <div className="flex flex-col justify-between">
+              <div className="text-base font-medium">{user?.username}</div>
+              <div className="bg-opacity-50 text-xs font-medium text-base-900">
+                {user?.email}
+              </div>
+            </div>
+          </>
+        }
+      >
         <SidebarButtons />
       </Sidebar>
       <div className="flex flex-col gap-4 p-4">
