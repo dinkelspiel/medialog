@@ -9,7 +9,7 @@ const badgeVariants = cva(
     variants: {
       variant: {
         default:
-          'border-transparent bg-base-500 text-base-50 shadow hover:bg-base-500 hover-bg-opacity-80',
+          'border-transparent bg-primary text-base-50 shadow hover:bg-primary hover:bg-opacity-80',
         secondary:
           'border-transparent bg-base-50 text-base-900 hover:bg-base-50 hover:bg-opacity-80',
         destructive:
