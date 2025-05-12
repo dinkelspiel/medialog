@@ -18,6 +18,7 @@ import AddLog from './addLog';
 import { Button } from './ui/button';
 import { Dialog, DialogContent, DialogTitle } from './ui/dialog';
 import { Drawer, DrawerContent, DrawerTrigger } from './ui/drawer';
+import { Feedback } from '@/app/(app)/_components/feedback';
 
 export const Header = ({
   className,
@@ -119,14 +120,17 @@ export const Header = ({
                   ? `${process.env.GIT_COMMIT}@${process.env.GIT_BRANCH}`
                   : 'dev'}
               </div>
-
-              <Button
-                size={'sm'}
-                variant={'outline'}
-                onClick={() => setSettingsOpen(true)}
-              >
-                <Settings className="stroke-base-600" /> Settings
-              </Button>
+              <div className="flex gap-2">
+                <Feedback />
+                <Button
+                  size={'sm'}
+                  variant={'outline'}
+                  className="w-full"
+                  onClick={() => setSettingsOpen(true)}
+                >
+                  <Settings className="stroke-base-600" /> Settings
+                </Button>
+              </div>
               <Link href={`/@${user && user.username}`} className="w-full">
                 <Button variant={'outline'} size="sm" className="w-full">
                   <UserRound className="size-4 stroke-base-600" />{' '}

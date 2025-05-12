@@ -54,7 +54,7 @@ export const Feedback = () => {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button className="hidden lg:flex" size="sm" variant={'outline'}>
+        <Button size="sm" variant={'outline'} className="w-full">
           <MessageCircle className="size-4 stroke-base-600" />
           Send Feedback
         </Button>
