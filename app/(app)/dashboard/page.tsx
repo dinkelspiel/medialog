@@ -310,7 +310,7 @@ const Dashboard = ({
               <h3 className="text-sm font-medium">Categories</h3>
               <div className="grid gap-2">
                 {Object.keys(Category).map(category => (
-                  <div className="flex items-center space-x-2">
+                  <div key={category} className="flex items-center space-x-2">
                     <Checkbox
                       value={category}
                       id={category}
