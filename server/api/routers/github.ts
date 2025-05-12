@@ -2,6 +2,7 @@ import { createTRPCRouter } from '@/server/api/trpc';
 import z from 'zod';
 import { protectedProcedure } from '../trpc';
 import { Octokit } from 'octokit';
+import { createAppAuth } from '@octokit/auth-app';
 
 export const githubRouter = createTRPCRouter({
   createIssue: protectedProcedure
@@ -15,7 +16,12 @@ export const githubRouter = createTRPCRouter({
     )
     .mutation(async ({ input, ctx }) => {
       const octokit = new Octokit({
-        auth: process.env.GITHUB_ACCESS_TOKEN!,
+        authStrategy: createAppAuth,
+        auth: {
+          appId: process.env.GITHUB_APP_ID!,
+          installationId: process.env.GITHUB_INSTALLATION_ID!,
+          privateKey: process.env.GITHUB_PRIVATE_KEY!,
+        },
       });
 
       const response = await octokit.request(
