@@ -1,6 +1,7 @@
 import { cookies } from 'next/headers';
 import prisma from '../db';
 import { cache } from 'react';
+import { redirect } from 'next/navigation';
 
 export const validateSessionToken = cache(async () => {
   const sessionToken = cookies().get('mlSessionToken');
@@ -20,7 +21,7 @@ export const validateSessionToken = cache(async () => {
   }
 
   if (session.expiry && session.expiry < new Date()) {
-    cookies().delete('mlSessionToken');
+    redirect('/auth/logout');
     return null;
   }
 
