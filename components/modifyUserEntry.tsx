@@ -17,6 +17,7 @@ import {
   Check,
   ExternalLink,
   Eye,
+  ListPlus,
   Pause,
   Plus,
   Save,
@@ -49,6 +50,8 @@ import {
   DialogHeader,
   DialogTrigger,
 } from './ui/dialog';
+import { Label } from './ui/label';
+import { DateTimePicker } from './ui/date-time-picker';
 
 const ModifyUserEntry = ({
   userEntry,
@@ -69,6 +72,7 @@ const ModifyUserEntry = ({
 }) => {
   const [rating, setRating] = useState(userEntry.rating);
   const [notes, setNotes] = useState(userEntry.notes);
+  const [watchedAt, setWatchedAt] = useState(userEntry.watchedAt);
 
   const [saveUserEntryState, saveUserEntryAction] = useFormState(
     saveUserEntry,
@@ -220,12 +224,12 @@ const ModifyUserEntry = ({
           <div className="text-lg font-semibold tracking-tight lg:pt-0">
             {userEntry.entry.originalTitle}
           </div>
-          <div className="text-base-500 pb-[2px] text-sm">
+          <div className="pb-[2px] text-sm text-base-500">
             {userEntry.entry.releaseDate.getFullYear()}
           </div>
         </div>
         {userEntry.entry.tagline && (
-          <div className="text-base-500 text-sm font-normal italic">
+          <div className="text-sm font-normal italic text-base-500">
             "{userEntry.entry.tagline}"
           </div>
         )}
@@ -243,8 +247,8 @@ const ModifyUserEntry = ({
     <div className="flex items-center justify-between">
       <Dialog open={removeUserEntryOpen} onOpenChange={setRemoveUserEntryOpen}>
         <DialogTrigger asChild>
-          <Button variant={'ghost'} className="[&>svg]:size-4">
-            <Trash2 className="stroke-red-500" />
+          <Button variant="destructive" size="sm">
+            <Trash2 className="size-3 stroke-white" /> Remove
           </Button>
         </DialogTrigger>
         <DialogContent>
@@ -265,7 +269,7 @@ const ModifyUserEntry = ({
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      <div className="flex gap-4">
+      <div className="flex gap-2">
         <Popover open={addListsOpen} onOpenChange={setAddListsOpen}>
           <PopoverTrigger asChild>
             <Button
@@ -274,7 +278,7 @@ const ModifyUserEntry = ({
               role="combobox"
               aria-expanded={addListsOpen}
             >
-              <Plus className="size-3" /> Add to list
+              <ListPlus className="size-3" /> Add to list
             </Button>
           </PopoverTrigger>
           <PopoverContent className="w-[200px] p-0">
@@ -338,8 +342,8 @@ const ModifyUserEntry = ({
     return (
       <div className="grid h-full grow grid-rows-[max-content,max-content,1fr,max-content]">
         <Header />
-        <div className="border-b-base-200 flex flex-row items-center gap-3 border-b py-3 text-sm">
-          <div className="text-base-500 w-max">Rating</div>
+        <div className="flex flex-row items-center gap-3 border-b border-b-base-200 py-3 text-sm">
+          <div className="w-max text-base-500">Rating</div>
           <Badge className="min-w-[50px] max-w-[50px] justify-center">
             {rating / 20}
           </Badge>
@@ -355,20 +359,40 @@ const ModifyUserEntry = ({
             />
           </div>
         </div>
-        <div className="flex h-full flex-row items-center gap-2 py-3 text-sm">
+        <div className="flex h-full flex-col items-center gap-4 py-3 text-sm">
           <Textarea
-            className="h-full resize-none border-none p-0 shadow-none focus-visible:ring-0"
+            className="h-full resize-none"
+            // border-none p-0 shadow-none focus-visible:ring-0
             placeholder="Write your review"
             value={notes}
             onChange={e => setNotes(e.target.value)}
             name="notes"
           />
+          <div className="flex w-full justify-start gap-6">
+            <div className="flex items-center gap-2">
+              <Label>Watched</Label>
+              <DateTimePicker date={watchedAt} setDate={setWatchedAt} />
+            </div>
+            <div className="flex items-center gap-2">
+              <Label>Created</Label>
+              {userEntry.createdAt.toDateString()}
+            </div>
+            <div className="flex items-center gap-2">
+              <Label>Updated</Label>
+              {userEntry.updatedAt.toDateString()}
+            </div>
+          </div>
         </div>
         <Footer>
           <form action={saveUserEntryAction}>
             <input type="hidden" value={userEntry.id} name="userEntryId" />
             <input type="hidden" value={rating} name="rating" />
             <input type="hidden" value={notes} name="notes" />
+            <input
+              type="hidden"
+              value={watchedAt?.toISOString()}
+              name="watchedAt"
+            />
             <SubmitButton className="w-max px-6" size={'sm'}>
               <Save className="size-3" />
               Save
@@ -412,7 +436,7 @@ const ModifyUserEntry = ({
             </Button>
             <div
               className={cn(
-                'text-base-500 flex h-0 items-center gap-2 overflow-hidden px-2 py-0 transition-all duration-500',
+                'flex h-0 items-center gap-2 overflow-hidden px-2 py-0 text-base-500 transition-all duration-500',
                 { 'h-[48px] py-2': userEntry.status === 'watching' }
               )}
             >
