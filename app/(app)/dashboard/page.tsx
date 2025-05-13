@@ -3,54 +3,20 @@
 import { Header } from '@/components/header';
 import HeaderLayout from '@/components/layouts/header';
 import ModifyUserEntry from '@/components/modifyUserEntry';
-import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuLabel,
-  DropdownMenuRadioGroup,
-  DropdownMenuRadioItem,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
-import { Input } from '@/components/ui/input';
-import { Label } from '@/components/ui/label';
-import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
-import {
-  Sheet,
-  SheetContent,
-  SheetDescription,
-  SheetHeader,
-  SheetTitle,
-  SheetTrigger,
-} from '@/components/ui/sheet';
 import { UserEntryCardObject } from '@/components/userEntryCard';
-import { cn } from '@/lib/utils';
 import { api } from '@/trpc/react';
-import {
-  Category,
-  Entry,
-  User,
-  UserEntry,
-  UserEntryStatus,
-  UserList,
-} from '@prisma/client';
+import { Entry, User, UserEntry, UserList } from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
-import { Command, Loader2, SlidersHorizontal, SortDesc } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
-import { useMediaQuery } from 'usehooks-ts';
 import { SidebarButtons } from '../_components/sidebar';
-import { FilterStyle, useDashboardStore } from './state';
+import { FilterView } from './_components/FilterView';
+import { useDashboardStore } from './state';
 
 const Page = () => {
-  const {
-    data,
-    isPending: dataIsPending,
-    error: dataError,
-  } = api.dashboard.get.useQuery();
+  const { data, isPending: dataIsPending } = api.dashboard.get.useQuery();
 
   if (dataIsPending) {
     return <Loader2 className="size-4 animate-spin" />;
@@ -71,8 +37,6 @@ const Page = () => {
 
 const Dashboard = ({
   userEntries: originalUserEntries,
-  topRatedNotCompleted,
-  topCompletedNotCompleted,
 }: {
   userEntries: (UserEntry & { entry: Entry } & { user: User })[];
   topCompletedNotCompleted: Entry[];
@@ -80,13 +44,9 @@ const Dashboard = ({
 }) => {
   const {
     filterStatus,
-    setFilterStatus,
     filterCategories,
-    toggleFilterCategory,
     filterTitle,
-    setFilterTitle,
     filterStyle,
-    setFilterStyle,
 
     userEntries,
     setUserEntries,
@@ -120,32 +80,6 @@ const Dashboard = ({
       setUserEntriesWidth((userEntriesRef.current as any).clientWidth ?? 0);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
-  }, []);
-
-  // Shortcut for search
-
-  const searchTitleRef = useRef(null);
-
-  useEffect(() => {
-    function handleKeyDown(e: KeyboardEvent) {
-      if (
-        (navigator?.platform?.toLowerCase().includes('mac')
-          ? e.metaKey
-          : e.ctrlKey) &&
-        e.key === 'k'
-      ) {
-        e.preventDefault();
-        e.stopPropagation();
-
-        (searchTitleRef.current as any).focus();
-      }
-    }
-
-    document.addEventListener('keydown', handleKeyDown);
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-    };
   }, []);
 
   // Lists
@@ -185,173 +119,6 @@ const Dashboard = ({
 
     fetchUserLists();
   };
-
-  // Mobile
-
-  const isXl = useMediaQuery('(min-width: 1280px)');
-  const [informationViewOpen, setInformationViewOpenValue] = useState(false);
-
-  const setInformationViewOpen = (open: boolean) => {
-    if (!open) {
-      setSelectedUserEntry(undefined);
-    }
-
-    setInformationViewOpenValue(open);
-  };
-
-  useEffect(() => {
-    if (selectedUserEntry === undefined) {
-      return;
-    }
-
-    if (isXl) {
-      return;
-    }
-
-    setInformationViewOpen(true);
-  }, [selectedUserEntry]);
-
-  useEffect(() => {
-    setInformationViewOpen(false);
-  }, []);
-
-  const FilterView = ({ className }: { className: string }) => (
-    <div className={cn('flex items-center gap-3', className)}>
-      <div className="relative w-full lg:w-[356px]">
-        <Input
-          ref={searchTitleRef}
-          value={filterTitle}
-          onChange={e => setFilterTitle(e.target.value)}
-          className="flex w-full lg:w-[356px]"
-          placeholder="Search by title..."
-        />
-        <div className="absolute right-[5.2px] top-1/2 hidden -translate-y-1/2 items-center gap-1 rounded-md border border-base-200 bg-white px-2 py-0.5 text-xs font-medium text-base-600 lg:flex">
-          <Command className="size-3" /> K
-        </div>
-      </div>
-      <DropdownMenu>
-        <DropdownMenuTrigger asChild>
-          <Button size={'sm'} variant={'outline'}>
-            <SortDesc className="stroke-base-600" />
-            Sort
-          </Button>
-        </DropdownMenuTrigger>
-        <DropdownMenuContent align="end" className="w-56">
-          <DropdownMenuLabel>Sort by</DropdownMenuLabel>
-          <DropdownMenuSeparator />
-          <DropdownMenuRadioGroup
-            value={filterStyle}
-            onValueChange={e => setFilterStyle(e as FilterStyle)}
-          >
-            <DropdownMenuRadioItem value="rating">
-              Rating (High to Low)
-            </DropdownMenuRadioItem>
-            <DropdownMenuRadioItem value="az">A-Z</DropdownMenuRadioItem>
-            <DropdownMenuRadioItem value="completed">
-              Completed
-            </DropdownMenuRadioItem>
-            <DropdownMenuRadioItem value="updated">
-              Recently Updated
-            </DropdownMenuRadioItem>
-          </DropdownMenuRadioGroup>
-        </DropdownMenuContent>
-      </DropdownMenu>
-      <Sheet>
-        <SheetTrigger asChild>
-          <Button size={'sm'} variant={'outline'}>
-            <SlidersHorizontal className="stroke-base-600" />
-            Filter
-          </Button>
-        </SheetTrigger>
-        <SheetContent className="flex flex-col">
-          <SheetHeader>
-            <SheetTitle>Filter Entries</SheetTitle>
-            <SheetDescription>
-              Customize shown entries these filters
-            </SheetDescription>
-          </SheetHeader>
-
-          <div className="flex flex-col gap-6 py-6">
-            <div className="space-y-3">
-              <h3 className="text-sm font-medium">Status</h3>
-              <RadioGroup
-                value={filterStatus}
-                onValueChange={(e: any) =>
-                  setFilterStatus(e as UserEntryStatus | undefined)
-                }
-              >
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="all" id="all" />
-                  <Label htmlFor="all">All</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="planning" id="planning" />
-                  <Label htmlFor="planning">Planning</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="watching" id="watching" />
-                  <Label htmlFor="watching">Watching</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="paused" id="paused" />
-                  <Label htmlFor="paused">Paused</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="dnf" id="dnf" />
-                  <Label htmlFor="dnf">Did not finish</Label>
-                </div>
-                <div className="flex items-center space-x-2">
-                  <RadioGroupItem value="completed" id="completed" />
-                  <Label htmlFor="completed">Completed</Label>
-                </div>
-              </RadioGroup>
-            </div>
-            <div className="space-y-3">
-              <h3 className="text-sm font-medium">Categories</h3>
-              <div className="grid gap-2">
-                {Object.keys(Category).map(category => (
-                  <div key={category} className="flex items-center space-x-2">
-                    <Checkbox
-                      value={category}
-                      id={category}
-                      checked={filterCategories.includes(category as Category)}
-                      onCheckedChange={() =>
-                        toggleFilterCategory(category as Category)
-                      }
-                    />
-                    <Label htmlFor={category}>{category}</Label>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            {/* <div className="space-y-3">
-            <div className="flex justify-between">
-              <h3 className="text-sm font-medium">Rating Range</h3>
-              <span className="text-sm text-base-500">
-                {ratingRange[0]} - {ratingRange[1]}
-              </span>
-            </div>
-            <Slider
-              defaultValue={[0, 10]}
-              max={10}
-              step={0.5}
-              value={ratingRange}
-              onValueChange={setRatingRange}
-              className="py-4"
-            />
-          </div> */}
-          </div>
-          {/* <div className="flex h-full flex-col justify-end">
-            <Button className="w-full" size={'sm'} variant={'outline'}>
-              <Dices className="stroke-base-600" />
-              Pick Random
-            </Button>
-          </div> */}
-        </SheetContent>
-      </Sheet>
-    </div>
-  );
 
   return (
     <HeaderLayout className="gap-0">
