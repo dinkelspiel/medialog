@@ -1,6 +1,5 @@
 import { Button } from '@/components/ui/button';
 import { Checkbox } from '@/components/ui/checkbox';
-import { Command } from '@/components/ui/command';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -22,7 +21,7 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
-import { SlidersHorizontal, SortDesc } from 'lucide-react';
+import { Command, SlidersHorizontal, SortDesc } from 'lucide-react';
 import { FilterStyle, useDashboardStore } from '../state';
 import { Category, UserEntryStatus } from '@prisma/client';
 import { useEffect, useRef } from 'react';
