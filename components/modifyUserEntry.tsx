@@ -52,6 +52,7 @@ import {
 } from './ui/dialog';
 import { Label } from './ui/label';
 import { DateTimePicker } from './ui/date-time-picker';
+import { api } from '@/trpc/react';
 
 const ModifyUserEntry = ({
   userEntry,
@@ -62,7 +63,7 @@ const ModifyUserEntry = ({
   setUserEntry,
   removeUserEntry: removeUserEntryClient,
 }: {
-  userEntry: UserEntry & { user: User } & { entry: Entry };
+  userEntry: ExtendedUserEntry;
   userLists: UserList[];
   userListsWithEntry: UserList[];
   refetchUserLists: () => Promise<void>;
@@ -78,6 +79,13 @@ const ModifyUserEntry = ({
     saveUserEntry,
     {}
   );
+
+  const utils = api.useUtils();
+  useEffect(() => {
+    if (saveUserEntryState.message) {
+      utils.dashboard.invalidate();
+    }
+  }, [saveUserEntryState]);
   const [removeUserEntryState, removeUserEntryAction] = useFormState(
     removeUserEntry,
     {}

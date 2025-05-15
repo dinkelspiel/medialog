@@ -6,14 +6,14 @@ import ModifyUserEntry from '@/components/modifyUserEntry';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { UserEntryCardObject } from '@/components/userEntryCard';
 import { api } from '@/trpc/react';
-import { Entry, User, UserEntry, UserList } from '@prisma/client';
+import { Entry, UserList } from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { SidebarButtons } from '../_components/sidebar';
 import { FilterView } from './_components/FilterView';
-import { useDashboardStore } from './state';
+import { ExtendedUserEntry, useDashboardStore } from './state';
 
 const Page = () => {
   const { data, isPending: dataIsPending } = api.dashboard.get.useQuery();
@@ -38,7 +38,7 @@ const Page = () => {
 const Dashboard = ({
   userEntries: originalUserEntries,
 }: {
-  userEntries: (UserEntry & { entry: Entry } & { user: User })[];
+  userEntries: ExtendedUserEntry[];
   topCompletedNotCompleted: Entry[];
   topRatedNotCompleted: Entry[];
 }) => {

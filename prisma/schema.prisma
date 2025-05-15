@@ -187,8 +187,9 @@ model Country {
     entryWatchProviders    EntryWatchProvider[]
     entryAlternativeTitles EntryAlternativeTitle[]
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @default(now()) @updatedAt
+    createdAt        DateTime           @default(now())
+    updatedAt        DateTime           @default(now()) @updatedAt
+    EntryTranslation EntryTranslation[]
 }
 
 model Language {
@@ -199,9 +200,10 @@ model Language {
     spokenLanguages        EntrySpokenLanguage[]
     entryAlternativeTitles EntryAlternativeTitle[]
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @default(now()) @updatedAt
-    Entry     Entry[]
+    createdAt        DateTime           @default(now())
+    updatedAt        DateTime           @default(now()) @updatedAt
+    Entry            Entry[]
+    EntryTranslation EntryTranslation[]
 }
 
 model Person {
@@ -303,6 +305,25 @@ model EntryAlternativeTitle {
     updatedAt DateTime @default(now()) @updatedAt
 
     @@index([title])
+}
+
+model EntryTranslation {
+    id         Int       @id @default(autoincrement()) @db.UnsignedInt
+    entryId    Int       @db.UnsignedInt
+    entry      Entry     @relation(fields: [entryId], references: [id], onDelete: Cascade)
+    countryId  Int?      @db.UnsignedInt
+    country    Country?  @relation(fields: [countryId], references: [id], onDelete: Cascade)
+    languageId Int?      @db.UnsignedInt
+    language   Language? @relation(fields: [languageId], references: [id], onDelete: Cascade)
+    name       String
+    overview   String
+    homepage   String
+    tagline    String
+
+    createdAt DateTime @default(now())
+    updatedAt DateTime @default(now()) @updatedAt
+
+    @@index([name])
 }
 
 model EntryCast {
@@ -410,8 +431,9 @@ model Entry {
     userActivity        UserActivity[]
     userListEntries     UserListEntry[]
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @default(now()) @updatedAt
+    createdAt        DateTime           @default(now())
+    updatedAt        DateTime           @default(now()) @updatedAt
+    EntryTranslation EntryTranslation[]
 
     @@index([originalTitle])
 }

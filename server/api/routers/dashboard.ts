@@ -128,6 +128,13 @@ export const dashboardRouter = createTRPCRouter({
                 userId: ctx.user.id,
               },
             },
+            alternativeTitles: {
+              where: {
+                language: {
+                  iso_639_1: 'en',
+                },
+              },
+            },
           },
         },
       },

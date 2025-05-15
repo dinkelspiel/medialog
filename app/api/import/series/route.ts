@@ -34,6 +34,10 @@ export const GET = async (request: NextRequest) => {
     `https://api.themoviedb.org/3/tv/${id}/alternative_titles?language=en-US`,
     options
   );
+  const translations = await axios.get(
+    `https://api.themoviedb.org/3/tv/${id}/translations?language=en-US`,
+    options
+  );
   const watchProviders = await axios.get(
     `https://api.themoviedb.org/3/tv/${id}/watch/providers?language=en-US`,
     options
@@ -47,6 +51,7 @@ export const GET = async (request: NextRequest) => {
   }
 
   data['alternative_titles'] = altTitles.data['results'];
+  data['translations'] = translations.data['translations'];
   data['watch_providers'] = watchProviders.data['results'];
 
   for (var i = 0; i < data.seasons.length; i++) {
@@ -411,6 +416,32 @@ export const GET = async (request: NextRequest) => {
         },
       });
     }
+  }
+
+  for (const translation of data.translations) {
+    await prisma.entryTranslation.create({
+      data: {
+        entryId: entry!.id!,
+        countryId: (
+          await prisma.country.findFirst({
+            where: {
+              iso_3166_1: translation.iso_3166_1,
+            },
+          })
+        )?.id!,
+        languageId: (
+          await prisma.language.findFirst({
+            where: {
+              iso_639_1: translation.iso_639_1,
+            },
+          })
+        )?.id!,
+        name: translation.name,
+        overview: translation.overview,
+        homepage: translation.homepage,
+        tagline: translation.tagline,
+      },
+    });
   }
 
   return Response.json({
