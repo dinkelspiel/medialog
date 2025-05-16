@@ -70,8 +70,10 @@ export const GET = async (request: NextRequest) => {
 
   let entry = await prisma.entry.findFirst({
     where: {
-      foreignId: data.id.toString(),
       category: 'Series',
+      collection: {
+        foreignId: data.id.toString(),
+      },
     },
   });
 
@@ -89,6 +91,7 @@ export const GET = async (request: NextRequest) => {
   const existingCollection = await prisma.collection.findFirst({
     where: {
       foreignId: data.id.toString(),
+      category: 'Series',
     },
   });
 
@@ -113,7 +116,11 @@ export const GET = async (request: NextRequest) => {
   for (const season of data.seasons) {
     const existingEntry = await prisma.entry.findFirst({
       where: {
-        foreignId: season.id.toString(),
+        foreignId: season.season_number.toString(),
+        collection: {
+          foreignId: data.id.toString(),
+        },
+        category: 'Series',
       },
     });
 
@@ -124,7 +131,7 @@ export const GET = async (request: NextRequest) => {
     entry = await prisma.entry.create({
       data: {
         originalTitle: `${data.original_name}: ${season.name}`,
-        foreignId: season.id.toString(),
+        foreignId: season.season_number.toString(),
         collectionId,
         posterPath: 'https://image.tmdb.org/t/p/original/' + season.poster_path,
         tagline: data.tagline,
@@ -143,7 +150,7 @@ export const GET = async (request: NextRequest) => {
       },
     });
 
-    if (firstSeason === undefined) {
+    if (season.season_number == 1) {
       firstSeason = entry;
     }
 

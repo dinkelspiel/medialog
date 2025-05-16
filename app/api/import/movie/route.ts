@@ -83,6 +83,7 @@ export const GET = async (request: NextRequest) => {
     const existingCollection = await prisma.collection.findFirst({
       where: {
         foreignId: data.belongs_to_collection.id.toString(),
+        category: 'Movie',
       },
     });
 

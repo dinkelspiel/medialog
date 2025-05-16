@@ -2,6 +2,7 @@ import {
   Category,
   Entry,
   EntryAlternativeTitle,
+  EntryTranslation,
   User,
   UserEntry,
   UserEntryStatus,
@@ -10,7 +11,7 @@ import { create } from 'zustand';
 
 export type FilterStyle = 'rating' | 'az' | 'completed' | 'updated';
 export type ExtendedUserEntry = UserEntry & {
-  entry: Entry & { alternativeTitles: EntryAlternativeTitle[] };
+  entry: Entry & { translations: EntryTranslation[] };
 } & { user: User };
 
 type DashboardStore = {

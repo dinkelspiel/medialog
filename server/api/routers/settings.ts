@@ -3,6 +3,7 @@ import prisma from '@/server/db';
 import { Theme } from '@prisma/client';
 import z from 'zod';
 import { protectedProcedure } from '../trpc';
+import { TRPCError } from '@trpc/server';
 
 export const settingsRouter = createTRPCRouter({
   setTheme: protectedProcedure
@@ -21,4 +22,34 @@ export const settingsRouter = createTRPCRouter({
         },
       });
     }),
+  setShowMediaMetaIn: protectedProcedure
+    .input(
+      z.object({
+        iso_639_2: z.string(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const language = await prisma.language.findFirst({
+        where: {
+          iso_639_2: input.iso_639_2,
+        },
+      });
+      if (!language) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'Invalid iso_639_2 code',
+        });
+      }
+      await prisma.user.update({
+        data: {
+          showMediaMetaInId: language.id,
+        },
+        where: {
+          id: ctx.user.id,
+        },
+      });
+    }),
+  getLanguages: protectedProcedure.query(async () => {
+    return await prisma.language.findMany();
+  }),
 });

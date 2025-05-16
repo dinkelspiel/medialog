@@ -2,22 +2,22 @@ import '@/styles/globals.css';
 import '@/styles/themes.css';
 import { TRPCReactProvider } from '@/trpc/react';
 import { Metadata, Viewport } from 'next';
-import { ThemeProvider } from './_components/ThemeContext';
-import { getTheme } from './_components/theme';
+import { SettingsProvider } from './_components/SettingsContext';
 import Providers from './providers';
+import { getSettings } from './_components/settings';
 
 export default async function RootLayout({
   children,
 }: {
   children: React.ReactNode;
 }) {
-  const theme = await getTheme();
+  const settings = await getSettings();
 
   return (
     <TRPCReactProvider>
-      <ThemeProvider theme={theme}>
+      <SettingsProvider settings={settings}>
         <Providers>{children}</Providers>
-      </ThemeProvider>
+      </SettingsProvider>
     </TRPCReactProvider>
   );
 }

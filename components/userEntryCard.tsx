@@ -88,9 +88,9 @@ export const UserEntryCardObject = ({
   <UserEntryCard
     {...{
       title:
-        userEntry.entry.alternativeTitles.length !== 0
-          ? userEntry.entry.alternativeTitles[0]!.title
-          : userEntry.entry.originalTitle + 'a',
+        userEntry.entry.translations.length !== 0
+          ? userEntry.entry.translations[0]!.name
+          : userEntry.entry.originalTitle,
       backgroundImage: userEntry.entry.posterPath,
       releaseDate: userEntry.entry.releaseDate,
       category: userEntry.entry.category,

@@ -21,7 +21,7 @@ const Page = async () => {
   const user = await validateSessionToken();
 
   const getEnglishTitles = async (entryId: number) => {
-    return await prisma.entryAlternativeTitle.findMany({
+    return await prisma.entryTranslation.findMany({
       where: {
         entryId: parseInt(entryId.toString()),
         language: {
@@ -102,7 +102,7 @@ const Page = async () => {
                     {
                       entry: {
                         ...randomMovie,
-                        alternativeTitles: movieTitles,
+                        translations: movieTitles,
                       },
                     } as ExtendedUserEntry
                   }
@@ -114,7 +114,7 @@ const Page = async () => {
                     {
                       entry: {
                         ...randomBook,
-                        alternativeTitles: bookTitles,
+                        translations: bookTitles,
                       },
                     } as ExtendedUserEntry
                   }
@@ -126,7 +126,7 @@ const Page = async () => {
                     {
                       entry: {
                         ...randomSeries,
-                        alternativeTitles: seriesTitles,
+                        translations: seriesTitles,
                       },
                     } as ExtendedUserEntry
                   }
