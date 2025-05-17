@@ -4,6 +4,7 @@ import axios from 'axios';
 import { Pi } from 'lucide-react';
 import { NextRequest } from 'next/server';
 
+export const dynamic = 'force-dynamic';
 export const GET = async (req: NextRequest) => {
   const user = await validateSessionToken();
   if (!user) {
