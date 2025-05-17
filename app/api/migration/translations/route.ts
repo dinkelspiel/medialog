@@ -163,9 +163,15 @@ export const GET = async (req: NextRequest) => {
           continue;
         }
 
+        let season = translation.data.name
+          ? translation.data.name
+          : parseInt(entry.foreignId) > 0
+            ? 'Season ' + entry.foreignId
+            : 'Specials';
+
         title =
           collectionTranslation.data.name +
-          `: ${translation.data.name ? translation.data.name : parseInt(entry.foreignId) > 0 ? 'Season ' + entry.foreignId : 'Specials'}`;
+          (season === collectionTranslation.data.name ? '' : `: ${season}`);
       } else if (translation.data.title) {
         title = translation.data.title;
       } else {
