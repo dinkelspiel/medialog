@@ -13,7 +13,12 @@ RUN chmod 777 /usr/src/app -R
 RUN chmod 744 ./prisma/schema.prisma
 RUN pnpm install
 RUN pnpm dlx prisma generate
-RUN pnpm dlx prisma db push
+
+# Skip the db push if it is the github actions running
+ARG BUILD_ENV=default
+ENV BUILD_ENV=${BUILD_ENV}
+RUN if [ "$BUILD_ENV" != "github" ]; then pnpm dlx prisma db push; fi
+
 RUN apt-get update && apt-get install -y git && apt-get clean
 RUN export GIT_BRANCH=$(git rev-parse --abbrev-ref HEAD)
 RUN export GIT_COMMIT=$(git rev-parse --short HEAD)

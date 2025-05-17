@@ -23,7 +23,7 @@ jobs:
           echo "IMAGE_TAG=${GIT_REF}-${GIT_SHA}" >> $GITHUB_ENV
 
       - name: Docker Build
-        run: docker build --tag ${IMAGE_NAME}:${IMAGE_TAG} --build-arg GIT_REF=${GIT_REF} --build-arg GIT_SHA=${GIT_SHA} .
+        run: docker build --tag ${IMAGE_NAME}:${IMAGE_TAG} --build-arg BUILD_ENV=github --build-arg GIT_REF=${GIT_REF} --build-arg GIT_SHA=${GIT_SHA} .
 
       - name: Docker Login
         run: echo ${{ secrets.GITHUB_TOKEN }} | docker login $REGISTRY -u "${{ github.actor }}" --password-stdin
