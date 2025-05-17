@@ -14,11 +14,22 @@ import {
 } from '@/components/ui/card';
 import UserEntryCard, { UserEntryCardObject } from '@/components/userEntryCard';
 import prisma from '@/server/db';
-import { Entry } from '@prisma/client';
+import { Entry, EntryAlternativeTitle } from '@prisma/client';
 import { ExtendedUserEntry } from '../(app)/dashboard/state';
 
 const Page = async () => {
   const user = await validateSessionToken();
+
+  const getEnglishTitles = async (entryId: number) => {
+    return await prisma.entryTranslation.findMany({
+      where: {
+        entryId: parseInt(entryId.toString()),
+        language: {
+          iso_639_1: 'en',
+        },
+      },
+    });
+  };
 
   const randomMovie = (
     (await prisma.$queryRawUnsafe(
@@ -26,17 +37,22 @@ const Page = async () => {
     )) as Entry[]
   )[0] as Entry;
 
+  const movieTitles = await getEnglishTitles(randomMovie.id);
+
   const randomSeries = (
     (await prisma.$queryRawUnsafe(
       `SELECT * FROM Entry WHERE category = "Series" ORDER BY RAND() LIMIT 1;`
     )) as Entry[]
   )[0] as Entry;
 
+  const seriesTitles = await getEnglishTitles(randomSeries.id);
+
   const randomBook = (
     (await prisma.$queryRawUnsafe(
       `SELECT * FROM Entry WHERE category = "Book" ORDER BY RAND() LIMIT 1;`
     )) as Entry[]
   )[0] as Entry;
+  const bookTitles = await getEnglishTitles(randomBook.id);
 
   return (
     <div className="flex w-full flex-col items-center bg-white">
@@ -82,17 +98,38 @@ const Page = async () => {
             <CardContent className="grid grid-cols-3 gap-3 lg:gap-6">
               {randomMovie && (
                 <UserEntryCardObject
-                  userEntry={{ entry: randomMovie } as ExtendedUserEntry}
+                  userEntry={
+                    {
+                      entry: {
+                        ...randomMovie,
+                        translations: movieTitles,
+                      },
+                    } as ExtendedUserEntry
+                  }
                 />
               )}
               {randomBook && (
                 <UserEntryCardObject
-                  userEntry={{ entry: randomBook } as ExtendedUserEntry}
+                  userEntry={
+                    {
+                      entry: {
+                        ...randomBook,
+                        translations: bookTitles,
+                      },
+                    } as ExtendedUserEntry
+                  }
                 />
               )}
               {randomSeries && (
                 <UserEntryCardObject
-                  userEntry={{ entry: randomSeries } as ExtendedUserEntry}
+                  userEntry={
+                    {
+                      entry: {
+                        ...randomSeries,
+                        translations: seriesTitles,
+                      },
+                    } as ExtendedUserEntry
+                  }
                 />
               )}
             </CardContent>

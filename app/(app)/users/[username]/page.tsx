@@ -12,6 +12,8 @@ import { getUserDiary } from './_components/diary';
 import { ProfileHeader } from './_components/header';
 import { ProfileSidebar } from './_components/sidebar';
 import { Stats } from './_components/stats';
+import { getUserTitleFromEntry } from '@/server/api/routers/dashboard';
+import { ServerEntryTitleForUser } from './_components/serverUserEntryTitle';
 
 const Profile404 = async () => {
   const user = await validateSessionToken();
@@ -133,6 +135,7 @@ const Profile = async ({ params }: { params: { username: string } }) => {
           watchedAt: true,
           entry: {
             select: {
+              id: true,
               originalTitle: true,
               posterPath: true,
               length: true,
@@ -175,7 +178,22 @@ const Profile = async ({ params }: { params: { username: string } }) => {
     select: {
       notes: false,
       rating: true,
-      entry: true,
+      entry: {
+        select: {
+          originalTitle: true,
+          posterPath: true,
+          releaseDate: true,
+          category: true,
+          translations: {
+            where: {
+              language: {
+                id: user ? (user.showMediaMetaInId ?? undefined) : undefined,
+                iso_639_1: !user ? 'en' : undefined,
+              },
+            },
+          },
+        },
+      },
     },
   });
 
@@ -242,7 +260,7 @@ const Profile = async ({ params }: { params: { username: string } }) => {
                       <UserEntryCard
                         key={`userEntry-${idx}`}
                         {...{
-                          title: userEntry.entry.originalTitle,
+                          title: getUserTitleFromEntry(userEntry.entry as any),
                           backgroundImage: userEntry.entry.posterPath,
                           releaseDate: userEntry.entry.releaseDate,
                           rating: userEntry.rating,
@@ -256,7 +274,7 @@ const Profile = async ({ params }: { params: { username: string } }) => {
                       <UserEntryCard
                         key={`userEntry-${idx}`}
                         {...{
-                          title: userEntry.entry.originalTitle,
+                          title: getUserTitleFromEntry(userEntry.entry as any),
                           backgroundImage: userEntry.entry.posterPath,
                           releaseDate: userEntry.entry.releaseDate,
                           rating: userEntry.rating,
@@ -306,7 +324,9 @@ const Profile = async ({ params }: { params: { username: string } }) => {
                         <div className="flex h-full flex-col justify-center gap-3 pb-3 2xl:border-b-0 2xl:pb-0">
                           <div className="space-x-3">
                             <span className="text-lg font-semibold 2xl:text-2xl">
-                              {activity.entry.originalTitle}
+                              <ServerEntryTitleForUser
+                                entryId={activity.entry.id}
+                              />
                             </span>
                             <span className="text-sm font-medium text-base-500">
                               {activity.entry.releaseDate.getFullYear()}
