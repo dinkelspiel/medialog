@@ -87,7 +87,10 @@ export const UserEntryCardObject = ({
 } & HTMLProps<HTMLDivElement>) => (
   <UserEntryCard
     {...{
-      title: userEntry.entry.originalTitle,
+      title:
+        userEntry.entry.translations.length !== 0
+          ? userEntry.entry.translations[0]!.name
+          : userEntry.entry.originalTitle,
       backgroundImage: userEntry.entry.posterPath,
       releaseDate: userEntry.entry.releaseDate,
       category: userEntry.entry.category,

@@ -1,6 +1,3 @@
-'use client';
-
-import { useMediaQuery } from 'usehooks-ts';
 import SmallRating from '@/components/smallRating';
 import { Entry, User, UserEntry, UserFollow } from '@prisma/client';
 import { cn } from '@/lib/utils';
@@ -8,6 +5,7 @@ import { Diary } from './diary';
 import { Calendar } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { Fragment } from 'react';
+import { ServerEntryTitleForUser } from './serverUserEntryTitle';
 
 export const ProfileSidebar = ({
   profileUser,
@@ -47,9 +45,9 @@ export const ProfileSidebar = ({
   return (
     <div className={cn('flex flex-col gap-6', className)}>
       <div className="flex flex-col gap-4">
-        <div className="border-b-base-200 flex justify-between border-b pb-2 text-lg font-medium">
+        <div className="flex justify-between border-b border-b-base-200 pb-2 text-lg font-medium">
           Watchlist
-          <span className="text-base-500 ms-auto">
+          <span className="ms-auto text-base-500">
             {
               profileUser.userEntries.filter(e => e.status === 'planning')
                 .length
@@ -76,9 +74,9 @@ export const ProfileSidebar = ({
         {profileUser.userEntries.filter(e => e.status === 'watching').length >
           0 && (
           <div className="flex flex-col gap-4">
-            <div className="border-b-base-200 flex w-full justify-between border-b pb-2 text-lg font-medium">
+            <div className="flex w-full justify-between border-b border-b-base-200 pb-2 text-lg font-medium">
               In Progress
-              <span className="text-base-500 ms-auto">
+              <span className="ms-auto text-base-500">
                 {
                   profileUser.userEntries.filter(e => e.status === 'watching')
                     .length
@@ -89,7 +87,7 @@ export const ProfileSidebar = ({
               .filter(e => e.status === 'watching')
               .map(entry => (
                 <div className="flex flex-col gap-1.5" key={entry.id}>
-                  {entry.entry.originalTitle}
+                  <ServerEntryTitleForUser entryId={entry.entry.id} />
                   <Progress
                     value={(entry.progress / entry.entry.length) * 100}
                   />
@@ -99,17 +97,17 @@ export const ProfileSidebar = ({
         )}
       </div>
       <div className="flex flex-col items-center gap-4 lg:items-start">
-        <div className="border-b-base-200 flex w-full justify-between border-b pb-2 text-lg font-medium">
+        <div className="flex w-full justify-between border-b border-b-base-200 pb-2 text-lg font-medium">
           Ratings
-          <span className="text-base-500 ms-auto">{totalRatings}</span>
+          <span className="ms-auto text-base-500">{totalRatings}</span>
         </div>
         <div className="flex w-full flex-row items-end justify-between gap-2 2xl:w-[250px]">
           <SmallRating rating={20} className="pb-1" />
-          <div className="border-b-base-200 flex w-[135px] flex-row items-end gap-0.5 border-b pb-1">
+          <div className="flex w-[135px] flex-row items-end gap-0.5 border-b border-b-base-200 pb-1">
             {ratings.map((ratingPercentage, idx) => (
               <div
                 key={idx}
-                className="bg-base-300 w-full"
+                className="w-full bg-base-300"
                 style={{ height: 110 * ratingPercentage }}
               ></div>
             ))}
@@ -126,9 +124,9 @@ export const ProfileSidebar = ({
               Daily streak hasn't been updated
             </div>
           )}
-        <div className="border-b-base-200 flex w-full justify-between border-b pb-2 text-lg font-medium">
+        <div className="flex w-full justify-between border-b border-b-base-200 pb-2 text-lg font-medium">
           Diary
-          <span className="text-base-500 ms-auto">
+          <span className="ms-auto text-base-500">
             {profileUser.dailyStreakLength} Day Streak
           </span>
         </div>

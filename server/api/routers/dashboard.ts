@@ -2,6 +2,40 @@ import { createTRPCRouter } from '@/server/api/trpc';
 import { protectedProcedure } from '../trpc';
 import { unstable_cache } from 'next/cache';
 import prisma from '@/server/db';
+import { validateSessionToken } from '@/server/auth/validateSession';
+import { Entry, EntryTranslation } from '@prisma/client';
+
+export const getUserTitleFromEntryId = async (entryId: number) => {
+  const user = await validateSessionToken();
+  const entry = await prisma.entry.findFirst({
+    where: {
+      id: entryId,
+    },
+    include: {
+      translations: {
+        where: {
+          language: {
+            id: user ? (user.showMediaMetaInId ?? undefined) : undefined,
+            iso_639_1: !user ? 'en' : undefined,
+          },
+        },
+      },
+    },
+  });
+  if (!entry) {
+    return null;
+  }
+
+  return getUserTitleFromEntry(entry);
+};
+
+export const getUserTitleFromEntry = (
+  entry: Entry & { translations: EntryTranslation[] }
+) => {
+  return entry.translations.length !== 0
+    ? entry.translations[0]!.name
+    : entry.originalTitle;
+};
 
 const getTop3RatedNotCompleted = unstable_cache(
   async (userId: number) => {
@@ -126,6 +160,11 @@ export const dashboardRouter = createTRPCRouter({
             userEntries: {
               where: {
                 userId: ctx.user.id,
+              },
+            },
+            translations: {
+              where: {
+                languageId: ctx.user.showMediaMetaInId,
               },
             },
           },

@@ -1,426 +1,451 @@
 generator client {
-    provider      = "prisma-client-js"
-    binaryTargets = ["native", "debian-openssl-3.0.x", "linux-musl-openssl-3.0.x"]
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "debian-openssl-3.0.x", "linux-musl-openssl-3.0.x"]
 }
 
 datasource db {
-    provider = "mysql"
-    url      = env("DATABASE_URL")
+  provider = "mysql"
+  url      = env("DATABASE_URL")
 }
 
 enum RatingStyle {
-    stars
-    range
+  stars
+  range
 }
 
 enum Theme {
-    slate
-    gray
-    zinc
-    neutral
-    stone
-    red
-    orange
-    amber
-    yellow
-    lime
-    green
-    emerald
-    teal
-    cyan
-    sky
-    blue
-    indigo
-    violet
-    purple
-    fuchsia
-    pink
-    rose
+  slate
+  gray
+  zinc
+  neutral
+  stone
+  red
+  orange
+  amber
+  yellow
+  lime
+  green
+  emerald
+  teal
+  cyan
+  sky
+  blue
+  indigo
+  violet
+  purple
+  fuchsia
+  pink
+  rose
 }
 
 model User {
-    id          Int         @id @default(autoincrement()) @db.UnsignedInt
-    username    String      @unique
-    email       String      @unique
-    password    String      @db.VarChar(64)
-    sessions    Session[]
-    ratingStyle RatingStyle @default(stars)
-    theme       Theme       @default(neutral)
+  id                Int         @id @default(autoincrement()) @db.UnsignedInt
+  username          String      @unique
+  email             String      @unique
+  password          String      @db.VarChar(64)
+  sessions          Session[]
+  ratingStyle       RatingStyle @default(stars)
+  theme             Theme       @default(neutral)
+  showMediaMetaInId Int?        @db.UnsignedInt
+  showMediaMetaIn   Language?   @relation("showMediaMetaInIn", fields: [showMediaMetaInId], references: [id])
 
-    dailyStreakStarted DateTime @default(now())
-    dailyStreakUpdated DateTime @default(now())
-    dailyStreakLength  Int      @default(0) @db.SmallInt
-    dailyStreakLongest Int      @default(0) @db.SmallInt
+  dailyStreakStarted DateTime @default(now())
+  dailyStreakUpdated DateTime @default(now())
+  dailyStreakLength  Int      @default(0) @db.SmallInt
+  dailyStreakLongest Int      @default(0) @db.SmallInt
 
-    invitedById Int?   @db.UnsignedInt
-    invitedBy   User?  @relation("Invite", fields: [invitedById], references: [id])
-    invitees    User[] @relation("Invite")
+  invitedById Int?   @db.UnsignedInt
+  invitedBy   User?  @relation("Invite", fields: [invitedById], references: [id])
+  invitees    User[] @relation("Invite")
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @default(now()) @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
-    following       UserFollow[]         @relation("follower")
-    followers       UserFollow[]         @relation("followee")
-    userEntries     UserEntry[]
-    activity        UserActivity[]
-    forgotPasswords UserForgotPassword[]
-    lists           UserList[]
+  following       UserFollow[]         @relation("follower")
+  followers       UserFollow[]         @relation("followee")
+  userEntries     UserEntry[]
+  activity        UserActivity[]
+  forgotPasswords UserForgotPassword[]
+  lists           UserList[]
 }
 
 enum Activity {
-    statusUpdate
-    reviewed
-    rewatch
-    completeReview
+  statusUpdate
+  reviewed
+  rewatch
+  completeReview
 }
 
 model UserActivity {
-    id Int @id @default(autoincrement()) @db.UnsignedInt
+  id Int @id @default(autoincrement()) @db.UnsignedInt
 
-    userId         Int      @db.UnsignedInt
-    user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-    entryId        Int      @db.UnsignedInt
-    entry          Entry    @relation(fields: [entryId], references: [id], onDelete: Cascade)
-    type           Activity
-    additionalData String
+  userId         Int      @db.UnsignedInt
+  user           User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  entryId        Int      @db.UnsignedInt
+  entry          Entry    @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  type           Activity
+  additionalData String
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @default(now()) @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model UserFollow {
-    id Int @id @default(autoincrement()) @db.UnsignedInt
+  id Int @id @default(autoincrement()) @db.UnsignedInt
 
-    userId   Int  @db.UnsignedInt
-    user     User @relation("follower", fields: [userId], references: [id], onDelete: Cascade)
-    followId Int  @db.UnsignedInt
-    follow   User @relation("followee", fields: [followId], references: [id], onDelete: Cascade)
+  userId   Int  @db.UnsignedInt
+  user     User @relation("follower", fields: [userId], references: [id], onDelete: Cascade)
+  followId Int  @db.UnsignedInt
+  follow   User @relation("followee", fields: [followId], references: [id], onDelete: Cascade)
 
-    isFollowing Boolean
+  isFollowing Boolean
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @default(now()) @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 enum UserEntryStatus {
-    planning
-    watching
-    dnf
-    paused
-    completed
+  planning
+  watching
+  dnf
+  paused
+  completed
 }
 
 model UserEntry {
-    id        Int             @id @default(autoincrement()) @db.UnsignedInt
-    userId    Int             @db.UnsignedInt
-    user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-    entryId   Int             @db.UnsignedInt
-    entry     Entry           @relation(fields: [entryId], references: [id], onDelete: Cascade)
-    rating    Int             @db.SmallInt
-    notes     String          @db.Text
-    watchedAt DateTime?
-    status    UserEntryStatus @default(planning)
-    progress  Int             @db.UnsignedSmallInt
-    createdAt DateTime        @default(now())
-    updatedAt DateTime        @default(now()) @updatedAt
+  id        Int             @id @default(autoincrement()) @db.UnsignedInt
+  userId    Int             @db.UnsignedInt
+  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  entryId   Int             @db.UnsignedInt
+  entry     Entry           @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  rating    Int             @db.SmallInt
+  notes     String          @db.Text
+  watchedAt DateTime?
+  status    UserEntryStatus @default(planning)
+  progress  Int             @db.UnsignedSmallInt
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @default(now()) @updatedAt
 }
 
 enum UserListType {
-    ordered
-    unordered
+  ordered
+  unordered
 }
 
 model UserList {
-    id          Int             @id @default(autoincrement()) @db.UnsignedInt
-    userId      Int             @db.UnsignedInt
-    user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-    name        String
-    description String          @default("") @db.VarChar(256)
-    type        UserListType
-    entries     UserListEntry[]
-    createdAt   DateTime        @default(now())
-    updatedAt   DateTime        @default(now()) @updatedAt
+  id          Int             @id @default(autoincrement()) @db.UnsignedInt
+  userId      Int             @db.UnsignedInt
+  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name        String
+  description String          @default("") @db.VarChar(256)
+  type        UserListType
+  entries     UserListEntry[]
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @default(now()) @updatedAt
 }
 
 model UserListEntry {
-    id        Int      @id @default(autoincrement()) @db.UnsignedInt
-    entryId   Int      @db.UnsignedInt
-    entry     Entry    @relation(fields: [entryId], references: [id], onDelete: Cascade)
-    listId    Int      @db.UnsignedInt
-    list      UserList @relation(fields: [listId], references: [id], onDelete: Cascade)
-    order     Int
-    createdAt DateTime @default(now())
-    updatedAt DateTime @default(now()) @updatedAt
+  id        Int      @id @default(autoincrement()) @db.UnsignedInt
+  entryId   Int      @db.UnsignedInt
+  entry     Entry    @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  listId    Int      @db.UnsignedInt
+  list      UserList @relation(fields: [listId], references: [id], onDelete: Cascade)
+  order     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Session {
-    id        Int       @id @default(autoincrement()) @db.UnsignedInt
-    token     String    @db.VarChar(64)
-    user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
-    userId    Int       @db.UnsignedInt
-    expiry    DateTime?
-    ipAddress String
-    userAgent String
-    createdAt DateTime  @default(now())
-    updatedAt DateTime  @default(now()) @updatedAt
+  id        Int       @id @default(autoincrement()) @db.UnsignedInt
+  token     String    @db.VarChar(64)
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId    Int       @db.UnsignedInt
+  expiry    DateTime?
+  ipAddress String
+  userAgent String
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @default(now()) @updatedAt
 }
 
 model Company {
-    id                       Int                      @id @default(autoincrement()) @db.UnsignedInt
-    name                     String
-    logo                     String?
-    countryId                Int                      @db.UnsignedInt
-    country                  Country                  @relation(fields: [countryId], references: [id], onDelete: Cascade)
-    foreignId                String
-    entryProductionCompanies EntryProductionCompany[]
+  id                       Int                      @id @default(autoincrement()) @db.UnsignedInt
+  name                     String
+  logo                     String?
+  countryId                Int                      @db.UnsignedInt
+  country                  Country                  @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  foreignId                String
+  entryProductionCompanies EntryProductionCompany[]
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @default(now()) @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Country {
-    id                     Int                      @id @default(autoincrement()) @db.UnsignedInt
-    name                   String                   @unique
-    iso_3166_1             String                   @unique @db.VarChar(6)
-    companies              Company[]
-    productionCountries    EntryProductionCountry[]
-    entryWatchProviders    EntryWatchProvider[]
-    entryAlternativeTitles EntryAlternativeTitle[]
+  id                     Int                      @id @default(autoincrement()) @db.UnsignedInt
+  name                   String                   @unique
+  iso_3166_1             String                   @unique @db.VarChar(6)
+  companies              Company[]
+  productionCountries    EntryProductionCountry[]
+  entryWatchProviders    EntryWatchProvider[]
+  entryAlternativeTitles EntryAlternativeTitle[]
+  entryTranslation       EntryTranslation[]
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @default(now()) @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Language {
-    id                     Int                     @id @default(autoincrement()) @db.UnsignedInt
-    name                   String
-    iso_639_1              String?                 @db.VarChar(2)
-    iso_639_2              String                  @db.VarChar(3)
-    spokenLanguages        EntrySpokenLanguage[]
-    entryAlternativeTitles EntryAlternativeTitle[]
+  id                     Int                     @id @default(autoincrement()) @db.UnsignedInt
+  name                   String
+  iso_639_1              String?                 @db.VarChar(2)
+  iso_639_2              String                  @db.VarChar(3)
+  spokenLanguages        EntrySpokenLanguage[]
+  entryAlternativeTitles EntryAlternativeTitle[]
+  entryTranslations      EntryTranslation[]
+  userShowMediaMetaIn    User[]                  @relation("showMediaMetaInIn")
+  entryOriginalLanguages Entry[]
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @default(now()) @updatedAt
-    Entry     Entry[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Person {
-    id          Int         @id @default(autoincrement()) @db.UnsignedInt
-    name        String
-    foreignId   String
-    gender      Int         @db.TinyInt
-    profilePath String?
-    memberCasts EntryCast[]
-    memberCrews EntryCrew[]
+  id          Int         @id @default(autoincrement()) @db.UnsignedInt
+  name        String
+  foreignId   String
+  gender      Int         @db.TinyInt
+  profilePath String?
+  memberCasts EntryCast[]
+  memberCrews EntryCrew[]
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @default(now()) @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Genre {
-    id        Int          @id @default(autoincrement()) @db.UnsignedInt
-    name      String
-    foreignId String
-    entries   EntryGenre[]
+  id        Int          @id @default(autoincrement()) @db.UnsignedInt
+  name      String
+  foreignId String
+  entries   EntryGenre[]
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @default(now()) @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model WatchProvider {
-    id        Int                  @id @default(autoincrement()) @db.UnsignedInt
-    name      String
-    foreignId String
-    logoPath  String
-    entries   EntryWatchProvider[]
+  id        Int                  @id @default(autoincrement()) @db.UnsignedInt
+  name      String
+  foreignId String
+  logoPath  String
+  entries   EntryWatchProvider[]
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @default(now()) @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Department {
-    id   Int         @id @default(autoincrement()) @db.UnsignedInt
-    name String
-    crew EntryCrew[]
+  id   Int         @id @default(autoincrement()) @db.UnsignedInt
+  name String
+  crew EntryCrew[]
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @default(now()) @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Job {
-    id   Int         @id @default(autoincrement()) @db.UnsignedInt
-    name String
-    crew EntryCrew[]
+  id   Int         @id @default(autoincrement()) @db.UnsignedInt
+  name String
+  crew EntryCrew[]
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @default(now()) @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model EntryProductionCompany {
-    id        Int     @id @default(autoincrement()) @db.UnsignedInt
-    entryId   Int     @db.UnsignedInt
-    entry     Entry   @relation(fields: [entryId], references: [id], onDelete: Cascade)
-    companyId Int     @db.UnsignedInt
-    company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
+  id        Int     @id @default(autoincrement()) @db.UnsignedInt
+  entryId   Int     @db.UnsignedInt
+  entry     Entry   @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  companyId Int     @db.UnsignedInt
+  company   Company @relation(fields: [companyId], references: [id], onDelete: Cascade)
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @default(now()) @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model EntryProductionCountry {
-    id        Int     @id @default(autoincrement()) @db.UnsignedInt
-    entryId   Int     @db.UnsignedInt
-    entry     Entry   @relation(fields: [entryId], references: [id], onDelete: Cascade)
-    countryId Int     @db.UnsignedInt
-    country   Country @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  id        Int     @id @default(autoincrement()) @db.UnsignedInt
+  entryId   Int     @db.UnsignedInt
+  entry     Entry   @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  countryId Int     @db.UnsignedInt
+  country   Country @relation(fields: [countryId], references: [id], onDelete: Cascade)
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @default(now()) @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model EntrySpokenLanguage {
-    id         Int      @id @default(autoincrement()) @db.UnsignedInt
-    entryId    Int      @db.UnsignedInt
-    entry      Entry    @relation(fields: [entryId], references: [id], onDelete: Cascade)
-    languageId Int      @db.UnsignedInt
-    language   Language @relation(fields: [languageId], references: [id], onDelete: Cascade)
+  id         Int      @id @default(autoincrement()) @db.UnsignedInt
+  entryId    Int      @db.UnsignedInt
+  entry      Entry    @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  languageId Int      @db.UnsignedInt
+  language   Language @relation(fields: [languageId], references: [id], onDelete: Cascade)
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @default(now()) @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model EntryAlternativeTitle {
-    id         Int       @id @default(autoincrement()) @db.UnsignedInt
-    entryId    Int       @db.UnsignedInt
-    entry      Entry     @relation(fields: [entryId], references: [id], onDelete: Cascade)
-    countryId  Int?      @db.UnsignedInt
-    country    Country?  @relation(fields: [countryId], references: [id], onDelete: Cascade)
-    languageId Int?      @db.UnsignedInt
-    language   Language? @relation(fields: [languageId], references: [id], onDelete: Cascade)
-    title      String
+  id         Int       @id @default(autoincrement()) @db.UnsignedInt
+  entryId    Int       @db.UnsignedInt
+  entry      Entry     @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  countryId  Int?      @db.UnsignedInt
+  country    Country?  @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  languageId Int?      @db.UnsignedInt
+  language   Language? @relation(fields: [languageId], references: [id], onDelete: Cascade)
+  title      String
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @default(now()) @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
-    @@index([title])
+  @@index([title])
+}
+
+model EntryTranslation {
+  id         Int       @id @default(autoincrement()) @db.UnsignedInt
+  entryId    Int       @db.UnsignedInt
+  entry      Entry     @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  countryId  Int?      @db.UnsignedInt
+  country    Country?  @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  languageId Int?      @db.UnsignedInt
+  language   Language? @relation(fields: [languageId], references: [id], onDelete: Cascade)
+  name       String
+  overview   String
+  homepage   String
+  tagline    String
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@index([name])
 }
 
 model EntryCast {
-    id        Int    @id @default(autoincrement()) @db.UnsignedInt
-    entryId   Int    @db.UnsignedInt
-    entry     Entry  @relation(fields: [entryId], references: [id], onDelete: Cascade)
-    personId  Int    @db.UnsignedInt
-    person    Person @relation(fields: [personId], references: [id], onDelete: Cascade)
-    character String
+  id        Int    @id @default(autoincrement()) @db.UnsignedInt
+  entryId   Int    @db.UnsignedInt
+  entry     Entry  @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  personId  Int    @db.UnsignedInt
+  person    Person @relation(fields: [personId], references: [id], onDelete: Cascade)
+  character String
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @default(now()) @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model EntryCrew {
-    id           Int        @id @default(autoincrement()) @db.UnsignedInt
-    entryId      Int        @db.UnsignedInt
-    entry        Entry      @relation(fields: [entryId], references: [id], onDelete: Cascade)
-    personId     Int        @db.UnsignedInt
-    person       Person     @relation(fields: [personId], references: [id], onDelete: Cascade)
-    departmentId Int        @db.UnsignedInt
-    department   Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
-    jobId        Int        @db.UnsignedInt
-    job          Job        @relation(fields: [jobId], references: [id], onDelete: Cascade)
+  id           Int        @id @default(autoincrement()) @db.UnsignedInt
+  entryId      Int        @db.UnsignedInt
+  entry        Entry      @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  personId     Int        @db.UnsignedInt
+  person       Person     @relation(fields: [personId], references: [id], onDelete: Cascade)
+  departmentId Int        @db.UnsignedInt
+  department   Department @relation(fields: [departmentId], references: [id], onDelete: Cascade)
+  jobId        Int        @db.UnsignedInt
+  job          Job        @relation(fields: [jobId], references: [id], onDelete: Cascade)
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @default(now()) @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model EntryGenre {
-    id      Int   @id @default(autoincrement()) @db.UnsignedInt
-    entryId Int   @db.UnsignedInt
-    entry   Entry @relation(fields: [entryId], references: [id], onDelete: Cascade)
-    genreId Int   @db.UnsignedInt
-    genre   Genre @relation(fields: [genreId], references: [id], onDelete: Cascade)
+  id      Int   @id @default(autoincrement()) @db.UnsignedInt
+  entryId Int   @db.UnsignedInt
+  entry   Entry @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  genreId Int   @db.UnsignedInt
+  genre   Genre @relation(fields: [genreId], references: [id], onDelete: Cascade)
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @default(now()) @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 enum WatchProviderType {
-    buy
-    rent
-    flatrate
+  buy
+  rent
+  flatrate
 }
 
 model EntryWatchProvider {
-    id              Int               @id @default(autoincrement()) @db.UnsignedInt
-    entryId         Int               @db.UnsignedInt
-    entry           Entry             @relation(fields: [entryId], references: [id], onDelete: Cascade)
-    watchProviderId Int               @db.UnsignedInt
-    watchProvider   WatchProvider     @relation(fields: [watchProviderId], references: [id], onDelete: Cascade)
-    countryId       Int               @db.UnsignedInt
-    country         Country           @relation(fields: [countryId], references: [id], onDelete: Cascade)
-    type            WatchProviderType
+  id              Int               @id @default(autoincrement()) @db.UnsignedInt
+  entryId         Int               @db.UnsignedInt
+  entry           Entry             @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  watchProviderId Int               @db.UnsignedInt
+  watchProvider   WatchProvider     @relation(fields: [watchProviderId], references: [id], onDelete: Cascade)
+  countryId       Int               @db.UnsignedInt
+  country         Country           @relation(fields: [countryId], references: [id], onDelete: Cascade)
+  type            WatchProviderType
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @default(now()) @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 enum Category {
-    Series
-    Movie
-    Book
+  Series
+  Movie
+  Book
 }
 
 model Collection {
-    id           Int      @id @default(autoincrement()) @db.UnsignedInt
-    name         String
-    foreignId    String
-    posterPath   String
-    backdropPath String
-    category     Category
-    entries      Entry[]
+  id           Int      @id @default(autoincrement()) @db.UnsignedInt
+  name         String
+  foreignId    String
+  posterPath   String
+  backdropPath String
+  category     Category
+  entries      Entry[]
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @default(now()) @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }
 
 model Entry {
-    id                 Int         @id @default(autoincrement()) @db.UnsignedInt
-    collectionId       Int?        @db.UnsignedInt
-    collection         Collection? @relation(fields: [collectionId], references: [id], onDelete: Cascade)
-    category           Category
-    originalLanguageId Int         @db.UnsignedInt
-    originalLanguage   Language    @relation(fields: [originalLanguageId], references: [id], onDelete: Cascade)
-    foreignId          String
-    posterPath         String
-    tagline            String      @db.Text
-    originalTitle      String
-    overview           String      @db.Text
-    backdropPath       String
-    releaseDate        DateTime
-    length             Int         @db.UnsignedSmallInt
+  id                 Int         @id @default(autoincrement()) @db.UnsignedInt
+  collectionId       Int?        @db.UnsignedInt
+  collection         Collection? @relation(fields: [collectionId], references: [id], onDelete: Cascade)
+  category           Category
+  originalLanguageId Int         @db.UnsignedInt
+  originalLanguage   Language    @relation(fields: [originalLanguageId], references: [id], onDelete: Cascade)
+  foreignId          String
+  posterPath         String
+  tagline            String      @db.Text
+  originalTitle      String
+  overview           String      @db.Text
+  backdropPath       String
+  releaseDate        DateTime
+  length             Int         @db.UnsignedSmallInt
 
-    productionCompanies EntryProductionCompany[]
-    productionCountries EntryProductionCountry[]
-    spokenLanguage      EntrySpokenLanguage[]
-    alternativeTitles   EntryAlternativeTitle[]
-    cast                EntryCast[]
-    crew                EntryCrew[]
-    genres              EntryGenre[]
-    watchProviders      EntryWatchProvider[]
-    userEntries         UserEntry[]
-    userActivity        UserActivity[]
-    userListEntries     UserListEntry[]
+  productionCompanies EntryProductionCompany[]
+  productionCountries EntryProductionCountry[]
+  spokenLanguage      EntrySpokenLanguage[]
+  alternativeTitles   EntryAlternativeTitle[]
+  translations        EntryTranslation[]
+  cast                EntryCast[]
+  crew                EntryCrew[]
+  genres              EntryGenre[]
+  watchProviders      EntryWatchProvider[]
+  userEntries         UserEntry[]
+  userActivity        UserActivity[]
+  userListEntries     UserListEntry[]
 
-    createdAt DateTime @default(now())
-    updatedAt DateTime @default(now()) @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 
-    @@index([originalTitle])
+  @@index([originalTitle])
 }
 
 model UserForgotPassword {
-    id        String   @id @db.VarChar(36)
-    userId    Int      @db.UnsignedInt
-    user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
-    used      Boolean
-    createdAt DateTime @default(now())
-    updatedAt DateTime @default(now()) @updatedAt
+  id        String   @id @db.VarChar(36)
+  userId    Int      @db.UnsignedInt
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  used      Boolean
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
 }

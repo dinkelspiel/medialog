@@ -1,9 +1,9 @@
 import { useAuthUser } from '@/app/(app)/_components/AuthUserContext';
-import { useTheme } from '@/app/_components/ThemeContext';
+import { useSettings } from '@/app/_components/SettingsContext';
 import { capitalizeFirst } from '@/lib/capitalizeFirst';
 import { colors } from '@/lib/colors';
 import { api } from '@/trpc/react';
-import { Theme } from '@prisma/client';
+import { Language, Theme } from '@prisma/client';
 import { Sun } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -12,20 +12,35 @@ import { Button } from '../ui/button';
 import { Card, CardContent } from '../ui/card';
 import { Label } from '../ui/label';
 import { Select, SelectContent, SelectItem, SelectTrigger } from '../ui/select';
+import { toast } from 'sonner';
 
 const Settings = () => {
-  const selectedTheme_ = useTheme();
+  const originalSettings = useSettings();
   const [selectedTheme, setSelectedTheme] = useState<Theme>();
+  const [selectedShowMediaMetaIn, setSelectedShowMediaMetaIn] =
+    useState<Language>();
 
   const router = useRouter();
   const setTheme = api.settings.setTheme.useMutation({
     onSuccess: () => {
+      toast.success(`Set theme to ${selectedTheme}`);
+      router.refresh();
+    },
+  });
+  const setShowMediaMetaIn = api.settings.setShowMediaMetaIn.useMutation({
+    onSuccess: () => {
+      toast.success(
+        `Set show media meta to ${selectedShowMediaMetaIn ? selectedShowMediaMetaIn.name : ''}`
+      );
       router.refresh();
     },
   });
 
+  const languages = api.settings.getLanguages.useQuery();
+
   useEffect(() => {
-    setSelectedTheme(selectedTheme_);
+    setSelectedTheme(originalSettings.theme);
+    setSelectedShowMediaMetaIn(originalSettings.showMediaMetaIn);
   }, []);
 
   const user = useAuthUser();
@@ -90,37 +105,79 @@ const Settings = () => {
           Appearance
         </div>
         <Card>
-          <CardContent className="flex items-center justify-between p-2 ps-4">
-            <div className="whitespace-nowrap text-sm font-medium text-base-600">
-              Theme
+          <CardContent className="divide-y divide-base-100 p-0 pe-2 ps-4">
+            <div className="flex items-center justify-between py-2">
+              <div className="whitespace-nowrap text-sm font-medium text-base-600">
+                Theme
+              </div>
+              <div className="w-fit">
+                <Select
+                  value={selectedTheme}
+                  onValueChange={theme => {
+                    setSelectedTheme(theme as Theme);
+                    setTheme.mutate({ theme });
+                  }}
+                >
+                  <SelectTrigger>
+                    {selectedTheme ? (
+                      <ThemeComponent theme={selectedTheme} />
+                    ) : (
+                      'No theme selected'
+                    )}
+                  </SelectTrigger>
+                  <SelectContent>
+                    {Object.keys(Theme).map(theme => (
+                      <SelectItem
+                        key={theme}
+                        value={theme}
+                        className="cursor-pointer hover:bg-base-400"
+                      >
+                        <ThemeComponent theme={theme} />
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
-            <div className="w-fit">
-              <Select
-                value={selectedTheme}
-                onValueChange={theme => {
-                  setSelectedTheme(theme as Theme);
-                  setTheme.mutate({ theme });
-                }}
-              >
-                <SelectTrigger>
-                  {selectedTheme ? (
-                    <ThemeComponent theme={selectedTheme} />
-                  ) : (
-                    'No theme selected'
-                  )}
-                </SelectTrigger>
-                <SelectContent>
-                  {Object.keys(Theme).map(theme => (
-                    <SelectItem
-                      key={theme}
-                      value={theme}
-                      className="cursor-pointer hover:bg-base-400"
-                    >
-                      <ThemeComponent theme={theme} />
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
+            <div className="flex items-center justify-between py-2">
+              <div className="whitespace-nowrap text-sm font-medium text-base-600">
+                Show media meda in
+              </div>
+              <div className="w-fit">
+                <Select
+                  value={
+                    selectedShowMediaMetaIn
+                      ? selectedShowMediaMetaIn.iso_639_2!
+                      : ''
+                  }
+                  onValueChange={iso_639_2 => {
+                    setSelectedShowMediaMetaIn(
+                      languages.data!.find(e => e.iso_639_2 === iso_639_2)
+                    );
+                    setShowMediaMetaIn.mutate({ iso_639_2: iso_639_2 });
+                  }}
+                >
+                  <SelectTrigger>
+                    {selectedShowMediaMetaIn
+                      ? selectedShowMediaMetaIn.name
+                      : 'No language selected'}
+                  </SelectTrigger>
+                  <SelectContent>
+                    {languages.data &&
+                      languages.data
+                        .sort((a, b) => a.name.localeCompare(b.name))
+                        .map(language => (
+                          <SelectItem
+                            key={language.id}
+                            value={language.iso_639_2!}
+                            className="cursor-pointer hover:bg-base-400"
+                          >
+                            {language.name}
+                          </SelectItem>
+                        ))}
+                  </SelectContent>
+                </Select>
+              </div>
             </div>
           </CardContent>
         </Card>

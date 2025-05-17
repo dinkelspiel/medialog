@@ -1,4 +1,4 @@
-import { getTheme } from '@/app/_components/theme';
+import { getTheme } from '@/app/_components/settings';
 import { cn } from '@/lib/utils';
 import React, { ReactNode } from 'react';
 import BaseLayout from './base';
