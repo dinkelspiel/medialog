@@ -57,6 +57,7 @@ export const ProfileSidebar = ({
         <div className="flex flex-row justify-center">
           {profileUser.userEntries
             .filter(e => e.status === 'planning')
+            .sort(() => Math.random() - 0.5)
             .slice(0, 4)
             .map((watchlist, idx) => (
               <img
