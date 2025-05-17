@@ -13,7 +13,7 @@ const ExternalUserEntry = ({
   openOverride,
   setUserEntry,
 }: {
-  userEntry: UserEntry & { user: User } & { entry: Entry };
+  userEntry: ExtendedUserEntry;
   openOverride?:
     | [open: boolean, setOpen: Dispatch<SetStateAction<boolean>>]
     | undefined;
