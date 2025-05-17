@@ -3,6 +3,7 @@ import prisma from '@/server/db';
 import axios from 'axios';
 import { NextRequest } from 'next/server';
 
+export const dynamic = 'force-dynamic';
 export const GET = async (req: NextRequest) => {
   const user = await validateSessionToken();
   if (!user) {
