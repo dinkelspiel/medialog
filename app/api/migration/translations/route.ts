@@ -11,11 +11,11 @@ export const GET = async (req: NextRequest) => {
     return;
   }
 
-  if (process.env.NODE_ENV !== 'development') {
-    return new Response('Not dev', {
-      status: 400,
-    });
-  }
+  // if (process.env.NODE_ENV !== 'development') {
+  //   return new Response('Not dev', {
+  //     status: 400,
+  //   });
+  // }
 
   const options = {
     headers: {
