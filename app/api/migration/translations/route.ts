@@ -126,6 +126,9 @@ export const GET = async (req: NextRequest) => {
           iso_639_1: translation['iso_639_1'],
         },
       });
+      if (!language) {
+        continue;
+      }
 
       const country = await prisma.country.findFirst({
         where: {
