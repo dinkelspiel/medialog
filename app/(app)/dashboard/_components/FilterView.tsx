@@ -92,13 +92,17 @@ export const FilterView = ({ className }: { className: string }) => {
             value={filterStyle}
             onValueChange={e => setFilterStyle(e as FilterStyle)}
           >
-            <DropdownMenuRadioItem value="rating">
+            <DropdownMenuRadioItem value="rating-desc">
               Rating (High to Low)
+            </DropdownMenuRadioItem>
+            <DropdownMenuRadioItem value="rating-asc">
+              Rating (Low to High)
             </DropdownMenuRadioItem>
             <DropdownMenuRadioItem value="az">A-Z</DropdownMenuRadioItem>
             <DropdownMenuRadioItem value="completed">
               Completed
             </DropdownMenuRadioItem>
+
             <DropdownMenuRadioItem value="updated">
               Recently Updated
             </DropdownMenuRadioItem>

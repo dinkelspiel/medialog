@@ -9,7 +9,12 @@ import {
 } from '@prisma/client';
 import { create } from 'zustand';
 
-export type FilterStyle = 'rating' | 'az' | 'completed' | 'updated';
+export type FilterStyle =
+  | 'rating-asc'
+  | 'rating-desc'
+  | 'az'
+  | 'completed'
+  | 'updated';
 export type ExtendedUserEntry = UserEntry & {
   entry: Entry & { translations: EntryTranslation[] };
 } & { user: User };
@@ -49,7 +54,7 @@ export const useDashboardStore = create<DashboardStore>(set => ({
     })),
   filterTitle: '',
   setFilterTitle: (title: string) => set(() => ({ filterTitle: title })),
-  filterStyle: 'rating',
+  filterStyle: 'rating-desc',
   setFilterStyle: (style: FilterStyle) => set(() => ({ filterStyle: style })),
 
   userEntries: [],

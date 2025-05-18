@@ -140,8 +140,10 @@ const Dashboard = ({
             userEntries
               .sort((a, b) => {
                 switch (filterStyle) {
-                  case 'rating':
+                  case 'rating-desc':
                     return b.rating - a.rating;
+                  case 'rating-asc':
+                    return (a.rating === 0 ? 999 : a.rating) - b.rating;
                   case 'az':
                     return a.entry.originalTitle.localeCompare(
                       b.entry.originalTitle
