@@ -255,7 +255,7 @@ const Profile = async ({ params }: { params: { username: string } }) => {
               </div>
               {favorites.length > 0 && (
                 <>
-                  <div className="hidden grid-cols-4 gap-4 sm:grid">
+                  <div className="hidden grid-cols-4 gap-3 sm:grid">
                     {favorites.map((userEntry, idx) => (
                       <UserEntryCard
                         key={`userEntry-${idx}`}
@@ -269,7 +269,7 @@ const Profile = async ({ params }: { params: { username: string } }) => {
                       />
                     ))}
                   </div>
-                  <div className="grid grid-cols-3 gap-4 sm:hidden">
+                  <div className="grid grid-cols-3 gap-3 sm:hidden">
                     {favorites.slice(0, 3).map((userEntry, idx) => (
                       <UserEntryCard
                         key={`userEntry-${idx}`}
