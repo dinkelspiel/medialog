@@ -123,10 +123,10 @@ const AddMedia = ({
         }}
       >
         <Button
-          className="flex aspect-[2/3] h-full w-full lg:flex"
+          className="flex aspect-[2/3] h-full w-full rounded-lg lg:flex"
           variant={'outline'}
         >
-          <Plus />
+          <Plus className="stroke-base-600" />
           Add Media
         </Button>
       </AddLog>

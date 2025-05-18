@@ -90,7 +90,7 @@ const Page = async ({
         </HeaderDescription>
       </Header>
       <div className="mx-auto flex w-full flex-col-reverse gap-16 pb-8 pt-4 md:w-fit min-[1330px]:grid min-[1330px]:grid-cols-[1fr,250px]">
-        <div className="grid w-full grid-cols-3 gap-4 px-4 ps-4  md:grid-cols-4 min-[1330px]:w-[716px] min-[1330px]:pe-4">
+        <div className="grid w-full grid-cols-3 gap-3 px-4 ps-4  md:grid-cols-4 min-[1330px]:w-[716px] min-[1330px]:pe-4">
           {!(authUser && authUser?.id === targetUser.id) &&
             list.entries
               .sort((a, b) => a.order - b.order)
