@@ -1,3 +1,4 @@
+import { getDefaultWhereForTranslations } from '@/server/api/routers/dashboard_';
 import { validateSessionToken } from '@/server/auth/validateSession';
 import prisma from '@/server/db';
 import { Category } from '@prisma/client';
@@ -28,9 +29,9 @@ export const GET = async (request: NextRequest) => {
           : undefined,
         OR: [
           {
-            alternativeTitles: {
+            translations: {
               some: {
-                title: {
+                name: {
                   contains: query ?? '',
                 },
               },
@@ -42,6 +43,9 @@ export const GET = async (request: NextRequest) => {
             },
           },
         ],
+      },
+      include: {
+        translations: getDefaultWhereForTranslations(user),
       },
       take,
       orderBy: {

@@ -12,8 +12,8 @@ import { getUserDiary } from './_components/diary';
 import { ProfileHeader } from './_components/header';
 import { ProfileSidebar } from './_components/sidebar';
 import { Stats } from './_components/stats';
-import { getUserTitleFromEntry } from '@/server/api/routers/dashboard';
 import { ServerEntryTitleForUser } from './_components/serverUserEntryTitle';
+import { getDefaultWhereForTranslations } from '@/server/api/routers/dashboard_';
 
 const Profile404 = async () => {
   const user = await validateSessionToken();
@@ -180,18 +180,12 @@ const Profile = async ({ params }: { params: { username: string } }) => {
       rating: true,
       entry: {
         select: {
+          id: true,
           originalTitle: true,
           posterPath: true,
           releaseDate: true,
           category: true,
-          translations: {
-            where: {
-              language: {
-                id: user ? (user.showMediaMetaInId ?? undefined) : undefined,
-                iso_639_1: !user ? 'en' : undefined,
-              },
-            },
-          },
+          translations: getDefaultWhereForTranslations(user),
         },
       },
     },
@@ -260,7 +254,11 @@ const Profile = async ({ params }: { params: { username: string } }) => {
                       <UserEntryCard
                         key={`userEntry-${idx}`}
                         {...{
-                          title: getUserTitleFromEntry(userEntry.entry as any),
+                          entryTitle: (
+                            <ServerEntryTitleForUser
+                              entryId={userEntry.entry.id}
+                            />
+                          ),
                           backgroundImage: userEntry.entry.posterPath,
                           releaseDate: userEntry.entry.releaseDate,
                           rating: userEntry.rating,
@@ -274,7 +272,11 @@ const Profile = async ({ params }: { params: { username: string } }) => {
                       <UserEntryCard
                         key={`userEntry-${idx}`}
                         {...{
-                          title: getUserTitleFromEntry(userEntry.entry as any),
+                          entryTitle: (
+                            <ServerEntryTitleForUser
+                              entryId={userEntry.entry.id}
+                            />
+                          ),
                           backgroundImage: userEntry.entry.posterPath,
                           releaseDate: userEntry.entry.releaseDate,
                           rating: userEntry.rating,

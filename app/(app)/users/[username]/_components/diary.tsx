@@ -1,11 +1,13 @@
-import { getUserTitleFromEntry } from '@/server/api/routers/dashboard';
 import { validateSessionToken } from '@/server/auth/validateSession';
 import prisma from '@/server/db';
+import { ReactNode } from 'react';
+import { ServerEntryTitleForUser } from './serverUserEntryTitle';
+import { getDefaultWhereForTranslations } from '@/server/api/routers/dashboard_';
 
 export type Diary = Record<
   string,
   {
-    title: string;
+    title: ReactNode;
     day: number;
   }[]
 >;
@@ -24,16 +26,7 @@ export const getUserDiary = async (userId: number): Promise<Diary> => {
     include: {
       entry: {
         include: {
-          translations: {
-            where: {
-              language: {
-                id: authUser
-                  ? (authUser.showMediaMetaInId ?? undefined)
-                  : undefined,
-                iso_639_1: !authUser ? 'en' : undefined,
-              },
-            },
-          },
+          translations: getDefaultWhereForTranslations(authUser),
         },
       },
     },
@@ -53,7 +46,7 @@ export const getUserDiary = async (userId: number): Promise<Diary> => {
       diary[monthMinusYear] = [];
     }
     diary[monthMinusYear]!.push({
-      title: getUserTitleFromEntry(userEntry.entry),
+      title: <ServerEntryTitleForUser entryId={userEntry.entry.id} />,
       day: userEntry.watchedAt!.getDate(),
     });
   });

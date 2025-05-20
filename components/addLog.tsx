@@ -14,7 +14,7 @@ import { Toggle } from './ui/toggle';
 
 import { ExtendedUserEntry } from '@/app/(app)/dashboard/state';
 import { cn } from '@/lib/utils';
-import { Category, Entry } from '@prisma/client';
+import { Category, Entry, EntryTranslation } from '@prisma/client';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
@@ -23,6 +23,7 @@ import { Drawer, DrawerContent, DrawerTrigger } from './ui/drawer';
 import UserEntryCard from './userEntryCard';
 import ExternalUserEntry from './userEntryExternal';
 import { api } from '@/trpc/react';
+import { getUserTitleFromEntry } from '@/server/api/routers/dashboard_';
 
 const AddLog = ({
   children,
@@ -168,7 +169,7 @@ const AddLogContent = ({
     isLoading: queryIsLoading,
     isError: queryIsError,
     error: queryError,
-  } = useQuery<Entry[]>({
+  } = useQuery<(Entry & { translations: EntryTranslation[] })[]>({
     queryFn: () =>
       fetch(
         `/api/entries?q=${debouncedQueryTitle[0]}&take=8&categories=${generateQueryCategories()}`
@@ -295,14 +296,14 @@ const AddLogContent = ({
         )}
 
       <div className="max-h-[calc(100dvh-100px)] overflow-y-scroll lg:max-h-[calc(100dvh-220px)]">
-        <div className="grid grid-cols-3 gap-4 lg:grid-cols-4">
+        <div className="grid grid-cols-3 gap-3 lg:grid-cols-4">
           {queryResults &&
             queryResults
               .slice(0, isDesktop ? 8 : 6)
               .map(e => (
                 <UserEntryCard
                   key={e.posterPath}
-                  title={e.originalTitle}
+                  entryTitle={getUserTitleFromEntry(e)}
                   backgroundImage={e.posterPath}
                   releaseDate={new Date(e.releaseDate)}
                   category={e.category}
@@ -361,7 +362,7 @@ const AddLogContent = ({
                     })}
                   >
                     <UserEntryCard
-                      title={e.title}
+                      entryTitle={e.title}
                       backgroundImage={e.posterPath}
                       releaseDate={new Date(e.releaseDate)}
                       category={e.category as Category}

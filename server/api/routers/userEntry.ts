@@ -5,6 +5,7 @@ import { validateSessionToken } from '@/server/auth/validateSession';
 import prisma from '@/server/db';
 import { ExtendedUserEntry } from '@/app/(app)/dashboard/state';
 import { revalidatePath } from 'next/cache';
+import { getDefaultWhereForTranslations } from './dashboard_';
 
 export const userEntryRouter = createTRPCRouter({
   create: protectedProcedure
@@ -34,16 +35,7 @@ export const userEntryRouter = createTRPCRouter({
         include: {
           entry: {
             include: {
-              translations: {
-                where: {
-                  language: {
-                    id: user
-                      ? (user.showMediaMetaInId ?? undefined)
-                      : undefined,
-                    iso_639_1: !user ? 'en' : undefined,
-                  },
-                },
-              },
+              translations: getDefaultWhereForTranslations(user),
             },
           },
           user: true,

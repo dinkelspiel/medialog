@@ -1,10 +1,11 @@
 'use client';
 
 import AddLog from '@/components/addLog';
+import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import UserEntryCard from '@/components/userEntryCard';
 import { Entry, User, UserList, UserListEntry } from '@prisma/client';
-import { ChevronDown, ChevronUp, Plus, X } from 'lucide-react';
+import { ChevronDown, ChevronUp, ListEnd, Plus, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
 import { toast } from 'sonner';
@@ -73,15 +74,17 @@ const AddMedia = ({
     <>
       {userList.entries
         .sort((a, b) => a.order - b.order)
-        .map(e => (
+        .map((e, idx) => (
           <UserEntryCard
             key={e.id}
             {...{
-              title: e.entry.originalTitle,
+              entryTitle: e.entry.originalTitle,
               backgroundImage: e.entry.posterPath,
               category: e.entry.category,
               releaseDate: e.entry.releaseDate,
               rating: 0,
+              topRight:
+                userList.type === 'ordered' ? <Badge>{idx + 1}</Badge> : '',
               hoverCard: (
                 <>
                   <Button
