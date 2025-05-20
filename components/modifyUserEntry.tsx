@@ -73,7 +73,9 @@ const ModifyUserEntry = ({
 }) => {
   const [rating, setRating] = useState(userEntry.rating);
   const [notes, setNotes] = useState(userEntry.notes);
-  const [watchedAt, setWatchedAt] = useState(userEntry.watchedAt);
+  const [watchedAt, setWatchedAt] = useState(
+    userEntry.watchedAt ? userEntry.watchedAt : new Date()
+  );
 
   const [saveUserEntryState, saveUserEntryAction] = useFormState(
     saveUserEntry,
@@ -383,11 +385,11 @@ const ModifyUserEntry = ({
             </div>
             <div className="flex items-center gap-2">
               <Label>Created</Label>
-              {userEntry.createdAt.toDateString()}
+              {new Date(userEntry.createdAt.toString()).toDateString()}
             </div>
             <div className="flex items-center gap-2">
               <Label>Updated</Label>
-              {userEntry.updatedAt.toDateString()}
+              {new Date(userEntry.updatedAt.toString()).toDateString()}
             </div>
           </div>
         </div>

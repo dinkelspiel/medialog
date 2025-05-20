@@ -22,6 +22,7 @@ import { useDebounceValue, useMediaQuery } from 'usehooks-ts';
 import { Drawer, DrawerContent, DrawerTrigger } from './ui/drawer';
 import UserEntryCard from './userEntryCard';
 import ExternalUserEntry from './userEntryExternal';
+import { api } from '@/trpc/react';
 
 const AddLog = ({
   children,
@@ -42,19 +43,11 @@ const AddLog = ({
 
   const router = useRouter();
 
-  const addUserEntry = useMutation({
-    mutationKey: ['addUserEntry'],
-    mutationFn: (data: { entryId: number }) =>
-      fetch(`/api/user/entries`, {
-        method: 'POST',
-        body: JSON.stringify({
-          entryId: data.entryId,
-        }),
-      }),
-    onSuccess: async (result, variables, context) => {
-      const data = await result.json();
-
-      if (data.message) {
+  const addUserEntry = api.userEntry.create.useMutation({
+    onSuccess: async data => {
+      if (!('message' in data)) {
+        return;
+      } else if (data.message) {
         toast.success(data.message);
         data.userEntry.entry.releaseDate = new Date(
           data.userEntry.entry.releaseDate
@@ -64,8 +57,6 @@ const AddLog = ({
         setActiveUserEntry(data.userEntry);
 
         router.refresh();
-      } else {
-        toast.error(data.error);
       }
     },
     onError: error => {
@@ -222,7 +213,7 @@ const AddLogContent = ({
         `/api/import/${data.category.toLowerCase()}?${data.category === 'Book' ? 'olId' : 'tmdbId'}=${data.foreignId}`
       ),
     onMutate: data => setImporting(data.foreignId),
-    onSuccess: async (result, variables, context) => {
+    onSuccess: async result => {
       const data = await result.json();
       setImporting(undefined);
       if (data.message) {
@@ -231,7 +222,7 @@ const AddLogContent = ({
         toast.error(data.error);
       }
     },
-    onError: async (error, variables, context) => {
+    onError: async error => {
       toast.error(error.message);
     },
   });

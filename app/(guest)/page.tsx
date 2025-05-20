@@ -74,8 +74,8 @@ const Page = async () => {
         <Image
           src={'/dashboard.png'}
           alt="Image of dashboard"
-          width={1900}
-          height={970}
+          width={2542}
+          height={1439}
           className="rounded-t-2xl border border-base-200 shadow-2xl shadow-base-200"
         />
       </div>
