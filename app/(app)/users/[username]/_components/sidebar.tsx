@@ -6,6 +6,8 @@ import { Calendar } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import { Fragment } from 'react';
 import { ServerEntryTitleForUser } from './serverUserEntryTitle';
+import { Lists } from './lists';
+import Link from 'next/link';
 
 export const ProfileSidebar = ({
   profileUser,
@@ -13,6 +15,7 @@ export const ProfileSidebar = ({
   totalRatings,
   className,
   diary,
+  lists,
 }: {
   profileUser: User & {
     userEntries: (UserEntry & { entry: Entry })[];
@@ -23,6 +26,7 @@ export const ProfileSidebar = ({
   totalRatings: number;
   className: string;
   diary: Diary;
+  lists: Lists;
 }) => {
   const monthOrder = [
     'DEC',
@@ -165,6 +169,38 @@ export const ProfileSidebar = ({
               </div>
             </div>
           ))}
+      </div>
+      <div className="flex flex-col items-center gap-4 lg:items-start">
+        <div className="flex w-full justify-between border-b border-b-base-200 pb-2 text-lg font-medium">
+          Lists
+          <span className="ms-auto text-base-500">{lists.length}</span>
+        </div>
+        <div className="flex w-full flex-row items-end justify-between gap-2 2xl:w-[250px]">
+          {lists.map(list => (
+            <Link
+              className="group flex cursor-pointer flex-col gap-2"
+              href={`/@${profileUser.username}/lists/${list.id}`}
+            >
+              <div className="flex flex-row justify-center rounded-md shadow-slate-900/50 ring-slate-900 ring-offset-2 transition-all duration-150 group-hover:shadow-lg group-hover:ring-4">
+                {list.posterUrls.map((posterUrl, idx) => (
+                  <img
+                    key={posterUrl}
+                    src={posterUrl}
+                    className={cn(
+                      `${idx !== 0 && 'ms-[-24px]'} h-[120px] w-[80px] rounded-md shadow-lg`
+                    )}
+                    alt={'Test'}
+                    style={{ zIndex: idx }}
+                  />
+                ))}
+              </div>
+              <div className="flex justify-between gap-2">
+                <div>{list.name}</div>
+                <div className="text-base-600">{list.mediaCount}</div>
+              </div>
+            </Link>
+          ))}
+        </div>
       </div>
     </div>
   );

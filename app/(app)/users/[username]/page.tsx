@@ -14,6 +14,8 @@ import { ProfileSidebar } from './_components/sidebar';
 import { Stats } from './_components/stats';
 import { ServerEntryTitleForUser } from './_components/serverUserEntryTitle';
 import { getDefaultWhereForTranslations } from '@/server/api/routers/dashboard_';
+import { getUserLists } from './_components/lists';
+import { Metadata, ResolvingMetadata } from 'next';
 
 const Profile404 = async () => {
   const user = await validateSessionToken();
@@ -36,6 +38,19 @@ const Profile404 = async () => {
     </div>
   );
 };
+
+export type Props = {
+  params: { username: string };
+};
+
+export async function generateMetadata(
+  { params }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  return {
+    title: `${params.username}'s profile - Medialog`,
+  };
+}
 
 const Profile = async ({ params }: { params: { username: string } }) => {
   const user = await validateSessionToken();
@@ -234,6 +249,8 @@ const Profile = async ({ params }: { params: { username: string } }) => {
 
   const diary = await getUserDiary(profileUser.id);
 
+  const lists = await getUserLists(profileUser.id);
+
   return (
     <HeaderLayout>
       <ProfileHeader user={user} profileUser={profileUser as any} />
@@ -306,6 +323,7 @@ const Profile = async ({ params }: { params: { username: string } }) => {
               totalRatings={totalRatings}
               className="flex min-[1330px]:hidden"
               diary={diary}
+              lists={lists}
             />
             <div className="flex flex-col gap-4">
               <div className="flex w-full justify-between border-b border-b-base-200 pb-2 text-lg font-medium">
@@ -364,6 +382,7 @@ const Profile = async ({ params }: { params: { username: string } }) => {
             totalRatings={totalRatings}
             className="hidden min-[1330px]:flex"
             diary={diary}
+            lists={lists}
           />
         </div>
       </div>

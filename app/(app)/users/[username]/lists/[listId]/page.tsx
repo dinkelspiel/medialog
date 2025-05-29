@@ -9,27 +9,38 @@ import EditableDescription from './_components/editableDescription';
 import EditableName from './_components/editableName';
 import CompletionProgress from './_components/progress';
 import HeaderLayout from '@/components/layouts/header';
-import { Button } from '@/components/ui/button';
-import { Clock, Plus, Vote } from 'lucide-react';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuGroup,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from '@/components/ui/dropdown-menu';
 import SettingsView from './_components/settings';
 import { Badge } from '@/components/ui/badge';
-import CreateTimedChallenge from './_components/challenges/timedChallenge';
 import AddWidget from './_components/addWidget';
+import type { Metadata, ResolvingMetadata } from 'next';
 
-const Page = async ({
-  params,
-}: {
+export type Props = {
   params: { listId: string; username: string };
-}) => {
+};
+
+export async function generateMetadata(
+  { params }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  const list = await prisma.userList.findFirst({
+    where: {
+      id: Number(params.listId),
+      user: {
+        username: params.username,
+      },
+    },
+  });
+  if (!list) {
+    return {
+      title: `Invalid list - Medialog`,
+    };
+  }
+  return {
+    title: `${list?.name} by @${params.username} - Medialog`,
+  };
+}
+
+const Page = async ({ params }: Props) => {
   const authUser = await validateSessionToken();
   const targetUser = await prisma.user.findFirst({
     where: {
