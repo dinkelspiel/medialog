@@ -20,11 +20,18 @@ import { capitalizeFirst } from '@/lib/capitalizeFirst';
 import { api } from '@/trpc/react';
 import { UserList, UserListType } from '@prisma/client';
 import { List, ListOrdered, Settings } from 'lucide-react';
-import { useRouter } from 'next/navigation';
+import { revalidatePath } from 'next/cache';
+import { usePathname, useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { toast } from 'sonner';
 
-const SettingsView = ({ list }: { list: UserList }) => {
+const SettingsView = ({
+  list,
+  user,
+}: {
+  list: UserList;
+  user: { id: number; username: string };
+}) => {
   const [selectedType, setSelectedType] = useState<UserListType>(list.type);
   const router = useRouter();
   const setType = api.list.setType.useMutation({

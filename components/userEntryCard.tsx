@@ -89,17 +89,19 @@ export const UserEntryCardObject = ({
   ...props
 }: {
   userEntry: ExtendedUserEntry;
-} & HTMLProps<HTMLDivElement>) => (
-  <UserEntryCard
-    {...{
-      entryTitle: getUserTitleFromEntry(userEntry.entry),
-      backgroundImage: userEntry.entry.posterPath,
-      releaseDate: userEntry.entry.releaseDate,
-      category: userEntry.entry.category,
-      rating: userEntry.rating,
-    }}
-    {...props}
-  />
-);
+} & HTMLProps<HTMLDivElement>) => {
+  return (
+    <UserEntryCard
+      {...{
+        entryTitle: getUserTitleFromEntry(userEntry.entry),
+        backgroundImage: userEntry.entry.posterPath,
+        releaseDate: userEntry.entry.releaseDate,
+        category: userEntry.entry.category,
+        rating: userEntry.rating,
+      }}
+      {...props}
+    />
+  );
+};
 
 export default UserEntryCard;

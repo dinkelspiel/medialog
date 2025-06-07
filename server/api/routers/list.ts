@@ -46,4 +46,51 @@ export const listRouter = createTRPCRouter({
       });
       revalidatePath(`/users/${ctx.user.username}/lists/${input.listId}`);
     }),
+
+  createChallengeTimed: protectedProcedure
+    .input(
+      z.object({
+        listId: z.number(),
+        name: z.string(),
+        from: z.string(),
+        to: z.string(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const list = await prisma.userList.findFirst({
+        where: {
+          id: input.listId,
+        },
+      });
+      if (!list) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'No list with id',
+        });
+      }
+
+      if (list.userId !== ctx.user.id) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'Not your list',
+        });
+      }
+
+      if (input.to < input.from) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: "To can't be before from",
+        });
+      }
+
+      await prisma.userListChallengeTimed.create({
+        data: {
+          name: input.name,
+          from: new Date(input.from),
+          to: new Date(input.to),
+          listId: input.listId,
+        },
+      });
+      revalidatePath(`/users/${ctx.user.username}/lists/${input.listId}`);
+    }),
 });

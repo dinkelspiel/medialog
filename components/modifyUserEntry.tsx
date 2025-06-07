@@ -53,6 +53,7 @@ import {
 import { Label } from './ui/label';
 import { DateTimePicker } from './ui/date-time-picker';
 import { api } from '@/trpc/react';
+import { ResponseCookies } from 'next/dist/compiled/@edge-runtime/cookies';
 
 const ModifyUserEntry = ({
   userEntry,
@@ -73,7 +74,7 @@ const ModifyUserEntry = ({
 }) => {
   const [rating, setRating] = useState(userEntry.rating);
   const [notes, setNotes] = useState(userEntry.notes);
-  const [watchedAt, setWatchedAt] = useState(
+  const [watchedAt, setWatchedAt] = useState<Date | null>(
     userEntry.watchedAt ? userEntry.watchedAt : new Date()
   );
 
@@ -176,6 +177,7 @@ const ModifyUserEntry = ({
     if (response.error) {
       toast.error(response.error);
     } else if (response.message) {
+      toast.success(response.message);
       setUserEntry({
         ...response.userEntry,
         entry: {

@@ -29,5 +29,23 @@ export const validateSessionToken = cache(async () => {
     where: {
       id: session.userId,
     },
+    select: {
+      id: true,
+      username: true,
+      ratingStyle: true,
+      theme: true,
+      showMediaMetaIn: true,
+      showMediaMetaInId: true,
+
+      dailyStreakLength: true,
+      dailyStreakLongest: true,
+      dailyStreakStarted: true,
+      dailyStreakUpdated: true,
+
+      invitedBy: true,
+      invitedById: true,
+
+      createdAt: true,
+    },
   });
 });

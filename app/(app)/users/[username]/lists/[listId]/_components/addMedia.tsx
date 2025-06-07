@@ -14,7 +14,10 @@ const AddMedia = ({
   userList: userListDefault,
   user,
 }: {
-  user: User;
+  user: {
+    id: number;
+    username: string;
+  };
   userList: UserList & { entries: (UserListEntry & { entry: Entry })[] };
 }) => {
   const [userList, setUserList] = useState(userListDefault);

@@ -13,6 +13,10 @@ import SettingsView from './_components/settings';
 import { Badge } from '@/components/ui/badge';
 import AddWidget from './_components/addWidget';
 import type { Metadata, ResolvingMetadata } from 'next';
+import { Clock, Pen } from 'lucide-react';
+import { UserEntry } from '@prisma/client';
+import { Button } from '@/components/ui/button';
+import EditTimedChallenge from './_components/challenges/editTimedChallenge';
 
 export type Props = {
   params: { listId: string; username: string };
@@ -46,6 +50,10 @@ const Page = async ({ params }: Props) => {
     where: {
       username: params.username,
     },
+    select: {
+      id: true,
+      username: true,
+    },
   });
 
   if (!targetUser) {
@@ -66,10 +74,22 @@ const Page = async ({ params }: Props) => {
     },
   });
 
+  if (!list) {
+    return <div>No list with id on user</div>;
+  }
+
+  const timedChallenges = await prisma.userListChallengeTimed.findMany({
+    where: {
+      listId: list.id,
+    },
+  });
+
   let completed = 0;
 
+  let userEntries: { id: number; entryId: number; watchedAt: Date | null }[] =
+    [];
   if (authUser) {
-    const userEntries = await prisma.userEntry.findMany({
+    userEntries = await prisma.userEntry.findMany({
       where: {
         userId: authUser.id,
         status: 'completed',
@@ -84,16 +104,13 @@ const Page = async ({ params }: Props) => {
       select: {
         id: true,
         entryId: true,
+        watchedAt: true,
       },
     });
 
     completed = userEntries.filter(
       e => userEntries.find(f => f.entryId === e.entryId)!.id === e.id
     ).length;
-  }
-
-  if (!list) {
-    return <div>No list with id on user</div>;
   }
 
   return (
@@ -149,10 +166,10 @@ const Page = async ({ params }: Props) => {
           )}
 
           {authUser && (
-            <div className="flex flex-col gap-4">
+            <div className="flex flex-col gap-2">
               <div className="flex justify-between border-b border-b-base-200 pb-2 text-lg font-semibold">
                 You've completed
-                <span className="ms-auto font-normal text-base-500">
+                <span className="ms-auto flex items-end text-sm font-normal text-base-500">
                   {((completed / list!.entries.length) * 100).toFixed(0)}%
                 </span>
               </div>
@@ -162,9 +179,85 @@ const Page = async ({ params }: Props) => {
               />
             </div>
           )}
+          {timedChallenges.map(challenge => {
+            const now = new Date();
+            const isBetween = now >= challenge.from && now <= challenge.to;
+
+            const completed = challenge.to < now;
+
+            let daysLeft = 0;
+            const millisecondsPerDay = 1000 * 60 * 60 * 24;
+            if (isBetween) {
+              daysLeft = Math.ceil(
+                (challenge.to.getTime() - now.getTime()) / millisecondsPerDay
+              );
+            }
+
+            let daysUntil = Math.ceil(
+              (challenge.from.getTime() - now.getTime()) / millisecondsPerDay
+            );
+
+            const options = { month: 'short', day: 'numeric' };
+            const fromString = challenge.from.toLocaleDateString(
+              'en-US',
+              options as any
+            );
+            const toString = challenge.to.toLocaleDateString(
+              'en-US',
+              options as any
+            );
+
+            const completedBetweenDates = userEntries
+              .filter(
+                e => userEntries.find(f => f.entryId === e.entryId)!.id === e.id
+              )
+              .filter(e => !!e.watchedAt)
+              .filter(
+                e =>
+                  e.watchedAt! > challenge.from && e.watchedAt! < challenge.to
+              ).length;
+
+            return (
+              <div className="flex flex-col gap-2" key={challenge.id}>
+                <div className="flex items-center justify-between gap-2 border-b border-b-base-200 pb-2 text-lg font-semibold">
+                  <Clock className="size-4" /> {challenge.name}
+                  <span className="ms-auto flex h-full items-end gap-2 text-sm font-normal text-base-500">
+                    {!isBetween &&
+                      !completed &&
+                      `${daysUntil} days until start`}
+                    {!isBetween && completed && 'Finished'}
+                    {isBetween && `${daysLeft} days left`}
+                    <EditTimedChallenge />
+                  </span>
+                </div>
+                <div className="flex items-center justify-between text-sm">
+                  <div>
+                    {fromString} - {toString}
+                  </div>
+                  {isBetween && (
+                    <div className="text-base-500">
+                      {(
+                        (completedBetweenDates / list!.entries.length) *
+                        100
+                      ).toFixed(0)}
+                      %
+                    </div>
+                  )}
+                </div>
+                {isBetween && (
+                  <CompletionProgress
+                    max={list!.entries.length}
+                    current={
+                      (completedBetweenDates / list!.entries.length) * 100
+                    }
+                  />
+                )}
+              </div>
+            );
+          })}
           <div className="flex gap-2">
-            <AddWidget />
-            <SettingsView list={list} />
+            <AddWidget list={list} />
+            <SettingsView list={list} user={targetUser} />
           </div>
         </div>
       </div>

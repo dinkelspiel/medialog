@@ -133,15 +133,16 @@ enum UserListType {
 }
 
 model UserList {
-  id          Int             @id @default(autoincrement()) @db.UnsignedInt
-  userId      Int             @db.UnsignedInt
-  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  name        String
-  description String          @default("") @db.VarChar(256)
-  type        UserListType
-  entries     UserListEntry[]
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @default(now()) @updatedAt
+  id              Int                      @id @default(autoincrement()) @db.UnsignedInt
+  userId          Int                      @db.UnsignedInt
+  user            User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name            String
+  description     String                   @default("") @db.VarChar(256)
+  type            UserListType
+  entries         UserListEntry[]
+  createdAt       DateTime                 @default(now())
+  updatedAt       DateTime                 @default(now()) @updatedAt
+  timedChallenges UserListChallengeTimed[]
 }
 
 model UserListEntry {
@@ -151,6 +152,17 @@ model UserListEntry {
   listId    Int      @db.UnsignedInt
   list      UserList @relation(fields: [listId], references: [id], onDelete: Cascade)
   order     Int
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model UserListChallengeTimed {
+  id        Int      @id @default(autoincrement()) @db.UnsignedInt
+  name      String
+  from      DateTime
+  to        DateTime
+  listId    Int      @db.UnsignedInt
+  list      UserList @relation(fields: [listId], references: [id], onDelete: Cascade)
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
 }
@@ -319,9 +331,9 @@ model EntryTranslation {
   languageId Int?      @db.UnsignedInt
   language   Language? @relation(fields: [languageId], references: [id], onDelete: Cascade)
   name       String
-  overview   String
-  homepage   String
-  tagline    String
+  overview   String    @db.Text
+  homepage   String    @db.Text
+  tagline    String    @db.Text
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt

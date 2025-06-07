@@ -11,11 +11,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import CreateTimedChallenge from './challenges/timedChallenge';
+import CreateTimedChallenge from './challenges/createTimedChallenge';
 import { useListState } from '../state';
+import { UserList } from '@prisma/client';
+import { useEffect } from 'react';
 
-const AddWidget = () => {
-  const { setCreateTimedChallengeOpen } = useListState();
+const AddWidget = ({ list }: { list: UserList }) => {
+  const { setCreateTimedChallengeOpen, setList } = useListState();
+
+  useEffect(() => {
+    setList(list);
+  }, [list]);
 
   return (
     <>

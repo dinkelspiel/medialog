@@ -2,7 +2,13 @@ import { User } from '@prisma/client';
 import 'server-only';
 import prisma from '../db';
 
-export const getDailyStreak = async (user: User): Promise<number> => {
+export const getDailyStreak = async (user: {
+  id: number;
+  dailyStreakUpdated: Date;
+  dailyStreakLength: number;
+  dailyStreakLongest: number;
+  dailyStreakStarted: Date;
+}): Promise<number> => {
   const now = new Date();
   const msInDay = 1000 * 60 * 60 * 24;
 
@@ -48,7 +54,13 @@ export const getDailyStreak = async (user: User): Promise<number> => {
   return streakLength;
 };
 
-export const pushDailyStreak = async (user: User) => {
+export const pushDailyStreak = async (user: {
+  id: number;
+  dailyStreakUpdated: Date;
+  dailyStreakLength: number;
+  dailyStreakLongest: number;
+  dailyStreakStarted: Date;
+}) => {
   const streakLength = await getDailyStreak(user);
 
   if (streakLength === 0) {
