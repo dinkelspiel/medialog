@@ -17,9 +17,9 @@ import { DateTimePicker } from '@/components/ui/date-time-picker';
 import { api } from '@/trpc/react';
 import Error from '@/components/error';
 import { toast } from 'sonner';
-import { UserListChallengeTimed } from '@prisma/client';
+import { UserListChallengeTimed, UserListPoll } from '@prisma/client';
 
-const ModifyTimedChallenge = ({
+const ModifyPoll = ({
   open,
   setOpen,
   onSubmit,
@@ -38,7 +38,7 @@ const ModifyTimedChallenge = ({
   setError: (open: ReactNode | undefined) => void;
   error: ReactNode | undefined;
   trigger?: ReactNode;
-  defaults?: UserListChallengeTimed;
+  defaults?: UserListPoll;
   title: string;
   submit: string;
 }) => {
@@ -98,8 +98,8 @@ const ModifyTimedChallenge = ({
           <DialogFooter>
             {defaults && (
               <Button
-                variant={'destructive'}
                 onClick={() => (onDelete ? onDelete() : {})}
+                variant={'destructive'}
                 type="button"
                 size="sm"
               >
@@ -116,4 +116,4 @@ const ModifyTimedChallenge = ({
   );
 };
 
-export default ModifyTimedChallenge;
+export default ModifyPoll;

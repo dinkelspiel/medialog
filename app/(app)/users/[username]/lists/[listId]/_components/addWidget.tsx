@@ -12,12 +12,14 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 import CreateTimedChallenge from './challenges/createTimedChallenge';
-import { useListState } from '../state';
-import { UserList } from '@prisma/client';
+import { StateList, useListState } from '../state';
+import { UserList, UserListEntry } from '@prisma/client';
 import { useEffect } from 'react';
+import CreatePoll from './polls/createPoll';
 
-const AddWidget = ({ list }: { list: UserList }) => {
-  const { setCreateTimedChallengeOpen, setList } = useListState();
+const AddWidget = ({ list }: { list: StateList }) => {
+  const { setCreateTimedChallengeOpen, setCreatePollOpen, setList } =
+    useListState();
 
   useEffect(() => {
     setList(list);
@@ -26,6 +28,7 @@ const AddWidget = ({ list }: { list: UserList }) => {
   return (
     <>
       <CreateTimedChallenge />
+      <CreatePoll />
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
           <Button variant={'outline'} size={'sm'} className="w-full">
@@ -46,7 +49,11 @@ const AddWidget = ({ list }: { list: UserList }) => {
           </DropdownMenuGroup>
           <DropdownMenuSeparator />
           <DropdownMenuGroup>
-            <DropdownMenuItem>
+            <DropdownMenuItem
+              onClick={() => {
+                setCreatePollOpen(true);
+              }}
+            >
               <Vote className="size-4 stroke-base-600" /> Vote
             </DropdownMenuItem>
           </DropdownMenuGroup>
