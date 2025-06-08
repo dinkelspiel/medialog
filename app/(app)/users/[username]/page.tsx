@@ -16,6 +16,7 @@ import { ServerEntryTitleForUser } from './_components/serverUserEntryTitle';
 import { getDefaultWhereForTranslations } from '@/server/api/routers/dashboard_';
 import { getUserLists } from './_components/lists';
 import { Metadata, ResolvingMetadata } from 'next';
+import ActivityHistory from './_components/activityHistory';
 
 const Profile404 = async () => {
   const user = await validateSessionToken();
@@ -325,6 +326,9 @@ const Profile = async ({ params }: { params: { username: string } }) => {
               diary={diary}
               lists={lists}
             />
+
+            <ActivityHistory profileUser={profileUser} />
+
             <div className="flex flex-col gap-4">
               <div className="flex w-full justify-between border-b border-b-base-200 pb-2 text-lg font-medium">
                 Recent Activity
