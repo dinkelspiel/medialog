@@ -175,9 +175,10 @@ export const ProfileSidebar = ({
           Lists
           <span className="ms-auto text-base-500">{lists.length}</span>
         </div>
-        <div className="flex w-full flex-row items-end justify-between gap-2 2xl:w-[250px]">
+        <div className="flex w-full flex-col items-center gap-4 2xl:w-[250px]">
           {lists.map(list => (
             <Link
+              key={list.id}
               className="group flex cursor-pointer flex-col gap-2"
               href={`/@${profileUser.username}/lists/${list.id}`}
             >

@@ -53,7 +53,7 @@ export async function generateMetadata(
 }
 
 const Profile = async ({ params }: { params: { username: string } }) => {
-  const user = await validateSessionToken();
+  const authUser = await validateSessionToken();
   const profileUserExists = await prisma.user.findFirst({
     where: {
       username: params.username,
@@ -200,7 +200,7 @@ const Profile = async ({ params }: { params: { username: string } }) => {
           posterPath: true,
           releaseDate: true,
           category: true,
-          translations: getDefaultWhereForTranslations(user),
+          translations: getDefaultWhereForTranslations(authUser),
         },
       },
     },
@@ -253,10 +253,10 @@ const Profile = async ({ params }: { params: { username: string } }) => {
 
   return (
     <HeaderLayout>
-      <ProfileHeader user={user} profileUser={profileUser as any} />
+      <ProfileHeader profileUser={profileUser as any} />
       <div className="col-span-2 mx-auto pb-4">
         <div className="block py-2 lg:hidden">
-          <Stats user={user} profileUser={profileUser as any} />
+          <Stats profileUser={profileUser as any} />
         </div>
         <div className="grid w-fit grid-cols-1 gap-16 min-[1330px]:grid-cols-[1fr,250px]">
           <div className="flex flex-col gap-6 px-4 md:w-[710px]">
@@ -305,8 +305,8 @@ const Profile = async ({ params }: { params: { username: string } }) => {
                 </>
               )}
               {favorites.length === 0 &&
-                (user !== undefined &&
-                profileUser.id === (user ? user.id : -1) ? (
+                (authUser !== undefined &&
+                profileUser.id === (authUser ? authUser.id : -1) ? (
                   <div className="text-lg">
                     Rate your favorites{' '}
                     <Link href="/dashboard">

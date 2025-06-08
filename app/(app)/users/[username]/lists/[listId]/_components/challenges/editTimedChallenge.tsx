@@ -19,18 +19,23 @@ import Error from '@/components/error';
 import { toast } from 'sonner';
 import ModifyTimedChallenge from './modifyTimedChallenge';
 import { Pen } from 'lucide-react';
+import { UserListChallengeTimed } from '@prisma/client';
 
-const EditTimedChallenge = () => {
+const EditTimedChallenge = ({
+  challenge,
+}: {
+  challenge: UserListChallengeTimed;
+}) => {
   const [open, setOpen] = useState(false);
   const { list } = useListState();
   const [error, setError] = useState<ReactNode | undefined>(undefined);
 
-  const createChallengeTimed = api.list.createChallengeTimed.useMutation({
+  const editChallengeTimed = api.list.editChallengeTimed.useMutation({
     onError(error, variables, context) {
       setError(error.message);
     },
     onSuccess() {
-      toast.success('Created Timed Challenge');
+      toast.success('Updated Timed Challenge');
       setOpen(false);
     },
   });
@@ -38,6 +43,8 @@ const EditTimedChallenge = () => {
 
   return (
     <ModifyTimedChallenge
+      title={`Edit ${challenge.name}`}
+      submit={'Save'}
       trigger={
         <Button variant={'ghost'} size={'xs'}>
           <Pen className="stroke-base-600" />
@@ -47,9 +54,10 @@ const EditTimedChallenge = () => {
       setOpen={open => setOpen(open)}
       setError={error => setError(error)}
       error={error}
+      defaults={challenge}
       onSubmit={(name, from, to) => {
-        createChallengeTimed.mutate({
-          listId: list.id,
+        editChallengeTimed.mutate({
+          challengeId: challenge.id,
           name,
           from: from.toISOString(),
           to: to.toISOString(),

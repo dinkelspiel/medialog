@@ -76,7 +76,7 @@ export const listRouter = createTRPCRouter({
         });
       }
 
-      if (input.to < input.from) {
+      if (new Date(input.to) < new Date(input.from)) {
         throw new TRPCError({
           code: 'BAD_REQUEST',
           message: "To can't be before from",
@@ -92,5 +92,62 @@ export const listRouter = createTRPCRouter({
         },
       });
       revalidatePath(`/users/${ctx.user.username}/lists/${input.listId}`);
+    }),
+
+  editChallengeTimed: protectedProcedure
+    .input(
+      z.object({
+        challengeId: z.number(),
+        name: z.string().optional(),
+        from: z.string().optional(),
+        to: z.string().optional(),
+      })
+    )
+    .mutation(async ({ input, ctx }) => {
+      const challengeTimed = await prisma.userListChallengeTimed.findFirst({
+        where: {
+          id: input.challengeId,
+        },
+        include: {
+          list: true,
+        },
+      });
+      if (!challengeTimed) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'No challenge with id',
+        });
+      }
+
+      if (challengeTimed.list.userId !== ctx.user.id) {
+        throw new TRPCError({
+          code: 'UNAUTHORIZED',
+          message: 'Not your list',
+        });
+      }
+
+      let to = input.to ? input.to : challengeTimed.to;
+      let from = input.from ? input.from : challengeTimed.from;
+
+      if (new Date(to) < new Date(from)) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: "To can't be before from",
+        });
+      }
+
+      await prisma.userListChallengeTimed.update({
+        where: {
+          id: input.challengeId,
+        },
+        data: {
+          name: input.name ? input.name : challengeTimed.name,
+          from: new Date(from),
+          to: new Date(to),
+        },
+      });
+      revalidatePath(
+        `/users/${ctx.user.username}/lists/${challengeTimed.listId}`
+      );
     }),
 });

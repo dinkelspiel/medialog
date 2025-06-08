@@ -11,7 +11,7 @@ const Layout = async ({ children }: { children: ReactNode }) => {
 
   if (user) {
     return (
-      <AuthUserProvider user={{ id: user.id, username: user.username }}>
+      <AuthUserProvider user={user}>
         <SidebarLayout>
           <LoggedIn user={user}>{children}</LoggedIn>
         </SidebarLayout>

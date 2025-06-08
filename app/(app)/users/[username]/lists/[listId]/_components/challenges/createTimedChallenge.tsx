@@ -37,6 +37,8 @@ const CreateTimedChallenge = () => {
 
   return (
     <ModifyTimedChallenge
+      title={'Add Timed Challenge'}
+      submit={'Create'}
       open={createTimedChallengeOpen}
       setOpen={open => setCreateTimedChallengeOpen(open)}
       setError={error => setError(error)}

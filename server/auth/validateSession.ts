@@ -3,6 +3,8 @@ import prisma from '../db';
 import { cache } from 'react';
 import { redirect } from 'next/navigation';
 
+export type AuthUser = Awaited<ReturnType<typeof validateSessionToken>>;
+
 export const validateSessionToken = cache(async () => {
   const sessionToken = cookies().get('mlSessionToken');
 
@@ -32,6 +34,7 @@ export const validateSessionToken = cache(async () => {
     select: {
       id: true,
       username: true,
+      email: true,
       ratingStyle: true,
       theme: true,
       showMediaMetaIn: true,

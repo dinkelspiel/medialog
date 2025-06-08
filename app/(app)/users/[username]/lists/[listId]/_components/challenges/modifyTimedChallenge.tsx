@@ -17,6 +17,7 @@ import { DateTimePicker } from '@/components/ui/date-time-picker';
 import { api } from '@/trpc/react';
 import Error from '@/components/error';
 import { toast } from 'sonner';
+import { UserListChallengeTimed } from '@prisma/client';
 
 const ModifyTimedChallenge = ({
   open,
@@ -25,6 +26,9 @@ const ModifyTimedChallenge = ({
   error,
   setError,
   trigger,
+  defaults,
+  title,
+  submit,
 }: {
   open: boolean;
   setOpen: (open: boolean) => void;
@@ -32,19 +36,24 @@ const ModifyTimedChallenge = ({
   setError: (open: ReactNode | undefined) => void;
   error: ReactNode | undefined;
   trigger?: ReactNode;
+  defaults?: UserListChallengeTimed;
+  title: string;
+  submit: string;
 }) => {
   const { list } = useListState();
 
-  const [name, setName] = useState('');
-  const [from, setFrom] = useState<Date | null>(null);
-  const [to, setTo] = useState<Date | null>(null);
+  const [name, setName] = useState(defaults ? defaults.name : '');
+  const [from, setFrom] = useState<Date | null>(
+    defaults ? defaults.from : null
+  );
+  const [to, setTo] = useState<Date | null>(defaults ? defaults.to : null);
 
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       {trigger && <DialogTrigger asChild>{trigger}</DialogTrigger>}
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Add Timed Challenge</DialogTitle>
+          <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
         <form
           className="grid gap-4"
@@ -86,7 +95,7 @@ const ModifyTimedChallenge = ({
 
           <DialogFooter>
             <Button type="submit" size="sm">
-              Create
+              {submit}
             </Button>
           </DialogFooter>
         </form>

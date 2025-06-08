@@ -13,7 +13,7 @@ import SettingsView from './_components/settings';
 import { Badge } from '@/components/ui/badge';
 import AddWidget from './_components/addWidget';
 import type { Metadata, ResolvingMetadata } from 'next';
-import { Clock, Pen } from 'lucide-react';
+import { Clock, Pen, UserRound } from 'lucide-react';
 import { UserEntry } from '@prisma/client';
 import { Button } from '@/components/ui/button';
 import EditTimedChallenge from './_components/challenges/editTimedChallenge';
@@ -83,6 +83,68 @@ const Page = async ({ params }: Props) => {
       listId: list.id,
     },
   });
+
+  let followerProgress: Record<
+    number,
+    {
+      username: string;
+      userEntries: {
+        id: number;
+      }[];
+    }[]
+  > = {};
+
+  for (const challenge of timedChallenges) {
+    if (!authUser) continue;
+    const users = await prisma.user.findMany({
+      where: {
+        OR: [
+          {
+            followers: {
+              some: {
+                userId: authUser.id,
+                isFollowing: true,
+              },
+            },
+          },
+          {
+            id: authUser.id,
+          },
+        ],
+      },
+      select: {
+        username: true,
+        userEntries: {
+          select: {
+            id: true,
+          },
+          where: {
+            entry: {
+              userListEntries: {
+                some: {
+                  listId: list?.id,
+                },
+              },
+            },
+            status: 'completed',
+            AND: [
+              {
+                watchedAt: {
+                  gt: challenge.from,
+                },
+              },
+              {
+                watchedAt: {
+                  lt: challenge.to,
+                },
+              },
+            ],
+          },
+        },
+      },
+    });
+    followerProgress[challenge.id] = users;
+  }
 
   let completed = 0;
 
@@ -182,20 +244,8 @@ const Page = async ({ params }: Props) => {
           {timedChallenges.map(challenge => {
             const now = new Date();
             const isBetween = now >= challenge.from && now <= challenge.to;
-
             const completed = challenge.to < now;
-
-            let daysLeft = 0;
-            const millisecondsPerDay = 1000 * 60 * 60 * 24;
-            if (isBetween) {
-              daysLeft = Math.ceil(
-                (challenge.to.getTime() - now.getTime()) / millisecondsPerDay
-              );
-            }
-
-            let daysUntil = Math.ceil(
-              (challenge.from.getTime() - now.getTime()) / millisecondsPerDay
-            );
+            const before = now < challenge.from;
 
             const options = { month: 'short', day: 'numeric' };
             const fromString = challenge.from.toLocaleDateString(
@@ -215,42 +265,74 @@ const Page = async ({ params }: Props) => {
               .filter(
                 e =>
                   e.watchedAt! > challenge.from && e.watchedAt! < challenge.to
-              ).length;
+              );
 
             return (
               <div className="flex flex-col gap-2" key={challenge.id}>
                 <div className="flex items-center justify-between gap-2 border-b border-b-base-200 pb-2 text-lg font-semibold">
                   <Clock className="size-4" /> {challenge.name}
-                  <span className="ms-auto flex h-full items-end gap-2 text-sm font-normal text-base-500">
-                    {!isBetween &&
-                      !completed &&
-                      `${daysUntil} days until start`}
-                    {!isBetween && completed && 'Finished'}
-                    {isBetween && `${daysLeft} days left`}
-                    <EditTimedChallenge />
+                  <span className="ms-auto flex h-full gap-2 text-sm font-normal text-base-500">
+                    {isBetween && (
+                      <div className="flex h-[28px] items-end">
+                        <div className="text-base-500">
+                          {(
+                            (completedBetweenDates.length /
+                              list!.entries.length) *
+                            100
+                          ).toFixed(0)}
+                          %
+                        </div>
+                      </div>
+                    )}
+                    <EditTimedChallenge challenge={challenge} />
                   </span>
                 </div>
                 <div className="flex items-center justify-between text-sm">
                   <div>
-                    {fromString} - {toString}
+                    Complete every media between{' '}
+                    <span className="text-primary">{fromString}</span> and{' '}
+                    <span className="text-primary">
+                      {toString} {completed && '(Completed)'}{' '}
+                      {before && '(Not started)'}
+                    </span>
                   </div>
-                  {isBetween && (
-                    <div className="text-base-500">
-                      {(
-                        (completedBetweenDates / list!.entries.length) *
-                        100
-                      ).toFixed(0)}
-                      %
-                    </div>
-                  )}
                 </div>
                 {isBetween && (
-                  <CompletionProgress
-                    max={list!.entries.length}
-                    current={
-                      (completedBetweenDates / list!.entries.length) * 100
-                    }
-                  />
+                  <>
+                    <CompletionProgress
+                      max={list!.entries.length}
+                      current={
+                        (completedBetweenDates.length / list!.entries.length) *
+                        100
+                      }
+                    />
+                    <div className="flex flex-col gap-1">
+                      {followerProgress[challenge.id]!.sort(
+                        (a, b) => b.userEntries.length - a.userEntries.length
+                      )
+                        .filter(e => e.userEntries.length > 0)
+                        .map(user => (
+                          <div className="flex justify-between text-sm">
+                            <div className="flex items-center gap-1">
+                              {user.username === authUser!.username && (
+                                <UserRound className="size-3" />
+                              )}{' '}
+                              {user.username}
+                            </div>
+                            <div className="text-base-500">
+                              {parseInt(
+                                (
+                                  (user.userEntries.length /
+                                    list!.entries.length) *
+                                  100
+                                ).toString()
+                              )}
+                              %
+                            </div>
+                          </div>
+                        ))}
+                    </div>
+                  </>
                 )}
               </div>
             );
