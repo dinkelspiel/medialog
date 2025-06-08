@@ -191,16 +191,16 @@ export const GET = async (req: NextRequest) => {
           name: title,
           overview:
             entry.category === 'Series'
-              ? (collectionTranslation.overview ?? '')
-              : (translation.overview ?? ''),
+              ? (collectionTranslation.data.overview ?? '')
+              : (translation.data.overview ?? ''),
           tagline:
             entry.category === 'Series'
-              ? (collectionTranslation.tagline ?? '')
-              : (translation.tagline ?? ''),
+              ? (collectionTranslation.data.tagline ?? '')
+              : (translation.data.tagline ?? ''),
           homepage:
             entry.category === 'Series'
-              ? (collectionTranslation.overview ?? '')
-              : (translation.overview ?? ''),
+              ? (collectionTranslation.data.overview ?? '')
+              : (translation.data.overview ?? ''),
         },
       });
 

@@ -10,7 +10,7 @@ const CompletionProgress = ({
   current: number;
 }) => {
   return (
-    <div className="flex items-center gap-2">
+    <div className="flex items-center gap-2 text-sm">
       0 <Progress max={max} value={current} /> {max}
     </div>
   );

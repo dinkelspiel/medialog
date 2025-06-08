@@ -1,4 +1,5 @@
 import { UserEntryStatusArray } from '@/lib/userEntryStatus';
+import { getDefaultWhereForTranslations } from '@/server/api/routers/dashboard_';
 import { validateSessionToken } from '@/server/auth/validateSession';
 import prisma from '@/server/db';
 import { pushDailyStreak } from '@/server/user/user';
@@ -211,7 +212,16 @@ export const PATCH = async (
     },
     include: {
       user: true,
-      entry: true,
+      entry: {
+        include: {
+          userEntries: {
+            where: {
+              userId: user.id,
+            },
+          },
+          translations: getDefaultWhereForTranslations(user),
+        },
+      },
     },
   });
 

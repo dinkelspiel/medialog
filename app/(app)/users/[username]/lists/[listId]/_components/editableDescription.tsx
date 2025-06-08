@@ -49,7 +49,7 @@ const EditableDescription = ({ userList }: { userList: UserList }) => {
       onBlur={() => {
         updateDescription();
       }}
-      className="bg-base-100 text-base-700 h-max resize-none text-base"
+      className="h-max resize-none bg-base-100 text-base text-base-700"
     />
   );
 };
