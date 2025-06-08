@@ -6,13 +6,15 @@ import { User } from '@prisma/client';
 import { ChevronRight, Menu } from 'lucide-react';
 import Link from 'next/link';
 import React, { useState } from 'react';
+import { useAuthUser } from '../(app)/_components/AuthUserContext';
 
-const Header = ({ user }: { user: User | null }) => {
+const Header = () => {
+  const authUser = useAuthUser();
   const [open, setOpen] = useState(false);
 
   return (
     <>
-      <header className="border-base-700 bg-base-800 fixed top-4 z-10 flex w-[calc(100dvw-2rem)] gap-6 rounded-2xl border border-solid p-1 shadow-xl md:mx-0 md:w-fit">
+      <header className="fixed top-4 z-10 flex w-[calc(100dvw-2rem)] gap-6 rounded-2xl border border-solid border-base-700 bg-base-800 p-1 shadow-xl md:mx-0 md:w-fit">
         <div className="flex h-9 w-full items-center justify-between gap-0 md:justify-start">
           <div className="mr-2 flex h-9 w-9 items-center justify-center rounded-xl">
             <Logo className="size-9 rounded-xl" />
@@ -30,10 +32,10 @@ const Header = ({ user }: { user: User | null }) => {
           <div className="flex h-full w-fit items-center gap-x-2">
             <Link
               className="inline h-full"
-              href={user ? '/dashboard' : '/auth/login'}
+              href={authUser ? '/dashboard' : '/auth/login'}
             >
               <span className="ml-2 flex h-full cursor-pointer items-center rounded-xl bg-white px-3 text-sm font-medium leading-[130%] tracking-[-0.005em] text-black hover:opacity-80">
-                {user ? 'Go to app' : 'Sign in'}
+                {authUser ? 'Go to app' : 'Sign in'}
               </span>
             </Link>
             <nav className="flex h-9 w-9 items-center justify-center md:hidden">
@@ -51,7 +53,7 @@ const Header = ({ user }: { user: User | null }) => {
         className={cn(
           'box-base-100 fixed top-[calc(32px+45.6px)] flex h-0 w-11/12 origin-top select-none  flex-col overflow-hidden rounded-xl bg-[#292929] px-1 shadow-lg duration-500 md:hidden md:w-fit',
           {
-            'border-base-700 h-fit border border-solid py-1 shadow-xl ease-in-out':
+            'h-fit border border-solid border-base-700 py-1 shadow-xl ease-in-out':
               open,
           }
         )}

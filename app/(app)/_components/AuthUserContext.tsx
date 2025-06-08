@@ -1,8 +1,7 @@
 'use client';
 
+import { AuthUser } from '@/server/auth/validateSession';
 import { createContext, useContext } from 'react';
-
-type AuthUser = { id: number; username: string; email: string };
 
 const AuthUserContext = createContext<AuthUser | null>(null);
 

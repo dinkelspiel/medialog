@@ -2,11 +2,13 @@ import { ExtendedUserEntry } from '@/app/(app)/dashboard/state';
 import { cn } from '@/lib/utils';
 import { Category } from '@prisma/client';
 import { Book, Film, Star, Tv } from 'lucide-react';
-import { HTMLProps, ReactElement } from 'react';
+import { HTMLProps, ReactElement, ReactNode } from 'react';
 import SmallRating from './smallRating';
+import { getUserTitleFromEntry } from '@/server/api/routers/dashboard_';
+import { Badge } from './ui/badge';
 
 const UserEntryCard = ({
-  title,
+  entryTitle,
   backgroundImage,
   category,
   releaseDate,
@@ -14,15 +16,17 @@ const UserEntryCard = ({
   className,
   customStars,
   hoverCard,
+  topRight,
   ...props
 }: {
-  title: string;
+  entryTitle: ReactNode;
   backgroundImage: string;
   category: Category;
   releaseDate: Date;
   rating: number;
-  customStars?: ReactElement;
-  hoverCard?: ReactElement;
+  customStars?: ReactNode;
+  hoverCard?: ReactNode;
+  topRight?: ReactNode;
 } & HTMLProps<HTMLDivElement>) => {
   return (
     <div
@@ -47,15 +51,16 @@ const UserEntryCard = ({
         })()}
       </div>
       {hoverCard && (
-        <div className="duration-400 absolute right-1 top-1 -translate-y-4 rounded-sm border border-base-100 bg-white bg-white opacity-0 shadow-sm transition-all hover:bg-base-50 hover:text-base-900 group-hover:translate-y-0 group-hover:opacity-100">
+        <div className="duration-400 absolute right-1 top-1 z-10 -translate-y-4 rounded-sm border border-base-100 bg-white opacity-0 shadow-sm transition-all hover:bg-base-50 hover:text-base-900 group-hover:translate-y-0 group-hover:opacity-100">
           {hoverCard}
         </div>
       )}
+      <div className="absolute -top-1 right-0 p-2">{topRight}</div>
 
-      <div className="select-none text-transparent">{title}</div>
+      <div className="select-none text-transparent">{entryTitle}</div>
       <div className="absolute top-[40%] flex h-[60%] w-full flex-col justify-end rounded-bl-lg rounded-br-lg bg-gradient-to-t from-base-900 to-transparent object-cover p-2">
         <div className="text-left text-sm font-semibold text-white sm:text-base">
-          {title}
+          {entryTitle}
         </div>
         <div className="flex flex-row items-center justify-between">
           <div className="text-sm text-base-400">
@@ -84,20 +89,19 @@ export const UserEntryCardObject = ({
   ...props
 }: {
   userEntry: ExtendedUserEntry;
-} & HTMLProps<HTMLDivElement>) => (
-  <UserEntryCard
-    {...{
-      title:
-        userEntry.entry.translations.length !== 0
-          ? userEntry.entry.translations[0]!.name
-          : userEntry.entry.originalTitle,
-      backgroundImage: userEntry.entry.posterPath,
-      releaseDate: userEntry.entry.releaseDate,
-      category: userEntry.entry.category,
-      rating: userEntry.rating,
-    }}
-    {...props}
-  />
-);
+} & HTMLProps<HTMLDivElement>) => {
+  return (
+    <UserEntryCard
+      {...{
+        entryTitle: getUserTitleFromEntry(userEntry.entry),
+        backgroundImage: userEntry.entry.posterPath,
+        releaseDate: userEntry.entry.releaseDate,
+        category: userEntry.entry.category,
+        rating: userEntry.rating,
+      }}
+      {...props}
+    />
+  );
+};
 
 export default UserEntryCard;

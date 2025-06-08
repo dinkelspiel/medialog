@@ -25,7 +25,7 @@ import {
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import Link from 'next/link';
-import { validateSessionToken } from '@/server/auth/validateSession';
+import { AuthUser, validateSessionToken } from '@/server/auth/validateSession';
 import { User, UserEntry, UserFollow } from '@prisma/client';
 import FollowButton from './followButton';
 import { useAuthUser } from '../../../_components/AuthUserContext';
@@ -33,10 +33,8 @@ import { Stats } from './stats';
 import { SidebarButtons } from '@/app/(app)/_components/sidebar';
 
 export const ProfileHeader = ({
-  user,
   profileUser,
 }: {
-  user: User | null;
   profileUser: User & {
     userEntries: UserEntry[];
     followers: (UserFollow & {
@@ -47,12 +45,11 @@ export const ProfileHeader = ({
     })[];
   };
 }) => {
+  const authUser = useAuthUser();
   const FollowEditProfile = () => {
     return (
-      user &&
-      user.id !== profileUser.id && (
-        <FollowButton user={profileUser} authUser={user} />
-      )
+      authUser &&
+      authUser.id !== profileUser.id && <FollowButton user={profileUser} />
     );
   };
 
@@ -60,7 +57,7 @@ export const ProfileHeader = ({
     <Header
       titleComponent={
         <div>
-          {user && user.username === profileUser.username
+          {authUser && authUser.username === profileUser.username
             ? 'Your profile'
             : `${profileUser.username}'s profile`}
         </div>
@@ -77,11 +74,7 @@ export const ProfileHeader = ({
         <div className="hidden lg:block">
           <FollowEditProfile />
         </div>
-        <Stats
-          className="hidden lg:flex"
-          profileUser={profileUser}
-          user={user}
-        />
+        <Stats className="hidden lg:flex" profileUser={profileUser} />
       </div>
     </Header>
   );

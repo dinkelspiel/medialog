@@ -444,9 +444,9 @@ export const GET = async (request: NextRequest) => {
           })
         )?.id!,
         name: translation.name,
-        overview: translation.overview,
-        homepage: translation.homepage,
-        tagline: translation.tagline,
+        overview: translation.data.overview,
+        homepage: translation.data.homepage,
+        tagline: translation.data.tagline,
       },
     });
   }

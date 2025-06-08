@@ -1,18 +1,18 @@
 'use client';
 
+import { useAuthUser } from '@/app/(app)/_components/AuthUserContext';
 import { Button } from '@/components/ui/button';
 import { User, UserFollow } from '@prisma/client';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 
 const FollowButton = ({
-  authUser,
   user,
 }: {
-  authUser: User;
   user: User & { followers: UserFollow[] };
 }) => {
   const [following, setFollowing] = useState(false);
+  const authUser = useAuthUser();
 
   const toggleFollow = async () => {
     if (!authUser) {

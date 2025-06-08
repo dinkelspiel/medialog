@@ -16,17 +16,16 @@ import { useAuthUser } from '@/app/(app)/_components/AuthUserContext';
 
 const UserCard = ({
   user,
-  authUser,
 }: {
   user: User & { following: UserFollow[]; followers: UserFollow[] };
-  authUser: User | null;
 }) => {
+  const authUser = useAuthUser();
   return (
     <React.Fragment key={user.username}>
       <Link href={`/@${user.username}`}>
         <div className="flex flex-col">
           <div className="font-semibold">{user.username}</div>
-          <div className="text-base-500 text-sm">
+          <div className="text-sm text-base-500">
             {user.followers.filter(e => e.isFollowing).length} followers,
             following {user.following.filter(e => e.isFollowing).length}
           </div>
@@ -34,7 +33,7 @@ const UserCard = ({
       </Link>
       <div className="flex flex-row justify-end">
         {authUser && authUser.username !== user.username && (
-          <FollowButton user={user} authUser={authUser} />
+          <FollowButton user={user} />
         )}
       </div>
     </React.Fragment>
@@ -43,13 +42,12 @@ const UserCard = ({
 
 const UserList = ({
   users,
-  authUser,
 }: {
   users: (UserFollow & {
     follow: User & { following: UserFollow[]; followers: UserFollow[] };
   } & { user: User & { following: UserFollow[]; followers: UserFollow[] } })[];
-  authUser: User | null;
 }) => {
+  const authUser = useAuthUser();
   return (
     <div className="py-6">
       <div className="grid grid-cols-[1fr,96px] items-center gap-3">
@@ -57,11 +55,11 @@ const UserList = ({
           .filter(e => e.isFollowing)
           .map(user => {
             if (user.follow) {
-              return <UserCard user={user.follow} authUser={authUser} />;
+              return <UserCard user={user.follow} />;
             }
 
             if (user.user) {
-              return <UserCard user={user.user} authUser={authUser} />;
+              return <UserCard user={user.user} />;
             }
           })}
       </div>
@@ -71,7 +69,6 @@ const UserList = ({
 
 export const Stats = ({
   profileUser,
-  user,
   className,
 }: {
   profileUser: User & {
@@ -83,9 +80,9 @@ export const Stats = ({
       follow: User & { following: UserFollow[]; followers: UserFollow[] };
     })[];
   };
-  user: User | null;
   className?: string;
 }) => {
+  const authUser = useAuthUser();
   const [page, setPage] = useState<'Following' | 'Followers'>('Followers');
 
   return (
@@ -98,7 +95,7 @@ export const Stats = ({
                 .length
             }
           </div>
-          <div className="text-base-500 text-center text-sm">Watched</div>
+          <div className="text-center text-sm text-base-500">Watched</div>
         </div>
         <div className="flex flex-col">
           <div className="text-center text-2xl font-semibold">
@@ -112,7 +109,7 @@ export const Stats = ({
               ).length
             }
           </div>
-          <div className="text-base-500 whitespace-nowrap text-center text-sm">
+          <div className="whitespace-nowrap text-center text-sm text-base-500">
             This Year
           </div>
         </div>
@@ -126,7 +123,7 @@ export const Stats = ({
                 <div className="text-center text-2xl font-semibold">
                   {profileUser.following.filter(e => e.isFollowing).length}
                 </div>
-                <div className="text-base-500 text-center text-sm">
+                <div className="text-center text-sm text-base-500">
                   Following
                 </div>
               </div>
@@ -137,7 +134,7 @@ export const Stats = ({
                 <div className="text-center text-2xl font-semibold">
                   {profileUser.followers.filter(e => e.isFollowing).length}
                 </div>
-                <div className="text-base-500 text-center text-sm">
+                <div className="text-center text-sm text-base-500">
                   Followers
                 </div>
               </div>
@@ -148,7 +145,7 @@ export const Stats = ({
               <SheetTitle className="flex flex-row gap-6">
                 <div
                   className={cn(
-                    `text-base-500 cursor-pointer px-2 pb-1 text-lg font-semibold`,
+                    `cursor-pointer px-2 pb-1 text-lg font-semibold text-base-500`,
                     {
                       'border-b border-b-black text-black':
                         page === 'Following',
@@ -160,7 +157,7 @@ export const Stats = ({
                 </div>
                 <div
                   className={cn(
-                    `text-base-500 cursor-pointer px-2 pb-1 text-lg font-semibold`,
+                    `cursor-pointer px-2 pb-1 text-lg font-semibold text-base-500`,
                     {
                       'border-b border-b-black text-black':
                         page === 'Followers',
@@ -188,7 +185,6 @@ export const Stats = ({
                   };
                 })[]
               }
-              authUser={user}
             />
           </SheetContent>
         </Sheet>

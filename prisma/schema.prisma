@@ -67,6 +67,7 @@ model User {
   activity        UserActivity[]
   forgotPasswords UserForgotPassword[]
   lists           UserList[]
+  votes           UserListPollVote[]
 }
 
 enum Activity {
@@ -133,15 +134,17 @@ enum UserListType {
 }
 
 model UserList {
-  id          Int             @id @default(autoincrement()) @db.UnsignedInt
-  userId      Int             @db.UnsignedInt
-  user        User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  name        String
-  description String          @default("") @db.VarChar(256)
-  type        UserListType
-  entries     UserListEntry[]
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @default(now()) @updatedAt
+  id              Int                      @id @default(autoincrement()) @db.UnsignedInt
+  userId          Int                      @db.UnsignedInt
+  user            User                     @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name            String
+  description     String                   @default("") @db.VarChar(256)
+  type            UserListType
+  entries         UserListEntry[]
+  createdAt       DateTime                 @default(now())
+  updatedAt       DateTime                 @default(now()) @updatedAt
+  timedChallenges UserListChallengeTimed[]
+  polls           UserListPoll[]
 }
 
 model UserListEntry {
@@ -153,6 +156,41 @@ model UserListEntry {
   order     Int
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
+}
+
+model UserListChallengeTimed {
+  id        Int      @id @default(autoincrement()) @db.UnsignedInt
+  name      String
+  from      DateTime
+  to        DateTime
+  listId    Int      @db.UnsignedInt
+  list      UserList @relation(fields: [listId], references: [id], onDelete: Cascade)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+}
+
+model UserListPoll {
+  id        Int                @id @default(autoincrement()) @db.UnsignedInt
+  name      String
+  from      DateTime
+  to        DateTime
+  listId    Int                @db.UnsignedInt
+  list      UserList           @relation(fields: [listId], references: [id], onDelete: Cascade)
+  votes     UserListPollVote[]
+  createdAt DateTime           @default(now())
+  updatedAt DateTime           @default(now()) @updatedAt
+}
+
+model UserListPollVote {
+  id        Int          @id @default(autoincrement()) @db.UnsignedInt
+  userId    Int          @db.UnsignedInt
+  user      User         @relation(fields: [userId], references: [id], onDelete: Cascade)
+  entryId   Int          @db.UnsignedInt
+  entry     Entry        @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  pollId    Int          @db.UnsignedInt
+  poll      UserListPoll @relation(fields: [pollId], references: [id], onDelete: Cascade)
+  createdAt DateTime     @default(now())
+  updatedAt DateTime     @default(now()) @updatedAt
 }
 
 model Session {
@@ -319,9 +357,9 @@ model EntryTranslation {
   languageId Int?      @db.UnsignedInt
   language   Language? @relation(fields: [languageId], references: [id], onDelete: Cascade)
   name       String
-  overview   String
-  homepage   String
-  tagline    String
+  overview   String    @db.Text
+  homepage   String    @db.Text
+  tagline    String    @db.Text
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt
@@ -434,6 +472,7 @@ model Entry {
   userEntries         UserEntry[]
   userActivity        UserActivity[]
   userListEntries     UserListEntry[]
+  userListPollVotes   UserListPollVote[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @default(now()) @updatedAt

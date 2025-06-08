@@ -14,7 +14,13 @@ export const signUp = async (
   formData: FormData
 ): Promise<{ error?: string; message?: string }> => {
   const schema = z.object({
-    username: z.string(),
+    username: z
+      .string()
+      .min(3, { message: 'Username must be at least 3 characters long' })
+      .max(25, { message: 'Username must not exceed 25 characters' })
+      .regex(/^[a-zA-Z0-9_]+$/, {
+        message: 'Username may only contain letters, numbers, and underscores',
+      }),
     email: z.string().email(),
     password: z.string().min(8),
   });

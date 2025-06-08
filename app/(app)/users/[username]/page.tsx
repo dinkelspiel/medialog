@@ -12,8 +12,10 @@ import { getUserDiary } from './_components/diary';
 import { ProfileHeader } from './_components/header';
 import { ProfileSidebar } from './_components/sidebar';
 import { Stats } from './_components/stats';
-import { getUserTitleFromEntry } from '@/server/api/routers/dashboard';
 import { ServerEntryTitleForUser } from './_components/serverUserEntryTitle';
+import { getDefaultWhereForTranslations } from '@/server/api/routers/dashboard_';
+import { getUserLists } from './_components/lists';
+import { Metadata, ResolvingMetadata } from 'next';
 
 const Profile404 = async () => {
   const user = await validateSessionToken();
@@ -37,8 +39,21 @@ const Profile404 = async () => {
   );
 };
 
+export type Props = {
+  params: { username: string };
+};
+
+export async function generateMetadata(
+  { params }: Props,
+  parent: ResolvingMetadata
+): Promise<Metadata> {
+  return {
+    title: `${params.username}'s profile - Medialog`,
+  };
+}
+
 const Profile = async ({ params }: { params: { username: string } }) => {
-  const user = await validateSessionToken();
+  const authUser = await validateSessionToken();
   const profileUserExists = await prisma.user.findFirst({
     where: {
       username: params.username,
@@ -180,18 +195,12 @@ const Profile = async ({ params }: { params: { username: string } }) => {
       rating: true,
       entry: {
         select: {
+          id: true,
           originalTitle: true,
           posterPath: true,
           releaseDate: true,
           category: true,
-          translations: {
-            where: {
-              language: {
-                id: user ? (user.showMediaMetaInId ?? undefined) : undefined,
-                iso_639_1: !user ? 'en' : undefined,
-              },
-            },
-          },
+          translations: getDefaultWhereForTranslations(authUser),
         },
       },
     },
@@ -240,12 +249,14 @@ const Profile = async ({ params }: { params: { username: string } }) => {
 
   const diary = await getUserDiary(profileUser.id);
 
+  const lists = await getUserLists(profileUser.id);
+
   return (
     <HeaderLayout>
-      <ProfileHeader user={user} profileUser={profileUser as any} />
+      <ProfileHeader profileUser={profileUser as any} />
       <div className="col-span-2 mx-auto pb-4">
         <div className="block py-2 lg:hidden">
-          <Stats user={user} profileUser={profileUser as any} />
+          <Stats profileUser={profileUser as any} />
         </div>
         <div className="grid w-fit grid-cols-1 gap-16 min-[1330px]:grid-cols-[1fr,250px]">
           <div className="flex flex-col gap-6 px-4 md:w-[710px]">
@@ -260,7 +271,11 @@ const Profile = async ({ params }: { params: { username: string } }) => {
                       <UserEntryCard
                         key={`userEntry-${idx}`}
                         {...{
-                          title: getUserTitleFromEntry(userEntry.entry as any),
+                          entryTitle: (
+                            <ServerEntryTitleForUser
+                              entryId={userEntry.entry.id}
+                            />
+                          ),
                           backgroundImage: userEntry.entry.posterPath,
                           releaseDate: userEntry.entry.releaseDate,
                           rating: userEntry.rating,
@@ -274,7 +289,11 @@ const Profile = async ({ params }: { params: { username: string } }) => {
                       <UserEntryCard
                         key={`userEntry-${idx}`}
                         {...{
-                          title: getUserTitleFromEntry(userEntry.entry as any),
+                          entryTitle: (
+                            <ServerEntryTitleForUser
+                              entryId={userEntry.entry.id}
+                            />
+                          ),
                           backgroundImage: userEntry.entry.posterPath,
                           releaseDate: userEntry.entry.releaseDate,
                           rating: userEntry.rating,
@@ -286,8 +305,8 @@ const Profile = async ({ params }: { params: { username: string } }) => {
                 </>
               )}
               {favorites.length === 0 &&
-                (user !== undefined &&
-                profileUser.id === (user ? user.id : -1) ? (
+                (authUser !== undefined &&
+                profileUser.id === (authUser ? authUser.id : -1) ? (
                   <div className="text-lg">
                     Rate your favorites{' '}
                     <Link href="/dashboard">
@@ -304,6 +323,7 @@ const Profile = async ({ params }: { params: { username: string } }) => {
               totalRatings={totalRatings}
               className="flex min-[1330px]:hidden"
               diary={diary}
+              lists={lists}
             />
             <div className="flex flex-col gap-4">
               <div className="flex w-full justify-between border-b border-b-base-200 pb-2 text-lg font-medium">
@@ -362,6 +382,7 @@ const Profile = async ({ params }: { params: { username: string } }) => {
             totalRatings={totalRatings}
             className="hidden min-[1330px]:flex"
             diary={diary}
+            lists={lists}
           />
         </div>
       </div>
