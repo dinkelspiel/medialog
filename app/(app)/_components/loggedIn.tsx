@@ -23,7 +23,12 @@ import Link from 'next/link';
 import { Toggle } from '@/components/ui/toggle';
 import { Feedback } from './feedback';
 
-export const LoggedIn = ({ children }: { user: User; children: ReactNode }) => {
+export const LoggedIn = ({
+  children,
+}: {
+  user: { id: number; username: string };
+  children: ReactNode;
+}) => {
   const { sidebarOpen } = useAppStore();
   return (
     <>
