@@ -58,7 +58,7 @@ const Page = async () => {
     <div className="flex w-full flex-col items-center bg-white">
       <Header />
       <div className="flex w-full flex-col items-center gap-[4rem] bg-base-100 px-[1rem] pt-[calc(5rem+45.6px)] md:px-[3rem]">
-        <div className="flex w-[90%] flex-col items-center gap-12 py-24 text-center lg:w-2/3">
+        <div className="flex w-[90%] max-w-[1071px] flex-col items-center gap-12 py-24 text-center lg:w-2/3">
           <div className="text-[3rem] font-medium leading-[1.15] tracking-[-.08rem] md:text-[4rem]">
             <i>Your</i> website for rating{' '}
             <span className="text-primary">Movies</span>,{' '}
@@ -76,7 +76,7 @@ const Page = async () => {
           alt="Image of dashboard"
           width={2542}
           height={1439}
-          className="rounded-t-2xl border border-base-200 shadow-2xl shadow-base-200"
+          className="w-full max-w-[1607px] rounded-t-2xl border border-base-200 shadow-2xl shadow-base-200"
         />
       </div>
       <div className="flex w-full flex-col items-center bg-white p-4 shadow-xl lg:p-6">
