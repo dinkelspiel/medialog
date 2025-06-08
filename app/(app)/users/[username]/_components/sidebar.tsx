@@ -8,6 +8,7 @@ import { Fragment } from 'react';
 import { ServerEntryTitleForUser } from './serverUserEntryTitle';
 import { Lists } from './lists';
 import Link from 'next/link';
+import GenreOverview from './genreOverview';
 
 export const ProfileSidebar = ({
   profileUser,
@@ -120,6 +121,7 @@ export const ProfileSidebar = ({
           <SmallRating rating={100} className="pb-1" />
         </div>
       </div>
+      <GenreOverview profileUser={profileUser} />
       <div className="flex flex-col gap-4">
         {profileUser.dailyStreakLength != 0 &&
           !(
