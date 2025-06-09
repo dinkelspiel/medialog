@@ -12,13 +12,38 @@ import {
   UserRound,
 } from 'lucide-react';
 import Link from 'next/link';
-import React, { ReactNode, useState } from 'react';
+import React, {
+  Dispatch,
+  memo,
+  ReactNode,
+  SetStateAction,
+  useState,
+} from 'react';
 import { cn } from '../lib/utils';
 import AddLog from './addLog';
 import { Button } from './ui/button';
 import { Dialog, DialogContent, DialogTitle } from './ui/dialog';
 import { Drawer, DrawerContent, DrawerTrigger } from './ui/drawer';
 import { Feedback } from '@/app/(app)/_components/feedback';
+
+const SettingsButton = memo(
+  ({
+    open,
+    setOpen,
+  }: {
+    open: boolean;
+    setOpen: Dispatch<SetStateAction<boolean>>;
+  }) => {
+    return (
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="box-border overflow-clip p-0 lg:h-full lg:max-h-[calc(100vh-64px)] lg:max-w-[calc(100vw-64px)]">
+          <DialogTitle className="sr-only">Settings</DialogTitle>
+          <SettingsView />
+        </DialogContent>
+      </Dialog>
+    );
+  }
+);
 
 export const Header = ({
   className,
@@ -140,12 +165,7 @@ export const Header = ({
             </div>
           </DrawerContent>
         </Drawer>
-        <Dialog open={settingsOpen} onOpenChange={setSettingsOpen}>
-          <DialogContent className="box-border overflow-clip p-0 lg:h-full lg:max-h-[calc(100vh-64px)] lg:max-w-[calc(100vw-64px)]">
-            <DialogTitle className="sr-only">Settings</DialogTitle>
-            <SettingsView />
-          </DialogContent>
-        </Dialog>
+        <SettingsButton open={settingsOpen} setOpen={setSettingsOpen} />
       </div>
     </div>
   );
