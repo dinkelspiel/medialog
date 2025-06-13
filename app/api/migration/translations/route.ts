@@ -173,9 +173,13 @@ export const GET = async (req: NextRequest) => {
             ? 'Season ' + entry.foreignId
             : 'Specials';
 
-        title =
-          collectionTranslation.data.name +
-          (season === collectionTranslation.data.name ? '' : `: ${season}`);
+        if ((season as string).includes(collectionTranslation.data.name)) {
+          title = season;
+        } else {
+          title =
+            collectionTranslation.data.name +
+            (season === collectionTranslation.data.name ? '' : `: ${season}`);
+        }
       } else if (translation.data.title) {
         title = translation.data.title;
       } else {
