@@ -64,15 +64,11 @@ export const GET = async (request: NextRequest) => {
     if (editionData.number_of_pages) {
       fallbackNumberOfPages = editionData.number_of_pages;
     }
-    if (edition) {
-      if (
-        new Date(editionData.publish_date).getTime() <
+    if (
+      editionData.publish_date !== undefined &&
+      new Date(editionData.publish_date).getTime() <
         earliestPublishDate.getTime()
-      ) {
-        earliestPublishDate = new Date(editionData.publish_date);
-        edition = editionData;
-      }
-    } else {
+    ) {
       earliestPublishDate = new Date(editionData.publish_date);
       edition = editionData;
     }
@@ -121,7 +117,7 @@ export const GET = async (request: NextRequest) => {
       await prisma.language.findFirst({
         where: {
           iso_639_2:
-            edition.languages ?? fallbackLanguages
+            (edition.languages ?? fallbackLanguages)
               ? (edition.languages ?? fallbackLanguages).length > 0
                 ? (edition.languages ?? fallbackLanguages)[0].key.split('/')[
                     (edition.languages ?? fallbackLanguages)[0].key.split('/')
@@ -158,7 +154,7 @@ export const GET = async (request: NextRequest) => {
     const language = await prisma.language.findFirst({
       where: {
         iso_639_2:
-          editionData.languages ?? fallbackLanguages
+          (editionData.languages ?? fallbackLanguages)
             ? (editionData.languages ?? fallbackLanguages).length > 0
               ? (editionData.languages ?? fallbackLanguages)[0].key.split('/')[
                   (editionData.languages ?? fallbackLanguages)[0].key.split('/')
