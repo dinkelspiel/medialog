@@ -443,7 +443,7 @@ export const GET = async (request: NextRequest) => {
             },
           })
         )?.id!,
-        name: translation.name,
+        name: translation.data.name,
         overview: translation.data.overview,
         homepage: translation.data.homepage,
         tagline: translation.data.tagline,
