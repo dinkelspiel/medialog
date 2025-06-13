@@ -64,6 +64,14 @@ export const GET = async (request: NextRequest) => {
     data.seasons[i].cast = creditsData.cast;
     data.seasons[i].crew = creditsData.crew;
     data.seasons[i].episodes = undefined;
+
+    const translations = await fetch(
+      `https://api.themoviedb.org/3/tv/${id}/season/${data.seasons[i].season_number}/translations?language=en-US`,
+      options
+    );
+    const translationsData: any = await translations.json();
+
+    data.seasons[i].translations = translationsData.translations;
   }
 
   // return Response.json(data);
@@ -423,32 +431,57 @@ export const GET = async (request: NextRequest) => {
         },
       });
     }
-  }
 
-  for (const translation of data.translations) {
-    await prisma.entryTranslation.create({
-      data: {
-        entryId: entry!.id!,
-        countryId: (
-          await prisma.country.findFirst({
-            where: {
-              iso_3166_1: translation.iso_3166_1,
-            },
-          })
-        )?.id!,
-        languageId: (
-          await prisma.language.findFirst({
-            where: {
-              iso_639_1: translation.iso_639_1,
-            },
-          })
-        )?.id!,
-        name: translation.data.name,
-        overview: translation.data.overview,
-        homepage: translation.data.homepage,
-        tagline: translation.data.tagline,
-      },
-    });
+    for (const translation of season.translations) {
+      const collectionTranslation = data.translations.find(
+        (e: any) => e.iso_639_1 === translation.iso_639_1
+      );
+      if (!collectionTranslation.data.name) {
+        console.log(`No name for collection ${entry.id} ${translation.name}`);
+        continue;
+      }
+
+      let seasonTitle = translation.data.name
+        ? translation.data.name
+        : parseInt(entry.foreignId) > 0
+          ? 'Season ' + entry.foreignId
+          : 'Specials';
+
+      let title = '';
+      if ((seasonTitle as string).includes(collectionTranslation.data.name)) {
+        title = seasonTitle;
+      } else {
+        title =
+          collectionTranslation.data.name +
+          (seasonTitle === collectionTranslation.data.name
+            ? ''
+            : `: ${seasonTitle}`);
+      }
+
+      await prisma.entryTranslation.create({
+        data: {
+          entryId: entry!.id!,
+          countryId: (
+            await prisma.country.findFirst({
+              where: {
+                iso_3166_1: translation.iso_3166_1,
+              },
+            })
+          )?.id!,
+          languageId: (
+            await prisma.language.findFirst({
+              where: {
+                iso_639_1: translation.iso_639_1,
+              },
+            })
+          )?.id!,
+          name: title,
+          overview: translation.data.overview ?? '',
+          homepage: translation.data.homepage ?? '',
+          tagline: translation.data.tagline ?? '',
+        },
+      });
+    }
   }
 
   return Response.json({
