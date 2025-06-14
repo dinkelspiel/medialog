@@ -454,7 +454,7 @@ const ModifyUserEntry = ({
             >
               <Input
                 defaultValue={userEntry.progress}
-                className="text-black"
+                className="text-base-900"
                 onBlur={e => {
                   if (Number(e.target.value) < 0) {
                     return;

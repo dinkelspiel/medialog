@@ -17,6 +17,10 @@ const config = {
       },
     },
     extend: {
+      fontFamily: {
+        'dm-serif': ['"DM Serif Display"', 'serif'],
+        geist: ['Geist', 'sans-serif'],
+      },
       colors: {
         'base-50': 'rgba(var(--base-50), var(--tw-bg-opacity, 1))',
         'base-100': 'rgba(var(--base-100), var(--tw-bg-opacity, 1))',

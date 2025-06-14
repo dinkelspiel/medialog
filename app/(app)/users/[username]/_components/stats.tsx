@@ -147,7 +147,7 @@ export const Stats = ({
                   className={cn(
                     `cursor-pointer px-2 pb-1 text-lg font-semibold text-base-500`,
                     {
-                      'border-b border-b-black text-black':
+                      'border-b border-b-black text-base-900':
                         page === 'Following',
                     }
                   )}
@@ -159,7 +159,7 @@ export const Stats = ({
                   className={cn(
                     `cursor-pointer px-2 pb-1 text-lg font-semibold text-base-500`,
                     {
-                      'border-b border-b-black text-black':
+                      'border-b border-b-black text-base-900':
                         page === 'Followers',
                     }
                   )}

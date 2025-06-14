@@ -54,7 +54,7 @@ const AddWidget = ({ list }: { list: StateList }) => {
                 setCreatePollOpen(true);
               }}
             >
-              <Vote className="size-4 stroke-base-600" /> Vote
+              <Vote className="size-4 stroke-base-600" /> Poll
             </DropdownMenuItem>
           </DropdownMenuGroup>
         </DropdownMenuContent>

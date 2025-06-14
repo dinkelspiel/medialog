@@ -118,9 +118,10 @@ const TimedChallenges = async ({
 
     return (
       <div className="flex flex-col gap-2" key={challenge.id}>
-        <div className="flex items-center justify-between gap-2 border-b border-b-base-200 pb-2 text-lg font-semibold">
-          <Clock className="size-4" /> {challenge.name}
-          <span className="ms-auto flex h-full gap-2 text-sm font-normal text-base-500">
+        <div className="flex items-end justify-between gap-2 border-b border-b-base-200 pb-2 text-lg font-semibold">
+          <Clock className="mb-1 size-4" />{' '}
+          <span className="">{challenge.name}</span>
+          <span className="ms-auto flex h-fit items-center gap-2 whitespace-nowrap text-sm font-normal text-base-500">
             {isBetween && (
               <div className="flex h-[28px] items-end">
                 <div className="text-base-500">

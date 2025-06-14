@@ -42,7 +42,7 @@ const ActivityHistory = async ({ profileUser }: { profileUser: User }) => {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex w-full justify-between border-b border-b-base-200 pb-2 text-lg font-medium">
+      <div className="font-dm-serif flex w-full justify-between border-b border-b-base-200 pb-2 text-3xl font-semibold">
         Activity History
       </div>
 

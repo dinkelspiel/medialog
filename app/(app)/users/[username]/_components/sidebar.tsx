@@ -51,9 +51,9 @@ export const ProfileSidebar = ({
   return (
     <div className={cn('flex flex-col gap-6', className)}>
       <div className="flex flex-col gap-4">
-        <div className="flex justify-between border-b border-b-base-200 pb-2 text-lg font-medium">
+        <div className="font-dm-serif flex justify-between border-b border-b-base-200 pb-2 text-3xl font-semibold">
           Watchlist
-          <span className="ms-auto flex items-end text-sm text-base-500">
+          <span className="font-geist ms-auto flex items-end text-sm text-base-500">
             {
               profileUser.userEntries.filter(e => e.status === 'planning')
                 .length
@@ -81,9 +81,9 @@ export const ProfileSidebar = ({
         {profileUser.userEntries.filter(e => e.status === 'watching').length >
           0 && (
           <div className="flex flex-col gap-4">
-            <div className="flex w-full justify-between border-b border-b-base-200 pb-2 text-lg font-medium">
+            <div className="font-dm-serif flex w-full justify-between border-b border-b-base-200 pb-2 text-3xl font-semibold">
               In Progress
-              <span className="ms-auto flex items-end text-sm text-base-500">
+              <span className="font-geist ms-auto flex items-end text-sm text-base-500">
                 {
                   profileUser.userEntries.filter(e => e.status === 'watching')
                     .length
@@ -94,9 +94,9 @@ export const ProfileSidebar = ({
               .filter(e => e.status === 'watching')
               .map(entry => (
                 <div className="flex flex-col gap-1.5" key={entry.id}>
-                  <Label className="text-black">
+                  <div className="whitespace-break-spaces text-sm font-medium text-base-900">
                     <ServerEntryTitleForUser entryId={entry.entry.id} />
-                  </Label>
+                  </div>
                   <Progress
                     value={(entry.progress / entry.entry.length) * 100}
                   />
@@ -106,9 +106,9 @@ export const ProfileSidebar = ({
         )}
       </div>
       <div className="flex flex-col items-center gap-4 lg:items-start">
-        <div className="flex w-full justify-between border-b border-b-base-200 pb-2 text-lg font-medium">
+        <div className="font-dm-serif flex w-full justify-between border-b border-b-base-200 pb-2 text-3xl font-semibold">
           Ratings
-          <span className="ms-auto flex items-end text-sm text-base-500">
+          <span className="font-geist ms-auto flex items-end text-sm text-base-500">
             {totalRatings}
           </span>
         </div>
@@ -128,9 +128,9 @@ export const ProfileSidebar = ({
       </div>
       <GenreOverview profileUser={profileUser} />
       <div className="flex flex-col gap-4">
-        <div className="flex w-full justify-between border-b border-b-base-200 pb-2 text-lg font-medium">
+        <div className="font-dm-serif flex w-full justify-between border-b border-b-base-200 pb-2 text-3xl font-semibold">
           Diary
-          <span className="ms-auto flex items-end text-sm text-base-500">
+          <span className="font-geist ms-auto flex items-end text-sm text-base-500">
             {profileUser.dailyStreakLength} Day Streak
           </span>
         </div>
@@ -160,7 +160,7 @@ export const ProfileSidebar = ({
             <div className="grid grid-cols-[42px,1fr] gap-2" key={month}>
               <div className="flex flex-col items-center gap-1">
                 <Calendar />
-                <div className="text-center text-[11px] font-semibold text-black">
+                <div className="text-center text-[11px] font-semibold text-base-900">
                   {month.split('-')[0]!}
                 </div>
               </div>
@@ -170,7 +170,9 @@ export const ProfileSidebar = ({
                     key={month + (JSON.stringify(day) + '') + day.title}
                   >
                     <div className="text-base-500">{day.day}</div>
-                    <div className="whitespace-break-spaces">{day.title}</div>
+                    <div className="whitespace-break-spaces text-base-900">
+                      {day.title}
+                    </div>
                   </Fragment>
                 ))}
               </div>
@@ -178,9 +180,9 @@ export const ProfileSidebar = ({
           ))}
       </div>
       <div className="flex flex-col items-center gap-4 lg:items-start">
-        <div className="flex w-full justify-between border-b border-b-base-200 pb-2 text-lg font-medium">
+        <div className="font-dm-serif flex w-full justify-between border-b border-b-base-200 pb-2 text-3xl font-semibold">
           Lists
-          <span className="ms-auto flex items-end text-sm text-base-500">
+          <span className="font-geist ms-auto flex items-end text-sm text-base-500">
             {lists.length}
           </span>
         </div>
