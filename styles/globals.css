@@ -2,16 +2,14 @@
 @tailwind components;
 @tailwind utilities;
 
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap');
+
 @font-face {
   font-family: 'Geist';
   src: url('/Geist[wght].ttf') format('truetype');
   font-weight: 100 200 300 400 500 600 700 800 900; /* Adjust range based on font capabilities */
   font-style: normal;
   font-display: swap;
-}
-
-.font-geist {
-  font-family: 'Geist', sans-serif;
 }
 
 .scrollable-grid-item {
@@ -117,6 +115,6 @@
     @apply border-base-100;
   }
   body {
-    @apply bg-white text-foreground;
+    @apply bg-base-50 text-neutral-900;
   }
 }
