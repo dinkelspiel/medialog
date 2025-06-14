@@ -31,16 +31,11 @@ export const GET = async (request: NextRequest) => {
     )
   ).data.docs
     .map((ol: any) => {
-      let lowestReleaseDate = new Date();
+      let releaseDate = new Date();
       let releaseDateFallback: string | undefined = undefined;
 
-      if (ol.publish_date) {
-        for (const d of ol.publish_date) {
-          const date = new Date(d);
-          if (date.getTime() < lowestReleaseDate.getTime()) {
-            lowestReleaseDate = date;
-          }
-        }
+      if (ol.first_publish_year) {
+        releaseDate = new Date(ol.first_publish_year.toString());
       } else {
         releaseDateFallback = 'No release date';
       }
@@ -48,14 +43,12 @@ export const GET = async (request: NextRequest) => {
       return {
         title: ol.title,
         category: 'Book',
-        releaseDate: releaseDateFallback ?? lowestReleaseDate.toDateString(),
+        releaseDate: releaseDateFallback ?? releaseDate,
         author: ol.author_name ? ol.author_name[0] : '',
         foreignId: ol.key.split('/')[ol.key.split('/').length - 1],
-        posterPath: ol.edition_key
-          ? `https://covers.openlibrary.org/b/olid/${ol.edition_key[0]}-L.jpg`
-          : ol.isbn
-            ? `https://covers.openlibrary.org/b/isbn/${ol.isbn[0]}-L.jpg`
-            : ``,
+        posterPath: ol.cover_edition_key
+          ? `https://covers.openlibrary.org/b/olid/${ol.cover_edition_key}-L.jpg`
+          : '',
       };
     })
     .filter((e: any) => !!new Date(e.releaseDate))
