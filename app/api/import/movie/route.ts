@@ -400,6 +400,8 @@ export const GET = async (request: NextRequest) => {
   }
 
   for (const translation of data.translations) {
+    if (!translation.data.name) continue;
+
     await prisma.entryTranslation.create({
       data: {
         entryId: entry.id!,
@@ -417,10 +419,10 @@ export const GET = async (request: NextRequest) => {
             },
           })
         )?.id!,
-        name: translation.name,
-        overview: translation.data.overview,
-        homepage: translation.data.homepage,
-        tagline: translation.data.tagline,
+        name: translation.data.name,
+        overview: translation.data.overview ?? '',
+        homepage: translation.data.homepage ?? '',
+        tagline: translation.data.tagline ?? '',
       },
     });
   }
