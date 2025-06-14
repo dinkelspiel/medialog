@@ -262,7 +262,7 @@ const Profile = async ({ params }: { params: { username: string } }) => {
         <div className="grid w-fit grid-cols-1 gap-16 min-[1330px]:grid-cols-[1fr,250px]">
           <div className="flex flex-col gap-6 px-4 md:w-[710px]">
             <div className="flex flex-col gap-4">
-              <div className="flex w-full justify-between border-b border-b-base-200 pb-2 text-lg font-medium">
+              <div className="font-dm-serif flex w-full justify-between border-b border-b-base-200 pb-2 text-3xl font-semibold">
                 Favorites
               </div>
               {favorites.length > 0 && (
@@ -330,7 +330,7 @@ const Profile = async ({ params }: { params: { username: string } }) => {
             <ActivityHistory profileUser={profileUser} />
 
             <div className="flex flex-col gap-4">
-              <div className="flex w-full justify-between border-b border-b-base-200 pb-2 text-lg font-medium">
+              <div className="font-dm-serif flex w-full justify-between border-b border-b-base-200 pb-2 text-3xl font-semibold">
                 Recent Activity
               </div>
               {activity.length > 0 && (
@@ -339,15 +339,15 @@ const Profile = async ({ params }: { params: { username: string } }) => {
                     return (
                       <div
                         key={`activity-${idx}`}
-                        className="grid w-full grid-cols-[53px,1fr] gap-4 2xl:w-full 2xl:grid-cols-[80px,1fr]"
+                        className="grid w-full grid-cols-[max-content,1fr] gap-4 2xl:w-full 2xl:grid-cols-[max-content,1fr]"
                       >
                         <img
                           src={activity.entry.posterPath}
-                          className="h-[80px] w-[53px] rounded-md 2xl:h-[120px] 2xl:w-[80px]"
+                          className="aspect-2/3 h-[80px] rounded-md 2xl:h-[100px]"
                         />
                         <div className="flex h-full flex-col justify-center gap-3 pb-3 2xl:border-b-0 2xl:pb-0">
                           <div className="space-x-3">
-                            <span className="text-lg font-semibold 2xl:text-2xl">
+                            <span className="text-lg font-semibold">
                               <ServerEntryTitleForUser
                                 entryId={activity.entry.id}
                               />

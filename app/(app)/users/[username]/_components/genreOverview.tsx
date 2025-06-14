@@ -86,7 +86,7 @@ const GenreOverview = async ({ profileUser }: { profileUser: User }) => {
 
   return (
     <div className="flex flex-col items-center gap-4 lg:items-start">
-      <div className="flex w-full justify-between border-b border-b-base-200 pb-2 text-lg font-medium">
+      <div className="font-dm-serif flex w-full justify-between border-b border-b-base-200 pb-2 text-3xl font-semibold">
         Genre Overview
       </div>
       <div className="flex w-full flex-col items-end justify-between gap-2 2xl:w-[250px]">

@@ -85,10 +85,11 @@ const Polls = async ({ list }: { list: UserList }) => {
 
     return (
       <div className="flex flex-col gap-2" key={poll.id}>
-        <div className="flex items-center justify-between gap-2 border-b border-b-base-200 pb-2 text-lg font-semibold">
-          <Vote className="size-4" /> {poll.name}
-          <span className="ms-auto flex h-full gap-2 text-sm font-normal text-base-500">
-            <div className="flex h-[28px] items-end text-base-500">
+        <div className="flex items-end justify-between gap-2 border-b border-b-base-200 pb-2 text-lg font-semibold">
+          <Vote className="mb-1 size-4" />
+          <span className="">{poll.name}</span>
+          <span className="ms-auto flex h-fit gap-2 text-sm font-normal text-base-500">
+            <div className="flex h-[28px] items-end whitespace-nowrap text-base-500">
               {isBetween && `${daysLeft}d left`}
               {completed && 'Voting has finished'}
               {before && `${daysUntil}d until start`}
