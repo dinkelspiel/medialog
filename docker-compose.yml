@@ -22,6 +22,18 @@ services:
       - PMA_HOST=mysql
       - PMA_USER=root
       - PMA_PASSWORD=prisma
+  meilisearch:
+    image: 'getmeili/meilisearch:v1.10.0'
+    environment:
+      MEILI_MASTER_KEY: '${MEILISEARCH_MASTER_KEY}'
+    ports:
+      - '${FORWARD_MEILISEARCH_PORT:-7700}:7700'
+    volumes:
+      - 'meilisearch:/meili_data'
+    healthcheck:
+      test: set -o pipefail;curl -fsS http://localhost:7700/health | grep -q '{"status":"available"}'
+      retries: 3
+      timeout: 5s
   prod:
     build:
       dockerfile: Dockerfile
@@ -42,3 +54,5 @@ services:
 volumes:
   mysql: ~
   dev:
+  meilisearch:
+    driver: local

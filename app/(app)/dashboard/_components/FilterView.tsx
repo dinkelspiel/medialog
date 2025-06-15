@@ -80,7 +80,7 @@ export const FilterView = ({ className }: { className: string }) => {
       </div>
       <DropdownMenu>
         <DropdownMenuTrigger asChild>
-          <Button size={'sm'} variant={'outline'}>
+          <Button size={'sm'} variant={'outline'} disabled={!!filterTitle}>
             <SortDesc className="stroke-base-600" />
             Sort
           </Button>

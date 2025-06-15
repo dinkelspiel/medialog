@@ -148,16 +148,16 @@ const AddLogContent = ({
   });
   const [queryTitle, setQueryTitle] = useState('');
 
-  const generateQueryCategories: () => string = (): string => {
-    let q = '';
+  const generateQueryCategories = (): string[] => {
+    let q = [];
     if (queryCategories.book) {
-      q += 'Book,';
+      q.push('Book');
     }
     if (queryCategories.movie) {
-      q += 'Movie,';
+      q.push('Movie');
     }
     if (queryCategories.series) {
-      q += 'Series';
+      q.push('Series');
     }
     return q;
   };
@@ -169,16 +169,10 @@ const AddLogContent = ({
     isLoading: queryIsLoading,
     isError: queryIsError,
     error: queryError,
-  } = useQuery<(Entry & { translations: EntryTranslation[] })[]>({
-    queryFn: () =>
-      fetch(
-        `/api/entries?q=${debouncedQueryTitle[0]}&take=8&categories=${generateQueryCategories()}`
-      ).then(res => res.json()),
-    queryKey: [
-      'internalSearch',
-      debouncedQueryTitle,
-      generateQueryCategories(),
-    ],
+  } = api.entries.search.useQuery({
+    query: debouncedQueryTitle[0],
+    limit: 8,
+    categories: generateQueryCategories(),
   });
 
   const {

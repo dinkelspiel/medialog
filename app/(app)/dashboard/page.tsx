@@ -14,6 +14,7 @@ import { toast } from 'sonner';
 import { SidebarButtons } from '../_components/sidebar';
 import { FilterView } from './_components/FilterView';
 import { ExtendedUserEntry, useDashboardStore } from './state';
+import { useDebounceValue } from 'usehooks-ts';
 
 const Page = () => {
   const { data, isPending: dataIsPending } = api.dashboard.get.useQuery();
@@ -61,14 +62,12 @@ const Dashboard = ({
     setUserEntries(originalUserEntries);
   }, [originalUserEntries]);
 
-  const {
-    data: queryResults,
-    error: queryError,
-    isLoading: queryIsLoading,
-  } = useQuery({
-    queryKey: ['searchQuery'],
-    queryFn: () =>
-      fetch(`/api/user/entries?q=${filterTitle}`).then(res => res.json()),
+  const debouncedFilterTitle = useDebounceValue(filterTitle, 200);
+
+  const search = api.entries.search.useQuery({
+    query: debouncedFilterTitle[0],
+    limit: 999,
+    categories: filterCategories,
   });
 
   const userEntriesRef = useRef(null);
@@ -127,7 +126,7 @@ const Dashboard = ({
       </Header>
       <div
         ref={userEntriesRef}
-        className="grid justify-center bg-base-100 p-4 xl:col-span-1"
+        className="grid h-fit justify-center bg-base-100 p-4 xl:col-span-1"
       >
         <FilterView className="flex pb-4 lg:hidden" />
         <div
@@ -138,7 +137,31 @@ const Dashboard = ({
         >
           {userEntries &&
             userEntries
+              .filter(a => {
+                if (filterTitle === '') {
+                  return true;
+                }
+
+                if (search.data) {
+                  const entry = search.data.find(e => e.id === a.entryId);
+                  if (!entry) {
+                    return false;
+                  }
+                  return (entry._rankingScore ?? 0) > 0.5;
+                }
+                return true;
+              })
               .sort((a, b) => {
+                if (filterTitle !== '' && search.data && !search.isPending) {
+                  const aEntry = search.data.find(e => e.id === a.entryId);
+                  const bEntry = search.data.find(e => e.id === b.entryId);
+
+                  return (
+                    (bEntry ? (bEntry._rankingScore ?? 0) : 0) -
+                    (aEntry ? (aEntry._rankingScore ?? 0) : 0)
+                  );
+                }
+
                 switch (filterStyle) {
                   case 'rating-desc':
                     return b.rating - a.rating;
@@ -161,42 +184,13 @@ const Dashboard = ({
                 }
               })
               .map(userEntry => {
-                if (filterTitle !== '' && (queryIsLoading || queryError)) {
-                  if (
-                    filterTitle !== '' &&
-                    !userEntry.entry.originalTitle
-                      .toLowerCase()
-                      .includes(filterTitle.toLowerCase())
-                  ) {
-                    return;
-                  }
-                } else if (
+                if (
                   filterTitle !== '' &&
-                  !queryIsLoading &&
-                  queryResults
+                  search.data &&
+                  !search.data.find(e => e.id === userEntry.entryId)
                 ) {
-                  if (!queryResults.includes(userEntry.id)) {
-                    return;
-                  }
+                  return;
                 }
-
-                // if (
-                //   filter.creator !== undefined &&
-                //   userEntry.creators.filter(
-                //     creator => creator.name === filter.creator
-                //   ).length === 0
-                // ) {
-                //   return;
-                // }
-
-                // if (
-                //   filter.studio !== undefined &&
-                //   userEntry.studios.filter(
-                //     studio => studio.name === filter.studio
-                //   ).length === 0
-                // ) {
-                //   return;
-                // }
 
                 if (
                   filterStatus !== 'all' &&
