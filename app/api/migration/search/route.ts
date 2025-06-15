@@ -5,6 +5,8 @@ import {
   deleteAllDocuments,
 } from '@/server/meilisearch';
 
+export const dynamic = 'force-dynamic';
+
 export const GET = async () => {
   console.log('Start');
   const entries = await prisma.entry.findMany();
