@@ -15,15 +15,13 @@ const ActivityHistory = async ({ profileUser }: { profileUser: User }) => {
     count: bigint;
   }[] = await prisma.$queryRawUnsafe(`
     SELECT 
-      DATE(watchedAt) as date,
+      DATE(createdAt) as date,
       COUNT(*) as count
-    FROM UserEntry
+    FROM UserActivity
     WHERE 
       userId = '${profileUser.id}'
-      AND status = 'completed'
-      AND watchedAt IS NOT NULL
-      AND watchedAt >= CURDATE() - INTERVAL 200 DAY
-    GROUP BY DATE(watchedAt)
+      AND createdAt >= CURDATE() - INTERVAL 200 DAY
+    GROUP BY DATE(createdAt)
     ORDER BY date ASC;
   `);
 
@@ -42,7 +40,7 @@ const ActivityHistory = async ({ profileUser }: { profileUser: User }) => {
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="font-dm-serif flex w-full justify-between border-b border-b-base-200 pb-2 text-3xl font-semibold">
+      <div className="flex w-full justify-between border-b border-b-base-200 pb-2 font-dm-serif text-3xl font-semibold">
         Activity History
       </div>
 
