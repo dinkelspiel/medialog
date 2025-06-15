@@ -55,6 +55,7 @@
     "google-auth-library": "^9.9.0",
     "googleapis": "^134.0.0",
     "lucide-react": "^0.321.0",
+    "meilisearch": "^0.51.0",
     "next": "^14.2",
     "next-themes": "^0.2.1",
     "octokit": "^4.1.3",

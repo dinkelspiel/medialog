@@ -1,4 +1,5 @@
 import prisma from '@/server/db';
+import { addMeilisearchEntryByEntryId } from '@/server/meilisearch';
 import axios from 'axios';
 import { NextRequest } from 'next/server';
 
@@ -426,6 +427,8 @@ export const GET = async (request: NextRequest) => {
       },
     });
   }
+
+  await addMeilisearchEntryByEntryId(entry!.id);
 
   return Response.json({
     message: `Imported movie ${data.title}`,
