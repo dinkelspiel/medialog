@@ -11,6 +11,8 @@ import {
 } from '@/server/api/routers/dashboard_';
 import { validateSessionToken } from '@/server/auth/validateSession';
 
+export const dynamic = 'force-dynamic';
+
 const Page = async ({ params }: { params: { slug: string } }) => {
   const authUser = await validateSessionToken();
 
