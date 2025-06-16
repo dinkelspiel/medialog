@@ -1,10 +1,11 @@
-import { createTRPCRouter } from '@/server/api/trpc';
+import { createTRPCRouter, publicProcedure } from '@/server/api/trpc';
 import { Category } from '@prisma/client';
 import z from 'zod';
 import { protectedProcedure } from '../trpc';
 import { searchEntries } from '@/server/meilisearch';
 import prisma from '@/server/db';
 import { getDefaultWhereForTranslations } from './dashboard_';
+import { validateSessionToken } from '@/server/auth/validateSession';
 
 export const entriesRouter = createTRPCRouter({
   search: protectedProcedure
@@ -51,5 +52,32 @@ export const entriesRouter = createTRPCRouter({
       console.log(entries[0]);
 
       return entries;
+    }),
+  get: publicProcedure
+    .input(
+      z.object({
+        id: z.number(),
+      })
+    )
+    .query(async ({ input, ctx }) => {
+      const user = await validateSessionToken();
+      const entry = await prisma.entry.findFirst({
+        where: {
+          id: input.id,
+        },
+        include: {
+          translations: user
+            ? getDefaultWhereForTranslations(user)
+            : {
+                where: {
+                  language: {
+                    iso_639_1: 'en',
+                  },
+                },
+              },
+        },
+      });
+
+      return entry;
     }),
 });

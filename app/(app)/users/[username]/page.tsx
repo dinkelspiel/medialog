@@ -153,6 +153,7 @@ const Profile = async ({ params }: { params: { username: string } }) => {
             select: {
               id: true,
               originalTitle: true,
+              slug: true,
               posterPath: true,
               length: true,
             },
@@ -262,7 +263,7 @@ const Profile = async ({ params }: { params: { username: string } }) => {
         <div className="grid w-fit grid-cols-1 gap-16 min-[1330px]:grid-cols-[1fr,250px]">
           <div className="flex flex-col gap-6 px-4 md:w-[710px]">
             <div className="flex flex-col gap-4">
-              <div className="font-dm-serif flex w-full justify-between border-b border-b-base-200 pb-2 text-3xl font-semibold">
+              <div className="flex w-full justify-between border-b border-b-base-200 pb-2 font-dm-serif text-3xl font-semibold">
                 Favorites
               </div>
               {favorites.length > 0 && (
@@ -330,7 +331,7 @@ const Profile = async ({ params }: { params: { username: string } }) => {
             <ActivityHistory profileUser={profileUser} />
 
             <div className="flex flex-col gap-4">
-              <div className="font-dm-serif flex w-full justify-between border-b border-b-base-200 pb-2 text-3xl font-semibold">
+              <div className="flex w-full justify-between border-b border-b-base-200 pb-2 font-dm-serif text-3xl font-semibold">
                 Recent Activity
               </div>
               {activity.length > 0 && (

@@ -10,6 +10,7 @@ import { Lists } from './lists';
 import Link from 'next/link';
 import GenreOverview from './genreOverview';
 import { Label } from '@/components/ui/label';
+import { EntryRedirect } from '@/app/(app)/_components/EntryIslandContext';
 
 export const ProfileSidebar = ({
   profileUser,
@@ -51,9 +52,9 @@ export const ProfileSidebar = ({
   return (
     <div className={cn('flex flex-col gap-6', className)}>
       <div className="flex flex-col gap-4">
-        <div className="font-dm-serif flex justify-between border-b border-b-base-200 pb-2 text-3xl font-semibold">
+        <div className="flex justify-between border-b border-b-base-200 pb-2 font-dm-serif text-3xl font-semibold">
           Watchlist
-          <span className="font-geist ms-auto flex items-end text-sm text-base-500">
+          <span className="ms-auto flex items-end font-geist text-sm text-base-500">
             {
               profileUser.userEntries.filter(e => e.status === 'planning')
                 .length
@@ -81,9 +82,9 @@ export const ProfileSidebar = ({
         {profileUser.userEntries.filter(e => e.status === 'watching').length >
           0 && (
           <div className="flex flex-col gap-4">
-            <div className="font-dm-serif flex w-full justify-between border-b border-b-base-200 pb-2 text-3xl font-semibold">
+            <div className="flex w-full justify-between border-b border-b-base-200 pb-2 font-dm-serif text-3xl font-semibold">
               In Progress
-              <span className="font-geist ms-auto flex items-end text-sm text-base-500">
+              <span className="ms-auto flex items-end font-geist text-sm text-base-500">
                 {
                   profileUser.userEntries.filter(e => e.status === 'watching')
                     .length
@@ -95,7 +96,12 @@ export const ProfileSidebar = ({
               .map(entry => (
                 <div className="flex flex-col gap-1.5" key={entry.id}>
                   <div className="whitespace-break-spaces text-sm font-medium text-base-900">
-                    <ServerEntryTitleForUser entryId={entry.entry.id} />
+                    <EntryRedirect
+                      entryId={entry.entry.id}
+                      entrySlug={entry.entry.slug}
+                    >
+                      <ServerEntryTitleForUser entryId={entry.entry.id} />
+                    </EntryRedirect>
                   </div>
                   <Progress
                     value={(entry.progress / entry.entry.length) * 100}
@@ -106,9 +112,9 @@ export const ProfileSidebar = ({
         )}
       </div>
       <div className="flex flex-col items-center gap-4 lg:items-start">
-        <div className="font-dm-serif flex w-full justify-between border-b border-b-base-200 pb-2 text-3xl font-semibold">
+        <div className="flex w-full justify-between border-b border-b-base-200 pb-2 font-dm-serif text-3xl font-semibold">
           Ratings
-          <span className="font-geist ms-auto flex items-end text-sm text-base-500">
+          <span className="ms-auto flex items-end font-geist text-sm text-base-500">
             {totalRatings}
           </span>
         </div>
@@ -128,9 +134,9 @@ export const ProfileSidebar = ({
       </div>
       <GenreOverview profileUser={profileUser} />
       <div className="flex flex-col gap-4">
-        <div className="font-dm-serif flex w-full justify-between border-b border-b-base-200 pb-2 text-3xl font-semibold">
+        <div className="flex w-full justify-between border-b border-b-base-200 pb-2 font-dm-serif text-3xl font-semibold">
           Diary
-          <span className="font-geist ms-auto flex items-end text-sm text-base-500">
+          <span className="ms-auto flex items-end font-geist text-sm text-base-500">
             {profileUser.dailyStreakLength} Day Streak
           </span>
         </div>
@@ -180,9 +186,9 @@ export const ProfileSidebar = ({
           ))}
       </div>
       <div className="flex flex-col items-center gap-4 lg:items-start">
-        <div className="font-dm-serif flex w-full justify-between border-b border-b-base-200 pb-2 text-3xl font-semibold">
+        <div className="flex w-full justify-between border-b border-b-base-200 pb-2 font-dm-serif text-3xl font-semibold">
           Lists
-          <span className="font-geist ms-auto flex items-end text-sm text-base-500">
+          <span className="ms-auto flex items-end font-geist text-sm text-base-500">
             {lists.length}
           </span>
         </div>

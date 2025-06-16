@@ -6,6 +6,10 @@ import { Toaster } from 'sonner';
 import { AuthUserProvider } from './_components/AuthUserContext';
 import { LoggedIn } from './_components/loggedIn';
 import { TooltipProvider } from '@/components/ui/tooltip';
+import {
+  EntryIsland,
+  EntryIslandProvider,
+} from './_components/EntryIslandContext';
 
 const Layout = async ({ children }: { children: ReactNode }) => {
   const user = await validateSessionToken();
@@ -13,11 +17,14 @@ const Layout = async ({ children }: { children: ReactNode }) => {
   if (user) {
     return (
       <AuthUserProvider user={user}>
-        <TooltipProvider>
-          <SidebarLayout>
-            <LoggedIn user={user}>{children}</LoggedIn>
-          </SidebarLayout>
-        </TooltipProvider>
+        <EntryIslandProvider>
+          <TooltipProvider>
+            <SidebarLayout>
+              <EntryIsland />
+              <LoggedIn user={user}>{children}</LoggedIn>
+            </SidebarLayout>
+          </TooltipProvider>
+        </EntryIslandProvider>
       </AuthUserProvider>
     );
   } else {

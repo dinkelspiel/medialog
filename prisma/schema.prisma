@@ -113,19 +113,26 @@ enum UserEntryStatus {
   completed
 }
 
+enum UserEntryVisibility {
+  public
+  friends
+  private
+}
+
 model UserEntry {
-  id        Int             @id @default(autoincrement()) @db.UnsignedInt
-  userId    Int             @db.UnsignedInt
-  user      User            @relation(fields: [userId], references: [id], onDelete: Cascade)
-  entryId   Int             @db.UnsignedInt
-  entry     Entry           @relation(fields: [entryId], references: [id], onDelete: Cascade)
-  rating    Int             @db.SmallInt
-  notes     String          @db.Text
-  watchedAt DateTime?
-  status    UserEntryStatus @default(planning)
-  progress  Int             @db.UnsignedSmallInt
-  createdAt DateTime        @default(now())
-  updatedAt DateTime        @default(now()) @updatedAt
+  id         Int                 @id @default(autoincrement()) @db.UnsignedInt
+  userId     Int                 @db.UnsignedInt
+  user       User                @relation(fields: [userId], references: [id], onDelete: Cascade)
+  entryId    Int                 @db.UnsignedInt
+  entry      Entry               @relation(fields: [entryId], references: [id], onDelete: Cascade)
+  rating     Int                 @db.SmallInt
+  notes      String              @db.Text
+  watchedAt  DateTime?
+  status     UserEntryStatus     @default(planning)
+  visibility UserEntryVisibility @default(public)
+  progress   Int                 @db.UnsignedSmallInt
+  createdAt  DateTime            @default(now())
+  updatedAt  DateTime            @default(now()) @updatedAt
 }
 
 enum UserListType {
@@ -455,6 +462,7 @@ model Entry {
   posterPath         String
   tagline            String      @db.Text
   originalTitle      String
+  slug               String      @default("")
   overview           String      @db.Text
   backdropPath       String
   releaseDate        DateTime
