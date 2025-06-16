@@ -11,15 +11,13 @@ import {
 } from '@/server/api/routers/dashboard_';
 import { validateSessionToken } from '@/server/auth/validateSession';
 
-const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {
-  const { slug } = await params;
-
+const Page = async ({ params }: { params: { slug: string } }) => {
   const authUser = await validateSessionToken();
 
   if (!authUser) {
     const entry = await prisma.entry.findFirst({
       where: {
-        slug,
+        slug: params.slug,
       },
       include: {
         translations: {
@@ -39,7 +37,7 @@ const Page = async ({ params }: { params: Promise<{ slug: string }> }) => {
 
   const entry = await prisma.entry.findFirst({
     where: {
-      slug,
+      slug: params.slug,
     },
     include: {
       translations: getDefaultWhereForTranslations(authUser),
