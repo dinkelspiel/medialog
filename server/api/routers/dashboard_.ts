@@ -3,9 +3,14 @@ import { Entry, EntryTranslation, User } from '@prisma/client';
 export const getUserTitleFromEntry = (
   entry: Entry & { translations: EntryTranslation[] }
 ) => {
-  return entry.translations.length !== 0
-    ? entry.translations[0]!.name
-    : entry.originalTitle;
+  const translationName = entry.translations?.[0]?.name;
+  const fallbackTitle = entry.originalTitle;
+
+  if (typeof translationName === 'string' && translationName.trim()) {
+    return translationName;
+  }
+
+  return fallbackTitle;
 };
 
 export const getDefaultWhereForTranslations = (
