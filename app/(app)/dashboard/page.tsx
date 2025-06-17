@@ -164,8 +164,12 @@ const Dashboard = ({
 
                 switch (filterStyle) {
                   case 'rating-desc':
+                    if (b.rating === a.rating) return b.id - a.id;
+
                     return b.rating - a.rating;
                   case 'rating-asc':
+                    if (b.rating === a.rating) return b.id - a.id;
+
                     return (a.rating === 0 ? 999 : a.rating) - b.rating;
                   case 'az':
                     return a.entry.originalTitle.localeCompare(

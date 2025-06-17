@@ -53,21 +53,22 @@ export const entriesRouter = createTRPCRouter({
 
       return entries;
     }),
-  get: publicProcedure
+  getEntryPage: publicProcedure
     .input(
       z.object({
-        id: z.number(),
+        entryId: z.number(),
       })
     )
-    .query(async ({ input, ctx }) => {
-      const user = await validateSessionToken();
+    .query(async ({ input }) => {
+      // Entry Model
+      const authUser = await validateSessionToken();
       const entry = await prisma.entry.findFirst({
         where: {
-          id: input.id,
+          id: input.entryId,
         },
         include: {
-          translations: user
-            ? getDefaultWhereForTranslations(user)
+          translations: authUser
+            ? getDefaultWhereForTranslations(authUser)
             : {
                 where: {
                   language: {
@@ -78,6 +79,84 @@ export const entriesRouter = createTRPCRouter({
         },
       });
 
-      return entry;
+      // Ratings Graph
+      let ratings = [];
+      const totalRatings = await prisma.userEntry.count({
+        where: {
+          entryId: input.entryId,
+          status: 'completed',
+        },
+      });
+      for (let ratingThreshold = 0; ratingThreshold <= 10; ratingThreshold++) {
+        if (totalRatings > 0) {
+          ratings[ratingThreshold - 1] =
+            (await prisma.userEntry.count({
+              where: {
+                entryId: input.entryId,
+                status: 'completed',
+                rating: {
+                  gt: (ratingThreshold - 1) * 10,
+                  lte: ratingThreshold * 10,
+                },
+              },
+            })) / totalRatings;
+        } else {
+          ratings[ratingThreshold - 1] = 0;
+        }
+      }
+
+      ratings[0] = (ratings[0] ?? 0) + (ratings[-1] ?? 0);
+      delete ratings[-1];
+
+      // Reviews
+      const reviews = await prisma.userEntry.findMany({
+        where: {
+          entryId: input.entryId,
+          status: 'completed',
+          NOT: {
+            notes: {
+              equals: '',
+            },
+          },
+          visibility: !authUser ? 'public' : undefined,
+          OR: authUser
+            ? [
+                {
+                  visibility: 'public',
+                },
+                {
+                  AND: [
+                    {
+                      visibility: 'friends',
+                    },
+                    {
+                      user: {
+                        following: {
+                          some: {
+                            followId: authUser.id,
+                          },
+                        },
+                      },
+                    },
+                  ],
+                },
+              ]
+            : undefined,
+        },
+        include: {
+          user: {
+            select: {
+              id: true,
+              username: true,
+            },
+          },
+        },
+      });
+
+      return {
+        entry: entry!,
+        ratings,
+        reviews,
+      };
     }),
 });

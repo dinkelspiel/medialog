@@ -10,6 +10,7 @@ import {
   getDefaultWhereForTranslations,
   getUserTitleFromEntry,
 } from '@/server/api/routers/dashboard_';
+import { EntryRedirect } from '@/app/(app)/_components/EntryIslandContext';
 
 const Polls = async ({ list }: { list: UserList }) => {
   const authUser = await validateSessionToken();
@@ -22,7 +23,17 @@ const Polls = async ({ list }: { list: UserList }) => {
   let authUserHasVoted: Record<number, boolean> = {};
 
   let totalVotes: Record<number, number> = {};
-  let votes: Record<number, Record<string, number>> = {};
+  let votes: Record<
+    number,
+    Record<
+      string,
+      {
+        votes: number;
+        entryId: number;
+        entrySlug: string;
+      }
+    >
+  > = {};
 
   for (const poll of polls) {
     const voteCounts = await prisma.userListPollVote.groupBy({
@@ -49,7 +60,14 @@ const Polls = async ({ list }: { list: UserList }) => {
           totalVotes[poll.id] =
             (totalVotes[poll.id] ?? 0) + count._count.entryId;
 
-          return [getUserTitleFromEntry(entry), count._count.entryId];
+          return [
+            getUserTitleFromEntry(entry),
+            {
+              votes: count._count.entryId,
+              entryId: entry.id,
+              entrySlug: entry.slug,
+            },
+          ];
         })
       )
     );
@@ -106,16 +124,21 @@ const Polls = async ({ list }: { list: UserList }) => {
         </div>
         <div className="flex flex-col gap-1">
           {Object.entries(votes[poll.id]!)!
-            .sort((a, b) => b[1] - a[1])
-            .filter(e => e[1] > 0)
+            .sort((a, b) => b[1].votes - a[1].votes)
+            .filter(e => e[1].votes > 0)
             .map((vote, idx) => (
               <div className="flex justify-between text-sm">
-                <div className="flex items-center gap-1">
-                  <span>{idx + 1}.</span> {vote[0]}
-                </div>
+                <EntryRedirect
+                  entryId={vote[1].entryId}
+                  entrySlug={vote[1].entrySlug}
+                >
+                  <div className="flex items-center gap-1">
+                    <span>{idx + 1}.</span> {vote[0]}
+                  </div>
+                </EntryRedirect>
                 <div className="text-base-500">
                   {parseInt(
-                    ((vote[1] / totalVotes[poll.id]!) * 100).toString()
+                    ((vote[1].votes / totalVotes[poll.id]!) * 100).toString()
                   )}
                   %
                 </div>

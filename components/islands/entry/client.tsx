@@ -11,15 +11,15 @@ import EntryView from '../entry';
 const EntryClient = () => {
   const entryIsland = useEntryIsland();
 
-  const entry = api.entries.get.useQuery({
-    id: entryIsland ? (entryIsland.entryId ?? -1) : -1,
+  const entryPage = api.entries.getEntryPage.useQuery({
+    entryId: entryIsland ? (entryIsland.entryId ?? -1) : -1,
   });
 
   if (!entryIsland || !entryIsland.entryId) return;
-  if (entry.isPending) return <Loader2 className="animate-spin" />;
-  if (!entry.data) return;
+  if (entryPage.isPending) return <Loader2 className="animate-spin" />;
+  if (!entryPage.data) return;
 
-  return <EntryView entry={entry.data} />;
+  return <EntryView entryPage={entryPage.data} />;
 };
 
 export default EntryClient;

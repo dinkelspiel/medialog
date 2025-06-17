@@ -176,9 +176,14 @@ export const ProfileSidebar = ({
                     key={month + (JSON.stringify(day) + '') + day.title}
                   >
                     <div className="text-base-500">{day.day}</div>
-                    <div className="whitespace-break-spaces text-base-900">
-                      {day.title}
-                    </div>
+                    <EntryRedirect
+                      entryId={day.entryId}
+                      entrySlug={day.entrySlug}
+                    >
+                      <div className="whitespace-break-spaces text-base-900">
+                        {day.title}
+                      </div>
+                    </EntryRedirect>
                   </Fragment>
                 ))}
               </div>

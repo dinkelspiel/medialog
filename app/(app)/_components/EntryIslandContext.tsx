@@ -116,7 +116,7 @@ export const EntryRedirect = ({
 
   return (
     <button
-      className={cn('text-left', className)}
+      className={cn('text-left hover:underline', className)}
       onClick={() => {
         entryIsland.setOpen(true, entryId, entrySlug);
       }}

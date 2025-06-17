@@ -5,10 +5,10 @@ import EntryView from '../entry';
 import { api } from '@/trpc/server';
 
 const EntryServer = async ({ entryId }: { entryId: number }) => {
-  const entry = await api.entries.get({ id: entryId });
-  if (!entry) return;
+  const entryPage = await api.entries.getEntryPage({ entryId });
+  if (!entryPage) return;
 
-  return <EntryView entry={entry} />;
+  return <EntryView entryPage={entryPage} />;
 };
 
 export default EntryServer;
