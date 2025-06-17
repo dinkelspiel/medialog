@@ -5,6 +5,8 @@ import {
 import prisma from '@/server/db';
 import slug from 'slug';
 
+export const dynamic = 'force-dynamic';
+
 export const GET = async () => {
   const entries = await prisma.entry.findMany({
     include: {
