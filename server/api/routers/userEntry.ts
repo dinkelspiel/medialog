@@ -128,6 +128,15 @@ export const userEntryRouter = createTRPCRouter({
             },
           });
         }
+      } else if (input.progress) {
+        await prisma.userActivity.create({
+          data: {
+            userId: ctx.user.id,
+            entryId: userEntry.entryId,
+            type: 'progressUpdate',
+            additionalData: input.progress.toString(),
+          },
+        });
       } else if (input.status) {
         await prisma.userActivity.create({
           data: {
