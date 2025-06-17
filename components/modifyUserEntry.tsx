@@ -237,7 +237,7 @@ const ModifyUserEntry = ({
   );
 
   const Footer = ({ children }: { children?: ReactNode }) => (
-    <div className="flex items-center justify-between">
+    <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:justify-between">
       <Dialog open={removeUserEntryOpen} onOpenChange={setRemoveUserEntryOpen}>
         <DialogTrigger asChild>
           <Button variant="destructive" size="sm">
@@ -262,11 +262,12 @@ const ModifyUserEntry = ({
           </DialogFooter>
         </DialogContent>
       </Dialog>
-      <div className="flex gap-2">
+      <div className="flex flex-col gap-2 lg:flex-row">
         <DropdownMenu>
           <DropdownMenuTrigger>
             <Button
               variant="outline"
+              className="w-full lg:w-fit"
               size="sm"
               role="combobox"
               aria-expanded={addListsOpen}
@@ -350,7 +351,7 @@ const ModifyUserEntry = ({
             onChange={e => setNotes(e.target.value)}
             name="notes"
           />
-          <div className="flex w-full justify-start gap-6">
+          <div className="flex w-full flex-col justify-start gap-6 lg:flex-row">
             <div className="flex items-center gap-2">
               <Label>Watched</Label>
               <DateTimePicker date={watchedAt} setDate={setWatchedAt} />
@@ -375,7 +376,7 @@ const ModifyUserEntry = ({
               value={watchedAt?.toISOString()}
               name="watchedAt"
             />
-            <SubmitButton className="w-max px-6" size={'sm'}>
+            <SubmitButton className="w-full px-6 lg:w-fit" size={'sm'}>
               <Save className="size-3" />
               Save
             </SubmitButton>

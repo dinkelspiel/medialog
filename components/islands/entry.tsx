@@ -38,7 +38,7 @@ const EntryView = ({
   const title = getUserTitleFromEntry(entryPage.entry);
 
   return (
-    <div className="grid h-full w-full grid-rows-[250px,1fr]">
+    <div className="grid h-full w-full grid-rows-[250px,1fr] p-2 lg:p-0">
       <div
         style={{ backgroundImage: `url(${entryPage.entry.backdropPath})` }}
         className="relative h-full w-full bg-cover"
@@ -59,16 +59,13 @@ const EntryView = ({
           </div>
         </div>
       </div>
-      <div className="mx-auto grid h-fit w-fit grid-cols-1 xl:gap-16 min-[1330px]:grid-cols-[250px,1fr]">
-        <div
-          style={{ marginTop: `-${377 / 2}px` }}
-          className="flex flex-col gap-6"
-        >
+      <div className="mx-auto mt-2 grid h-fit w-fit grid-cols-1 lg:-mt-[188px] xl:gap-16 min-[1330px]:grid-cols-[250px,1fr]">
+        <div className="flex flex-col gap-6">
           <div className="flex flex-col gap-2">
             <Image
               width={250}
               height={377}
-              className="z-10 rounded-lg border-2 border-base-200 shadow-md shadow-base-300"
+              className="z-10 hidden aspect-[2/3] w-[50px] rounded-lg border-2 border-base-200 shadow-md shadow-base-300 lg:block lg:w-[250px]"
               src={entryPage.entry.posterPath}
               alt={`Poster for ${title}`}
             />
