@@ -5,7 +5,6 @@ import EntryClient from '@/components/islands/entry/client';
 import { IslandDialog } from '@/components/islands/islands';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
-import { AuthUser } from '@/server/auth/validateSession';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import {
