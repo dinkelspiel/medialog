@@ -25,7 +25,7 @@ import {
 import { cn } from '@/lib/utils';
 import { toast } from 'sonner';
 import Link from 'next/link';
-import { AuthUser, validateSessionToken } from '@/server/auth/validateSession';
+import { validateSessionToken } from '@/server/auth/validateSession';
 import { User, UserEntry, UserFollow } from '@prisma/client';
 import FollowButton from './followButton';
 import { useAuthUser } from '../../../_components/AuthUserContext';

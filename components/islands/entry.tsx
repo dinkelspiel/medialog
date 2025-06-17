@@ -19,11 +19,21 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '../ui/dialog';
+import AddToList from '../addToList';
+import { capitalizeFirst } from '@/lib/capitalizeFirst';
+import { SafeUser } from '@/server/auth/validateSession';
+import EditUserEntry from './entry/editUserEntry';
 
 const EntryView = ({
+  host,
+  authUser,
   entryPage,
+  addToListSuccess,
 }: {
+  host: 'client' | 'server';
+  authUser?: SafeUser;
   entryPage: inferRouterOutputs<AppRouter>['entries']['getEntryPage'];
+  addToListSuccess?: () => Promise<void>;
 }) => {
   const title = getUserTitleFromEntry(entryPage.entry);
 
@@ -63,12 +73,21 @@ const EntryView = ({
               alt={`Poster for ${title}`}
             />
             <div className="flex gap-2">
-              <Button size="sm" className="w-full" variant={'outline'}>
-                Add to Watchlist
-              </Button>
-              <Button size="sm" variant={'outline'} className="size-9">
-                <ListPlus className="size-4 stroke-base-600" />
-              </Button>
+              {authUser && <EditUserEntry host={host} entryPage={entryPage} />}
+
+              {authUser && (
+                <AddToList
+                  onSuccess={addToListSuccess}
+                  entryId={entryPage.entry.id}
+                  userLists={entryPage.userListsByUser}
+                  userListsWithEntry={entryPage.userListsWithEntryByUser}
+                >
+                  <Button size="sm" variant={'outline'} className="size-9">
+                    <ListPlus className="size-4 stroke-base-600" />
+                    <div className="sr-only">Add to list</div>
+                  </Button>
+                </AddToList>
+              )}
             </div>
           </div>
           <div className="flex flex-col gap-2">

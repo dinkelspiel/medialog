@@ -2,7 +2,10 @@ import { createTRPCRouter } from '@/server/api/trpc';
 import { protectedProcedure } from '../trpc';
 import { unstable_cache } from 'next/cache';
 import prisma from '@/server/db';
-import { validateSessionToken } from '@/server/auth/validateSession';
+import {
+  safeUserSelect,
+  validateSessionToken,
+} from '@/server/auth/validateSession';
 import { Entry, EntryTranslation } from '@prisma/client';
 import {
   getDefaultWhereForTranslations,
@@ -144,7 +147,9 @@ export const dashboardRouter = createTRPCRouter({
         userId: ctx.user.id,
       },
       include: {
-        user: true,
+        user: {
+          select: safeUserSelect(),
+        },
         entry: {
           include: {
             userEntries: {

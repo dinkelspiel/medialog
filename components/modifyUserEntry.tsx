@@ -51,6 +51,7 @@ import {
   DialogContent,
   DialogFooter,
   DialogHeader,
+  DialogTitle,
   DialogTrigger,
 } from './ui/dialog';
 import { Label } from './ui/label';
@@ -67,6 +68,7 @@ import {
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
 import { capitalizeFirst } from '@/lib/capitalizeFirst';
+import AddToList from './addToList';
 
 const ModifyUserEntry = ({
   userEntry,
@@ -195,43 +197,6 @@ const ModifyUserEntry = ({
     });
   };
 
-  const createNewList = async () => {
-    const response = await (
-      await fetch(`/api/user/lists`, {
-        method: 'POST',
-        body: JSON.stringify({
-          initialEntryId: userEntry.entryId,
-        }),
-      })
-    ).json();
-
-    if (response.error) {
-      toast.error(`Error when creating list: ${response.error}`);
-    } else {
-      refetchUserLists().then(() => toast.success(response.message));
-    }
-  };
-
-  const addEntryToList = async (userList: UserList) => {
-    const response = await (
-      await fetch(`/api/user/lists/${userList.id}/entries`, {
-        method: 'POST',
-        body: JSON.stringify({
-          entryId: userEntry.entryId,
-        }),
-      })
-    ).json();
-
-    if (response.error) {
-      toast.error(`Error when adding entry to list: ${response.error}`);
-    } else {
-      refetchUserLists().then(() => {
-        setAddListsOpen(false);
-        toast.success(response.message);
-      });
-    }
-  };
-
   const Header = () => (
     <DialogHeader>
       <div className="grid w-full grid-cols-[max-content,1fr] gap-4 pb-4 pt-4 lg:pt-0">
@@ -245,9 +210,11 @@ const ModifyUserEntry = ({
               entryId={userEntry.entry.id}
               entrySlug={userEntry.entry.slug}
             >
-              <div className="text-lg font-semibold tracking-tight lg:pt-0">
-                {getUserTitleFromEntry(userEntry.entry)}
-              </div>
+              <DialogTitle>
+                <div className="text-lg font-semibold tracking-tight lg:pt-0">
+                  {getUserTitleFromEntry(userEntry.entry)}
+                </div>
+              </DialogTitle>
             </EntryRedirect>
             <div className="pb-[2px] text-sm text-base-500">
               {userEntry.entry.releaseDate.getFullYear()}
@@ -338,69 +305,16 @@ const ModifyUserEntry = ({
             </DropdownMenuGroup>
           </DropdownMenuContent>
         </DropdownMenu>
-        <Popover open={addListsOpen} onOpenChange={setAddListsOpen}>
-          <PopoverTrigger asChild>
-            <Button
-              variant="outline"
-              size="sm"
-              role="combobox"
-              aria-expanded={addListsOpen}
-            >
-              <ListPlus className="size-3" /> Add to list
-            </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-[200px] p-0">
-            <Command>
-              <div className="border-b p-1">
-                <Button
-                  variant={'ghost'}
-                  size={'sm'}
-                  className="w-full"
-                  onClick={() => {
-                    setAddListsOpen(false);
-                    createNewList();
-                  }}
-                >
-                  <Plus /> New list
-                </Button>
-              </div>
-              {userLists.length !== 0 && (
-                <CommandGroup>
-                  {userLists.map(list => (
-                    <div className="flex justify-between gap-1" key={list.id}>
-                      <CommandItem
-                        key={list.id}
-                        value={list.name}
-                        onSelect={() => {
-                          addEntryToList(list);
-                        }}
-                        className="w-full"
-                      >
-                        <Check
-                          className={cn(
-                            'mr-2 h-4 w-4',
-                            userListsWithEntry.find(e => e.id === list.id) !==
-                              undefined
-                              ? 'opacity-100'
-                              : 'opacity-0'
-                          )}
-                        />
-                        {list.name}
-                      </CommandItem>
-                      <Button variant={'ghost'} className="w-10">
-                        <Link
-                          href={`/@${userEntry.user.username}/lists/${list.id}`}
-                        >
-                          <ExternalLink className="size-4" />
-                        </Link>
-                      </Button>
-                    </div>
-                  ))}
-                </CommandGroup>
-              )}
-            </Command>
-          </PopoverContent>
-        </Popover>
+        <AddToList
+          onSuccess={() => refetchUserLists()}
+          entryId={userEntry.entryId}
+          userLists={userLists}
+          userListsWithEntry={userListsWithEntry}
+        >
+          <Button variant="outline" size="sm" role="combobox">
+            <ListPlus className="size-3" /> Add to list
+          </Button>
+        </AddToList>
         {children}
       </div>
     </div>

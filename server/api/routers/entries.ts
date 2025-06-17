@@ -1,11 +1,12 @@
 import { createTRPCRouter, publicProcedure } from '@/server/api/trpc';
-import { Category } from '@prisma/client';
+import { Category, UserEntry, UserList } from '@prisma/client';
 import z from 'zod';
 import { protectedProcedure } from '../trpc';
 import { searchEntries } from '@/server/meilisearch';
 import prisma from '@/server/db';
 import { getDefaultWhereForTranslations } from './dashboard_';
 import { validateSessionToken } from '@/server/auth/validateSession';
+import { TRPCError } from '@trpc/server';
 
 export const entriesRouter = createTRPCRouter({
   search: protectedProcedure
@@ -49,7 +50,6 @@ export const entriesRouter = createTRPCRouter({
         input.limit,
         input.categories as Category[]
       );
-      console.log(entries[0]);
 
       return entries;
     }),
@@ -67,6 +67,11 @@ export const entriesRouter = createTRPCRouter({
           id: input.entryId,
         },
         include: {
+          userListEntries: {
+            include: {
+              list: true,
+            },
+          },
           translations: authUser
             ? getDefaultWhereForTranslations(authUser)
             : {
@@ -78,6 +83,13 @@ export const entriesRouter = createTRPCRouter({
               },
         },
       });
+
+      if (!entry) {
+        throw new TRPCError({
+          code: 'BAD_REQUEST',
+          message: 'No entry found with id',
+        });
+      }
 
       // Ratings Graph
       let ratings = [];
@@ -140,6 +152,11 @@ export const entriesRouter = createTRPCRouter({
                     },
                   ],
                 },
+                {
+                  userId: {
+                    equals: authUser.id,
+                  },
+                },
               ]
             : undefined,
         },
@@ -153,10 +170,48 @@ export const entriesRouter = createTRPCRouter({
         },
       });
 
+      // Lists
+
+      let userListsWithEntryByUser: UserList[] = [];
+      if (authUser) {
+        userListsWithEntryByUser = entry.userListEntries
+          .map(e => e.list)
+          .filter(e => e.userId === authUser.id);
+
+        userListsWithEntryByUser = userListsWithEntryByUser.filter(
+          (e, idx) =>
+            userListsWithEntryByUser.findIndex(f => f.id === e.id) === idx
+        );
+      }
+
+      let userListsByUser: UserList[] = [];
+      if (authUser) {
+        userListsByUser = await prisma.userList.findMany({
+          where: {
+            userId: authUser.id,
+          },
+        });
+      }
+
+      // UserEntry
+
+      let userEntry: UserEntry | null = null;
+      if (authUser) {
+        userEntry = await prisma.userEntry.findFirst({
+          where: {
+            entryId: entry.id,
+            userId: authUser.id,
+          },
+        });
+      }
+
       return {
         entry: entry!,
         ratings,
         reviews,
+        userListsWithEntryByUser,
+        userListsByUser,
+        userEntry,
       };
     }),
 });

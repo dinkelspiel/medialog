@@ -3,7 +3,7 @@ import prisma from '../db';
 import { cache } from 'react';
 import { redirect } from 'next/navigation';
 
-export type AuthUser = Awaited<ReturnType<typeof validateSessionToken>>;
+export type SafeUser = Awaited<ReturnType<typeof validateSessionToken>>;
 
 export const validateSessionToken = cache(async () => {
   const sessionToken = cookies().get('mlSessionToken');
@@ -31,24 +31,26 @@ export const validateSessionToken = cache(async () => {
     where: {
       id: session.userId,
     },
-    select: {
-      id: true,
-      username: true,
-      email: true,
-      ratingStyle: true,
-      theme: true,
-      showMediaMetaIn: true,
-      showMediaMetaInId: true,
-
-      dailyStreakLength: true,
-      dailyStreakLongest: true,
-      dailyStreakStarted: true,
-      dailyStreakUpdated: true,
-
-      invitedBy: true,
-      invitedById: true,
-
-      createdAt: true,
-    },
+    select: safeUserSelect(),
   });
+});
+
+export const safeUserSelect = () => ({
+  id: true,
+  username: true,
+  email: true,
+  ratingStyle: true,
+  theme: true,
+  showMediaMetaIn: true,
+  showMediaMetaInId: true,
+
+  dailyStreakLength: true,
+  dailyStreakLongest: true,
+  dailyStreakStarted: true,
+  dailyStreakUpdated: true,
+
+  invitedBy: true,
+  invitedById: true,
+
+  createdAt: true,
 });

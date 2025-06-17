@@ -1,7 +1,10 @@
 import { createTRPCRouter } from '@/server/api/trpc';
 import z from 'zod';
 import { protectedProcedure } from '../trpc';
-import { validateSessionToken } from '@/server/auth/validateSession';
+import {
+  safeUserSelect,
+  validateSessionToken,
+} from '@/server/auth/validateSession';
 import prisma from '@/server/db';
 import { ExtendedUserEntry } from '@/app/(app)/dashboard/state';
 import { revalidatePath } from 'next/cache';
@@ -17,20 +20,11 @@ export const userEntryRouter = createTRPCRouter({
         entryId: z.number(),
       })
     )
-    .mutation(async ({ input }) => {
-      const user = await validateSessionToken();
-
-      if (!user) {
-        return Response.json(
-          { error: 'You are not logged in' },
-          { status: 400 }
-        );
-      }
-
+    .mutation(async ({ ctx, input }) => {
       const userEntry = await prisma.userEntry.create({
         data: {
           entryId: input.entryId,
-          userId: user.id,
+          userId: ctx.user.id,
           rating: 0,
           progress: 0,
           notes: '',
@@ -38,10 +32,12 @@ export const userEntryRouter = createTRPCRouter({
         include: {
           entry: {
             include: {
-              translations: getDefaultWhereForTranslations(user),
+              translations: getDefaultWhereForTranslations(ctx.user),
             },
           },
-          user: true,
+          user: {
+            select: safeUserSelect(),
+          },
         },
       });
 
@@ -76,7 +72,14 @@ export const userEntryRouter = createTRPCRouter({
         visibility: z
           .string()
           .optional()
-          .refine(e => Object.values(UserEntryVisibility).includes(e as any)),
+          .refine(
+            e =>
+              Object.values(UserEntryVisibility).includes(e as any) ||
+              e === undefined,
+            {
+              message: 'Invalid visibility',
+            }
+          ),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -238,7 +241,9 @@ export const userEntryRouter = createTRPCRouter({
           visibility: input.visibility as UserEntryVisibility,
         },
         include: {
-          user: true,
+          user: {
+            select: safeUserSelect(),
+          },
           entry: {
             include: {
               userEntries: {
