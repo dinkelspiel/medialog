@@ -1,15 +1,15 @@
 'use client';
 
-import { AuthUser } from '@/server/auth/validateSession';
+import { SafeUser } from '@/server/auth/validateSession';
 import { createContext, useContext } from 'react';
 
-const AuthUserContext = createContext<AuthUser | null>(null);
+const AuthUserContext = createContext<SafeUser | null>(null);
 
 export function AuthUserProvider({
   user,
   children,
 }: {
-  user: AuthUser | null;
+  user: SafeUser | null;
   children: React.ReactNode;
 }) {
   return (

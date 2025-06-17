@@ -17,6 +17,7 @@ import { getDefaultWhereForTranslations } from '@/server/api/routers/dashboard_'
 import { getUserLists } from './_components/lists';
 import { Metadata, ResolvingMetadata } from 'next';
 import ActivityHistory from './_components/activityHistory';
+import { EntryRedirect } from '../../_components/EntryIslandContext';
 
 const Profile404 = async () => {
   const user = await validateSessionToken();
@@ -153,6 +154,7 @@ const Profile = async ({ params }: { params: { username: string } }) => {
             select: {
               id: true,
               originalTitle: true,
+              slug: true,
               posterPath: true,
               length: true,
             },
@@ -197,6 +199,7 @@ const Profile = async ({ params }: { params: { username: string } }) => {
       entry: {
         select: {
           id: true,
+          slug: true,
           originalTitle: true,
           posterPath: true,
           releaseDate: true,
@@ -262,27 +265,33 @@ const Profile = async ({ params }: { params: { username: string } }) => {
         <div className="grid w-fit grid-cols-1 gap-16 min-[1330px]:grid-cols-[1fr,250px]">
           <div className="flex flex-col gap-6 px-4 md:w-[710px]">
             <div className="flex flex-col gap-4">
-              <div className="font-dm-serif flex w-full justify-between border-b border-b-base-200 pb-2 text-3xl font-semibold">
+              <div className="flex w-full justify-between border-b border-b-base-200 pb-2 font-dm-serif text-3xl font-semibold">
                 Favorites
               </div>
               {favorites.length > 0 && (
                 <>
                   <div className="hidden grid-cols-4 gap-3 sm:grid">
                     {favorites.map((userEntry, idx) => (
-                      <UserEntryCard
-                        key={`userEntry-${idx}`}
-                        {...{
-                          entryTitle: (
-                            <ServerEntryTitleForUser
-                              entryId={userEntry.entry.id}
-                            />
-                          ),
-                          backgroundImage: userEntry.entry.posterPath,
-                          releaseDate: userEntry.entry.releaseDate,
-                          rating: userEntry.rating,
-                          category: userEntry.entry.category,
-                        }}
-                      />
+                      <EntryRedirect
+                        className="hover:no-underline"
+                        entryId={userEntry.entry.id}
+                        entrySlug={userEntry.entry.slug}
+                      >
+                        <UserEntryCard
+                          key={`userEntry-${idx}`}
+                          {...{
+                            entryTitle: (
+                              <ServerEntryTitleForUser
+                                entryId={userEntry.entry.id}
+                              />
+                            ),
+                            backgroundImage: userEntry.entry.posterPath,
+                            releaseDate: userEntry.entry.releaseDate,
+                            rating: userEntry.rating,
+                            category: userEntry.entry.category,
+                          }}
+                        />
+                      </EntryRedirect>
                     ))}
                   </div>
                   <div className="grid grid-cols-3 gap-3 sm:hidden">
@@ -330,47 +339,50 @@ const Profile = async ({ params }: { params: { username: string } }) => {
             <ActivityHistory profileUser={profileUser} />
 
             <div className="flex flex-col gap-4">
-              <div className="font-dm-serif flex w-full justify-between border-b border-b-base-200 pb-2 text-3xl font-semibold">
+              <div className="flex w-full justify-between border-b border-b-base-200 pb-2 font-dm-serif text-3xl font-semibold">
                 Recent Activity
               </div>
               {activity.length > 0 && (
                 <div className="flex flex-col gap-3">
                   {activity.map((activity, idx) => {
                     return (
-                      <div
+                      <EntryRedirect
                         key={`activity-${idx}`}
-                        className="grid w-full grid-cols-[max-content,1fr] gap-4 2xl:w-full 2xl:grid-cols-[max-content,1fr]"
+                        entryId={activity.entry.id}
+                        entrySlug={activity.entry.slug}
                       >
-                        <img
-                          src={activity.entry.posterPath}
-                          className="aspect-2/3 h-[80px] rounded-md 2xl:h-[100px]"
-                        />
-                        <div className="flex h-full flex-col justify-center gap-3 pb-3 2xl:border-b-0 2xl:pb-0">
-                          <div className="space-x-3">
-                            <span className="text-lg font-semibold">
-                              <ServerEntryTitleForUser
-                                entryId={activity.entry.id}
-                              />
-                            </span>
-                            <span className="text-sm font-medium text-base-500">
-                              {activity.entry.releaseDate.getFullYear()}
-                            </span>
-                          </div>
-                          <div className="mr-auto">
-                            {activity.type === 'reviewed' ||
-                              (activity.type === 'completeReview' && (
-                                <SmallRating
-                                  rating={parseInt(
-                                    activity.additionalData.split('|')[1]!
-                                  )}
+                        <div className="group grid w-full grid-cols-[max-content,1fr] gap-4 2xl:w-full 2xl:grid-cols-[max-content,1fr]">
+                          <img
+                            src={activity.entry.posterPath}
+                            className="aspect-2/3 h-[80px] rounded-md 2xl:h-[100px]"
+                          />
+                          <div className="flex h-full flex-col justify-center gap-3 pb-3 2xl:border-b-0 2xl:pb-0">
+                            <div className="space-x-3">
+                              <span className="text-lg font-semibold group-hover:underline">
+                                <ServerEntryTitleForUser
+                                  entryId={activity.entry.id}
                                 />
-                              ))}
-                          </div>
-                          <div className="flex justify-between">
-                            {generateActivityInfo(activity)}
+                              </span>
+                              <span className="text-sm font-medium text-base-500">
+                                {activity.entry.releaseDate.getFullYear()}
+                              </span>
+                            </div>
+                            <div className="mr-auto">
+                              {activity.type === 'reviewed' ||
+                                (activity.type === 'completeReview' && (
+                                  <SmallRating
+                                    rating={parseInt(
+                                      activity.additionalData.split('|')[1]!
+                                    )}
+                                  />
+                                ))}
+                            </div>
+                            <div className="flex justify-between">
+                              {generateActivityInfo(activity)}
+                            </div>
                           </div>
                         </div>
-                      </div>
+                      </EntryRedirect>
                     );
                   })}
                 </div>

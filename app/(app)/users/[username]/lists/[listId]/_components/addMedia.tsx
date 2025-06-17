@@ -1,5 +1,6 @@
 'use client';
 
+import { EntryRedirect } from '@/app/(app)/_components/EntryIslandContext';
 import AddLog from '@/components/addLog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
