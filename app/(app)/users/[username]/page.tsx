@@ -213,6 +213,9 @@ const Profile = async ({ params }: { params: { username: string } }) => {
   const activity = await prisma.userActivity.findMany({
     where: {
       userId: profileUser.id,
+      NOT: {
+        type: 'progressUpdate',
+      },
     },
     orderBy: {
       createdAt: 'desc',

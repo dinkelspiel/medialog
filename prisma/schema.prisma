@@ -75,6 +75,7 @@ enum Activity {
   reviewed
   rewatch
   completeReview
+  progressUpdate
 }
 
 model UserActivity {
