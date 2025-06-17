@@ -13,6 +13,7 @@ import CompletionProgress from '../progress';
 import { useAuthUser } from '@/app/(app)/_components/AuthUserContext';
 import { validateSessionToken } from '@/server/auth/validateSession';
 import prisma from '@/server/db';
+import Link from 'next/link';
 
 const TimedChallenges = async ({
   userEntries,
@@ -163,12 +164,17 @@ const TimedChallenges = async ({
                 .filter(e => e.userEntries.length > 0)
                 .map(user => (
                   <div className="flex justify-between text-sm">
-                    <div className="flex items-center gap-1">
-                      {user.username === authUser!.username && (
-                        <UserRound className="size-3" />
-                      )}{' '}
-                      {user.username}
-                    </div>
+                    <Link
+                      href={`/@${user.username}`}
+                      className="hover:underline"
+                    >
+                      <div className="flex items-center gap-1">
+                        {user.username === authUser!.username && (
+                          <UserRound className="size-3" />
+                        )}{' '}
+                        {user.username}
+                      </div>
+                    </Link>
                     <div className="text-base-500">
                       {parseInt(
                         (

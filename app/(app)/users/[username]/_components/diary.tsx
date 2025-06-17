@@ -7,6 +7,8 @@ import { getDefaultWhereForTranslations } from '@/server/api/routers/dashboard_'
 export type Diary = Record<
   string,
   {
+    entryId: number;
+    entrySlug: string;
     title: ReactNode;
     day: number;
   }[]
@@ -46,6 +48,8 @@ export const getUserDiary = async (userId: number): Promise<Diary> => {
       diary[monthMinusYear] = [];
     }
     diary[monthMinusYear]!.push({
+      entrySlug: userEntry.entry.slug,
+      entryId: userEntry.entry.id,
       title: <ServerEntryTitleForUser entryId={userEntry.entry.id} />,
       day: userEntry.watchedAt!.getDate(),
     });

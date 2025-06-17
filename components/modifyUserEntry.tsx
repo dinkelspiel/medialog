@@ -10,11 +10,13 @@ import {
   User,
   UserEntry,
   UserEntryStatus,
+  UserEntryVisibility,
   UserList,
 } from '@prisma/client';
 import {
   Bookmark,
   Check,
+  ChevronDown,
   ExternalLink,
   Eye,
   ListPlus,
@@ -22,6 +24,7 @@ import {
   Plus,
   Save,
   Trash2,
+  UsersRound,
   X,
 } from 'lucide-react';
 import { ReactNode, useEffect, useState } from 'react';
@@ -48,12 +51,24 @@ import {
   DialogContent,
   DialogFooter,
   DialogHeader,
+  DialogTitle,
   DialogTrigger,
 } from './ui/dialog';
 import { Label } from './ui/label';
 import { DateTimePicker } from './ui/date-time-picker';
 import { api } from '@/trpc/react';
 import { ResponseCookies } from 'next/dist/compiled/@edge-runtime/cookies';
+import { getUserTitleFromEntry } from '@/server/api/routers/dashboard_';
+import { EntryRedirect } from '@/app/(app)/_components/EntryIslandContext';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuGroup,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from './ui/dropdown-menu';
+import { capitalizeFirst } from '@/lib/capitalizeFirst';
+import AddToList from './addToList';
 
 const ModifyUserEntry = ({
   userEntry,
@@ -128,33 +143,33 @@ const ModifyUserEntry = ({
     }
   }, [removeUserEntryState]);
 
+  const updateUserEntry = api.userEntry.update.useMutation({
+    onSuccess(data) {
+      toast.success(data.message);
+      setUserEntry({
+        ...data.userEntry,
+        entry: {
+          ...data.userEntry.entry,
+          releaseDate: new Date(data.userEntry.entry.releaseDate),
+        },
+      });
+      utils.entries.getEntryPage.invalidate();
+    },
+    onError(error) {
+      toast.error(error.message);
+    },
+  });
+
   const updateStatus = async (status: UserEntryStatus) => {
     setUserEntry({
       ...userEntry,
       watchedAt: status === 'completed' ? new Date() : null,
       status,
     });
-    const response = await (
-      await fetch(`/api/user/entries/${userEntry.id}`, {
-        method: 'PATCH',
-        body: JSON.stringify({
-          status,
-        }),
-      })
-    ).json();
-
-    if (response.error) {
-      toast.error(response.error);
-    } else if (response.message) {
-      toast.success(response.message);
-      setUserEntry({
-        ...response.userEntry,
-        entry: {
-          ...response.userEntry.entry,
-          releaseDate: new Date(response.userEntry.entry.releaseDate),
-        },
-      });
-    }
+    updateUserEntry.mutate({
+      userEntryId: userEntry.id,
+      status,
+    });
   };
 
   const updateProgress = async (progress: number) => {
@@ -165,94 +180,60 @@ const ModifyUserEntry = ({
         progress >= userEntry.entry.length ? 'completed' : userEntry.status,
       progress,
     });
-    const response = await (
-      await fetch(`/api/user/entries/${userEntry.id}`, {
-        method: 'PATCH',
-        body: JSON.stringify({
-          progress,
-        }),
-      })
-    ).json();
-
-    if (response.error) {
-      toast.error(response.error);
-    } else if (response.message) {
-      toast.success(response.message);
-      setUserEntry({
-        ...response.userEntry,
-        entry: {
-          ...response.userEntry.entry,
-          releaseDate: new Date(response.userEntry.entry.releaseDate),
-        },
-      });
-    }
+    updateUserEntry.mutate({
+      userEntryId: userEntry.id,
+      progress,
+    });
   };
 
-  const createNewList = async () => {
-    const response = await (
-      await fetch(`/api/user/lists`, {
-        method: 'POST',
-        body: JSON.stringify({
-          initialEntryId: userEntry.entryId,
-        }),
-      })
-    ).json();
-
-    if (response.error) {
-      toast.error(`Error when creating list: ${response.error}`);
-    } else {
-      refetchUserLists().then(() => toast.success(response.message));
-    }
-  };
-
-  const addEntryToList = async (userList: UserList) => {
-    const response = await (
-      await fetch(`/api/user/lists/${userList.id}/entries`, {
-        method: 'POST',
-        body: JSON.stringify({
-          entryId: userEntry.entryId,
-        }),
-      })
-    ).json();
-
-    if (response.error) {
-      toast.error(`Error when adding entry to list: ${response.error}`);
-    } else {
-      refetchUserLists().then(() => {
-        setAddListsOpen(false);
-        toast.success(response.message);
-      });
-    }
+  const updateVisibility = async (visibility: UserEntryVisibility) => {
+    setUserEntry({
+      ...userEntry,
+      visibility,
+    });
+    updateUserEntry.mutate({
+      userEntryId: userEntry.id,
+      visibility,
+    });
   };
 
   const Header = () => (
-    <div className="grid w-full grid-cols-[max-content,1fr] gap-4 pb-4 pt-4 lg:pt-0">
-      <img
-        src={userEntry.entry.posterPath}
-        className="aspect-[2/3] w-[100px] rounded-lg shadow-md"
-      />
-      <div className="flex flex-col gap-2">
-        <div className="flex items-end gap-2">
-          <div className="text-lg font-semibold tracking-tight lg:pt-0">
-            {userEntry.entry.originalTitle}
+    <DialogHeader>
+      <div className="grid w-full grid-cols-[max-content,1fr] gap-4 pb-4 pt-4 lg:pt-0">
+        <img
+          src={userEntry.entry.posterPath}
+          className="aspect-[2/3] w-[100px] rounded-lg shadow-md"
+        />
+        <div className="flex flex-col gap-2">
+          <div className="flex items-end gap-2">
+            <EntryRedirect
+              entryId={userEntry.entry.id}
+              entrySlug={userEntry.entry.slug}
+            >
+              <DialogTitle>
+                <div className="text-lg font-semibold tracking-tight lg:pt-0">
+                  {getUserTitleFromEntry(userEntry.entry)}
+                </div>
+              </DialogTitle>
+            </EntryRedirect>
+            <div className="pb-[2px] text-sm text-base-500">
+              {userEntry.entry.releaseDate.getFullYear()}
+            </div>
           </div>
-          <div className="pb-[2px] text-sm text-base-500">
-            {userEntry.entry.releaseDate.getFullYear()}
+          {userEntry.entry.tagline && (
+            <div className="text-sm font-normal italic text-base-500">
+              "{userEntry.entry.tagline}"
+            </div>
+          )}
+          <div className="break-all text-sm font-normal">
+            {userEntry.entry.overview.slice(0, isDesktop ? 190 : 150) +
+              (userEntry.entry.overview.length > (isDesktop ? 190 : 150)
+                ? '...'
+                : '')}
           </div>
-        </div>
-        {userEntry.entry.tagline && (
-          <div className="text-sm font-normal italic text-base-500">
-            "{userEntry.entry.tagline}"
-          </div>
-        )}
-        <div className="break-all text-sm font-normal">
-          {userEntry.entry.overview.slice(0, isDesktop ? 190 : 150) +
-            (userEntry.entry.overview.length > (isDesktop ? 190 : 150)
-              ? '...'
-              : '')}
         </div>
       </div>
-    </div>
+    </DialogHeader>
   );
 
   const Footer = ({ children }: { children?: ReactNode }) => (
@@ -282,69 +263,58 @@ const ModifyUserEntry = ({
         </DialogContent>
       </Dialog>
       <div className="flex gap-2">
-        <Popover open={addListsOpen} onOpenChange={setAddListsOpen}>
-          <PopoverTrigger asChild>
+        <DropdownMenu>
+          <DropdownMenuTrigger>
             <Button
               variant="outline"
               size="sm"
               role="combobox"
               aria-expanded={addListsOpen}
             >
-              <ListPlus className="size-3" /> Add to list
+              {(() => {
+                switch (userEntry.visibility) {
+                  case 'public':
+                    return <Eye className="size-3" />;
+                  case 'friends':
+                    return <UsersRound className="size-3" />;
+                  case 'private':
+                    return <X className="size-3" />;
+                }
+              })()}{' '}
+              {capitalizeFirst(userEntry.visibility)}{' '}
+              <ChevronDown className="size-3 stroke-base-600" />
             </Button>
-          </PopoverTrigger>
-          <PopoverContent className="w-[200px] p-0">
-            <Command>
-              <div className="border-b p-1">
-                <Button
-                  variant={'ghost'}
-                  size={'sm'}
-                  className="w-full"
-                  onClick={() => {
-                    setAddListsOpen(false);
-                    createNewList();
-                  }}
-                >
-                  <Plus /> New list
-                </Button>
-              </div>
-              {userLists.length !== 0 && (
-                <CommandGroup>
-                  {userLists.map(list => (
-                    <div className="flex justify-between gap-1" key={list.id}>
-                      <CommandItem
-                        key={list.id}
-                        value={list.name}
-                        onSelect={() => {
-                          addEntryToList(list);
-                        }}
-                        className="w-full"
-                      >
-                        <Check
-                          className={cn(
-                            'mr-2 h-4 w-4',
-                            userListsWithEntry.find(e => e.id === list.id) !==
-                              undefined
-                              ? 'opacity-100'
-                              : 'opacity-0'
-                          )}
-                        />
-                        {list.name}
-                      </CommandItem>
-                      <Button variant={'ghost'} className="w-10">
-                        <Link
-                          href={`/@${userEntry.user.username}/lists/${list.id}`}
-                        >
-                          <ExternalLink className="size-4" />
-                        </Link>
-                      </Button>
-                    </div>
-                  ))}
-                </CommandGroup>
-              )}
-            </Command>
-          </PopoverContent>
-        </Popover>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuGroup>
+              {Object.values(UserEntryVisibility).map(visiblity => (
+                <DropdownMenuItem onClick={() => updateVisibility(visiblity)}>
+                  {(() => {
+                    switch (visiblity) {
+                      case 'public':
+                        return <Eye className="size-3" />;
+                      case 'friends':
+                        return <UsersRound className="size-3" />;
+                      case 'private':
+                        return <X className="size-3" />;
+                    }
+                  })()}
+                  {capitalizeFirst(visiblity)}
+                </DropdownMenuItem>
+              ))}
+            </DropdownMenuGroup>
+          </DropdownMenuContent>
+        </DropdownMenu>
+        <AddToList
+          onSuccess={() => refetchUserLists()}
+          entryId={userEntry.entryId}
+          userLists={userLists}
+          userListsWithEntry={userListsWithEntry}
+        >
+          <Button variant="outline" size="sm" role="combobox">
+            <ListPlus className="size-3" /> Add to list
+          </Button>
+        </AddToList>
         {children}
       </div>
     </div>

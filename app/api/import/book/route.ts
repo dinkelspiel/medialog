@@ -3,8 +3,6 @@ import { addMeilisearchEntryByEntryId } from '@/server/meilisearch';
 import axios from 'axios';
 import { NextRequest } from 'next/server';
 
-export const dynamic = 'force-dynamic';
-
 export const GET = async (request: NextRequest) => {
   const id = request.nextUrl.searchParams.get('olId');
 

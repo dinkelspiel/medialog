@@ -25,6 +25,7 @@ import { Button } from './ui/button';
 import { Dialog, DialogContent, DialogTitle } from './ui/dialog';
 import { Drawer, DrawerContent, DrawerTrigger } from './ui/drawer';
 import { Feedback } from '@/app/(app)/_components/feedback';
+import { IslandDialog } from './islands/islands';
 
 const SettingsButton = memo(
   ({
@@ -35,12 +36,9 @@ const SettingsButton = memo(
     setOpen: Dispatch<SetStateAction<boolean>>;
   }) => {
     return (
-      <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="box-border overflow-clip p-0 lg:h-full lg:max-h-[calc(100vh-64px)] lg:max-w-[calc(100vw-64px)]">
-          <DialogTitle className="sr-only">Settings</DialogTitle>
-          <SettingsView />
-        </DialogContent>
-      </Dialog>
+      <IslandDialog open={open} setOpen={setOpen} title={'Settings'}>
+        <SettingsView />
+      </IslandDialog>
     );
   }
 );

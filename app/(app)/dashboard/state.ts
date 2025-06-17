@@ -1,3 +1,4 @@
+import { SafeUser } from '@/server/auth/validateSession';
 import {
   Category,
   Entry,
@@ -17,7 +18,7 @@ export type FilterStyle =
   | 'updated';
 export type ExtendedUserEntry = UserEntry & {
   entry: Entry & { translations: EntryTranslation[] };
-} & { user: User };
+} & { user: SafeUser };
 
 type DashboardStore = {
   filterStatus: UserEntryStatus | 'all';

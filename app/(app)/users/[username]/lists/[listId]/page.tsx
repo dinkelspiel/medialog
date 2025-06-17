@@ -21,6 +21,7 @@ import TimedChallenges from './_components/challenges/timedChallenges';
 import Polls from './_components/polls/polls';
 import PopulateState from './_components/populateState';
 import { getDefaultWhereForTranslations } from '@/server/api/routers/dashboard_';
+import { EntryRedirect } from '@/app/(app)/_components/EntryIslandContext';
 
 export type Props = {
   params: { listId: string; username: string };
@@ -142,17 +143,23 @@ const Page = async ({ params }: Props) => {
             list.entries
               .sort((a, b) => a.order - b.order)
               .map((e, idx) => (
-                <UserEntryCard
-                  {...{
-                    entryTitle: e.entry.originalTitle,
-                    backgroundImage: e.entry.posterPath,
-                    category: e.entry.category,
-                    releaseDate: e.entry.releaseDate,
-                    rating: 0,
-                    topRight:
-                      list.type === 'ordered' ? <Badge>{idx + 1}</Badge> : '',
-                  }}
-                />
+                <EntryRedirect
+                  className="hover:no-underline"
+                  entryId={e.entry.id}
+                  entrySlug={e.entry.slug}
+                >
+                  <UserEntryCard
+                    {...{
+                      entryTitle: e.entry.originalTitle,
+                      backgroundImage: e.entry.posterPath,
+                      category: e.entry.category,
+                      releaseDate: e.entry.releaseDate,
+                      rating: 0,
+                      topRight:
+                        list.type === 'ordered' ? <Badge>{idx + 1}</Badge> : '',
+                    }}
+                  />
+                </EntryRedirect>
               ))}
           {authUser && authUser?.id === targetUser.id && (
             <AddMedia userList={list} user={targetUser} />

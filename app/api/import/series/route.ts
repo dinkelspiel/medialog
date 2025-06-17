@@ -145,7 +145,8 @@ export const GET = async (request: NextRequest) => {
         posterPath: 'https://image.tmdb.org/t/p/original/' + season.poster_path,
         tagline: data.tagline,
         overview: season.overview.length > 0 ? season.overview : data.overview,
-        backdropPath: data.backdrop_path,
+        backdropPath:
+          'https://image.tmdb.org/t/p/original/' + data.backdrop_path,
         category: 'Series',
         releaseDate: new Date(season.air_date),
         length: season.episode_count,
