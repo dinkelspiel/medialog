@@ -1,5 +1,7 @@
 import prisma from '@/server/db';
 
+export const dynamic = 'force-dynamic';
+
 export const GET = async () => {
   const entries = await prisma.entry.findMany({
     where: {
