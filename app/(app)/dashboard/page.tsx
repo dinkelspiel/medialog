@@ -12,34 +12,12 @@ import { Loader2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { SidebarButtons } from '../_components/sidebar';
-import { FilterView } from './_components/FilterView';
+import { FilterView, shouldBeFiltered } from './_components/FilterView';
 import { ExtendedUserEntry, useDashboardStore } from './state';
 import { useDebounceValue } from 'usehooks-ts';
 import { inferRouterOutputs } from '@trpc/server';
 import { entriesRouter } from '@/server/api/routers/entries';
 import { cn } from '@/lib/utils';
-
-export const shouldBeFiltered = (userEntry: UserEntry & { entry: Entry }) => {
-  const state = useDashboardStore.getState();
-
-  if (state.filterStatus !== 'all' && userEntry.status !== state.filterStatus) {
-    return true;
-  }
-
-  if (
-    (userEntry.rating > state.filterRatingRange[1] ||
-      userEntry.rating < state.filterRatingRange[0]) &&
-    state.filterStatus !== 'planning'
-  ) {
-    return true;
-  }
-
-  if (!state.filterCategories.includes(userEntry.entry.category)) {
-    return true;
-  }
-
-  return false;
-};
 
 const Page = () => {
   const { data, isPending: dataIsPending } = api.dashboard.get.useQuery();

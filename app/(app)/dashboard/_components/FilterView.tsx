@@ -23,12 +23,32 @@ import {
 import { cn } from '@/lib/utils';
 import { Command, Dices, SlidersHorizontal, SortDesc } from 'lucide-react';
 import { FilterStyle, useDashboardStore } from '../state';
-import { Category, UserEntryStatus } from '@prisma/client';
+import { Category, Entry, UserEntry, UserEntryStatus } from '@prisma/client';
 import { useEffect, useRef } from 'react';
 import { Slider } from '@/components/ui/slider';
 import { DualRangeSlider } from '@/components/ui/dual-range-slider';
-import { shouldBeFiltered } from '../page';
 
+export const shouldBeFiltered = (userEntry: UserEntry & { entry: Entry }) => {
+  const state = useDashboardStore.getState();
+
+  if (state.filterStatus !== 'all' && userEntry.status !== state.filterStatus) {
+    return true;
+  }
+
+  if (
+    (userEntry.rating > state.filterRatingRange[1] ||
+      userEntry.rating < state.filterRatingRange[0]) &&
+    state.filterStatus !== 'planning'
+  ) {
+    return true;
+  }
+
+  if (!state.filterCategories.includes(userEntry.entry.category)) {
+    return true;
+  }
+
+  return false;
+};
 export const FilterView = ({ className }: { className: string }) => {
   const {
     userEntries,
