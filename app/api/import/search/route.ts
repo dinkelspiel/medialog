@@ -5,6 +5,7 @@ import { fetch, setGlobalDispatcher, Agent } from 'undici';
 import axios from 'axios';
 
 export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 export const GET = async (request: NextRequest) => {
   setGlobalDispatcher(new Agent({ connect: { timeout: 50_000 } }));
