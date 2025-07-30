@@ -5,8 +5,9 @@ import z from 'zod';
 
 export const PATCH = async (
   request: Request,
-  { params }: { params: { listId: string; entryId: string } }
+  { params: _params }: { params: Promise<{ listId: string; entryId: string }> }
 ) => {
+  const params = await _params;
   const body = await request.json();
 
   const schema = z.object({

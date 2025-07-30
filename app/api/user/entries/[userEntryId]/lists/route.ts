@@ -4,8 +4,9 @@ import { NextRequest } from 'next/server';
 
 export const GET = async (
   request: NextRequest,
-  { params }: { params: { userEntryId: string } }
+  { params: _params }: { params: Promise<{ userEntryId: string }> }
 ) => {
+  const params = await _params;
   const user = await validateSessionToken();
 
   if (!user) {

@@ -42,19 +42,25 @@ const Profile404 = async () => {
 };
 
 export type Props = {
-  params: { username: string };
+  params: Promise<{ username: string }>;
 };
 
 export async function generateMetadata(
-  { params }: Props,
+  { params: _params }: Props,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
+  const params = await _params;
   return {
     title: `${params.username}'s profile - Medialog`,
   };
 }
 
-const Profile = async ({ params }: { params: { username: string } }) => {
+const Profile = async ({
+  params: _params,
+}: {
+  params: Promise<{ username: string }>;
+}) => {
+  const params = await _params;
   const authUser = await validateSessionToken();
   const profileUserExists = await prisma.user.findFirst({
     where: {

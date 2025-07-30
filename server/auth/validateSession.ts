@@ -6,7 +6,7 @@ import { redirect } from 'next/navigation';
 export type SafeUser = Awaited<ReturnType<typeof validateSessionToken>>;
 
 export const validateSessionToken = cache(async () => {
-  const sessionToken = cookies().get('mlSessionToken');
+  const sessionToken = (await cookies()).get('mlSessionToken');
 
   if (sessionToken === null || sessionToken === undefined) {
     return null;

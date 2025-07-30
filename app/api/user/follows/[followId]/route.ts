@@ -4,8 +4,9 @@ import { NextRequest } from 'next/server';
 
 export const POST = async (
   request: NextRequest,
-  { params }: { params: { followId: string } }
+  { params: _params }: { params: Promise<{ followId: string }> }
 ) => {
+  const params = await _params;
   const user = await validateSessionToken();
   const follow = await prisma.user.findFirst({
     where: {
@@ -63,8 +64,9 @@ export const POST = async (
 
 export const DELETE = async (
   request: NextRequest,
-  { params }: { params: { followId: string } }
+  { params: _params }: { params: Promise<{ followId: string }> }
 ) => {
+  const params = await _params;
   const user = await validateSessionToken();
   const follow = await prisma.user.findFirst({
     where: {
