@@ -6,7 +6,7 @@ import ModifyUserEntry from '@/components/modifyUserEntry';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { UserEntryCardObject } from '@/components/userEntryCard';
 import { api } from '@/trpc/react';
-import { Entry, UserList } from '@prisma/client';
+import { Entry, UserEntry, UserList } from '@prisma/client';
 import { useQuery } from '@tanstack/react-query';
 import { Loader2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
@@ -15,6 +15,31 @@ import { SidebarButtons } from '../_components/sidebar';
 import { FilterView } from './_components/FilterView';
 import { ExtendedUserEntry, useDashboardStore } from './state';
 import { useDebounceValue } from 'usehooks-ts';
+import { inferRouterOutputs } from '@trpc/server';
+import { entriesRouter } from '@/server/api/routers/entries';
+import { cn } from '@/lib/utils';
+
+export const shouldBeFiltered = (userEntry: UserEntry & { entry: Entry }) => {
+  const state = useDashboardStore.getState();
+
+  if (state.filterStatus !== 'all' && userEntry.status !== state.filterStatus) {
+    return true;
+  }
+
+  if (
+    (userEntry.rating > state.filterRatingRange[1] ||
+      userEntry.rating < state.filterRatingRange[0]) &&
+    state.filterStatus !== 'planning'
+  ) {
+    return true;
+  }
+
+  if (!state.filterCategories.includes(userEntry.entry.category)) {
+    return true;
+  }
+
+  return false;
+};
 
 const Page = () => {
   const { data, isPending: dataIsPending } = api.dashboard.get.useQuery();
@@ -137,17 +162,19 @@ const Dashboard = ({
         >
           {userEntries &&
             userEntries
-              .filter(a => {
-                if (filterTitle === '') {
-                  return true;
+              .filter(userEntry => {
+                if (search.data && filterTitle !== '') {
+                  const entry = search.data.find(
+                    e => e.id === userEntry.entryId
+                  );
+                  if (!entry) {
+                    return true;
+                  }
+                  return (entry._rankingScore ?? 0) > 0.6;
                 }
 
-                if (search.data) {
-                  const entry = search.data.find(e => e.id === a.entryId);
-                  if (!entry) {
-                    return false;
-                  }
-                  return (entry._rankingScore ?? 0) > 0.5;
+                if (shouldBeFiltered(userEntry)) {
+                  return false;
                 }
                 return true;
               })
@@ -188,25 +215,6 @@ const Dashboard = ({
                 }
               })
               .map(userEntry => {
-                if (
-                  filterTitle !== '' &&
-                  search.data &&
-                  !search.data.find(e => e.id === userEntry.entryId)
-                ) {
-                  return;
-                }
-
-                if (
-                  filterStatus !== 'all' &&
-                  userEntry.status !== filterStatus
-                ) {
-                  return;
-                }
-
-                if (!filterCategories.includes(userEntry.entry.category)) {
-                  return;
-                }
-
                 return (
                   <UserEntryCardObject
                     key={'ue' + userEntry.id}
@@ -216,11 +224,11 @@ const Dashboard = ({
                       setListsWithUserEntry([]);
                       fetchUserListsWithEntry(userEntry.id);
                     }}
-                    className={
+                    className={cn(
                       userEntry.status === 'planning' && filterStatus === 'all'
                         ? 'opacity-70'
                         : 'opacity-100'
-                    }
+                    )}
                   />
                 );
               })}

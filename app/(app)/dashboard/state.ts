@@ -30,6 +30,8 @@ type DashboardStore = {
   setFilterTitle: (title: string) => void;
   filterStyle: FilterStyle;
   setFilterStyle: (style: FilterStyle) => void;
+  filterRatingRange: [number, number];
+  setFilterRatingRange: (value: [number, number]) => void;
 
   userEntries: ExtendedUserEntry[];
   setUserEntries: (userEntries: ExtendedUserEntry[]) => void;
@@ -79,4 +81,7 @@ export const useDashboardStore = create<DashboardStore>(set => ({
       selectedUserEntry:
         userEntryId === state.selectedUserEntry ? undefined : userEntryId,
     })),
+
+  filterRatingRange: [0, 100],
+  setFilterRatingRange: filterRatingRange => set({ filterRatingRange }),
 }));
