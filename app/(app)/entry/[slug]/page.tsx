@@ -13,7 +13,12 @@ import { validateSessionToken } from '@/server/auth/validateSession';
 
 export const dynamic = 'force-dynamic';
 
-const Page = async ({ params }: { params: { slug: string } }) => {
+const Page = async ({
+  params: _params,
+}: {
+  params: Promise<{ slug: string }>;
+}) => {
+  const params = await _params;
   const authUser = await validateSessionToken();
 
   if (!authUser) {

@@ -7,8 +7,9 @@ import z from 'zod';
 
 export const POST = async (
   request: NextRequest,
-  { params }: { params: { listId: string } }
+  { params: _params }: { params: Promise<{ listId: string }> }
 ) => {
+  const params = await _params;
   const body = await request.json();
 
   const schema = z.object({

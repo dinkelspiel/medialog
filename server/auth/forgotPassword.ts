@@ -72,7 +72,7 @@ export const forgotPassword = async (
     },
   });
 
-  await cookies().delete('mlSessionToken');
+  (await cookies()).delete('mlSessionToken');
 
   return {
     message: 'Updated password',

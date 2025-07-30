@@ -80,15 +80,15 @@ export const signUp = async (
     data: {
       userId: user.id,
       expiry: addMonths(new Date(), 6),
-      ipAddress: (headers().get('x-forwarded-for') ?? '127.0.0.1').split(
-        ','
-      )[0]!,
-      userAgent: headers().get('User-Agent') ?? 'No user agent found',
+      ipAddress: (
+        (await headers()).get('x-forwarded-for') ?? '127.0.0.1'
+      ).split(',')[0]!,
+      userAgent: (await headers()).get('User-Agent') ?? 'No user agent found',
       token: generateToken(64),
     },
   });
 
-  cookies().set('mlSessionToken', session.token, {
+  (await cookies()).set('mlSessionToken', session.token, {
     expires: new Date().getTime() + 1000 * 60 * 60 * 24 * 31 * 6,
   });
 

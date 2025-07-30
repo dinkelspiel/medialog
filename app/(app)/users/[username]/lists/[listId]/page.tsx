@@ -24,13 +24,14 @@ import { getDefaultWhereForTranslations } from '@/server/api/routers/dashboard_'
 import { EntryRedirect } from '@/app/(app)/_components/EntryIslandContext';
 
 export type Props = {
-  params: { listId: string; username: string };
+  params: Promise<{ listId: string; username: string }>;
 };
 
 export async function generateMetadata(
-  { params }: Props,
+  { params: _params }: Props,
   parent: ResolvingMetadata
 ): Promise<Metadata> {
+  const params = await _params;
   const list = await prisma.userList.findFirst({
     where: {
       id: Number(params.listId),
@@ -49,7 +50,8 @@ export async function generateMetadata(
   };
 }
 
-const Page = async ({ params }: Props) => {
+const Page = async ({ params: _params }: Props) => {
+  const params = await _params;
   const authUser = await validateSessionToken();
   const targetUser = await prisma.user.findFirst({
     where: {
