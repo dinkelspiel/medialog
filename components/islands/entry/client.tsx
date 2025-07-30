@@ -15,7 +15,7 @@ const EntryClient = () => {
   const utils = api.useUtils();
 
   const entryPage = api.entries.getEntryPage.useQuery({
-    entryId: entryIsland ? (entryIsland.entryId ?? -1) : -1,
+    entryId: entryIsland ? (entryIsland.entryId ?? 1) : 1,
   });
 
   if (!entryIsland || !entryIsland.entryId) return;

@@ -24,6 +24,7 @@ import UserEntryCard from './userEntryCard';
 import ExternalUserEntry from './userEntryExternal';
 import { api } from '@/trpc/react';
 import { getUserTitleFromEntry } from '@/server/api/routers/dashboard_';
+import { Badge } from './ui/badge';
 
 const AddLog = ({
   children,
@@ -287,7 +288,7 @@ const AddLogContent = ({
           </div>
         )}
 
-      <div className="max-h-[calc(100dvh-100px)] overflow-y-scroll lg:max-h-[calc(100dvh-220px)]">
+      <div className="no-scrollbar max-h-[calc(100dvh-100px)] overflow-y-scroll lg:max-h-[calc(100dvh-220px)]">
         <div className="grid grid-cols-3 gap-3 lg:grid-cols-4">
           {queryResults &&
             queryResults
@@ -301,6 +302,11 @@ const AddLogContent = ({
                   category={e.category}
                   rating={0}
                   onClick={() => addAction(e.id)}
+                  topRight={
+                    e.userEntries.length > 0 && (
+                      <Badge variant={'secondary'}>In Library</Badge>
+                    )
+                  }
                 />
               ))}
         </div>
@@ -322,11 +328,7 @@ const AddLogContent = ({
 
         {externalQueryResults && externalQueryResults.length > 0 && (
           <>
-            {!(
-              queryResults &&
-              externalQueryResults.length > 0 &&
-              queryResults.length === 0
-            ) && (
+            {externalQueryResults.length > 0 && (
               <div className="relative py-4">
                 <div className="absolute inset-0 flex items-center">
                   <span className="w-full border-t" />
@@ -340,14 +342,14 @@ const AddLogContent = ({
             )}
             <div className="grid grid-cols-3 gap-4 lg:grid-cols-4">
               {externalQueryResults
-                .slice(
-                  0,
-                  (isDesktop ? 8 : 12) -
-                    (queryResults ? queryResults.length : 0)
-                )
+                // .slice(
+                //   0,
+                //   (isDesktop ? 8 : 12) -
+                //     (queryResults ? queryResults.length : 0)
+                // )
                 .map(e => (
                   <div
-                    key={e.posterPath}
+                    key={e.foreignId}
                     className={cn({
                       'relative overflow-clip rounded-lg':
                         importing === e.foreignId.toString(),

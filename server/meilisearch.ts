@@ -75,6 +75,13 @@ export const searchEntries = async (
     },
     include: {
       translations: getDefaultWhereForTranslations(authUser),
+      userEntries: authUser
+        ? {
+            where: {
+              userId: authUser.id,
+            },
+          }
+        : undefined,
     },
   });
 

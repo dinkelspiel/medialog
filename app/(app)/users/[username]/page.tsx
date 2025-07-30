@@ -282,6 +282,7 @@ const Profile = async ({
                   <div className="hidden grid-cols-4 gap-3 sm:grid">
                     {favorites.map((userEntry, idx) => (
                       <EntryRedirect
+                        key={userEntry.entry.id}
                         className="hover:no-underline"
                         entryId={userEntry.entry.id}
                         entrySlug={userEntry.entry.slug}
@@ -305,20 +306,27 @@ const Profile = async ({
                   </div>
                   <div className="grid grid-cols-3 gap-3 sm:hidden">
                     {favorites.slice(0, 3).map((userEntry, idx) => (
-                      <UserEntryCard
-                        key={`userEntry-${idx}`}
-                        {...{
-                          entryTitle: (
-                            <ServerEntryTitleForUser
-                              entryId={userEntry.entry.id}
-                            />
-                          ),
-                          backgroundImage: userEntry.entry.posterPath,
-                          releaseDate: userEntry.entry.releaseDate,
-                          rating: userEntry.rating,
-                          category: userEntry.entry.category,
-                        }}
-                      />
+                      <EntryRedirect
+                        key={userEntry.entry.id}
+                        className="hover:no-underline"
+                        entryId={userEntry.entry.id}
+                        entrySlug={userEntry.entry.slug}
+                      >
+                        <UserEntryCard
+                          key={`userEntry-${idx}`}
+                          {...{
+                            entryTitle: (
+                              <ServerEntryTitleForUser
+                                entryId={userEntry.entry.id}
+                              />
+                            ),
+                            backgroundImage: userEntry.entry.posterPath,
+                            releaseDate: userEntry.entry.releaseDate,
+                            rating: userEntry.rating,
+                            category: userEntry.entry.category,
+                          }}
+                        />
+                      </EntryRedirect>
                     ))}
                   </div>
                 </>

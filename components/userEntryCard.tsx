@@ -64,7 +64,7 @@ const UserEntryCard = ({
         </div>
         <div className="flex flex-row items-center justify-between">
           <div className="text-sm text-base-400">
-            {releaseDate.getFullYear()}
+            {isNaN(releaseDate.getFullYear()) ? '' : releaseDate.getFullYear()}
           </div>
           {!!customStars && customStars}
           {!customStars && (

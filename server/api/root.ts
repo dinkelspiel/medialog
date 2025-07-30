@@ -6,6 +6,7 @@ import { userEntryRouter } from './routers/userEntry';
 import { listRouter } from './routers/list';
 import { entriesRouter } from './routers/entries';
 import { importRouter } from './routers/import';
+import { authRouter } from './routers/auth';
 
 /**
  * This is the primary router for your server.
@@ -13,6 +14,7 @@ import { importRouter } from './routers/import';
  * All routers added in /api/routers should be manually added here.
  */
 export const appRouter = createTRPCRouter({
+  auth: authRouter,
   dashboard: dashboardRouter,
   settings: settingsRouter,
   github: githubRouter,

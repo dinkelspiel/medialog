@@ -80,6 +80,7 @@ export const userEntryRouter = createTRPCRouter({
               message: 'Invalid visibility',
             }
           ),
+        watchedAt: z.date().optional(),
       })
     )
     .mutation(async ({ ctx, input }) => {
@@ -216,6 +217,18 @@ export const userEntryRouter = createTRPCRouter({
         }
       }
 
+      if (input.watchedAt) {
+        await prisma.userActivity.create({
+          data: {
+            type: 'progressUpdate',
+            userId: ctx.user.id,
+            entryId: userEntry.entryId,
+            additionalData: '',
+            createdAt: input.watchedAt,
+          },
+        });
+      }
+
       const updateUserEntry = await prisma.userEntry.update({
         where: {
           id: input.userEntryId,
@@ -237,6 +250,10 @@ export const userEntryRouter = createTRPCRouter({
           rating: input.rating,
           progress: input.progress,
           watchedAt: ((): Date | undefined => {
+            if (input.watchedAt) {
+              return input.watchedAt;
+            }
+
             if (input.progress && input.progress >= userEntry.entry.length) {
               return new Date();
             }
@@ -274,5 +291,21 @@ export const userEntryRouter = createTRPCRouter({
         message: 'Updated user entry',
         userEntry: updateUserEntry,
       };
+    }),
+  remove: protectedProcedure
+    .input(
+      z.object({
+        userEntryId: z.number(),
+      })
+    )
+    .mutation(async ({ ctx, input }) => {
+      await prisma.userEntry.delete({
+        where: {
+          id: input.userEntryId,
+          userId: ctx.user.id,
+        },
+      });
+
+      return { message: 'Removed user entry' };
     }),
 });

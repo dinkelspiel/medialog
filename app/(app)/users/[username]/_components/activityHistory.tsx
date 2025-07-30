@@ -46,7 +46,7 @@ const ActivityHistory = async ({ profileUser }: { profileUser: User }) => {
 
       <div className="flex flex-wrap justify-center gap-1 rounded-lg bg-base-50 p-4 shadow-sm">
         {days.map((day, idx) => (
-          <Tooltip>
+          <Tooltip key={day.date}>
             <TooltipTrigger asChild>
               <div
                 key={idx}
