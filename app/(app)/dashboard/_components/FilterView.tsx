@@ -21,13 +21,17 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
-import { Command, SlidersHorizontal, SortDesc } from 'lucide-react';
+import { Command, Dices, SlidersHorizontal, SortDesc } from 'lucide-react';
 import { FilterStyle, useDashboardStore } from '../state';
 import { Category, UserEntryStatus } from '@prisma/client';
 import { useEffect, useRef } from 'react';
+import { Slider } from '@/components/ui/slider';
+import { DualRangeSlider } from '@/components/ui/dual-range-slider';
+import { shouldBeFiltered } from '../page';
 
 export const FilterView = ({ className }: { className: string }) => {
   const {
+    userEntries,
     filterStatus,
     setFilterStatus,
     filterCategories,
@@ -36,6 +40,9 @@ export const FilterView = ({ className }: { className: string }) => {
     setFilterTitle,
     filterStyle,
     setFilterStyle,
+    filterRatingRange,
+    setFilterRatingRange,
+    setSelectedUserEntry,
   } = useDashboardStore();
 
   // Shortcut for search
@@ -178,29 +185,51 @@ export const FilterView = ({ className }: { className: string }) => {
               </div>
             </div>
 
-            {/* <div className="space-y-3">
-            <div className="flex justify-between">
+            <div
+              className={cn('space-y-1 transition-all duration-150', {
+                'pointer-events-none opacity-50': filterStatus === 'planning',
+              })}
+            >
+              <div className="flex justify-between">
                 <h3 className="text-sm font-medium">Rating Range</h3>
                 <span className="text-sm text-base-500">
-                {ratingRange[0]} - {ratingRange[1]}
+                  {filterRatingRange[0] / 20} - {filterRatingRange[1] / 20}
                 </span>
-            </div>
-            <Slider
-                defaultValue={[0, 10]}
-                max={10}
-                step={0.5}
-                value={ratingRange}
-                onValueChange={setRatingRange}
+              </div>
+              <DualRangeSlider
+                defaultValue={[0, 100]}
+                max={100}
+                // step={0.1}
+                value={filterRatingRange}
+                onValueChange={setFilterRatingRange}
                 className="py-4"
-            />
-            </div> */}
+              />
+            </div>
           </div>
-          {/* <div className="flex h-full flex-col justify-end">
-            <Button className="w-full" size={'sm'} variant={'outline'}>
-                <Dices className="stroke-base-600" />
-                Pick Random
+          <div className="flex h-full flex-col justify-end">
+            <Button
+              className="w-full"
+              size={'sm'}
+              variant={'outline'}
+              disabled={(() => {
+                const availableEntries = userEntries.filter(userEntry => {
+                  return !shouldBeFiltered(userEntry);
+                });
+                return availableEntries.length === 0;
+              })()}
+              onClick={() => {
+                const availableEntries = userEntries.filter(userEntry => {
+                  return !shouldBeFiltered(userEntry);
+                });
+
+                let index = Math.floor(Math.random() * availableEntries.length);
+                setSelectedUserEntry(availableEntries[index]!.id);
+              }}
+            >
+              <Dices className="stroke-base-600" />
+              Pick Random
             </Button>
-            </div> */}
+          </div>
         </SheetContent>
       </Sheet>
     </div>
