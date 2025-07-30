@@ -27,7 +27,7 @@ const Top = ({
   show: number;
 }) => {
   return results.slice(0, show).map((result, idx) => (
-    <div className="flex w-fit flex-col items-center gap-1">
+    <div key={result.genre} className="flex w-fit flex-col items-center gap-1">
       <div
         className={cn(
           'w-fit rounded-md px-4 py-1 text-white',
@@ -86,7 +86,7 @@ const GenreOverview = async ({ profileUser }: { profileUser: User }) => {
 
   return (
     <div className="flex flex-col items-center gap-4 lg:items-start">
-      <div className="font-dm-serif flex w-full justify-between border-b border-b-base-200 pb-2 text-3xl font-semibold">
+      <div className="flex w-full justify-between border-b border-b-base-200 pb-2 font-dm-serif text-3xl font-semibold">
         Genre Overview
       </div>
       <div className="flex w-full flex-col items-end justify-between gap-2 2xl:w-[250px]">
@@ -99,7 +99,7 @@ const GenreOverview = async ({ profileUser }: { profileUser: User }) => {
 
         <div className="flex h-4 w-full overflow-clip rounded-md shadow-sm">
           {results.map((result, idx) => (
-            <Tooltip>
+            <Tooltip key={result.genre}>
               <TooltipTrigger asChild>
                 <div
                   className={cn('h-4', colors[idx % colors.length]![0])}

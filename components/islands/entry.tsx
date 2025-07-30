@@ -38,7 +38,7 @@ const EntryView = ({
   const title = getUserTitleFromEntry(entryPage.entry);
 
   return (
-    <div className="grid h-full w-full grid-rows-[250px,1fr] p-2 lg:p-0">
+    <div className="grid h-full w-full grid-rows-[250px,1fr] p-2 lg:p-0 lg:pb-4">
       <div
         style={{ backgroundImage: `url(${entryPage.entry.backdropPath})` }}
         className="relative h-full w-full bg-cover"
@@ -59,8 +59,8 @@ const EntryView = ({
           </div>
         </div>
       </div>
-      <div className="mx-auto mt-2 grid h-fit w-fit grid-cols-1 lg:-mt-[188px] xl:gap-16 min-[1330px]:grid-cols-[250px,1fr]">
-        <div className="flex flex-col gap-6">
+      <div className="mx-auto mt-2 grid h-fit w-fit grid-cols-1 xl:gap-16 min-[1330px]:grid-cols-[250px,1fr]">
+        <div className="flex flex-col gap-6 lg:-mt-[188px]">
           <div className="flex flex-col gap-2">
             <Image
               width={250}
@@ -151,7 +151,7 @@ const EntryView = ({
                 Reviews
               </div>
               {entryPage.reviews.map(review => (
-                <div className="flex flex-col gap-2">
+                <div key={review.id} className="flex flex-col gap-2">
                   <div className="flex items-center gap-2 text-sm">
                     <div>
                       <span className="text-base-600">Review by </span>

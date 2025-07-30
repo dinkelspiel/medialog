@@ -170,9 +170,10 @@ export const ProfileSidebar = ({
                   {month.split('-')[0]!}
                 </div>
               </div>
-              <div className="grid grid-cols-[17.5px,1fr] gap-2 text-sm font-medium">
+              <div className="flex flex-col items-start gap-2 text-sm font-medium">
                 {diary[month]!.map(day => (
-                  <Fragment
+                  <div
+                    className="grid grid-cols-[17.5px,1fr] items-start gap-2"
                     key={month + (JSON.stringify(day) + '') + day.title}
                   >
                     <div className="text-base-500">{day.day}</div>
@@ -184,7 +185,7 @@ export const ProfileSidebar = ({
                         {day.title}
                       </div>
                     </EntryRedirect>
-                  </Fragment>
+                  </div>
                 ))}
               </div>
             </div>

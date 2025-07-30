@@ -30,6 +30,11 @@ export const entriesRouter = createTRPCRouter({
           },
           include: {
             translations: getDefaultWhereForTranslations(ctx.user),
+            userEntries: {
+              where: {
+                userId: ctx.user.id,
+              },
+            },
           },
           take: input.limit,
           orderBy: {

@@ -4,48 +4,25 @@ import SubmitButton from '@/components/submitButton';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
-import { removeUserEntry, saveUserEntry } from '@/server/user/entries';
-import {
-  Entry,
-  User,
-  UserEntry,
-  UserEntryStatus,
-  UserEntryVisibility,
-  UserList,
-} from '@prisma/client';
+import { UserEntryStatus, UserEntryVisibility, UserList } from '@prisma/client';
 import {
   Bookmark,
   Check,
   ChevronDown,
-  ExternalLink,
   Eye,
   ListPlus,
   Pause,
-  Plus,
   Save,
   Trash2,
   UsersRound,
   X,
 } from 'lucide-react';
 import { ReactNode, useEffect, useState } from 'react';
-import { useFormState } from 'react-dom';
 import { toast } from 'sonner';
 import { Input } from './ui/input';
 import { cn } from '@/lib/utils';
 import { useMediaQuery } from 'usehooks-ts';
 import { Badge } from './ui/badge';
-import {
-  Command,
-  CommandGroup,
-  CommandInput,
-  CommandItem,
-} from '@/components/ui/command';
-import {
-  Popover,
-  PopoverContent,
-  PopoverTrigger,
-} from '@/components/ui/popover';
-import Link from 'next/link';
 import {
   Dialog,
   DialogContent,
@@ -57,7 +34,6 @@ import {
 import { Label } from './ui/label';
 import { DateTimePicker } from './ui/date-time-picker';
 import { api } from '@/trpc/react';
-import { ResponseCookies } from 'next/dist/compiled/@edge-runtime/cookies';
 import { getUserTitleFromEntry } from '@/server/api/routers/dashboard_';
 import { EntryRedirect } from '@/app/(app)/_components/EntryIslandContext';
 import {
@@ -93,21 +69,7 @@ const ModifyUserEntry = ({
     userEntry.watchedAt ? userEntry.watchedAt : new Date()
   );
 
-  const [saveUserEntryState, saveUserEntryAction] = useFormState(
-    saveUserEntry,
-    {}
-  );
-
   const utils = api.useUtils();
-  useEffect(() => {
-    if (saveUserEntryState.message) {
-      utils.dashboard.invalidate();
-    }
-  }, [saveUserEntryState]);
-  const [removeUserEntryState, removeUserEntryAction] = useFormState(
-    removeUserEntry,
-    {}
-  );
 
   const isDesktop = useMediaQuery('(min-width: 1024px)');
 
@@ -120,29 +82,6 @@ const ModifyUserEntry = ({
     setRating(userEntry.rating);
   }, [userEntry]);
 
-  useEffect(() => {
-    if (saveUserEntryState.message) {
-      setUserEntry({ ...userEntry, notes, rating });
-      toast.success(saveUserEntryState.message);
-    }
-
-    if (saveUserEntryState.error) {
-      toast.error(saveUserEntryState.error);
-    }
-  }, [saveUserEntryState]);
-
-  useEffect(() => {
-    if (removeUserEntryState.message) {
-      removeUserEntryClient(userEntry);
-      setOpen(false);
-      toast.success(removeUserEntryState.message);
-    }
-
-    if (removeUserEntryState.error) {
-      toast.error(removeUserEntryState.error);
-    }
-  }, [removeUserEntryState]);
-
   const updateUserEntry = api.userEntry.update.useMutation({
     onSuccess(data) {
       toast.success(data.message);
@@ -154,6 +93,19 @@ const ModifyUserEntry = ({
         },
       });
       utils.entries.getEntryPage.invalidate();
+    },
+    onError(error) {
+      toast.error(error.message);
+    },
+  });
+
+  const removeUserEntry = api.userEntry.remove.useMutation({
+    onSuccess(data) {
+      toast.success(data.message);
+      utils.dashboard.invalidate();
+      utils.entries.getEntryPage.invalidate();
+      removeUserEntryClient(userEntry);
+      setOpen(false);
     },
     onError(error) {
       toast.error(error.message);
@@ -246,25 +198,35 @@ const ModifyUserEntry = ({
         </DialogTrigger>
         <DialogContent>
           <DialogHeader>
-            Are you sure you want to remove this review?
+            <DialogTitle>
+              Are you sure you want to remove this review?
+            </DialogTitle>
           </DialogHeader>
           <DialogFooter>
             <Button
+              className="w-full"
               variant={'outline'}
               onClick={() => setRemoveUserEntryOpen(false)}
             >
               No
             </Button>
-            <form action={removeUserEntryAction}>
-              <input type="hidden" value={userEntry.id} name="userEntryId" />
-              <SubmitButton size={'default'}>Yes</SubmitButton>
-            </form>
+            <SubmitButton
+              size={'default'}
+              isPending={removeUserEntry.isPending}
+              onClick={() =>
+                removeUserEntry.mutate({
+                  userEntryId: userEntry.id,
+                })
+              }
+            >
+              Yes
+            </SubmitButton>
           </DialogFooter>
         </DialogContent>
       </Dialog>
       <div className="flex flex-col gap-2 lg:flex-row">
         <DropdownMenu>
-          <DropdownMenuTrigger>
+          <DropdownMenuTrigger asChild>
             <Button
               variant="outline"
               className="w-full lg:w-fit"
@@ -356,31 +318,33 @@ const ModifyUserEntry = ({
               <Label>Watched</Label>
               <DateTimePicker date={watchedAt} setDate={setWatchedAt} />
             </div>
-            <div className="flex items-center gap-2">
+            <div className="hidden items-center gap-2 lg:flex">
               <Label>Created</Label>
               {new Date(userEntry.createdAt.toString()).toDateString()}
             </div>
-            <div className="flex items-center gap-2">
+            <div className="hidden items-center gap-2 lg:flex">
               <Label>Updated</Label>
               {new Date(userEntry.updatedAt.toString()).toDateString()}
             </div>
           </div>
         </div>
         <Footer>
-          <form action={saveUserEntryAction}>
-            <input type="hidden" value={userEntry.id} name="userEntryId" />
-            <input type="hidden" value={rating} name="rating" />
-            <input type="hidden" value={notes} name="notes" />
-            <input
-              type="hidden"
-              value={watchedAt?.toISOString()}
-              name="watchedAt"
-            />
-            <SubmitButton className="w-full px-6 lg:w-fit" size={'sm'}>
-              <Save className="size-3" />
-              Save
-            </SubmitButton>
-          </form>
+          <SubmitButton
+            isPending={updateUserEntry.isPending}
+            onClick={() =>
+              updateUserEntry.mutate({
+                userEntryId: userEntry.id,
+                rating,
+                notes,
+                watchedAt: watchedAt ? watchedAt : undefined,
+              })
+            }
+            className="w-full px-6 lg:w-fit"
+            size={'sm'}
+          >
+            <Save className="size-3" />
+            Save
+          </SubmitButton>
         </Footer>
       </div>
     );
