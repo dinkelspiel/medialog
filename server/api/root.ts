@@ -5,6 +5,7 @@ import { githubRouter } from './routers/github';
 import { userEntryRouter } from './routers/userEntry';
 import { listRouter } from './routers/list';
 import { entriesRouter } from './routers/entries';
+import { importRouter } from './routers/import';
 
 /**
  * This is the primary router for your server.
@@ -18,6 +19,7 @@ export const appRouter = createTRPCRouter({
   userEntry: userEntryRouter,
   list: listRouter,
   entries: entriesRouter,
+  import: importRouter,
 });
 
 // export type definition of API

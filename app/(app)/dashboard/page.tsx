@@ -146,9 +146,9 @@ const Dashboard = ({
                     e => e.id === userEntry.entryId
                   );
                   if (!entry) {
-                    return true;
+                    return false;
                   }
-                  return (entry._rankingScore ?? 0) > 0.6;
+                  return (entry._rankingScore ?? 0) > 0.5;
                 }
 
                 if (shouldBeFiltered(userEntry)) {
@@ -203,6 +203,7 @@ const Dashboard = ({
                       fetchUserListsWithEntry(userEntry.id);
                     }}
                     className={cn(
+                      'min-w-[132px]',
                       userEntry.status === 'planning' && filterStatus === 'all'
                         ? 'opacity-70'
                         : 'opacity-100'
