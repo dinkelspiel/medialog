@@ -2,6 +2,7 @@ import prisma from '@/server/db';
 import { addMeilisearchEntryByEntryId } from '@/server/meilisearch';
 import axios from 'axios';
 import { NextRequest } from 'next/server';
+export const revalidate = 0;
 
 export const GET = async (request: NextRequest) => {
   const id = request.nextUrl.searchParams.get('olId');
