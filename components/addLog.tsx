@@ -180,45 +180,43 @@ const AddLogContent = ({
     isLoading: externalQueryIsLoading,
     isError: externalIsError,
     error: externalQueryError,
-  } = useQuery<
-    {
-      title: string;
-      category: Category;
-      releaseDate: Date;
-      author: string;
-      foreignId: number;
-      posterPath: string;
-    }[]
-  >({
-    queryFn: () =>
-      fetch(
-        `/api/import/search?q=${debouncedQueryTitle[0]}&categories=${generateQueryCategories()}&take=12&excludeExisting=true`
-      ).then(res => res.json()),
-    queryKey: [
-      'externalSearch',
-      debouncedQueryTitle,
-      generateQueryCategories(),
-    ],
+  } = api.import.search.useQuery({
+    query: debouncedQueryTitle[0],
+    categories: generateQueryCategories(),
+    take: 12,
+    excludeExisting: true,
   });
 
-  const importMedia = useMutation({
-    mutationKey: ['importMedia'],
-    mutationFn: (data: { foreignId: string; category: Category }) =>
-      fetch(
-        `/api/import/${data.category.toLowerCase()}?${data.category === 'Book' ? 'olId' : 'tmdbId'}=${data.foreignId}`
-      ),
-    onMutate: data => setImporting(data.foreignId),
-    onSuccess: async result => {
-      const data = await result.json();
+  const importBook = api.import.book.useMutation({
+    onMutate: data => setImporting(data.olId.toString()),
+    onSuccess: data => {
       setImporting(undefined);
-      if (data.message) {
-        addAction(data.entry.id!);
-      } else {
-        toast.error(data.error);
-      }
+      addAction(data.entry.id!);
     },
-    onError: async error => {
-      toast.error(error.message);
+    onError: data => {
+      toast.error(data.message);
+    },
+  });
+
+  const importMovie = api.import.movie.useMutation({
+    onMutate: data => setImporting(data.tmdbId.toString()),
+    onSuccess: data => {
+      setImporting(undefined);
+      addAction(data.entry.id!);
+    },
+    onError: data => {
+      toast.error(data.message);
+    },
+  });
+
+  const importSeries = api.import.series.useMutation({
+    onMutate: data => setImporting(data.tmdbId.toString()),
+    onSuccess: data => {
+      setImporting(undefined);
+      addAction(data.entry.id!);
+    },
+    onError: data => {
+      toast.error(data.message);
     },
   });
 
@@ -366,10 +364,17 @@ const AddLogContent = ({
                           importing === e.foreignId.toString(),
                       })}
                       onClick={() => {
-                        importMedia.mutate({
-                          foreignId: e.foreignId.toString(),
-                          category: e.category,
-                        });
+                        switch (e.category) {
+                          case 'Series':
+                            importSeries.mutate({ tmdbId: e.foreignId });
+                            break;
+                          case 'Movie':
+                            importMovie.mutate({ tmdbId: e.foreignId });
+                            break;
+                          case 'Book':
+                            importBook.mutate({ olId: e.foreignId });
+                            break;
+                        }
                       }}
                     />
                     {importing === e.foreignId.toString() && (
