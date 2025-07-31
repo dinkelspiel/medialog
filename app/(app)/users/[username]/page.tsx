@@ -2,7 +2,10 @@ import HeaderLayout from '@/components/layouts/header';
 import SmallRating from '@/components/smallRating';
 import UserEntryCard from '@/components/userEntryCard';
 import { numberSuffix } from '@/lib/numberSuffix';
-import { validateSessionToken } from '@/server/auth/validateSession';
+import {
+  safeUserSelect,
+  validateSessionToken,
+} from '@/server/auth/validateSession';
 import prisma from '@/server/db';
 import { getDailyStreak } from '@/server/user/user';
 import { Entry, UserActivity, UserEntryStatus } from '@prisma/client';
@@ -18,6 +21,7 @@ import { getUserLists } from './_components/lists';
 import { Metadata, ResolvingMetadata } from 'next';
 import ActivityHistory from './_components/activityHistory';
 import { EntryRedirect } from '../../_components/EntryIslandContext';
+import Showcase from './_components/showcase';
 
 const Profile404 = async () => {
   const user = await validateSessionToken();
@@ -148,7 +152,8 @@ const Profile = async ({
     where: {
       username: params.username,
     },
-    include: {
+    select: {
+      ...safeUserSelect(),
       userEntries: {
         select: {
           id: true,
@@ -170,7 +175,8 @@ const Profile = async ({
       followers: {
         include: {
           user: {
-            include: {
+            select: {
+              ...safeUserSelect(),
               followers: true,
               following: true,
             },
@@ -203,13 +209,27 @@ const Profile = async ({
       notes: false,
       rating: true,
       entry: {
-        select: {
-          id: true,
-          slug: true,
-          originalTitle: true,
-          posterPath: true,
-          releaseDate: true,
-          category: true,
+        include: {
+          translations: getDefaultWhereForTranslations(authUser),
+        },
+      },
+    },
+  });
+
+  const recentlyWatched = await prisma.userEntry.findMany({
+    where: {
+      userId: profileUser.id,
+      status: 'completed',
+    },
+    orderBy: {
+      watchedAt: 'desc',
+    },
+    take: 4,
+    select: {
+      notes: false,
+      rating: true,
+      entry: {
+        include: {
           translations: getDefaultWhereForTranslations(authUser),
         },
       },
@@ -273,77 +293,17 @@ const Profile = async ({
         </div>
         <div className="grid w-fit grid-cols-1 gap-16 min-[1330px]:grid-cols-[1fr,250px]">
           <div className="flex flex-col gap-6 px-4 md:w-[710px]">
-            <div className="flex flex-col gap-4">
-              <div className="flex w-full justify-between border-b border-b-base-200 pb-2 font-dm-serif text-3xl font-semibold">
-                Favorites
-              </div>
-              {favorites.length > 0 && (
-                <>
-                  <div className="hidden grid-cols-4 gap-3 sm:grid">
-                    {favorites.map((userEntry, idx) => (
-                      <EntryRedirect
-                        key={userEntry.entry.id}
-                        className="hover:no-underline"
-                        entryId={userEntry.entry.id}
-                        entrySlug={userEntry.entry.slug}
-                      >
-                        <UserEntryCard
-                          key={`userEntry-${idx}`}
-                          {...{
-                            entryTitle: (
-                              <ServerEntryTitleForUser
-                                entryId={userEntry.entry.id}
-                              />
-                            ),
-                            backgroundImage: userEntry.entry.posterPath,
-                            releaseDate: userEntry.entry.releaseDate,
-                            rating: userEntry.rating,
-                            category: userEntry.entry.category,
-                          }}
-                        />
-                      </EntryRedirect>
-                    ))}
-                  </div>
-                  <div className="grid grid-cols-3 gap-3 sm:hidden">
-                    {favorites.slice(0, 3).map((userEntry, idx) => (
-                      <EntryRedirect
-                        key={userEntry.entry.id}
-                        className="hover:no-underline"
-                        entryId={userEntry.entry.id}
-                        entrySlug={userEntry.entry.slug}
-                      >
-                        <UserEntryCard
-                          key={`userEntry-${idx}`}
-                          {...{
-                            entryTitle: (
-                              <ServerEntryTitleForUser
-                                entryId={userEntry.entry.id}
-                              />
-                            ),
-                            backgroundImage: userEntry.entry.posterPath,
-                            releaseDate: userEntry.entry.releaseDate,
-                            rating: userEntry.rating,
-                            category: userEntry.entry.category,
-                          }}
-                        />
-                      </EntryRedirect>
-                    ))}
-                  </div>
-                </>
-              )}
-              {favorites.length === 0 &&
-                (authUser !== undefined &&
-                profileUser.id === (authUser ? authUser.id : -1) ? (
-                  <div className="text-lg">
-                    Rate your favorites{' '}
-                    <Link href="/dashboard">
-                      <span className="font-semibold">here</span>
-                    </Link>
-                  </div>
-                ) : (
-                  <div className="text-lg">No favorites found</div>
-                ))}
-            </div>
+            <Showcase
+              title={'Favorites'}
+              userEntries={favorites}
+              profileUser={profileUser}
+            />
+            <Showcase
+              title={'Latest Completions'}
+              userEntries={recentlyWatched}
+              profileUser={profileUser}
+            />
+
             <ProfileSidebar
               profileUser={profileUser as any}
               ratings={ratings}
@@ -352,7 +312,6 @@ const Profile = async ({
               diary={diary}
               lists={lists}
             />
-
             <ActivityHistory profileUser={profileUser} />
 
             <div className="flex flex-col gap-4">
