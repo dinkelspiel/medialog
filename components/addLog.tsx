@@ -44,6 +44,7 @@ const AddLog = ({
   const [userEntryOpen, setUserEntryOpen] = useState(false);
 
   const router = useRouter();
+  const utils = api.useUtils();
 
   const addUserEntry = api.userEntry.create.useMutation({
     onSuccess: async data => {
@@ -54,9 +55,11 @@ const AddLog = ({
         data.userEntry.entry.releaseDate = new Date(
           data.userEntry.entry.releaseDate
         );
-        setOpen(false);
+
         setUserEntryOpen(true);
         setActiveUserEntry(data.userEntry);
+        utils.entries.search.invalidate();
+        utils.dashboard.invalidate();
 
         router.refresh();
       }
