@@ -203,7 +203,7 @@ const Dashboard = ({
                       fetchUserListsWithEntry(userEntry.id);
                     }}
                     className={cn(
-                      'min-w-[132px]',
+                      'lg:min-w-[132px]',
                       userEntry.status === 'planning' && filterStatus === 'all'
                         ? 'opacity-70'
                         : 'opacity-100'
