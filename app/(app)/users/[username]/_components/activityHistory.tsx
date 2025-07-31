@@ -8,8 +8,13 @@ import {
   TooltipContent,
   TooltipTrigger,
 } from '@/components/ui/tooltip';
+import { SafeUser } from '@/server/auth/validateSession';
 
-const ActivityHistory = async ({ profileUser }: { profileUser: User }) => {
+const ActivityHistory = async ({
+  profileUser,
+}: {
+  profileUser: NonNullable<SafeUser>;
+}) => {
   const entriesPerDay: {
     date: string;
     count: bigint;
