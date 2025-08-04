@@ -1,6 +1,5 @@
 import { createTRPCRouter, publicProcedure } from '@/server/api/trpc';
 import z from 'zod';
-import { protectedProcedure, publicProcedure } from '../trpc';
 import { Octokit } from 'octokit';
 import { createAppAuth } from '@octokit/auth-app';
 import prisma from '@/server/db';
