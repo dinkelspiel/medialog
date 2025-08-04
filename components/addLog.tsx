@@ -1,7 +1,7 @@
 'use client';
 
 import { Book, Film, Loader2, Tv } from 'lucide-react';
-import { Fragment, ReactNode, useState } from 'react';
+import { Dispatch, Fragment, ReactNode, SetStateAction, useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -134,6 +134,71 @@ const AddLog = ({
   );
 };
 
+const CategoryToggles = ({
+  queryCategories,
+  setQueryCategories,
+}: {
+  queryCategories: {
+    movie: boolean;
+    series: boolean;
+    book: boolean;
+  };
+  setQueryCategories: Dispatch<
+    SetStateAction<{
+      movie: boolean;
+      series: boolean;
+      book: boolean;
+    }>
+  >;
+}) => {
+  return (
+    <>
+      <Toggle
+        size={'sm'}
+        className="sm:w-full"
+        pressed={queryCategories.movie}
+        onPressedChange={(e: boolean) =>
+          setQueryCategories({
+            ...queryCategories,
+            movie: e,
+          })
+        }
+      >
+        <Film className="size-4" />
+        Movies
+      </Toggle>
+      <Toggle
+        size={'sm'}
+        className="sm:w-full"
+        pressed={queryCategories.book}
+        onPressedChange={(e: boolean) =>
+          setQueryCategories({
+            ...queryCategories,
+            book: e,
+          })
+        }
+      >
+        <Book className="size-4" />
+        Books
+      </Toggle>
+      <Toggle
+        size={'sm'}
+        className="whitespace-nowrap sm:w-full"
+        pressed={queryCategories.series}
+        onPressedChange={(e: boolean) =>
+          setQueryCategories({
+            ...queryCategories,
+            series: e,
+          })
+        }
+      >
+        <Tv className="size-4" />
+        Tv Series
+      </Toggle>
+    </>
+  );
+};
+
 const AddLogContent = ({
   addAction,
   title,
@@ -233,51 +298,26 @@ const AddLogContent = ({
       <DialogHeader className="hidden lg:block">
         <DialogTitle>{title}</DialogTitle>
       </DialogHeader>
-      <div className="flex flex-row gap-2">
-        <Input
-          placeholder="Search Media"
-          value={queryTitle}
-          onChange={e => setQueryTitle(e.target.value)}
-        />
-        <Toggle
-          size={'sm'}
-          className="w-8"
-          pressed={queryCategories.movie}
-          onPressedChange={(e: boolean) =>
-            setQueryCategories({
-              ...queryCategories,
-              movie: e,
-            })
-          }
-        >
-          <Film />
-        </Toggle>
-        <Toggle
-          size={'sm'}
-          className="w-8"
-          pressed={queryCategories.book}
-          onPressedChange={(e: boolean) =>
-            setQueryCategories({
-              ...queryCategories,
-              book: e,
-            })
-          }
-        >
-          <Book />
-        </Toggle>
-        <Toggle
-          size={'sm'}
-          className="w-8"
-          pressed={queryCategories.series}
-          onPressedChange={(e: boolean) =>
-            setQueryCategories({
-              ...queryCategories,
-              series: e,
-            })
-          }
-        >
-          <Tv />
-        </Toggle>
+      <div className="flex flex-col gap-2">
+        <div className="flex flex-row gap-2">
+          <Input
+            placeholder="Search Media"
+            value={queryTitle}
+            onChange={e => setQueryTitle(e.target.value)}
+          />
+          <div className="hidden flex-row gap-2 lg:flex">
+            <CategoryToggles
+              queryCategories={queryCategories}
+              setQueryCategories={setQueryCategories}
+            />
+          </div>
+        </div>
+        <div className="flex flex-row gap-2 lg:hidden">
+          <CategoryToggles
+            queryCategories={queryCategories}
+            setQueryCategories={setQueryCategories}
+          />
+        </div>
       </div>
       {!queryIsLoading &&
         !queryIsError &&
