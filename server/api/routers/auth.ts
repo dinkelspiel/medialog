@@ -1,6 +1,6 @@
 import { createTRPCRouter, publicProcedure } from '@/server/api/trpc';
 import z from 'zod';
-import { protectedProcedure } from '../trpc';
+import { protectedProcedure, publicProcedure } from '../trpc';
 import { Octokit } from 'octokit';
 import { createAppAuth } from '@octokit/auth-app';
 import prisma from '@/server/db';
@@ -13,7 +13,7 @@ import { TRPCError } from '@trpc/server';
 const genericLoginError = 'Invalid email or password';
 
 export const authRouter = createTRPCRouter({
-  login: protectedProcedure
+  login: publicProcedure 
     .input(
       z.object({
         email: z.string(),
