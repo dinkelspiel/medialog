@@ -70,7 +70,13 @@ const EntryView = ({
               alt={`Poster for ${title}`}
             />
             <div className="flex gap-2">
-              {authUser && <EditUserEntry host={host} entryPage={entryPage} />}
+              {authUser && (
+                <EditUserEntry
+                  host={host}
+                  showAddAction={true}
+                  entryPage={entryPage}
+                />
+              )}
 
               {authUser && (
                 <AddToList

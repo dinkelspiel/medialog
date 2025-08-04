@@ -18,7 +18,7 @@ export type FilterStyle =
   | 'updated';
 export type ExtendedUserEntry = UserEntry & {
   entry: Entry & { translations: EntryTranslation[] };
-} & { user: SafeUser };
+} & { user: NonNullable<SafeUser> };
 
 type DashboardStore = {
   filterStatus: UserEntryStatus | 'all';

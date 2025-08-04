@@ -7,6 +7,8 @@ import { useMediaQuery } from 'usehooks-ts';
 import { ExtendedUserEntry } from '../app/(app)/dashboard/state';
 import ModifyUserEntry from '@/components/modifyUserEntry';
 import { toast } from 'sonner';
+import { Dialog, DialogContent } from './ui/dialog';
+import ContainedModifyUserEntry from './containedModifyUserEntry';
 
 const ExternalUserEntry = ({
   userEntry,
@@ -56,19 +58,11 @@ const ExternalUserEntry = ({
 
   if (isDesktop) {
     return (
-      <Sheet open={open} onOpenChange={setOpen}>
-        <SheetContent className="!max-w-[550px]">
-          <ModifyUserEntry
-            userEntry={userEntry}
-            setOpen={setOpen}
-            setUserEntry={setUserEntry}
-            removeUserEntry={() => {}}
-            userLists={lists}
-            userListsWithEntry={listsWithEntry}
-            refetchUserLists={refetchUserLists}
-          />
-        </SheetContent>
-      </Sheet>
+      <ContainedModifyUserEntry
+        open={open}
+        setOpen={setOpen}
+        id={{ userEntryId: userEntry.id }}
+      />
     );
   } else {
     return (

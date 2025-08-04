@@ -15,9 +15,11 @@ import { toast } from 'sonner';
 
 const EditUserEntry = ({
   entryPage,
+  showAddAction,
   host,
 }: {
   host: 'client' | 'server';
+  showAddAction: boolean;
   entryPage: inferRouterOutputs<AppRouter>['entries']['getEntryPage'];
 }) => {
   const utils = api.useUtils();
@@ -46,7 +48,7 @@ const EditUserEntry = ({
     },
   });
 
-  if (!userEntry) {
+  if (!userEntry && showAddAction) {
     return (
       <Button
         size="sm"
@@ -59,6 +61,8 @@ const EditUserEntry = ({
         Add to Watchlist
       </Button>
     );
+  } else if (!userEntry) {
+    return;
   }
 
   return (
