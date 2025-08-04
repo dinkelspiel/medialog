@@ -1,7 +1,7 @@
 'use client';
 
 import { Book, Film, Loader2, Tv } from 'lucide-react';
-import { ReactNode, useState } from 'react';
+import { Fragment, ReactNode, useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -25,6 +25,8 @@ import ExternalUserEntry from './userEntryExternal';
 import { api } from '@/trpc/react';
 import { getUserTitleFromEntry } from '@/server/api/routers/dashboard_';
 import { Badge } from './ui/badge';
+import ModifyUserEntry from './modifyUserEntry';
+import ContainedModifyUserEntry from './containedModifyUserEntry';
 
 const AddLog = ({
   children,
@@ -241,7 +243,7 @@ const AddLogContent = ({
           size={'sm'}
           className="w-8"
           pressed={queryCategories.movie}
-          onPressedChange={e =>
+          onPressedChange={(e: boolean) =>
             setQueryCategories({
               ...queryCategories,
               movie: e,
@@ -254,7 +256,7 @@ const AddLogContent = ({
           size={'sm'}
           className="w-8"
           pressed={queryCategories.book}
-          onPressedChange={e =>
+          onPressedChange={(e: boolean) =>
             setQueryCategories({
               ...queryCategories,
               book: e,
@@ -267,7 +269,7 @@ const AddLogContent = ({
           size={'sm'}
           className="w-8"
           pressed={queryCategories.series}
-          onPressedChange={e =>
+          onPressedChange={(e: boolean) =>
             setQueryCategories({
               ...queryCategories,
               series: e,
@@ -296,22 +298,43 @@ const AddLogContent = ({
           {queryResults &&
             queryResults
               .slice(0, isDesktop ? 8 : 6)
-              .map(e => (
-                <UserEntryCard
-                  key={e.posterPath}
-                  entryTitle={getUserTitleFromEntry(e)}
-                  backgroundImage={e.posterPath}
-                  releaseDate={new Date(e.releaseDate)}
-                  category={e.category}
-                  rating={0}
-                  onClick={() => addAction(e.id)}
-                  topRight={
-                    e.userEntries.length > 0 && (
-                      <Badge variant={'secondary'}>In Library</Badge>
-                    )
-                  }
-                />
-              ))}
+              .map(entry => ({
+                entry,
+                callback:
+                  entry.userEntries.length > 0
+                    ? (children: ReactNode) => (
+                        <ContainedModifyUserEntry
+                          key={entry.posterPath}
+                          id={{ entryId: entry.id }}
+                        >
+                          {children}
+                        </ContainedModifyUserEntry>
+                      )
+                    : (children: ReactNode) => (
+                        <Fragment key={entry.posterPath}>{children}</Fragment>
+                      ),
+              }))
+              .map(({ entry, callback }) =>
+                callback(
+                  <UserEntryCard
+                    entryTitle={getUserTitleFromEntry(entry)}
+                    backgroundImage={entry.posterPath}
+                    releaseDate={new Date(entry.releaseDate)}
+                    category={entry.category}
+                    rating={0}
+                    onClick={() => {
+                      if (entry.userEntries.length === 0) {
+                        addAction(entry.id);
+                      }
+                    }}
+                    topRight={
+                      entry.userEntries.length > 0 && (
+                        <Badge variant={'secondary'}>In Library</Badge>
+                      )
+                    }
+                  />
+                )
+              )}
         </div>
         {externalIsError && (
           <div className="relative flex justify-center text-xs uppercase">

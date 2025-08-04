@@ -308,4 +308,43 @@ export const userEntryRouter = createTRPCRouter({
 
       return { message: 'Removed user entry' };
     }),
+  get: protectedProcedure
+    .input(
+      z.object({
+        id: z
+          .object({
+            entryId: z.number(),
+          })
+          .or(
+            z.object({
+              userEntryId: z.number(),
+            })
+          ),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const userEntry = await prisma.userEntry.findFirst({
+        where:
+          'entryId' in input.id
+            ? {
+                userId: ctx.user.id,
+                entryId: input.id.entryId,
+              }
+            : {
+                id: input.id.userEntryId,
+                userId: ctx.user.id,
+              },
+        include: {
+          entry: {
+            include: {
+              translations: getDefaultWhereForTranslations(ctx.user),
+            },
+          },
+          user: {
+            select: safeUserSelect(),
+          },
+        },
+      });
+      return userEntry satisfies ExtendedUserEntry | null;
+    }),
 });
