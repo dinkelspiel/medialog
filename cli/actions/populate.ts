@@ -1,5 +1,6 @@
 import { existsSync, readFileSync } from 'fs';
 import prisma from '../../server/db';
+import logger from '@/server/logger';
 
 export const populateCountries = async (options: {
   file: string | undefined;
@@ -21,12 +22,12 @@ export const populateCountries = async (options: {
       Accept: 'application/sparql-results+json',
     };
 
-    console.log(`Fetching: ${fullUrl}`);
+    logger.info(`Fetching: ${fullUrl}`);
 
     dataString = await (await fetch(fullUrl, { headers })).json();
   } else {
     if (!existsSync(options.file)) {
-      console.error("File doesn't exist");
+      logger.error("File doesn't exist");
       return;
     }
 
@@ -34,7 +35,7 @@ export const populateCountries = async (options: {
   }
   const data = dataString['results']['bindings'] as any[];
 
-  console.log('Populating countries and languages...');
+  logger.info('Populating countries and languages...');
 
   for (const entry of data) {
     const country = await prisma.country.findFirst({
@@ -51,11 +52,11 @@ export const populateCountries = async (options: {
         },
       });
 
-      console.log(`${entry.countryLabel.value} ${entry.isoCode.value}`);
+      logger.info(`${entry.countryLabel.value} ${entry.isoCode.value}`);
     }
   }
 
-  console.log('Done populating countries and languages!');
+  logger.info('Done populating countries and languages!');
 };
 
 export const populateLanguages = async (options: {
@@ -78,12 +79,12 @@ export const populateLanguages = async (options: {
       Accept: 'application/sparql-results+json',
     };
 
-    console.log(`Fetching: ${fullUrl}`);
+    logger.info(`Fetching: ${fullUrl}`);
 
     dataString = await (await fetch(fullUrl, { headers })).json();
   } else {
     if (!existsSync(options.file)) {
-      console.error("File doesn't exist");
+      logger.error("File doesn't exist");
       return;
     }
 
@@ -91,7 +92,7 @@ export const populateLanguages = async (options: {
   }
   const data = dataString['results']['bindings'] as any[];
 
-  console.log('Populating languages...');
+  logger.info('Populating languages...');
 
   for (const entry of data) {
     const language = await prisma.language.findFirst({
@@ -111,11 +112,11 @@ export const populateLanguages = async (options: {
         },
       });
 
-      console.log(
+      logger.info(
         `${entry.languageLabel.value} ${entry.iso_639_2.value} ${entry.iso_639_1 ? entry.iso_639_1.value : undefined}`
       );
     }
   }
 
-  console.log('Done populating languages!');
+  logger.info('Done populating languages!');
 };

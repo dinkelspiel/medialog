@@ -1,5 +1,6 @@
 import { validateSessionToken } from '@/server/auth/validateSession';
 import prisma from '@/server/db';
+import logger from '@/server/logger';
 import axios from 'axios';
 import { Pi } from 'lucide-react';
 import { NextRequest } from 'next/server';
@@ -85,7 +86,7 @@ export const GET = async (req: NextRequest) => {
   }
 
   await prisma.entryTranslation.deleteMany();
-  console.log(`asd ${(await prisma.entryTranslation.findMany()).length}`);
+  logger.info(`asd ${(await prisma.entryTranslation.findMany()).length}`);
 
   const entries = await prisma.entry.findMany({
     include: {
@@ -97,8 +98,8 @@ export const GET = async (req: NextRequest) => {
     if (entry.category === 'Book') {
       continue;
     }
-    console.log('\n------');
-    console.log(entry.id);
+    logger.info('\n------');
+    logger.info(entry.id);
 
     let url = '';
     if (entry.category === 'Series') {
@@ -107,17 +108,17 @@ export const GET = async (req: NextRequest) => {
       url = `https://api.themoviedb.org/3/movie/${entry.foreignId}/translations?language=en-US`;
     }
 
-    console.log(url);
+    logger.info(url);
     let translations;
     try {
       translations = (await axios.get(url, options)).data['translations'];
     } catch {
-      console.log('request failed');
+      logger.error('request failed');
       continue;
     }
 
     for (const translation of translations) {
-      console.log(translation['iso_639_1']);
+      logger.info(translation['iso_639_1']);
       if (translation['iso_639_1'] === 'sh') {
         continue;
       }
@@ -163,7 +164,9 @@ export const GET = async (req: NextRequest) => {
       let title = '';
       if (entry.category === 'Series') {
         if (!collectionTranslation.data.name) {
-          console.log(`No name for collection ${entry.id} ${translation.name}`);
+          logger.error(
+            `No name for collection ${entry.id} ${translation.name}`
+          );
           continue;
         }
 
@@ -183,7 +186,7 @@ export const GET = async (req: NextRequest) => {
       } else if (translation.data.title) {
         title = translation.data.title;
       } else {
-        console.log(`No name for ${entry.id} ${translation.name}`);
+        logger.info(`No name for ${entry.id} ${translation.name}`);
         continue;
       }
 
@@ -208,7 +211,7 @@ export const GET = async (req: NextRequest) => {
         },
       });
 
-      console.log(`Finished ${entry.id} ${title} in ${language?.iso_639_1}`);
+      logger.info(`Finished ${entry.id} ${title} in ${language?.iso_639_1}`);
     }
   }
 };

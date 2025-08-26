@@ -1,5 +1,6 @@
 import { validateSessionToken } from '@/server/auth/validateSession';
 import prisma from '@/server/db';
+import logger from '@/server/logger';
 import axios from 'axios';
 import { NextRequest } from 'next/server';
 
@@ -30,13 +31,13 @@ export const GET = async (req: NextRequest) => {
     },
   });
   for (const entry of entries) {
-    console.log('\n----------');
+    logger.info('\n----------');
     if (entry.category !== 'Series') {
-      console.log('Skipped non series');
+      logger.info('Skipped non series');
       continue;
     }
 
-    console.log('Processing series');
+    logger.info('Processing series');
 
     const seasons = (
       await axios.get(
@@ -63,7 +64,7 @@ export const GET = async (req: NextRequest) => {
         continue;
       }
 
-      console.log(season);
+      logger.info(season);
 
       await prisma.entry.updateMany({
         where: {

@@ -155,7 +155,7 @@ const CategoryToggles = ({
     <>
       <Toggle
         size={'sm'}
-        className="sm:w-full"
+        className="w-full"
         pressed={queryCategories.movie}
         onPressedChange={(e: boolean) =>
           setQueryCategories({
@@ -169,7 +169,7 @@ const CategoryToggles = ({
       </Toggle>
       <Toggle
         size={'sm'}
-        className="sm:w-full"
+        className="w-full"
         pressed={queryCategories.book}
         onPressedChange={(e: boolean) =>
           setQueryCategories({
@@ -183,7 +183,7 @@ const CategoryToggles = ({
       </Toggle>
       <Toggle
         size={'sm'}
-        className="whitespace-nowrap sm:w-full"
+        className="w-full whitespace-nowrap"
         pressed={queryCategories.series}
         onPressedChange={(e: boolean) =>
           setQueryCategories({

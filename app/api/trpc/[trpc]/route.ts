@@ -3,6 +3,7 @@ import { type NextRequest } from 'next/server';
 
 import { appRouter } from '@/server/api/root';
 import { createTRPCContext } from '@/server/api/trpc';
+import logger from '@/server/logger';
 
 export const dynamic = 'force-dynamic';
 export const revalidate = 0;
@@ -26,8 +27,8 @@ const handler = (req: NextRequest) =>
     onError:
       process.env.NODE_ENV === 'development'
         ? ({ path, error }) => {
-            console.error(
-              `❌ tRPC failed on ${path ?? '<no-path>'}: ${error.message}`
+            logger.error(
+              `tRPC failed on ${path ?? '<no-path>'}: ${error.message}`
             );
           }
         : undefined,
