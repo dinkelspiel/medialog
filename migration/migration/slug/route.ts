@@ -3,6 +3,7 @@ import {
   getUserTitleFromEntry,
 } from '@/server/api/routers/dashboard_';
 import prisma from '@/server/db';
+import logger from '@/server/logger';
 import slug from 'slug';
 
 export const dynamic = 'force-dynamic';
