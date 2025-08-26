@@ -1,4 +1,5 @@
 import prisma from '@/server/db';
+import logger from '@/server/logger';
 import {
   addMeilisearchEntryByEntryId,
   createIndexes,
@@ -8,16 +9,16 @@ import {
 export const dynamic = 'force-dynamic';
 
 export const GET = async () => {
-  console.log('Start');
+  logger.info('Start');
   const entries = await prisma.entry.findMany();
 
-  console.log('Indexes');
+  logger.info('Indexes');
   await createIndexes();
-  console.log('Delete...');
+  logger.info('Delete...');
   await deleteAllDocuments();
 
   for (const entry of entries) {
-    console.log(entry.id);
+    logger.info(entry.id);
     await addMeilisearchEntryByEntryId(entry.id);
   }
 };

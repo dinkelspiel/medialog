@@ -21,7 +21,7 @@ export const GET = async () => {
   });
 
   for (const entry of entries) {
-    console.log('wads');
+    logger.info('wads');
     const entrySlug = slug(
       `${entry.category.toLowerCase()}-${getUserTitleFromEntry(entry)}`
     );
