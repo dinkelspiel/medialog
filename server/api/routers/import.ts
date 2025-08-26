@@ -12,7 +12,7 @@ type ExternalSearch = {
   category: 'Series' | 'Movie' | 'Book';
   releaseDate: Date;
   author: string;
-  foreignId: number;
+  foreignId: number | string;
   posterPath: string;
 };
 
