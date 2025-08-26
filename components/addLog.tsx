@@ -434,13 +434,17 @@ const AddLogContent = ({
                       onClick={() => {
                         switch (e.category) {
                           case 'Series':
-                            importSeries.mutate({ tmdbId: e.foreignId });
+                            importSeries.mutate({
+                              tmdbId: e.foreignId as number,
+                            });
                             break;
                           case 'Movie':
-                            importMovie.mutate({ tmdbId: e.foreignId });
+                            importMovie.mutate({
+                              tmdbId: e.foreignId as number,
+                            });
                             break;
                           case 'Book':
-                            importBook.mutate({ olId: e.foreignId });
+                            importBook.mutate({ olId: e.foreignId as string });
                             break;
                         }
                       }}
