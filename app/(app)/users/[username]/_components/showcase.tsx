@@ -6,6 +6,7 @@ import { ExtendedUserEntry } from '@/app/(app)/dashboard/state';
 import { SafeUser, validateSessionToken } from '@/server/auth/validateSession';
 import Link from 'next/link';
 import { Entry, EntryTranslation, User, UserEntry } from '@prisma/client';
+import StyleHeader from '@/components/styleHeader';
 
 const Showcase = async ({
   title,
@@ -24,9 +25,7 @@ const Showcase = async ({
   const authUser = await validateSessionToken();
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex w-full justify-between border-b border-b-base-200 pb-2 font-dm-serif text-3xl font-semibold">
-        {title}
-      </div>
+      <StyleHeader>{title}</StyleHeader>
       {userEntries.length > 0 && (
         <>
           <div className="hidden grid-cols-4 gap-3 sm:grid">

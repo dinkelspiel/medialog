@@ -11,6 +11,7 @@ import Link from 'next/link';
 import GenreOverview from './genreOverview';
 import { Label } from '@/components/ui/label';
 import { EntryRedirect } from '@/app/(app)/_components/EntryIslandContext';
+import StyleHeader from '@/components/styleHeader';
 
 export const ProfileSidebar = ({
   profileUser,
@@ -82,7 +83,7 @@ export const ProfileSidebar = ({
         {profileUser.userEntries.filter(e => e.status === 'watching').length >
           0 && (
           <div className="flex flex-col gap-4">
-            <div className="flex w-full justify-between border-b border-b-base-200 pb-2 font-dm-serif text-3xl font-semibold">
+            <StyleHeader>
               In Progress
               <span className="ms-auto flex items-end font-geist text-sm text-base-500">
                 {
@@ -90,7 +91,7 @@ export const ProfileSidebar = ({
                     .length
                 }
               </span>
-            </div>
+            </StyleHeader>
             {profileUser.userEntries
               .filter(e => e.status === 'watching')
               .map(entry => (
@@ -112,12 +113,12 @@ export const ProfileSidebar = ({
         )}
       </div>
       <div className="flex flex-col items-center gap-4 lg:items-start">
-        <div className="flex w-full justify-between border-b border-b-base-200 pb-2 font-dm-serif text-3xl font-semibold">
+        <StyleHeader>
           Ratings
           <span className="ms-auto flex items-end font-geist text-sm text-base-500">
             {totalRatings}
           </span>
-        </div>
+        </StyleHeader>
         <div className="flex w-full flex-row items-end justify-between gap-2 2xl:w-[250px]">
           <SmallRating rating={20} className="pb-1" />
           <div className="flex w-[135px] flex-row items-end gap-0.5 border-b border-b-base-200 pb-1">
@@ -134,12 +135,12 @@ export const ProfileSidebar = ({
       </div>
       <GenreOverview profileUser={profileUser} />
       <div className="flex flex-col gap-4">
-        <div className="flex w-full justify-between border-b border-b-base-200 pb-2 font-dm-serif text-3xl font-semibold">
+        <StyleHeader>
           Diary
           <span className="ms-auto flex items-end font-geist text-sm text-base-500">
             {profileUser.dailyStreakLength} Day Streak
           </span>
-        </div>
+        </StyleHeader>
         {profileUser.dailyStreakLength != 0 &&
           !(
             profileUser.dailyStreakUpdated.getTime() > startOfDay.getTime()
@@ -192,12 +193,12 @@ export const ProfileSidebar = ({
           ))}
       </div>
       <div className="flex flex-col items-center gap-4 lg:items-start">
-        <div className="flex w-full justify-between border-b border-b-base-200 pb-2 font-dm-serif text-3xl font-semibold">
+        <StyleHeader>
           Lists
           <span className="ms-auto flex items-end font-geist text-sm text-base-500">
             {lists.length}
           </span>
-        </div>
+        </StyleHeader>
         <div className="flex w-full flex-col items-center gap-4 2xl:w-[250px]">
           {lists.map(list => (
             <Link

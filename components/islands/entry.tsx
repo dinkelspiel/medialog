@@ -23,6 +23,7 @@ import AddToList from '../addToList';
 import { capitalizeFirst } from '@/lib/capitalizeFirst';
 import { SafeUser } from '@/server/auth/validateSession';
 import EditUserEntry from './entry/editUserEntry';
+import StyleHeader from '../styleHeader';
 
 const EntryView = ({
   host,
@@ -153,9 +154,7 @@ const EntryView = ({
           )}
           {entryPage.reviews.length > 0 && (
             <div className="flex flex-col gap-4">
-              <div className="flex w-full justify-between border-b border-b-base-200 pb-2 font-dm-serif text-3xl font-semibold">
-                Reviews
-              </div>
+              <StyleHeader>Reviews</StyleHeader>
               {entryPage.reviews.map(review => (
                 <div key={review.id} className="flex flex-col gap-2">
                   <div className="flex items-center gap-2 text-sm">

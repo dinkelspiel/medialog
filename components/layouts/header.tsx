@@ -11,7 +11,7 @@ const HeaderLayout = ({
   return (
     <div
       className={cn(
-        `grid h-screen grid-rows-[max-content,1fr] gap-4 overflow-y-scroll`,
+        `grid min-h-screen grid-rows-[max-content,1fr] gap-4`,
         className
       )}
     >

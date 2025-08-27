@@ -1,3 +1,4 @@
+import StyleHeader from '@/components/styleHeader';
 import {
   Tooltip,
   TooltipContent,
@@ -86,9 +87,7 @@ const GenreOverview = async ({ profileUser }: { profileUser: User }) => {
 
   return (
     <div className="flex flex-col items-center gap-4 lg:items-start">
-      <div className="flex w-full justify-between border-b border-b-base-200 pb-2 font-dm-serif text-3xl font-semibold">
-        Genre Overview
-      </div>
+      <StyleHeader>Genre Overview</StyleHeader>
       <div className="flex w-full flex-col items-end justify-between gap-2 2xl:w-[250px]">
         <div className="flex w-full flex-wrap gap-4 xl:hidden">
           <Top show={5} results={results} />
