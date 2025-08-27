@@ -28,7 +28,6 @@ const Page = () => {
 
   useEffect(() => {
     const handleScroll = () => {
-      console.log('scrolled');
       if (
         window.innerHeight + window.scrollY >=
         document.body.offsetHeight - 600
