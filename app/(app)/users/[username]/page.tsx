@@ -22,6 +22,9 @@ import { Metadata, ResolvingMetadata } from 'next';
 import ActivityHistory from './_components/activityHistory';
 import { EntryRedirect } from '../../_components/EntryIslandContext';
 import Showcase from './_components/showcase';
+import Activity from '@/components/activity';
+import { getUserTitleFromEntryId } from '@/server/api/routers/dashboard';
+import StyleHeader from '@/components/styleHeader';
 
 const Profile404 = async () => {
   const user = await validateSessionToken();
@@ -71,78 +74,6 @@ const Profile = async ({
       username: params.username,
     },
   });
-
-  const generateActivityInfo = (
-    activity: UserActivity & { entry: Entry }
-  ): ReactNode => {
-    let text = '';
-    switch (activity.type) {
-      case 'statusUpdate':
-        // eslint-disable-next-line no-case-declarations
-        const rewatch = parseInt(activity.additionalData.split('|')[1]!);
-        switch (activity.additionalData.split('|')[0] as UserEntryStatus) {
-          case 'planning':
-            if (rewatch === 0) {
-              text = 'Plans to watch';
-            } else {
-              text = `Plans to watch, for the ${numberSuffix(rewatch)},`;
-            }
-            break;
-          case 'watching':
-            if (rewatch === 0) {
-              text = `Started ${activity.entry.category === 'Book' ? 'reading' : 'watching'}`;
-            } else {
-              text = `Is for the ${numberSuffix(rewatch + 1)} time ${activity.entry.category === 'Book' ? 'reading' : 'watching'}`;
-            }
-            break;
-          case 'dnf':
-            if (rewatch === 0) {
-              text = 'Did not finish';
-            } else {
-              text = `Did not finish their ${numberSuffix(rewatch)} rewatch`;
-            }
-            break;
-          case 'paused':
-            if (rewatch === 0) {
-              text = 'Paused watching';
-            } else {
-              text = `Paused their ${numberSuffix(rewatch)} rewatch`;
-            }
-            break;
-          case 'completed':
-            if (rewatch === 0) {
-              text = 'Completed';
-            } else {
-              text = `Completed their ${numberSuffix(rewatch)} rewatch`;
-            }
-            break;
-        }
-        break;
-      case 'reviewed':
-        if (activity.additionalData.split('|')[0] == '0') {
-          text = 'Reviewed';
-        } else {
-          text = `Reviewed their ${numberSuffix(parseInt(activity.additionalData.split('|')[0]!))} rewatch`;
-        }
-        break;
-      case 'rewatch':
-        text = `Started their ${numberSuffix(parseInt(activity.additionalData))} rewatch`;
-        break;
-      case 'completeReview':
-        if (activity.additionalData.split('|')[0] == '0') {
-          text = 'Completed and reviewed';
-        } else {
-          text = `Completed and reviewed their ${numberSuffix(parseInt(activity.additionalData.split('|')[0]!))} rewatch`;
-        }
-        break;
-    }
-    return (
-      <>
-        {text}
-        <span className="ps-1">{activity.createdAt.toDateString()}</span>
-      </>
-    );
-  };
 
   if (profileUserExists === null) return <Profile404></Profile404>;
 
@@ -236,7 +167,7 @@ const Profile = async ({
     },
   });
 
-  const activity = await prisma.userActivity.findMany({
+  let activity = await prisma.userActivity.findMany({
     where: {
       userId: profileUser.id,
       NOT: {
@@ -248,7 +179,11 @@ const Profile = async ({
     },
     take: 10,
     include: {
-      entry: true,
+      entry: {
+        include: {
+          translations: getDefaultWhereForTranslations(authUser),
+        },
+      },
     },
   });
 
@@ -315,50 +250,19 @@ const Profile = async ({
             <ActivityHistory profileUser={profileUser} />
 
             <div className="flex flex-col gap-4">
-              <div className="flex w-full justify-between border-b border-b-base-200 pb-2 font-dm-serif text-3xl font-semibold">
-                Recent Activity
-              </div>
+              <StyleHeader>Recent Activity</StyleHeader>
               {activity.length > 0 && (
                 <div className="flex flex-col gap-3">
                   {activity.map((activity, idx) => {
                     return (
-                      <EntryRedirect
-                        key={`activity-${idx}`}
-                        entryId={activity.entry.id}
-                        entrySlug={activity.entry.slug}
-                      >
-                        <div className="group grid w-full grid-cols-[max-content,1fr] gap-4 2xl:w-full 2xl:grid-cols-[max-content,1fr]">
-                          <img
-                            src={activity.entry.posterPath}
-                            className="aspect-2/3 h-[80px] rounded-md 2xl:h-[100px]"
-                          />
-                          <div className="flex h-full flex-col justify-center gap-3 pb-3 2xl:border-b-0 2xl:pb-0">
-                            <div className="space-x-3">
-                              <span className="text-lg font-semibold group-hover:underline">
-                                <ServerEntryTitleForUser
-                                  entryId={activity.entry.id}
-                                />
-                              </span>
-                              <span className="text-sm font-medium text-base-500">
-                                {activity.entry.releaseDate.getFullYear()}
-                              </span>
-                            </div>
-                            <div className="mr-auto">
-                              {activity.type === 'reviewed' ||
-                                (activity.type === 'completeReview' && (
-                                  <SmallRating
-                                    rating={parseInt(
-                                      activity.additionalData.split('|')[1]!
-                                    )}
-                                  />
-                                ))}
-                            </div>
-                            <div className="flex justify-between">
-                              {generateActivityInfo(activity)}
-                            </div>
-                          </div>
-                        </div>
-                      </EntryRedirect>
+                      <Activity
+                        activity={activity}
+                        title={
+                          activity.entry.translations[0]?.name ||
+                          activity.entry.originalTitle
+                        }
+                        key={idx}
+                      />
                     );
                   })}
                 </div>

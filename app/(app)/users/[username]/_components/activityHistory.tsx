@@ -9,6 +9,7 @@ import {
   TooltipTrigger,
 } from '@/components/ui/tooltip';
 import { SafeUser } from '@/server/auth/validateSession';
+import StyleHeader from '@/components/styleHeader';
 
 const ActivityHistory = async ({
   profileUser,
@@ -45,9 +46,7 @@ const ActivityHistory = async ({
 
   return (
     <div className="flex flex-col gap-4">
-      <div className="flex w-full justify-between border-b border-b-base-200 pb-2 font-dm-serif text-3xl font-semibold">
-        Activity History
-      </div>
+      <StyleHeader>Activity History</StyleHeader>
 
       <div className="flex flex-wrap justify-center gap-1 rounded-lg bg-base-50 p-4 shadow-sm">
         {days.map((day, idx) => (

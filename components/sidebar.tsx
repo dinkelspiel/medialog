@@ -22,7 +22,7 @@ export const Sidebar = ({
   return (
     <div
       className={cn(
-        'sticky top-0 hidden h-[100dvh] w-0 flex-col overflow-hidden border-r border-r-base-200 bg-base-50 p-0 py-3 transition-all duration-200 lg:flex',
+        'sticky top-0 hidden h-screen w-0 flex-col overflow-hidden border-r border-r-base-200 bg-base-50 p-0 py-3 transition-all duration-200 lg:flex',
         {
           'w-[250px] px-3': sidebarOpen,
         },
