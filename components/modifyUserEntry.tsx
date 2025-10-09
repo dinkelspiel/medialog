@@ -125,6 +125,7 @@ const ModifyUserEntry = ({
   };
 
   const updateProgress = async (progress: number) => {
+    if (progress === userEntry.progress) return;
     setUserEntry({
       ...userEntry,
       watchedAt: progress >= userEntry.entry.length ? new Date() : null,
