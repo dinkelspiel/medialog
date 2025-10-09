@@ -101,7 +101,7 @@ export const userEntryRouter = createTRPCRouter({
         });
       }
 
-      if (input.progress && input.progress > userEntry.entry.length) {
+      if (input.progress && input.progress >= userEntry.entry.length) {
         const additionalData = `completed|${
           (await prisma.userEntry.count({
             where: {
@@ -236,7 +236,7 @@ export const userEntryRouter = createTRPCRouter({
         },
         data: {
           status: ((): UserEntryStatus | undefined => {
-            if (input.progress && input.progress > userEntry.entry.length) {
+            if (input.progress && input.progress >= userEntry.entry.length) {
               return 'completed';
             }
 
