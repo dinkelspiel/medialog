@@ -63,6 +63,7 @@ export const Feedback = () => {
         <DialogHeader className="flex-row items-center justify-between">
           <DialogTitle>Send Feedback</DialogTitle>
           <Link
+            target="_blank"
             className="text-sm text-sky-600 hover:underline"
             href={`https://github.com/${process.env.NEXT_PUBLIC_FEEDBACK_REPO_OWNER}/${process.env.NEXT_PUBLIC_FEEDBACK_REPO}/issues?q=is%3Aissue%20in%3Abody%20%22user%3A${user?.id}%22`}
           >
