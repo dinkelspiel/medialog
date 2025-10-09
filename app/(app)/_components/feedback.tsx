@@ -73,6 +73,10 @@ export const Feedback = () => {
           className="grid gap-4"
           onSubmit={e => {
             e.preventDefault();
+            setBody('');
+            setTitle('');
+            setLabel('bug');
+            setOpen(false);
             createIssue.mutate({
               title,
               body,
