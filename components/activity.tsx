@@ -1,7 +1,6 @@
 import { EntryRedirect } from '@/app/(app)/_components/EntryIslandContext';
-import { ServerEntryTitleForUser } from '@/app/(app)/users/[username]/_components/serverUserEntryTitle';
 import { Entry, UserActivity, UserEntryStatus } from '@prisma/client';
-import React, { ReactNode } from 'react';
+import React from 'react';
 import SmallRating from './smallRating';
 import { numberSuffix } from '@/lib/numberSuffix';
 import Link from 'next/link';
@@ -16,38 +15,49 @@ const generateActivityInfo = (
       const rewatch = parseInt(activity.additionalData.split('|')[1]!);
       switch (activity.additionalData.split('|')[0] as UserEntryStatus) {
         case 'planning':
-          if (rewatch === 0) {
-            text = 'Plans to watch';
-          } else {
-            text = `Plans to watch, for the ${numberSuffix(rewatch)},`;
+          {
+            const verb = activity.entry.category === 'Book' ? 'read' : 'watch';
+            if (rewatch === 0) {
+              text = `Plans to ${verb}`;
+            } else {
+              text = `Plans to ${verb}, for the ${numberSuffix(rewatch)},`;
+            }
           }
           break;
         case 'watching':
-          if (rewatch === 0) {
-            text = `Started ${activity.entry.category === 'Book' ? 'reading' : 'watching'}`;
-          } else {
-            text = `Is for the ${numberSuffix(rewatch + 1)} time ${activity.entry.category === 'Book' ? 'reading' : 'watching'}`;
+          {
+            const verb =
+              activity.entry.category === 'Book' ? 'reading' : 'watching';
+            if (rewatch === 0) {
+              text = `Started ${verb}`;
+            } else {
+              text = `Is for the ${numberSuffix(rewatch + 1)} time ${verb}`;
+            }
           }
           break;
         case 'dnf':
-          if (rewatch === 0) {
-            text = 'Did not finish';
-          } else {
-            text = `Did not finish their ${numberSuffix(rewatch)} rewatch`;
+          {
+            const verb =
+              activity.entry.category === 'Book' ? 'reread' : 'rewatch';
+            if (rewatch === 0) {
+              text = 'Did not finish';
+            } else {
+              text = `Did not finish their ${numberSuffix(rewatch)} ${verb}`;
+            }
           }
           break;
         case 'paused':
           if (rewatch === 0) {
-            text = 'Paused watching';
+            text = `Paused ${activity.entry.category === 'Book' ? 'reading' : 'watching'}`;
           } else {
-            text = `Paused their ${numberSuffix(rewatch)} rewatch`;
+            text = `Paused their ${numberSuffix(rewatch)} ${activity.entry.category === 'Book' ? 'reread' : 'rewatch'}`;
           }
           break;
         case 'completed':
           if (rewatch === 0) {
             text = 'Completed';
           } else {
-            text = `Completed their ${numberSuffix(rewatch)} rewatch`;
+            text = `Completed their ${numberSuffix(rewatch)} ${activity.entry.category === 'Book' ? 'reread' : 'rewatch'}`;
           }
           break;
       }
@@ -56,17 +66,17 @@ const generateActivityInfo = (
       if (activity.additionalData.split('|')[0] == '0') {
         text = 'Reviewed';
       } else {
-        text = `Reviewed their ${numberSuffix(parseInt(activity.additionalData.split('|')[0]!))} rewatch`;
+        text = `Reviewed their ${numberSuffix(parseInt(activity.additionalData.split('|')[0]!))} ${activity.entry.category === 'Book' ? 'reread' : 'rewatch'}`;
       }
       break;
     case 'rewatch':
-      text = `Started their ${numberSuffix(parseInt(activity.additionalData))} rewatch`;
+      text = `Started their ${numberSuffix(parseInt(activity.additionalData))} ${activity.entry.category === 'Book' ? 'reread' : 'rewatch'}`;
       break;
     case 'completeReview':
       if (activity.additionalData.split('|')[0] == '0') {
         text = 'Completed and reviewed';
       } else {
-        text = `Completed and reviewed their ${numberSuffix(parseInt(activity.additionalData.split('|')[0]!))} rewatch`;
+        text = `Completed and reviewed their ${numberSuffix(parseInt(activity.additionalData.split('|')[0]!))} ${activity.entry.category === 'Book' ? 'reread' : 'rewatch'}`;
       }
       break;
   }
