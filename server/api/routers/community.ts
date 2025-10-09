@@ -58,9 +58,9 @@ export const communityRouter = createTRPCRouter({
     const authUser = await validateSessionToken();
     const oneMonthAgo = subMonths(new Date(), 1);
 
-    const counts = await prisma.userEntry.groupBy({
+    const counts = await prisma.userActivity.groupBy({
       by: ['entryId'],
-      where: { createdAt: { gte: oneMonthAgo }, status: 'completed' },
+      where: { createdAt: { gte: oneMonthAgo } },
       _count: { entryId: true },
       orderBy: { _count: { entryId: 'desc' } },
       take: 4,
