@@ -2,26 +2,12 @@
 import AddLog from '@/components/addLog';
 import { Sidebar, SidebarFooter } from '@/components/sidebar';
 import { Button } from '@/components/ui/button';
-import { User } from '@prisma/client';
-import { Bug, MessageCircle, Plus, Send, Sparkles, Wand2 } from 'lucide-react';
 import { ReactNode } from 'react';
 import { Toaster } from 'sonner';
 import { SidebarButtons } from '../_components/sidebar';
 import { useAppStore } from '../state';
-import {
-  Dialog,
-  DialogContent,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from '@/components/ui/dialog';
-import { Input } from '@/components/ui/input';
-import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
-import Link from 'next/link';
-import { Toggle } from '@/components/ui/toggle';
 import { Feedback } from './feedback';
+import { Plus } from 'lucide-react';
 
 export const LoggedIn = ({
   children,
