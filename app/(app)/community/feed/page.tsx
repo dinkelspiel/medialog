@@ -117,7 +117,9 @@ const Page = () => {
                     releaseDate: entry.entry.releaseDate,
                     category: entry.entry.category,
                     topRight: entry.hasUserEntry && (
-                      <Badge variant={'secondary'}>In Library</Badge>
+                      <Badge variant={'secondary'} className="text-xs">
+                        In Library
+                      </Badge>
                     ),
                     className: 'max-w-[164px]',
                   }}

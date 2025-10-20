@@ -334,7 +334,7 @@ const AddLogContent = ({
         )}
 
       <div className="no-scrollbar max-h-[calc(100dvh-100px)] overflow-y-scroll lg:max-h-[calc(100dvh-220px)]">
-        <div className="grid grid-cols-3 gap-3 lg:grid-cols-4">
+        <div className="grid grid-cols-3 gap-2 lg:grid-cols-4">
           {queryResults &&
             queryResults
               .slice(0, isDesktop ? 8 : 6)
@@ -369,7 +369,9 @@ const AddLogContent = ({
                     }}
                     topRight={
                       entry.userEntries.length > 0 && (
-                        <Badge variant={'secondary'}>In Library</Badge>
+                        <Badge variant={'secondary'} className="text-xs">
+                          In Library
+                        </Badge>
                       )
                     }
                   />
@@ -406,7 +408,7 @@ const AddLogContent = ({
                 </div>
               </div>
             )}
-            <div className="grid grid-cols-3 gap-4 lg:grid-cols-4">
+            <div className="grid grid-cols-3 gap-2 lg:grid-cols-4">
               {externalQueryResults
                 // .slice(
                 //   0,
