@@ -1,6 +1,6 @@
 'use client';
 
-import { Book, Film, Loader2, Tv } from 'lucide-react';
+import { Book, Film, Library, Loader2, Tv } from 'lucide-react';
 import { Dispatch, Fragment, ReactNode, SetStateAction, useState } from 'react';
 import {
   Dialog,
@@ -27,6 +27,7 @@ import { getUserTitleFromEntry } from '@/server/api/routers/dashboard_';
 import { Badge } from './ui/badge';
 import ModifyUserEntry from './modifyUserEntry';
 import ContainedModifyUserEntry from './containedModifyUserEntry';
+import InLibrary from './inLibrary';
 
 const AddLog = ({
   children,
@@ -367,13 +368,7 @@ const AddLogContent = ({
                         addAction(entry.id);
                       }
                     }}
-                    topRight={
-                      entry.userEntries.length > 0 && (
-                        <Badge variant={'secondary'} className="text-xs">
-                          In Library
-                        </Badge>
-                      )
-                    }
+                    topRight={entry.userEntries.length > 0 && <InLibrary />}
                   />
                 )
               )}

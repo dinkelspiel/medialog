@@ -13,6 +13,7 @@ import UserEntryCard from '@/components/userEntryCard';
 import { EntryRedirect } from '../../_components/EntryIslandContext';
 import { Badge } from '@/components/ui/badge';
 import { Loader2 } from 'lucide-react';
+import InLibrary from '@/components/inLibrary';
 
 const Page = () => {
   const feed = api.community.getFeed.useInfiniteQuery(
@@ -116,11 +117,7 @@ const Page = () => {
                     backgroundImage: entry.entry.posterPath,
                     releaseDate: entry.entry.releaseDate,
                     category: entry.entry.category,
-                    topRight: entry.hasUserEntry && (
-                      <Badge variant={'secondary'} className="text-xs">
-                        In Library
-                      </Badge>
-                    ),
+                    topRight: entry.hasUserEntry && <InLibrary />,
                     className: 'max-w-[164px]',
                   }}
                 />

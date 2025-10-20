@@ -33,14 +33,14 @@ const UserEntryCard = ({
   return (
     <div
       className={cn(
-        'group relative z-50 aspect-[2/3] cursor-pointer overflow-clip rounded-lg border border-base-400 bg-cover shadow-black transition-all duration-200 hover:-translate-y-[4px] hover:scale-[101%] hover:shadow-md active:brightness-[0.8]',
+        'group relative z-50 aspect-[2/3] cursor-pointer overflow-clip rounded-lg bg-cover shadow-sm shadow-base-400 transition-all duration-200 hover:-translate-y-[4px] hover:scale-[101%] hover:shadow-md active:brightness-[0.8]',
         className
       )}
       {...props}
     >
       <img src={backgroundImage} className="absolute top-0 h-full w-full" />
       <div className="absolute top-0 flex h-[20%] w-full flex-col justify-end rounded-bl-lg rounded-br-lg bg-opacity-50 bg-gradient-to-b from-base-900 to-transparent"></div>
-      <div className="absolute top-0 hidden p-2 md:block">
+      <div className="absolute top-0 p-2">
         {(() => {
           switch (category) {
             case 'Book':
