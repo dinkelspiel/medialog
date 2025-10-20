@@ -28,7 +28,7 @@ const Showcase = async ({
       <StyleHeader>{title}</StyleHeader>
       {userEntries.length > 0 && (
         <>
-          <div className="hidden grid-cols-4 gap-3 sm:grid">
+          <div className="hidden grid-cols-4 gap-2 sm:grid">
             {userEntries.slice(0, 4).map((userEntry, idx) => (
               <EntryRedirect
                 key={userEntry.entry.id}
@@ -51,7 +51,7 @@ const Showcase = async ({
               </EntryRedirect>
             ))}
           </div>
-          <div className="grid grid-cols-3 gap-3 sm:hidden">
+          <div className="grid grid-cols-3 gap-2 sm:hidden">
             {userEntries.slice(0, 3).map((userEntry, idx) => (
               <EntryRedirect
                 key={userEntry.entry.id}
