@@ -9,12 +9,7 @@ const HeaderLayout = ({
   className?: string;
 }) => {
   return (
-    <div
-      className={cn(
-        `grid min-h-screen grid-rows-[max-content,1fr] gap-4`,
-        className
-      )}
-    >
+    <div className={cn(`flex min-h-screen flex-col gap-4`, className)}>
       {children}
     </div>
   );

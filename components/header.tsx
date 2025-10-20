@@ -22,7 +22,7 @@ import React, {
 import { cn } from '../lib/utils';
 import AddLog from './addLog';
 import { Button } from './ui/button';
-import { Dialog, DialogContent, DialogTitle } from './ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
 import { Drawer, DrawerContent, DrawerTrigger } from './ui/drawer';
 import { Feedback } from '@/app/(app)/_components/feedback';
 import { IslandDialog } from './islands/islands';
@@ -136,6 +136,9 @@ export const Header = ({
             </Button>
           </DrawerTrigger>
           <DrawerContent>
+            <DialogHeader className="sr-only">
+              <DialogTitle>Burger Menu</DialogTitle>
+            </DialogHeader>
             <div className="flex flex-col gap-2 p-4">{sidebarContent}</div>
             <div className="flex flex-col gap-2 p-4">
               <div className="text-sm font-normal text-base-400">
