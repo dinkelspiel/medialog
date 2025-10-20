@@ -2,10 +2,9 @@ import { ExtendedUserEntry } from '@/app/(app)/dashboard/state';
 import { cn } from '@/lib/utils';
 import { Category } from '@prisma/client';
 import { Book, Film, Star, Tv } from 'lucide-react';
-import { HTMLProps, ReactElement, ReactNode } from 'react';
+import { HTMLProps, ReactNode } from 'react';
 import SmallRating from './smallRating';
 import { getUserTitleFromEntry } from '@/server/api/routers/dashboard_';
-import { Badge } from './ui/badge';
 
 const UserEntryCard = ({
   entryTitle,
@@ -31,14 +30,14 @@ const UserEntryCard = ({
   return (
     <div
       className={cn(
-        'group relative aspect-[2/3] w-full cursor-pointer overflow-clip rounded-lg bg-cover shadow-md shadow-base-300',
+        'group relative aspect-[2/3] w-full cursor-pointer overflow-clip rounded-lg border border-base-400 bg-cover shadow-md shadow-base-300',
         className
       )}
       style={{ backgroundImage: `url(${backgroundImage})` }}
       {...props}
     >
       <div className="absolute top-0 flex h-[20%] w-full flex-col justify-end rounded-bl-lg rounded-br-lg bg-opacity-50 bg-gradient-to-b from-base-900 to-transparent"></div>
-      <div className="absolute top-0 p-2">
+      <div className="absolute top-0 hidden p-2 md:block">
         {(() => {
           switch (category) {
             case 'Book':
@@ -58,7 +57,7 @@ const UserEntryCard = ({
       <div className="absolute -top-1 right-0 p-2">{topRight}</div>
 
       <div className="select-none text-transparent">{entryTitle}</div>
-      <div className="absolute top-[40%] flex h-[60%] w-full flex-col justify-end rounded-bl-lg rounded-br-lg bg-gradient-to-t from-base-900 to-transparent object-cover p-2">
+      <div className="absolute top-[40%] hidden h-[60%] w-full flex-col justify-end rounded-bl-lg rounded-br-lg bg-gradient-to-t from-base-900 to-transparent object-cover p-2 opacity-0 transition-all duration-200 group-hover:opacity-100 md:flex">
         <div className="text-left text-sm font-semibold text-white sm:text-base">
           {entryTitle}
         </div>

@@ -6,8 +6,7 @@ import ModifyUserEntry from '@/components/modifyUserEntry';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { UserEntryCardObject } from '@/components/userEntryCard';
 import { api } from '@/trpc/react';
-import { Entry, UserEntry, UserList } from '@prisma/client';
-import { useQuery } from '@tanstack/react-query';
+import { Entry, UserList } from '@prisma/client';
 import { Loader2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';
@@ -15,15 +14,17 @@ import { SidebarButtons } from '../_components/sidebar';
 import { FilterView, shouldBeFiltered } from './_components/FilterView';
 import { ExtendedUserEntry, useDashboardStore } from './state';
 import { useDebounceValue } from 'usehooks-ts';
-import { inferRouterOutputs } from '@trpc/server';
-import { entriesRouter } from '@/server/api/routers/entries';
 import { cn } from '@/lib/utils';
 
 const Page = () => {
   const { data, isPending: dataIsPending } = api.dashboard.get.useQuery();
 
   if (dataIsPending) {
-    return <Loader2 className="size-4 animate-spin" />;
+    return (
+      <div className="flex h-full items-center justify-center">
+        <Loader2 className="size-4 animate-spin" />
+      </div>
+    );
   }
 
   if (!data) {
@@ -133,7 +134,7 @@ const Dashboard = ({
       >
         <FilterView className="flex pb-4 lg:hidden" />
         <div
-          className="grid h-fit w-fit max-w-[1024px] gap-3"
+          className="grid h-fit w-fit max-w-[1024px] gap-2"
           style={{
             gridTemplateColumns: `repeat(${Math.max(3, Math.floor(Math.min(userEntriesWidth, 1024) / 148))}, minmax(0, 1fr))`,
           }}
