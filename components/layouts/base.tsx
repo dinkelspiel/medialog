@@ -12,16 +12,14 @@ const BaseLayout = async ({
   const theme = await getTheme();
 
   return (
-    <html lang="en">
-      <body
-        className={cn(
-          `theme-${theme} font-geist min-h-[100dvh] bg-base-50`,
-          className
-        )}
-      >
-        {children}
-      </body>
-    </html>
+    <div
+      className={cn(
+        `theme-${theme} min-h-[100dvh] bg-base-50 font-geist`,
+        className
+      )}
+    >
+      {children}
+    </div>
   );
 };
 

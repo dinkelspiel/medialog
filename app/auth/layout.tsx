@@ -8,12 +8,10 @@ const Layout = async ({ children }: { children: ReactNode }) => {
   const theme = await getTheme();
 
   return (
-    <html lang="en">
-      <body className={`theme-${theme} min-h-[100dvh]`}>
-        {children}
-        <Toaster />
-      </body>
-    </html>
+    <div className={`theme-${theme} min-h-[100dvh]`}>
+      {children}
+      <Toaster />
+    </div>
   );
 };
 
