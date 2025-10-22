@@ -119,67 +119,29 @@ const Page = () => {
               </div>
             )}
 
-            {trending.data?.map(
-              (entry: {
-                entry: {
-                  id: number;
-                  userEntries: {
-                    id: number;
-                    userId: number;
-                    entryId: number;
-                    createdAt: Date;
-                    updatedAt: Date;
-                    status: UserEntryStatus;
-                    rating: number;
-                    notes: string;
-                    watchedAt: Date | null;
-                    visibility: UserEntryVisibility;
-                    progress: number;
-                  }[];
-                  _count: {
-                    userEntries: number;
-                  };
-                  category: Category;
-                  posterPath: string;
-                  originalTitle: string;
-                  slug: string;
-                  releaseDate: Date;
-                  translations: {
-                    id: number;
-                    createdAt: Date;
-                    updatedAt: Date;
-                    name: string;
-                    entryId: number;
-                    languageId: number | null;
-                  }[];
-                };
-                userEntriesPastMonth: number;
-                hasUserEntry: boolean;
-                averageRating: number | null;
-              }) => (
-                <EntryRedirect
-                  key={entry.entry.id}
-                  className="hover:no-underline"
-                  entryId={entry.entry.id}
-                  entrySlug={entry.entry.slug}
-                >
-                  <UserEntryCard
-                    key={`${entry.entry.id}`}
-                    {...{
-                      entryTitle:
-                        entry.entry.translations[0]?.name ||
-                        entry.entry.originalTitle,
-                      rating: entry.averageRating ?? 0,
-                      backgroundImage: entry.entry.posterPath,
-                      releaseDate: entry.entry.releaseDate,
-                      category: entry.entry.category,
-                      topRight: entry.hasUserEntry && <InLibrary />,
-                      className: 'max-w-[164px]',
-                    }}
-                  />
-                </EntryRedirect>
-              )
-            )}
+            {trending.data?.map(entry => (
+              <EntryRedirect
+                key={entry.entry.id}
+                className="hover:no-underline"
+                entryId={entry.entry.id}
+                entrySlug={entry.entry.slug}
+              >
+                <UserEntryCard
+                  key={`${entry.entry.id}`}
+                  {...{
+                    entryTitle:
+                      entry.entry.translations[0]?.name ||
+                      entry.entry.originalTitle,
+                    rating: entry.averageRating ?? 0,
+                    backgroundImage: entry.entry.posterPath,
+                    releaseDate: entry.entry.releaseDate,
+                    category: entry.entry.category,
+                    topRight: entry.hasUserEntry && <InLibrary />,
+                    className: 'max-w-[164px]',
+                  }}
+                />
+              </EntryRedirect>
+            ))}
           </div>
         </div>
       </div>
