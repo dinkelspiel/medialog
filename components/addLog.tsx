@@ -221,7 +221,7 @@ const AddLogContent = ({
   const [queryTitle, setQueryTitle] = useState('');
 
   const generateQueryCategories = (): string[] => {
-    let q = [];
+    let q: string[] = [];
     if (queryCategories.book) {
       q.push('Book');
     }
