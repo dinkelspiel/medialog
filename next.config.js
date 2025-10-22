@@ -15,7 +15,7 @@ const config = {
   images: {
     remotePatterns: [
       new URL('https://image.tmdb.org'),
-      new URL('covers.openlibrary.org'),
+      new URL('https://covers.openlibrary.org'),
     ],
   },
   rewrites: async () => {
