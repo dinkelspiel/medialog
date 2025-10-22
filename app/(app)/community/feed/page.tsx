@@ -14,6 +14,8 @@ import { EntryRedirect } from '../../_components/EntryIslandContext';
 import { Badge } from '@/components/ui/badge';
 import { Loader2 } from 'lucide-react';
 import InLibrary from '@/components/inLibrary';
+import { Entry, EntryTranslation, User, UserActivity } from '@prisma/client';
+import { SafeUser } from '@/server/auth/validateSession';
 
 const Page = () => {
   const feed = api.community.getFeed.useInfiniteQuery(
@@ -51,17 +53,24 @@ const Page = () => {
           <StyleHeader>Feed</StyleHeader>
           <div className="flex flex-col gap-3 pb-6">
             {feed.data?.pages.map(page =>
-              page.activity.map(activity => (
-                <Activity
-                  key={activity.id}
-                  activity={activity}
-                  title={
-                    activity.entry.translations[0]?.name ||
-                    activity.entry.originalTitle
+              page.activity.map(
+                (
+                  activity: UserActivity & {
+                    entry: Entry & { translations: EntryTranslation[] };
+                    user: NonNullable<SafeUser>;
                   }
-                  username={activity.user.username}
-                />
-              ))
+                ) => (
+                  <Activity
+                    key={activity.id}
+                    activity={activity}
+                    title={
+                      activity.entry.translations[0]?.name ||
+                      activity.entry.originalTitle
+                    }
+                    username={activity.user.username}
+                  />
+                )
+              )
             )}
             {feed.isFetchingNextPage && (
               <div className="flex items-center justify-center gap-3 py-12">
