@@ -1,6 +1,8 @@
 import { validateSessionToken } from '@/server/auth/validateSession';
 import prisma from '@/server/db';
 import { normalizeOrderInList } from '@/server/user/list/normalizeOrder';
+import { Prisma, UserListEntry } from '@prisma/client';
+import { DefaultArgs } from '@prisma/client/runtime/library';
 import z from 'zod';
 
 export const PATCH = async (
@@ -75,7 +77,12 @@ export const PATCH = async (
       return;
     }
 
-    const updates = [];
+    const updates: Prisma.Prisma__UserListEntryClient<
+      UserListEntry,
+      never,
+      DefaultArgs,
+      Prisma.PrismaClientOptions
+    >[] = [];
 
     if (currentOrder < data.data.order) {
       for (let i = currentEntryIndex + 1; i < list.entries.length; i++) {
