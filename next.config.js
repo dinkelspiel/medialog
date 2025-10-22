@@ -13,7 +13,10 @@ const config = {
    * @see https://github.com/vercel/next.js/issues/41980
    */
   images: {
-    domains: ['image.tmdb.org', 'covers.openlibrary.org'],
+    remotePatterns: [
+      new URL('https://image.tmdb.org'),
+      new URL('covers.openlibrary.org'),
+    ],
   },
   rewrites: async () => {
     return [
