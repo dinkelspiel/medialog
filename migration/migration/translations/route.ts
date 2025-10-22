@@ -137,7 +137,15 @@ export const GET = async (req: NextRequest) => {
         },
       });
 
-      let collectionTranslation = undefined;
+      let collectionTranslation:
+        | {
+            data: {
+              name: string;
+              overview: string;
+              tagline: string;
+            };
+          }
+        | undefined = undefined;
       if (entry.category === 'Series') {
         collectionTranslation = (
           (
@@ -163,7 +171,7 @@ export const GET = async (req: NextRequest) => {
 
       let title = '';
       if (entry.category === 'Series') {
-        if (!collectionTranslation.data.name) {
+        if (!collectionTranslation!.data.name) {
           logger.error(
             `No name for collection ${entry.id} ${translation.name}`
           );
@@ -176,12 +184,12 @@ export const GET = async (req: NextRequest) => {
             ? 'Season ' + entry.foreignId
             : 'Specials';
 
-        if ((season as string).includes(collectionTranslation.data.name)) {
+        if ((season as string).includes(collectionTranslation!.data.name)) {
           title = season;
         } else {
           title =
-            collectionTranslation.data.name +
-            (season === collectionTranslation.data.name ? '' : `: ${season}`);
+            collectionTranslation!.data.name +
+            (season === collectionTranslation!.data.name ? '' : `: ${season}`);
         }
       } else if (translation.data.title) {
         title = translation.data.title;
@@ -198,15 +206,15 @@ export const GET = async (req: NextRequest) => {
           name: title,
           overview:
             entry.category === 'Series'
-              ? (collectionTranslation.data.overview ?? '')
+              ? (collectionTranslation!.data.overview ?? '')
               : (translation.data.overview ?? ''),
           tagline:
             entry.category === 'Series'
-              ? (collectionTranslation.data.tagline ?? '')
+              ? (collectionTranslation!.data.tagline ?? '')
               : (translation.data.tagline ?? ''),
           homepage:
             entry.category === 'Series'
-              ? (collectionTranslation.data.overview ?? '')
+              ? (collectionTranslation!.data.overview ?? '')
               : (translation.data.overview ?? ''),
         },
       });

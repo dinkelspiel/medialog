@@ -6,6 +6,7 @@ import axios from 'axios';
 import { TRPCError } from '@trpc/server';
 import { Agent, setGlobalDispatcher } from 'undici';
 import logger from '@/server/logger';
+import { Entry } from '@prisma/client';
 
 type ExternalSearch = {
   title: string;
@@ -295,7 +296,7 @@ export const importRouter = createTRPCRouter({
         });
       }
 
-      let collectionId = undefined;
+      let collectionId: number | undefined = undefined;
 
       if (data.belongs_to_collection) {
         const existingCollection = await prisma.collection.findFirst({
@@ -771,7 +772,7 @@ export const importRouter = createTRPCRouter({
         });
       }
 
-      let collectionId = undefined;
+      let collectionId: number | undefined = undefined;
 
       let collection = await prisma.collection.findFirst({
         where: {
@@ -797,7 +798,7 @@ export const importRouter = createTRPCRouter({
       collectionId = collection.id;
 
       try {
-        let firstSeason = undefined;
+        let firstSeason: Entry | undefined = undefined;
         for (const season of data.seasons) {
           const existingEntry = await prisma.entry.findFirst({
             where: {
@@ -1284,7 +1285,7 @@ export const importRouter = createTRPCRouter({
         .filter((e: any) => e.releaseDate !== 'Invalid Date');
 
       if (input.excludeExisting) {
-        let finalMedia = [];
+        let finalMedia: any[] = [];
         for (const media of [...openLibrary, ...tmdb]) {
           const existing = await prisma.entry.findFirst({
             where: {
