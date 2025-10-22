@@ -5,8 +5,7 @@ import { Input } from '@/components/ui/input';
 import { api } from '@/trpc/react';
 import { User, UserForgotPassword } from '@prisma/client';
 import { redirect, useRouter } from 'next/navigation';
-import { useEffect, useState } from 'react';
-import { useFormState } from 'react-dom';
+import { useEffect, useState, useActionState } from 'react';
 import { toast } from 'sonner';
 
 const Client = ({
