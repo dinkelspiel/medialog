@@ -118,7 +118,6 @@ const Page = () => {
                 No entries are trending right now.
               </div>
             )}
-
             {trending.data?.map(entry => (
               <EntryRedirect
                 key={entry.entry.id}
