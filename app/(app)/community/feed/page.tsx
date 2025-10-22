@@ -113,11 +113,11 @@ const Page = () => {
                 <Loader2 className="size-4 animate-spin" /> Loading...
               </div>
             )}
-            {trending.data && trending.data.length === 0 && (
+            {/* {trending.data && trending.data.length === 0 && (
               <div className="flex items-center justify-center gap-3">
                 No entries are trending right now.
               </div>
-            )}
+            )} */}
             {trending.data?.map(entry => (
               <EntryRedirect
                 key={entry.entry.id}
