@@ -187,7 +187,7 @@ const Profile = async ({
     },
   });
 
-  let ratings = [];
+  let ratings: number[] = [];
   const totalRatings = await prisma.userEntry.count({
     where: {
       userId: profileUser.id,
