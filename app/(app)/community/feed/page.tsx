@@ -1,19 +1,19 @@
 'use client';
 
 import HeaderLayout from '@/components/layouts/header';
-import React, { useEffect, useRef, useState } from 'react';
-import { SidebarButtons } from '../../_components/sidebar';
+import { useEffect } from 'react';
 import { Header } from '@/components/header';
-import { FilterView } from '../../dashboard/_components/FilterView';
 import { api } from '@/trpc/react';
 import Activity from '@/components/activity';
 import StyleHeader from '@/components/styleHeader';
 import { cn } from '@/lib/utils';
 import UserEntryCard from '@/components/userEntryCard';
 import { EntryRedirect } from '../../_components/EntryIslandContext';
-import { Badge } from '@/components/ui/badge';
 import { Loader2 } from 'lucide-react';
 import InLibrary from '@/components/inLibrary';
+
+export const dynamic = 'force-dynamic';
+export const revalidate = 0;
 
 const Page = () => {
   const feed = api.community.getFeed.useInfiniteQuery(
