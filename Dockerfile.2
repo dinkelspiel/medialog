@@ -6,4 +6,5 @@ COPY package*.json ./
 RUN pnpm install
 COPY . .
 EXPOSE 3000
+RUN pnpm dlx prisma generate
 CMD pnpm dev
