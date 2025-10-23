@@ -13,7 +13,6 @@ import { Loader2 } from 'lucide-react';
 import InLibrary from '@/components/inLibrary';
 
 export const dynamic = 'force-dynamic';
-export const revalidate = 0;
 
 const Page = () => {
   const feed = api.community.getFeed.useInfiniteQuery(
