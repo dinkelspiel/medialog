@@ -28,12 +28,12 @@ const UserEntryCard = ({
   hoverCard?: ReactNode;
   topRight?: ReactNode;
 } & HTMLProps<HTMLDivElement>) => {
-  // return <img src={backgroundImage} className="aspect-[2/3] w-full"></img>;
+  // return <img src={backgroundImage} className="aspect-2/3 w-full"></img>;
 
   return (
     <div
       className={cn(
-        'group relative z-50 aspect-[2/3] cursor-pointer overflow-clip rounded-lg bg-cover shadow-sm shadow-base-400 transition-all duration-200 hover:-translate-y-[4px] hover:scale-[101%] hover:shadow-md active:brightness-[0.8]',
+        'group relative z-10 aspect-2/3 cursor-pointer overflow-clip rounded-lg bg-cover shadow-sm shadow-base-400 transition-all duration-200 hover:-translate-y-[4px] hover:scale-[101%] hover:shadow-md active:brightness-[0.8]',
         className
       )}
       {...props}
@@ -75,7 +75,7 @@ const UserEntryCard = ({
       <div className="absolute right-0 top-0 flex p-2">{topRight}</div>
 
       <div className="select-none text-transparent">{entryTitle}</div>
-      <div className="absolute top-[40%] hidden h-[60%] w-full flex-col justify-end rounded-bl-lg rounded-br-lg bg-gradient-to-t from-base-900 to-transparent object-cover p-2 opacity-0 transition-all duration-200 group-hover:opacity-100 md:flex">
+      <div className="absolute top-[40%] hidden h-[60%] w-full flex-col justify-end rounded-bl-lg rounded-br-lg bg-linear-to-t from-base-900 to-transparent object-cover p-2 opacity-0 transition-all duration-200 group-hover:opacity-100 md:flex">
         <div className="text-left text-sm font-semibold text-white sm:text-base">
           {entryTitle}
         </div>

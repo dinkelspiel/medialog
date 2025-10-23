@@ -10,7 +10,7 @@ const SidebarLayout = async ({ children }: { children: ReactNode }) => {
     <BaseLayout>
       <div
         className={cn(
-          `font-geist theme-${theme} grid min-h-dvh grid-cols-1 bg-base-100 lg:grid-cols-[max-content,1fr]`
+          `font-geist theme-${theme} grid min-h-dvh grid-cols-1 bg-base-100 lg:grid-cols-[max-content_1fr]`
         )}
       >
         {children}

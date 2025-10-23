@@ -57,7 +57,7 @@ const Page = async () => {
   return (
     <div className="flex w-full flex-col items-center bg-white">
       <Header />
-      <div className="flex w-full flex-col items-center gap-[4rem] bg-base-100 px-[1rem] pt-[calc(5rem+45.6px)] md:px-[3rem]">
+      <div className="flex w-full flex-col items-center gap-16 bg-base-100 px-4 pt-[calc(5rem+45.6px)] md:px-12">
         <div className="flex w-[90%] max-w-[1071px] flex-col items-center gap-12 py-24 text-center lg:w-2/3">
           <div className="text-[3rem] font-medium leading-[1.15] tracking-[-.08rem] md:text-[4rem]">
             <i>Your</i> website for rating{' '}
@@ -146,7 +146,7 @@ const Page = async () => {
           </Card>
         </div>
       </div>
-      <div className="grid w-full grid-cols-1 gap-[4rem] bg-base-100 px-4 pb-16 pt-8 md:grid-cols-2 md:px-[3rem]">
+      <div className="grid w-full grid-cols-1 gap-16 bg-base-100 px-4 pb-16 pt-8 md:grid-cols-2 md:px-12">
         <div className="flex flex-col gap-4">
           <div className="flex flex-row items-center gap-3 text-3xl font-bold tracking-tighter">
             <Logo /> Medialog

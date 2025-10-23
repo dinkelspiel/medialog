@@ -6,7 +6,7 @@ const Layout = async ({ children }: { children: ReactNode }) => {
   const theme = await getTheme();
 
   return (
-    <div className={`theme-${theme} min-h-[100dvh]`}>
+    <div className={`theme-${theme} min-h-dvh`}>
       {children}
       <Toaster />
     </div>

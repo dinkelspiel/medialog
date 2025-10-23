@@ -66,7 +66,7 @@ const Settings = () => {
   );
 
   return (
-    <div className="grid lg:grid-cols-[250px,1fr]">
+    <div className="grid lg:grid-cols-[250px_1fr]">
       <Sidebar
         sidebarOpen={true}
         className="h-full"

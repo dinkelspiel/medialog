@@ -9,8 +9,20 @@ const nextConfig: NextConfig = {
    * @see https://github.com/vercel/next.js/issues/41980
    */
   images: {
-    remotePatterns: [new URL('https://image.tmdb.org'), new URL('https://covers.openlibrary.org')],
-  },
+    remotePatterns: [
+      {
+        protocol: "https",
+        hostname: "image.tmdb.org",
+        port: "",
+        pathname: "/t/p/**",
+      },
+      {
+        protocol: "https",
+        hostname: "covers.openlibrary.org",
+        port: "",
+        pathname: "/**",
+      },
+    ],  },
   rewrites: async () => {
     return [
       {

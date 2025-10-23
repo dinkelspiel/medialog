@@ -47,19 +47,18 @@ const UserList = ({
     follow: User & { following: UserFollow[]; followers: UserFollow[] };
   } & { user: User & { following: UserFollow[]; followers: UserFollow[] } })[];
 }) => {
-  const authUser = useAuthUser();
   return (
     <div className="py-6">
-      <div className="grid grid-cols-[1fr,96px] items-center gap-3">
+      <div className="grid grid-cols-[1fr_96px] items-center gap-3">
         {users
           .filter(e => e.isFollowing)
           .map(user => {
             if (user.follow) {
-              return <UserCard user={user.follow} />;
+              return <UserCard key={user.follow.id} user={user.follow} />;
             }
 
             if (user.user) {
-              return <UserCard user={user.user} />;
+              return <UserCard key={user.user.id} user={user.user} />;
             }
           })}
       </div>
@@ -87,7 +86,7 @@ export const Stats = ({
 
   return (
     <div className={cn('flex justify-center', className ?? '')}>
-      <div className="grid w-full grid-cols-[1fr,1fr,2fr] items-center justify-between px-6 sm:flex sm:w-max sm:flex-row sm:justify-start sm:gap-6 sm:px-0">
+      <div className="grid w-full grid-cols-[1fr_1fr_2fr] items-center justify-between px-6 sm:flex sm:w-max sm:flex-row sm:justify-start sm:gap-6 sm:px-0">
         <div className="flex flex-col">
           <div className="text-center text-2xl font-semibold">
             {
@@ -140,7 +139,7 @@ export const Stats = ({
               </div>
             </div>
           </SheetTrigger>
-          <SheetContent className="!max-w-[450px] min-[450px]:max-w-[100dvw]">
+          <SheetContent className="max-w-[450px]! min-[450px]:max-w-dvw">
             <SheetHeader>
               <SheetTitle className="flex flex-row gap-6">
                 <div

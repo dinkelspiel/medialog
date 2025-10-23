@@ -46,7 +46,7 @@ const Page = () => {
   return (
     <HeaderLayout>
       <Header titleComponent="Community" sidebarContent={<></>}></Header>
-      <div className="mx-auto flex w-fit flex-col-reverse gap-16 lg:grid min-[1330px]:grid-cols-[1fr,250px]">
+      <div className="mx-auto flex w-fit flex-col-reverse gap-16 lg:grid min-[1330px]:grid-cols-[1fr_250px]">
         <div className="mx-auto flex flex-col gap-6 px-4 md:w-[710px]">
           <StyleHeader>Feed</StyleHeader>
           <div className="flex flex-col gap-3 pb-6">
@@ -71,7 +71,7 @@ const Page = () => {
             )}
             {!feed.hasNextPage && feed.data && (
               <div className="relative py-12">
-                <div className="h-[1px] w-full bg-base-200"></div>
+                <div className="h-px w-full bg-base-200"></div>
                 <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-base-100 px-4 text-center font-semibold">
                   You have reached the end.
                 </div>
@@ -89,7 +89,7 @@ const Page = () => {
               Trending
             </div>
           </div>
-          <div className="flex flex-wrap gap-3 lg:grid lg:grid-cols-2">
+          <div className="flex flex-wrap gap-2 lg:grid lg:grid-cols-2">
             {trending.isLoading && (
               <div className="flex items-center justify-center gap-3">
                 <Loader2 className="size-4 animate-spin" /> Loading...

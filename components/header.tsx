@@ -56,7 +56,7 @@ export const Header = ({
   return (
     <div
       className={cn(
-        "sticky top-0 z-10 flex h-16 items-center justify-between gap-2 border-b border-b-base-200 bg-base-50 p-4",
+        "sticky top-0 z-11 flex h-16 items-center justify-between gap-2 border-b border-b-base-200 bg-base-50 p-4",
         className
       )}
     >

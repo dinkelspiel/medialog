@@ -25,7 +25,7 @@ const Page = () => {
   const [password, setPassword] = useState('');
 
   return (
-    <main className="grid h-[100dvh] w-full items-center justify-center bg-base-100">
+    <main className="grid h-dvh w-full items-center justify-center bg-base-100">
       <form
         className="grid w-[350px] gap-8"
         onSubmit={e => {

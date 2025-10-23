@@ -40,7 +40,7 @@ const Header = () => {
             </Link>
             <nav className="flex h-9 w-9 items-center justify-center md:hidden">
               <button
-                className="hover:bg-base-700/[0.8] flex h-9 w-9 items-center justify-center rounded-xl"
+                className="hover:bg-base-700/80 flex h-9 w-9 items-center justify-center rounded-xl"
                 onClick={() => setOpen(!open)}
               >
                 <Menu className="size-4 stroke-white" />
@@ -59,7 +59,7 @@ const Header = () => {
         )}
       >
         <Link className="[&amp;>div]:last:border-none" href="/blog">
-          <div className="box-base-100 flex w-full items-center justify-between gap-x-[2px] border-b border-white/[0.06] px-4 py-3">
+          <div className="box-base-100 flex w-full items-center justify-between gap-x-[2px] border-b border-white/6 px-4 py-3">
             <span className="body-small flex h-full cursor-pointer items-center text-white hover:opacity-[.8]">
               Blog
             </span>

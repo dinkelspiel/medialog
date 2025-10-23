@@ -47,7 +47,7 @@ export const ProfileSidebar = ({
     'JAN',
   ];
 
-  var startOfDay = new Date();
+  const startOfDay = new Date();
   startOfDay.setUTCHours(0, 0, 0, 0);
 
   return (
@@ -65,7 +65,7 @@ export const ProfileSidebar = ({
         <div className="flex flex-row justify-center">
           {profileUser.userEntries
             .filter(e => e.status === 'planning')
-            .sort(() => Math.random() - 0.5)
+            // .sort(() => Math.random() - 0.5)
             .slice(0, 4)
             .map((watchlist, idx) => (
               <img
@@ -146,7 +146,7 @@ export const ProfileSidebar = ({
             profileUser.dailyStreakUpdated.getTime() > startOfDay.getTime()
           ) && (
             <div className="w-full rounded-md border bg-red-500 py-1 text-center text-sm text-white">
-              Daily streak hasn't been updated
+              Daily streak hasn{"'"}t been updated
             </div>
           )}
         {Object.keys(diary)
@@ -164,7 +164,7 @@ export const ProfileSidebar = ({
             return monthOrder.indexOf(aMonth) - monthOrder.indexOf(bMonth);
           })
           .map(month => (
-            <div className="grid grid-cols-[42px,1fr] gap-2" key={month}>
+            <div className="grid grid-cols-[42px_1fr] gap-2" key={month}>
               <div className="flex flex-col items-center gap-1">
                 <Calendar />
                 <div className="text-center text-[11px] font-semibold text-base-900">
@@ -172,10 +172,10 @@ export const ProfileSidebar = ({
                 </div>
               </div>
               <div className="flex flex-col items-start gap-2 text-sm font-medium">
-                {diary[month]!.map(day => (
+                {diary[month]!.map((day, idx) => (
                   <div
-                    className="grid grid-cols-[17.5px,1fr] items-start gap-2"
-                    key={month + (JSON.stringify(day) + '') + day.title}
+                    className="grid grid-cols-[17.5px_1fr] items-start gap-2"
+                    key={month + day.title + idx}
                   >
                     <div className="text-base-500">{day.day}</div>
                     <EntryRedirect

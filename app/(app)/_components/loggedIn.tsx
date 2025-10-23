@@ -50,7 +50,7 @@ export const LoggedIn = ({
         </SidebarFooter>
       </Sidebar>
 
-      <main className="lg:ps-[250px] sticky top-0">{children}</main>
+      <main>{children}</main>
       <Toaster />
     </>
   );

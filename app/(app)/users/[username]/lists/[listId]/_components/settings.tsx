@@ -69,7 +69,7 @@ const SettingsView = ({
                     setType.mutate({ type, listId: list.id });
                   }}
                 >
-                  <SelectTrigger className="min-w-[8rem]">
+                  <SelectTrigger className="min-w-32">
                     {capitalizeFirst(selectedType)}
                   </SelectTrigger>
                   <SelectContent>

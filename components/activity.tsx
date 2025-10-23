@@ -93,7 +93,7 @@ const Activity = ({
   username?: string;
 }) => {
   const contents = () => (
-    <div className="group grid w-full grid-cols-[max-content,1fr] gap-4 2xl:w-full 2xl:grid-cols-[max-content,1fr]">
+    <div className="group grid w-full grid-cols-[max-content_1fr] gap-4 2xl:w-full 2xl:grid-cols-[max-content_1fr]">
       <img
         src={activity.entry.posterPath}
         className="aspect-2/3 h-[80px] rounded-md 2xl:h-[100px]"

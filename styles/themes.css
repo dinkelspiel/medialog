@@ -305,3 +305,22 @@
   --base-900: 136, 19, 55;
   --base-950: 76, 5, 25;
 }
+
+:root,
+:is(.theme-slate, .theme-gray, .theme-zinc, .theme-neutral, .theme-stone,
+    .theme-red, .theme-orange, .theme-amber, .theme-yellow, .theme-lime,
+    .theme-green, .theme-emerald, .theme-teal, .theme-cyan, .theme-sky,
+    .theme-blue, .theme-indigo, .theme-violet, .theme-purple, .theme-fuchsia,
+    .theme-pink, .theme-rose) {
+  --color-base-50:  rgb(var(--base-50));
+  --color-base-100: rgb(var(--base-100));
+  --color-base-200: rgb(var(--base-200));
+  --color-base-300: rgb(var(--base-300));
+  --color-base-400: rgb(var(--base-400));
+  --color-base-500: rgb(var(--base-500));
+  --color-base-600: rgb(var(--base-600));
+  --color-base-700: rgb(var(--base-700));
+  --color-base-800: rgb(var(--base-800));
+  --color-base-900: rgb(var(--base-900));
+  --color-base-950: rgb(var(--base-950));
+}

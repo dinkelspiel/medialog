@@ -3,7 +3,7 @@
   "author": "Willem Dinkelspiel <willem@dinkelspiel.com> (https://github.com/dinkelspiel)",
   "version": "0.1.0",
   "private": true,
-  "scripts": {    
+  "scripts": {
     "dev:no-ts": "next dev --port 3000",
     "dev": "pnpm dev:no-ts & pnpm ts:watch",
     "ts": "tsc --noEmit --incremental",
@@ -61,7 +61,7 @@
     "zustand": "^5.0.8"
   },
   "devDependencies": {
-    "@tailwindcss/postcss": "^4",
+    "@tailwindcss/postcss": "^4.1.16",
     "@types/bcrypt": "^6.0.0",
     "@types/node": "^20",
     "@types/react": "^19",
@@ -69,7 +69,7 @@
     "@types/slug": "^5.0.9",
     "eslint": "^9",
     "eslint-config-next": "16.0.0",
-    "tailwindcss": "^4",
+    "tailwindcss": "^4.1.16",
     "typescript": "^5"
   }
 }

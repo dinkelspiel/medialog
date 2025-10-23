@@ -217,7 +217,7 @@ const Profile = async ({
         <div className="block py-2 lg:hidden">
           <Stats profileUser={profileUser as any} />
         </div>
-        <div className="grid w-fit grid-cols-1 gap-16 min-[1330px]:grid-cols-[1fr,250px]">
+        <div className="grid w-fit grid-cols-1 gap-16 min-[1330px]:grid-cols-[1fr_250px]">
           <div className="flex flex-col gap-6 px-4 md:w-[710px]">
             <Showcase
               title={"Favorites"}
