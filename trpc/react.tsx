@@ -54,7 +54,7 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
         }),
         splitLink({
           condition(op) {
-            return op.path.startsWith('auth.');
+            return (op.path ?? "").startsWith('auth.');
           },
           true: httpBatchLink({
             transformer: SuperJSON,
