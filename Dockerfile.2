@@ -7,4 +7,5 @@ RUN pnpm install
 COPY . .
 EXPOSE 3000
 RUN pnpm dlx prisma generate
-CMD pnpm dev
+RUN pnpm build
+CMD pnpm start 
