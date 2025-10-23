@@ -39,7 +39,7 @@ const UserEntryCard = ({
       {...props}
     >
       <img src={backgroundImage} className="absolute top-0 h-full w-full" />
-      <div className="absolute top-0 flex h-[20%] w-full flex-col justify-end rounded-bl-lg rounded-br-lg bg-opacity-50 bg-gradient-to-b from-base-900 to-transparent"></div>
+      <div className="absolute top-0 flex h-[20%] w-full flex-col justify-end rounded-bl-lg rounded-br-lg bg-linear-to-b from-base-900/50 to-transparent"></div>
       <div className="absolute top-0 p-2">
         {(() => {
           switch (category) {

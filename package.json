@@ -1,12 +1,21 @@
 {
-  "name": "medialog-16",
+  "name": "medialog",
+  "author": "Willem Dinkelspiel <willem@dinkelspiel.com> (https://github.com/dinkelspiel)",
   "version": "0.1.0",
   "private": true,
-  "scripts": {
-    "dev": "next dev",
+  "scripts": {    
+    "dev:no-ts": "next dev --port 3000",
+    "dev": "pnpm dev:no-ts & pnpm ts:watch",
+    "ts": "tsc --noEmit --incremental",
+    "ts:watch": "pnpm ts --watch",
     "build": "next build",
-    "start": "next start",
-    "lint": "eslint"
+    "start": "next start --port 3000",
+    "lint": "eslint",
+    "lint:fix": "npm run lint -- --fix",
+    "prettier": "prettier \"**/*.{js,mjs,ts,tsx,md,mdx,json,yml,css}\" --check --cache --cache-strategy=content --cache-location=.prettiercache",
+    "prettier:fix": "npm run prettier -- --write",
+    "format": "npm run lint:fix && npm run prettier:fix",
+    "cli": "tsc ./cli/cli.ts --outdir ./cli/dist && node ./cli/dist/cli/cli.js"
   },
   "dependencies": {
     "@octokit/auth-app": "^8.1.1",

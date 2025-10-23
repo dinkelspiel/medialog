@@ -54,8 +54,8 @@ const ActivityHistory = async ({
             <TooltipTrigger asChild>
               <div
                 key={idx}
-                className={cn('size-3 rounded-sm bg-opacity-5', {
-                  'bg-base-950': day.count === 0,
+                className={cn('size-3 rounded-sm', {
+                  'bg-base-950/5': day.count === 0,
                 })}
                 style={{
                   backgroundColor: day.count

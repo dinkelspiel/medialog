@@ -8,21 +8,16 @@
    Theme tokens (Tailwind v4)
    ================================= */
 @theme {
-  /* container */
   --container-2xl: 1400px;
   --container-padding: 2rem;
 
-  /* fonts */
   --font-dm-serif: "DM Serif Display", serif;
   --font-geist: Geist, sans-serif;
 
-  /* radii */
   --radius-lg: var(--radius);
   --radius-md: calc(var(--radius) - 2px);
   --radius-sm: calc(var(--radius) - 4px);
 
-  /* v4-native color tokens (map to your CSS vars)
-     NOTE: v4 no longer uses --tw-*-opacity. Keep these as rgb(). */
   --color-base-50: rgb(var(--base-50));
   --color-base-100: rgb(var(--base-100));
   --color-base-200: rgb(var(--base-200));
@@ -35,7 +30,6 @@
   --color-base-900: rgb(var(--base-900));
   --color-base-950: rgb(var(--base-950));
 
-  /* The rest of your semantic tokens (using HSL tuples you define below) */
   --color-border: hsl(var(--base-100));
   --color-input: hsl(var(--base-100));
   --color-ring: hsl(var(--base-950));
@@ -63,14 +57,10 @@
   --color-card: hsl(var(--base-50));
   --color-card-foreground: hsl(var(--base-950));
 
-  /* animations (replacing tailwindcss-animate plugin) */
   --animate-accordion-down: accordion-down 0.2s ease-out;
   --animate-accordion-up: accordion-up 0.2s ease-out;
 }
 
-/* ================================
-   Keyframes
-   ================================= */
 @keyframes accordion-down {
   from {
     height: 0;
@@ -88,12 +78,10 @@
   }
 }
 
-/* Match v3 `container.center: true` behavior */
 .container {
   margin-inline: auto;
 }
 
-/* Fonts */
 @font-face {
   font-family: "Geist";
   src: url("/Geist[wght].ttf") format("truetype");
@@ -102,7 +90,6 @@
   font-display: swap;
 }
 
-/* Utilities you had */
 .scrollable-grid-item {
   max-height: calc(100vh - 1.5rem);
   overflow: auto;
@@ -113,7 +100,7 @@
     overflow: auto;
   }
 }
-/* Hide scrollbar */
+
 .no-scrollbar::-webkit-scrollbar {
   display: none;
 }
@@ -122,15 +109,6 @@
   scrollbar-width: none;
 }
 
-/* ================================
-   Base layer: design tokens
-   Define your palette tuples somewhere global:
-   - --white, --foreground, etc. are HSL tuples
-   - --base-* can be HSL or RGB tuples depending on how you consume them.
-   Here we assume:
-     * base-* used via rgb(var(--base-*)) for utilities above
-     * semantic tokens use hsl(var(--...))
-   ================================= */
 @layer base {
   :root {
     /* HSL tuples (examples — keep yours) */
@@ -143,16 +121,8 @@
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    /* Radius */
     --radius: 0.5rem;
 
-    /* ------------------------------------------
-       IMPORTANT: define your base-* channel tuples.
-       Since @theme maps them with rgb(var(--base-*)),
-       these should be comma-separated RGB channels, e.g.:
-       255,255,255  (not hsl)
-       Replace with your actual values/theme system.
-       ------------------------------------------ */
     --base-50: 249, 250, 251;
     --base-100: 243, 244, 246;
     --base-200: 229, 231, 235;
@@ -165,12 +135,10 @@
     --base-900: 17, 24, 39;
     --base-950: 2, 6, 23;
 
-    /* Optional: other HSL tuples used above */
     --muted: 210 40% 96.1%;
   }
 
   .dark {
-    /* Swap HSL tuples for dark semantics */
     --white: 222.2 84% 4.9%;
     --foreground: 210 40% 98%;
     --primary: 210 40% 98%;
@@ -178,7 +146,6 @@
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
-    /* Dark RGB channels for your base palette */
     --base-50: 2, 6, 23;
     --base-100: 17, 24, 39;
     --base-200: 31, 41, 55;
@@ -195,7 +162,6 @@
   }
 }
 
-/* Base element defaults */
 @layer base {
   * {
     @apply border-base-100;
