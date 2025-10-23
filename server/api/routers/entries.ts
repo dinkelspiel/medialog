@@ -97,7 +97,7 @@ export const entriesRouter = createTRPCRouter({
       }
 
       // Ratings Graph
-      let ratings = [];
+      let ratings: number[] = [];
       const totalRatings = await prisma.userEntry.count({
         where: {
           entryId: input.entryId,

@@ -20,14 +20,12 @@ import { capitalizeFirst } from '@/lib/capitalizeFirst';
 import { api } from '@/trpc/react';
 import { UserList, UserListType } from '@prisma/client';
 import { List, ListOrdered, Settings } from 'lucide-react';
-import { revalidatePath } from 'next/cache';
-import { usePathname, useRouter } from 'next/navigation';
+import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';
 import { toast } from 'sonner';
 
 const SettingsView = ({
   list,
-  user,
 }: {
   list: UserList;
   user: { id: number; username: string };

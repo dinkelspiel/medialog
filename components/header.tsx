@@ -1,8 +1,8 @@
-'use client';
+"use client";
 
-import { useAuthUser } from '@/app/(app)/_components/AuthUserContext';
-import { useAppStore } from '@/app/(app)/state';
-import SettingsView from '@/components/islands/settings';
+import { useAuthUser } from "@/app/(app)/_components/AuthUserContext";
+import { useAppStore } from "@/app/(app)/state";
+import SettingsView from "@/components/islands/settings";
 import {
   LogIn,
   Menu,
@@ -10,45 +10,42 @@ import {
   Plus,
   Settings,
   UserRound,
-} from 'lucide-react';
-import Link from 'next/link';
+} from "lucide-react";
+import Link from "next/link";
 import React, {
   Dispatch,
   memo,
   ReactNode,
   SetStateAction,
   useState,
-} from 'react';
-import { cn } from '../lib/utils';
-import AddLog from './addLog';
-import { Button } from './ui/button';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from './ui/dialog';
-import { Drawer, DrawerContent, DrawerTrigger } from './ui/drawer';
-import { Feedback } from '@/app/(app)/_components/feedback';
-import { IslandDialog } from './islands/islands';
+} from "react";
+import { cn } from "../lib/utils";
+import AddLog from "./addLog";
+import { Button } from "./ui/button";
+import { DialogHeader, DialogTitle } from "./ui/dialog";
+import { Drawer, DrawerContent, DrawerTrigger } from "./ui/drawer";
+import { Feedback } from "@/app/(app)/_components/feedback";
+import { IslandDialog } from "./islands/islands";
 
-const SettingsButton = memo(
-  ({
-    open,
-    setOpen,
-  }: {
-    open: boolean;
-    setOpen: Dispatch<SetStateAction<boolean>>;
-  }) => {
-    return (
-      <IslandDialog open={open} setOpen={setOpen} title={'Settings'}>
-        <SettingsView />
-      </IslandDialog>
-    );
-  }
-);
+const SettingsButton = memo(function SettingsButton({
+  open,
+  setOpen,
+}: {
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+}) {
+  return (
+    <IslandDialog open={open} setOpen={setOpen} title={"Settings"}>
+      <SettingsView />
+    </IslandDialog>
+  );
+});
 
 export const Header = ({
   className,
   titleComponent,
   children,
   sidebarContent,
-  ...props
 }: React.HTMLAttributes<HTMLDivElement> & {
   titleComponent: ReactNode;
   sidebarContent: ReactNode;
@@ -59,15 +56,15 @@ export const Header = ({
   return (
     <div
       className={cn(
-        'sticky top-0 z-10 flex h-16 items-center justify-between gap-2 border-b border-b-base-200 bg-base-50 p-4',
+        "sticky top-0 z-10 flex h-16 items-center justify-between gap-2 border-b border-b-base-200 bg-base-50 p-4",
         className
       )}
     >
       <div className="flex items-center gap-2">
         {user && (
           <Button
-            size={'icon'}
-            variant={'ghost'}
+            size={"icon"}
+            variant={"ghost"}
             className="hidden lg:flex"
             onClick={() => setSidebarOpen(!sidebarOpen)}
           >
@@ -82,17 +79,17 @@ export const Header = ({
       <div className="hidden items-center gap-2 lg:flex">
         {user && (
           <>
-            {' '}
+            {" "}
             <Button
-              size={'icon'}
-              variant={'ghost'}
+              size={"icon"}
+              variant={"ghost"}
               onClick={() => setSettingsOpen(true)}
             >
               <Settings className="stroke-base-600" />
-            </Button>{' '}
+            </Button>{" "}
             <Link href={`/@${user && user.username}`}>
-              <Button variant={'outline'}>
-                <UserRound className="size-4 stroke-base-600" />{' '}
+              <Button variant={"outline"}>
+                <UserRound className="size-4 stroke-base-600" />{" "}
                 {user && user.username}
               </Button>
             </Link>
@@ -100,7 +97,7 @@ export const Header = ({
         )}
         {!user && (
           <Link href={`/auth/login`}>
-            <Button variant={'default'} size={'sm'}>
+            <Button variant={"default"} size={"sm"}>
               <LogIn className="size-4" /> Sign in
             </Button>
           </Link>
@@ -110,14 +107,14 @@ export const Header = ({
       <div className="flex items-center gap-2 lg:hidden">
         {!user && (
           <Link href={`/auth/login`} className="w-full">
-            <Button variant={'default'} size={'sm'} className="w-full">
+            <Button variant={"default"} size={"sm"} className="w-full">
               <LogIn className="size-4" /> Sign in
             </Button>
           </Link>
         )}
         {user && (
           <AddLog>
-            <Button className="flex lg:hidden" size="sm" variant={'outline'}>
+            <Button className="flex lg:hidden" size="sm" variant={"outline"}>
               <Plus className="size-4 stroke-base-600" />
               Log Media
             </Button>
@@ -126,9 +123,9 @@ export const Header = ({
         <Drawer>
           <DrawerTrigger asChild>
             <Button
-              size={'icon'}
-              variant={'ghost'}
-              className={cn('flex aspect-square lg:hidden', {
+              size={"icon"}
+              variant={"ghost"}
+              className={cn("flex aspect-square lg:hidden", {
                 hidden: !user,
               })}
             >
@@ -144,13 +141,13 @@ export const Header = ({
               <div className="text-sm font-normal text-base-400">
                 {process.env.GIT_COMMIT
                   ? `${process.env.GIT_COMMIT}@${process.env.GIT_BRANCH}`
-                  : 'dev'}
+                  : "dev"}
               </div>
               <div className="flex gap-2">
                 <Feedback />
                 <Button
-                  size={'sm'}
-                  variant={'outline'}
+                  size={"sm"}
+                  variant={"outline"}
                   className="w-full"
                   onClick={() => setSettingsOpen(true)}
                 >
@@ -158,8 +155,8 @@ export const Header = ({
                 </Button>
               </div>
               <Link href={`/@${user && user.username}`} className="w-full">
-                <Button variant={'outline'} size="sm" className="w-full">
-                  <UserRound className="size-4 stroke-base-600" />{' '}
+                <Button variant={"outline"} size="sm" className="w-full">
+                  <UserRound className="size-4 stroke-base-600" />{" "}
                   {user && user.username}
                 </Button>
               </Link>
@@ -178,8 +175,8 @@ export const HeaderHeader = ({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => {
   return (
-    <div className={cn('flex items-center gap-3', className)} {...props}>
-      <Button size={'icon'} variant={'ghost'} onClick={() => 'setOpen(!open)'}>
+    <div className={cn("flex items-center gap-3", className)} {...props}>
+      <Button size={"icon"} variant={"ghost"} onClick={() => "setOpen(!open)"}>
         <PanelLeft className="stroke-base-600" />
       </Button>
       {children}
@@ -194,7 +191,7 @@ export const HeaderTitle = ({
 }: React.HTMLAttributes<HTMLDivElement>) => {
   return (
     <div
-      className={cn('text-sm font-medium text-base-600', className)}
+      className={cn("text-sm font-medium text-base-600", className)}
       {...props}
     >
       {children}
@@ -208,7 +205,7 @@ export const HeaderDescription = ({
   ...props
 }: React.HTMLAttributes<HTMLDivElement>) => {
   return (
-    <div className={cn('w-full text-base-500 xl:w-max', className)} {...props}>
+    <div className={cn("w-full text-base-500 xl:w-max", className)} {...props}>
       {children}
     </div>
   );
@@ -221,7 +218,7 @@ export const HeaderContent = ({
 }: React.HTMLAttributes<HTMLDivElement>) => {
   return (
     <div
-      className={cn('flex w-full items-center justify-end gap-2', className)}
+      className={cn("flex w-full items-center justify-end gap-2", className)}
       {...props}
     >
       {children}

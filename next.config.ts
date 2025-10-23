@@ -1,10 +1,6 @@
-/**
- * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially useful
- * for Docker builds.
- */
+import type { NextConfig } from "next";
 
-/** @type {import("next").NextConfig} */
-const config = {
+const nextConfig: NextConfig = {
   reactStrictMode: true,
 
   /**
@@ -13,7 +9,7 @@ const config = {
    * @see https://github.com/vercel/next.js/issues/41980
    */
   images: {
-    domains: ['image.tmdb.org', 'covers.openlibrary.org'],
+    remotePatterns: [new URL('https://image.tmdb.org'), new URL('https://covers.openlibrary.org')],
   },
   rewrites: async () => {
     return [
@@ -29,4 +25,4 @@ const config = {
   },
 };
 
-module.exports = config;
+export default nextConfig;
