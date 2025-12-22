@@ -1,6 +1,6 @@
 'use client';
 
-import { User } from '@prisma/client';
+import { User } from '@/prisma/generated/client';
 import React from 'react';
 import {
   DropdownMenu,

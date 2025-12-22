@@ -1,9 +1,17 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
-import { PrismaClient } from '@prisma/client';
+import { PrismaClient } from '@/prisma/generated/client';
+import { PrismaMariaDb } from "@prisma/adapter-mariadb"
+
+const adapter = new PrismaMariaDb({
+  database: process.env.DATABASE_NAME,
+  user: process.env.DATABASE_USER,
+  password: process.env.DATABASE_PASS,
+  host: process.env.DATABASE_HOST
+})
 
 const prismaClientSingleton = () => {
-  return new PrismaClient();
+  return new PrismaClient({ adapter });
 };
 
 declare global {

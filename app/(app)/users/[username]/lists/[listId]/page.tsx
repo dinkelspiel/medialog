@@ -14,7 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import AddWidget from './_components/addWidget';
 import type { Metadata, ResolvingMetadata } from 'next';
 import { Clock, Pen, UserRound } from 'lucide-react';
-import { UserEntry } from '@prisma/client';
+import { UserEntry } from '@/prisma/generated/client';
 import { Button } from '@/components/ui/button';
 import EditTimedChallenge from './_components/challenges/editTimedChallenge';
 import TimedChallenges from './_components/challenges/timedChallenges';

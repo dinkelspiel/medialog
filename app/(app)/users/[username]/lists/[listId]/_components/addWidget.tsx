@@ -13,7 +13,7 @@ import {
 } from '@/components/ui/dropdown-menu';
 import CreateTimedChallenge from './challenges/createTimedChallenge';
 import { StateList, useListState } from '../state';
-import { UserList, UserListEntry } from '@prisma/client';
+import { UserList, UserListEntry } from '@/prisma/generated/client';
 import { useEffect } from 'react';
 import CreatePoll from './polls/createPoll';
 

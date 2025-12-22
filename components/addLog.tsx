@@ -14,7 +14,7 @@ import { Toggle } from './ui/toggle';
 
 import { ExtendedUserEntry } from '@/app/(app)/dashboard/state';
 import { cn } from '@/lib/utils';
-import { Category, Entry, EntryTranslation } from '@prisma/client';
+import { Category, Entry, EntryTranslation } from '@/prisma/generated/client';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';

@@ -6,7 +6,7 @@ import {
   safeUserSelect,
   validateSessionToken,
 } from '@/server/auth/validateSession';
-import { Entry, EntryTranslation } from '@prisma/client';
+import { Entry, EntryTranslation } from '@/prisma/generated/client';
 import {
   getDefaultWhereForTranslations,
   getUserTitleFromEntry,

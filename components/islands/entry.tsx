@@ -5,7 +5,7 @@ import { ListPlus, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import React from 'react';
 import { Button } from '../ui/button';
-import { Entry, EntryTranslation } from '@prisma/client';
+import { Entry, EntryTranslation } from '@/prisma/generated/client';
 import { Card } from '../ui/card';
 import { Label } from '../ui/label';
 import SmallRating from '../smallRating';

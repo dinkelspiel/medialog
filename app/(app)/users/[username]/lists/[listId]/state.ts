@@ -3,7 +3,7 @@ import {
   EntryTranslation,
   UserList,
   UserListEntry,
-} from '@prisma/client';
+} from '@/prisma/generated/client';
 import { create } from 'zustand';
 
 export type StateList = UserList & {

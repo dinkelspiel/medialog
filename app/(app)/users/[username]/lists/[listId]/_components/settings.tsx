@@ -18,7 +18,7 @@ import {
 } from '@/components/ui/select';
 import { capitalizeFirst } from '@/lib/capitalizeFirst';
 import { api } from '@/trpc/react';
-import { UserList, UserListType } from '@prisma/client';
+import { UserList, UserListType } from '@/prisma/generated/client';
 import { List, ListOrdered, Settings } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import React, { useState } from 'react';

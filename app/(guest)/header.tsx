@@ -2,7 +2,7 @@
 
 import Logo from '@/components/icons/logo';
 import { cn } from '@/lib/utils';
-import { User } from '@prisma/client';
+import { User } from '@/prisma/generated/client';
 import { ChevronRight, Menu } from 'lucide-react';
 import Link from 'next/link';
 import React, { useState } from 'react';

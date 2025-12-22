@@ -1,4 +1,4 @@
-import { Category, Entry } from '@prisma/client';
+import { Category, Entry } from '@/prisma/generated/client';
 import { Meilisearch } from 'meilisearch';
 import prisma from './db';
 import { validateSessionToken } from './auth/validateSession';

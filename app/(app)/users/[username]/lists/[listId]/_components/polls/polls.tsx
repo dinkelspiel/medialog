@@ -1,5 +1,5 @@
 import prisma from '@/server/db';
-import { UserList } from '@prisma/client';
+import { UserList } from '@/prisma/generated/client';
 import { Vote } from 'lucide-react';
 import React from 'react';
 import EditPoll from './editPoll';

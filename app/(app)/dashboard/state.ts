@@ -7,7 +7,7 @@ import {
   User,
   UserEntry,
   UserEntryStatus,
-} from '@prisma/client';
+} from '@/prisma/generated/client';
 import { create } from 'zustand';
 
 export type FilterStyle =

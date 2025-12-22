@@ -2,7 +2,7 @@
 
 import { useAuthUser } from '@/app/(app)/_components/AuthUserContext';
 import { cn } from '@/lib/utils';
-import { UserList } from '@prisma/client';
+import { UserList } from '@/prisma/generated/client';
 import {
   Popover,
   PopoverContent,

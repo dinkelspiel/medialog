@@ -1,4 +1,4 @@
-import { Entry, EntryTranslation, User } from '@prisma/client';
+import { Entry, EntryTranslation, User } from '@/prisma/generated/client';
 
 export const getUserTitleFromEntry = (
   entry: Entry & { translations: EntryTranslation[] }

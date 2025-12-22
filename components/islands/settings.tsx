@@ -3,7 +3,7 @@ import { useSettings } from '@/app/_components/SettingsContext';
 import { capitalizeFirst } from '@/lib/capitalizeFirst';
 import { colors } from '@/lib/colors';
 import { api } from '@/trpc/react';
-import { Language, Theme } from '@prisma/client';
+import { Language, Theme } from '@/prisma/generated/client';
 import { Sun } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
