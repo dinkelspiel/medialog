@@ -1,6 +1,6 @@
 import { validateSessionToken } from '@/server/auth/validateSession';
 import prisma from '@/server/db';
-import { UserList } from '@/prisma/generated/client';
+import { UserList } from '@/prisma/generated/browser';
 import { revalidatePath } from 'next/cache';
 import { NextRequest } from 'next/server';
 import z from 'zod';

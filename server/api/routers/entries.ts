@@ -1,5 +1,5 @@
 import { createTRPCRouter, publicProcedure } from '@/server/api/trpc';
-import { Category, UserEntry, UserList } from '@/prisma/generated/client';
+import { Category, UserEntry, UserList } from '@/prisma/generated/browser';
 import z from 'zod';
 import { protectedProcedure } from '../trpc';
 import { searchEntries } from '@/server/meilisearch';

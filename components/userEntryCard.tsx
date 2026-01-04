@@ -1,6 +1,6 @@
 import { ExtendedUserEntry } from '@/app/(app)/dashboard/state';
 import { cn } from '@/lib/utils';
-import { Category } from '@/prisma/generated/client';
+import { Category } from '@/prisma/generated/browser';
 import { Book, Film, Star, Tv } from 'lucide-react';
 import { HTMLProps, ReactNode } from 'react';
 import SmallRating from './smallRating';

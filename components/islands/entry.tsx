@@ -1,11 +1,10 @@
 import { useEntryIsland } from '@/app/(app)/_components/EntryIslandContext';
 import { getUserTitleFromEntry } from '@/server/api/routers/dashboard_';
-import { api } from '@/trpc/react';
 import { ListPlus, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import React from 'react';
 import { Button } from '../ui/button';
-import { Entry, EntryTranslation } from '@/prisma/generated/client';
+import { Entry, EntryTranslation } from '@/prisma/generated/browser';
 import { Card } from '../ui/card';
 import { Label } from '../ui/label';
 import SmallRating from '../smallRating';

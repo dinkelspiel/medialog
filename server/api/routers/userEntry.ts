@@ -9,7 +9,7 @@ import prisma from '@/server/db';
 import { ExtendedUserEntry } from '@/app/(app)/dashboard/state';
 import { revalidatePath } from 'next/cache';
 import { getDefaultWhereForTranslations } from './dashboard_';
-import { UserEntryStatus, UserEntryVisibility } from '@/prisma/generated/client';
+import { UserEntryStatus, UserEntryVisibility } from '@/prisma/generated/browser';
 import { TRPCError } from '@trpc/server';
 import { pushDailyStreak } from '@/server/user/user';
 

@@ -6,7 +6,7 @@ import axios from 'axios';
 import { TRPCError } from '@trpc/server';
 import { Agent, setGlobalDispatcher } from 'undici';
 import logger from '@/server/logger';
-import { Entry } from '@/prisma/generated/client';
+import { Entry } from '@/prisma/generated/browser';
 
 type ExternalSearch = {
   title: string;

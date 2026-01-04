@@ -1,5 +1,5 @@
 import { EntryRedirect } from '@/app/(app)/_components/EntryIslandContext';
-import { Entry, UserActivity, UserEntryStatus } from '@/prisma/generated/client';
+import { Entry, UserActivity, UserEntryStatus } from '@/prisma/generated/browser';
 import React from 'react';
 import SmallRating from './smallRating';
 import { numberSuffix } from '@/lib/numberSuffix';

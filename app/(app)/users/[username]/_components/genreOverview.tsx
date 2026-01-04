@@ -6,7 +6,7 @@ import {
 } from '@/components/ui/tooltip';
 import { cn } from '@/lib/utils';
 import prisma from '@/server/db';
-import { User } from '@/prisma/generated/client';
+import { User } from '@/prisma/generated/browser';
 import React from 'react';
 
 const colors = [

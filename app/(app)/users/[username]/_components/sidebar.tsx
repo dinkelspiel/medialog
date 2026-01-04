@@ -1,5 +1,5 @@
 import SmallRating from '@/components/smallRating';
-import { Entry, User, UserEntry, UserFollow } from '@/prisma/generated/client';
+import { Entry, User, UserEntry, UserFollow } from '@/prisma/generated/browser';
 import { cn } from '@/lib/utils';
 import { Diary } from './diary';
 import { Calendar } from 'lucide-react';

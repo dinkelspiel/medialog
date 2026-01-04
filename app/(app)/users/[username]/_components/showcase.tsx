@@ -5,7 +5,7 @@ import { ServerEntryTitleForUser } from './serverUserEntryTitle';
 import { ExtendedUserEntry } from '@/app/(app)/dashboard/state';
 import { SafeUser, validateSessionToken } from '@/server/auth/validateSession';
 import Link from 'next/link';
-import { Entry, EntryTranslation, User, UserEntry } from '@/prisma/generated/client';
+import { Entry, EntryTranslation, User, UserEntry } from '@/prisma/generated/browser';
 import StyleHeader from '@/components/styleHeader';
 
 const Showcase = async ({

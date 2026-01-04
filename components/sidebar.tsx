@@ -104,7 +104,7 @@ const ClientSidebarButton = ({
   href: string;
   selectedVariant?: string;
 }) => {
-  const path = usePathname();
+  const path = usePathname() ?? '';
 
   return (
     // <Button
@@ -126,7 +126,7 @@ const ClientSidebarButton = ({
     // >
     //   {children}
     // </Button>
-    <Button
+      <Button
       variant={path.includes(href ?? '') ? 'outline' : 'ghost'}
       size={'sm'}
       className={cn('w-full justify-start gap-3', {

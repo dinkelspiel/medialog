@@ -8,6 +8,6 @@ dotenv.config({ path: path.resolve(".env") });
 export default {
   schema: "prisma/schema.prisma",
   datasource: { 
-    url: env("DATABASE_URL") 
+    url: process.env.DATABASE_URL
   }
 } satisfies PrismaConfig;

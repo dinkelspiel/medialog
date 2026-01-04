@@ -14,7 +14,7 @@ import {
 } from '@/components/ui/card';
 import UserEntryCard, { UserEntryCardObject } from '@/components/userEntryCard';
 import prisma from '@/server/db';
-import { Entry, EntryAlternativeTitle } from '@/prisma/generated/client';
+import { Entry, EntryAlternativeTitle } from '@/prisma/generated/browser';
 import { ExtendedUserEntry } from '../(app)/dashboard/state';
 
 const Page = async () => {

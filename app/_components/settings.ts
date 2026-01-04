@@ -2,7 +2,7 @@ import prisma from '@/server/db';
 import { Settings } from './SettingsContext';
 
 import { validateSessionToken } from '@/server/auth/validateSession';
-import { Language } from '@/prisma/generated/client';
+import { Language } from '@/prisma/generated/browser';
 
 export const getTheme = async () => {
   const user = await validateSessionToken();

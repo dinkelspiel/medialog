@@ -2,7 +2,7 @@
 
 import { useAuthUser } from '@/app/(app)/_components/AuthUserContext';
 import { Button } from '@/components/ui/button';
-import { User, UserFollow } from '@/prisma/generated/client';
+import { User, UserFollow } from '@/prisma/generated/browser';
 import React, { useEffect, useState } from 'react';
 import { toast } from 'sonner';
 

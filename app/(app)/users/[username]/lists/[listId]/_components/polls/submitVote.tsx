@@ -9,7 +9,7 @@ import {
   DialogTitle,
   DialogTrigger,
 } from '@/components/ui/dialog';
-import { UserListPoll } from '@/prisma/generated/client';
+import { UserListPoll } from '@/prisma/generated/browser';
 import React, { useState } from 'react';
 import { useListState } from '../../state';
 import { getUserTitleFromEntry } from '@/server/api/routers/dashboard_';

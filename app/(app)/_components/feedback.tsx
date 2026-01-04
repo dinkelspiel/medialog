@@ -82,7 +82,7 @@ export const Feedback = () => {
               title,
               body,
               label,
-              route: path,
+              route: path ?? '',
             });
           }}
         >
