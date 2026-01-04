@@ -109,7 +109,7 @@ const AddLog = ({
               <DrawerTrigger asChild className="block lg:hidden">
                 {children}
               </DrawerTrigger>
-              <DrawerContent className="top-[50px] mt-0 gap-4 p-4">
+              <DrawerContent className="top-12.5 mt-0 gap-4 p-4">
                                <DrawerHeader className='sr-only'>
                 <DrawerTitle>
                   Add log
@@ -231,7 +231,7 @@ const AddLogContent = ({
   const [queryTitle, setQueryTitle] = useState('');
 
   const generateQueryCategories = (): string[] => {
-    let q: string[] = [];
+    const q: string[] = [];
     if (queryCategories.book) {
       q.push('Book');
     }
