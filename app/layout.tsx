@@ -5,6 +5,10 @@ import { Metadata, Viewport } from "next";
 import { SettingsProvider } from "./_components/SettingsContext";
 import Providers from "./providers";
 import { getSettings } from "./_components/settings";
+import dotenv from "dotenv"
+import path from "path";
+
+dotenv.config({ path: path.resolve("../.env") });
 
 export default async function RootLayout({
   children,
