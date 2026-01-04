@@ -1,7 +1,5 @@
 import prisma from '@/server/db';
-import { User } from '@/prisma/generated/client';
-import React from 'react';
-import { format, subDays } from 'date-fns';
+import { subDays } from 'date-fns';
 import { cn } from '@/lib/utils';
 import {
   Tooltip,

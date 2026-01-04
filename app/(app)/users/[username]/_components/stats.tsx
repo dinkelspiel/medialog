@@ -8,7 +8,7 @@ import {
   SheetTrigger,
 } from '@/components/ui/sheet';
 import { cn } from '@/lib/utils';
-import { User, UserEntry, UserFollow } from '@/prisma/generated/client';
+import { User, UserEntry, UserFollow } from '@/prisma/generated/browser';
 import Link from 'next/link';
 import React, { useState } from 'react';
 import FollowButton from './followButton';

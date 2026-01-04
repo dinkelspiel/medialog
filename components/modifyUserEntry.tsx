@@ -4,7 +4,7 @@ import SubmitButton from '@/components/submitButton';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
-import { UserEntryStatus, UserEntryVisibility, UserList } from '@/prisma/generated/client';
+import { UserEntryStatus, UserEntryVisibility, UserList } from '@/prisma/generated/browser';
 import {
   Bookmark,
   Check,

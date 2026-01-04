@@ -1,7 +1,7 @@
 "use client";
 import { Drawer, DrawerContent } from "@/components/ui/drawer";
 import { Sheet, SheetContent } from "@/components/ui/sheet";
-import { Entry, User, UserEntry, UserList } from "@/prisma/generated/client";
+import { Entry, User, UserEntry, UserList } from "@/prisma/generated/browser";
 import { Dispatch, SetStateAction, useEffect, useState } from "react";
 import { useMediaQuery } from "usehooks-ts";
 import { ExtendedUserEntry } from "../app/(app)/dashboard/state";

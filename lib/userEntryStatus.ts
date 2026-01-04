@@ -1,4 +1,4 @@
-import { UserEntryStatus } from '@/prisma/generated/client';
+import { UserEntryStatus } from '@/prisma/generated/browser';
 
 export const UserEntryStatusArray: UserEntryStatus[] = [
   'planning',

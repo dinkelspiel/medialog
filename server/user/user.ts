@@ -1,4 +1,4 @@
-import { User } from '@/prisma/generated/client';
+import { User } from '@/prisma/generated/browser';
 import 'server-only';
 import prisma from '../db';
 

@@ -19,7 +19,7 @@ import Error from '@/components/error';
 import { toast } from 'sonner';
 import ModifyTimedChallenge from './modifyTimedChallenge';
 import { Pen } from 'lucide-react';
-import { UserListChallengeTimed } from '@/prisma/generated/client';
+import { UserListChallengeTimed } from '@/prisma/generated/browser';
 
 const EditTimedChallenge = ({
   challenge,

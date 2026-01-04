@@ -1,7 +1,7 @@
 import { validateSessionToken } from '@/server/auth/validateSession';
 import prisma from '@/server/db';
 import { normalizeOrderInList } from '@/server/user/list/normalizeOrder';
-import { UserList } from '@/prisma/generated/client';
+import { UserList } from '@/prisma/generated/browser';
 import { NextRequest } from 'next/server';
 import z from 'zod';
 
