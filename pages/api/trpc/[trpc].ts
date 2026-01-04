@@ -8,8 +8,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   return createNextApiHandler({
     router: appRouter,
     createContext: () => {
-      // createTRPCContext expects a `Headers`-like object; build a Headers
-      // instance from Next's Node-style headers safely without `any`.
       const headersInit: HeadersInit = Object.entries(req.headers || {}).reduce<
         Record<string, string>
       >((acc, [k, v]) => {
@@ -18,7 +16,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         return acc;
       }, {});
 
-      return createTRPCContext({ headers: new Headers(headersInit) });
+      return createTRPCContext({ headers: new Headers(headersInit), res });
     },
     onError:
       process.env.NODE_ENV === 'development'

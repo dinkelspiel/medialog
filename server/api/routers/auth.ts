@@ -3,9 +3,9 @@ import z from "zod";
 import prisma from "@/server/db";
 import bcrypt from "bcrypt";
 import { addMonths } from "@/lib/addMonths";
-import { cookies, headers } from "next/headers";
 import { generateToken } from "@/lib/generateToken";
 import { TRPCError } from "@trpc/server";
+import { serialize } from "cookie";
 
 const genericLoginError = "Invalid email or password";
 
@@ -48,17 +48,24 @@ export const authRouter = createTRPCRouter({
           userId: user.id,
           expiry: addMonths(new Date(), 6),
           ipAddress: (
-            (await headers()).get("x-forwarded-for") ?? "127.0.0.1"
+           ctx.headers.get("x-forwarded-for") ?? "127.0.0.1"
           ).split(",")[0]!,
           userAgent:
-            (await headers()).get("User-Agent") ?? "No user agent found",
+           ctx.headers.get("User-Agent") ?? "No user agent found",
           token: generateToken(64),
         },
       });
 
-      (await cookies()).set("mlSessionToken", session.token, {
-        expires: new Date().getTime() + 1000 * 60 * 60 * 24 * 31 * 6,
-      });
+      // Maybe make this http only?
+      const cookie = serialize('mlSessionToken', session.token, {
+        // httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 31 * 6)
+      })
+
+      ctx.res.setHeader('Set-Cookie', cookie)
 
       return {
         message: "Login successful",
@@ -125,17 +132,24 @@ export const authRouter = createTRPCRouter({
           userId: user.id,
           expiry: addMonths(new Date(), 6),
           ipAddress: (
-            (await headers()).get("x-forwarded-for") ?? "127.0.0.1"
+            ctx.headers.get("x-forwarded-for") ?? "127.0.0.1"
           ).split(",")[0]!,
           userAgent:
-            (await headers()).get("User-Agent") ?? "No user agent found",
+            ctx.headers.get("User-Agent") ?? "No user agent found",
           token: generateToken(64),
         },
       });
 
-      (await cookies()).set("mlSessionToken", session.token, {
-        expires: new Date().getTime() + 1000 * 60 * 60 * 24 * 31 * 6,
-      });
+      // Maybe make this http only?
+      const cookie = serialize('mlSessionToken', session.token, {
+        // httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 31 * 6)
+      })
+
+      ctx.res.setHeader('Set-Cookie', cookie)
 
       return {
         message: "Sign up successfull",
@@ -189,7 +203,7 @@ export const authRouter = createTRPCRouter({
         },
       });
 
-      (await cookies()).delete("mlSessionToken");
+      ctx.res.setHeader("Set-Cookie", "mlSessionToken=deleted; Expires=Thu, 01 Jan 1970 00:00:00 GMT");
 
       return {
         message: "Updated password",

@@ -14,6 +14,7 @@ import {
   validateSessionToken,
   validateSessionTokenFromHeaders,
 } from "../auth/validateSession";
+import { NextApiResponse } from "next";
 
 /**
  * 1. CONTEXT
@@ -27,7 +28,7 @@ import {
  *
  * @see https://trpc.io/docs/server/context
  */
-export const createTRPCContext = async (opts: { headers: Headers }) => {
+export const createTRPCContext = async (opts: { headers: Headers, res: NextApiResponse }) => {
   return {
     ...opts,
   };
@@ -109,7 +110,7 @@ export const publicProcedure = t.procedure.use(timingMiddleware);
 
 export const protectedProcedure = t.procedure.use(async function (opts) {
   // Try to validate using headers from the tRPC HTTP context when available
-  const headers = (opts.ctx as any)?.headers as Headers | undefined | null;
+  const headers = opts.ctx.headers as Headers | undefined | null;
   const user = (await validateSessionTokenFromHeaders(headers)) ?? (await validateSessionToken());
 
   if (!user) {
