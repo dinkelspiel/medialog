@@ -3,7 +3,7 @@ import { createTRPCRouter, publicProcedure } from '../trpc';
 import { getDefaultWhereForTranslations } from './dashboard_';
 import {
   safeUserSelect,
-  validateSessionToken,
+  validateSessionTokenFromHeaders,
 } from '@/server/auth/validateSession';
 import { subMonths } from 'date-fns';
 import { z } from 'zod';
@@ -15,8 +15,8 @@ export const communityRouter = createTRPCRouter({
         cursor: z.number().nullish(),
       })
     )
-    .query(async ({ input }) => {
-      const authUser = await validateSessionToken();
+    .query(async ({ input, ctx }) => {
+      const authUser = await validateSessionTokenFromHeaders(ctx.headers);
 
       const limit = 50;
 
@@ -54,8 +54,8 @@ export const communityRouter = createTRPCRouter({
         nextCursor,
       };
     }),
-  getTrending: publicProcedure.query(async ({}) => {
-    const authUser = await validateSessionToken();
+  getTrending: publicProcedure.query(async ({ctx}) => {
+    const authUser = await validateSessionTokenFromHeaders(ctx.headers);
     const oneMonthAgo = subMonths(new Date(), 1);
 
     const counts = await prisma.userActivity.groupBy({

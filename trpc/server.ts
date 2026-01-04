@@ -7,7 +7,7 @@ import { cache } from 'react';
 import { createCaller, type AppRouter } from '@/server/api/root';
 import { createTRPCContext } from '@/server/api/trpc';
 import { createQueryClient } from './query-client';
-import { NextApiResponse } from 'next';
+import { NextApiRequest, NextApiResponse } from 'next';
 
 /**
  * This wraps the `createTRPCContext` helper and provides the required context for the tRPC API when
@@ -19,7 +19,8 @@ const createContext = cache(async () => {
 
   return createTRPCContext({
     headers: heads,
-    res: undefined as unknown as NextApiResponse
+    res: undefined as unknown as NextApiResponse,
+    req: undefined as unknown as NextApiRequest
   });
 });
 

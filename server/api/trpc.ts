@@ -14,7 +14,7 @@ import {
   validateSessionToken,
   validateSessionTokenFromHeaders,
 } from "../auth/validateSession";
-import { NextApiResponse } from "next";
+import { NextApiRequest, NextApiResponse } from "next";
 
 /**
  * 1. CONTEXT
@@ -28,7 +28,7 @@ import { NextApiResponse } from "next";
  *
  * @see https://trpc.io/docs/server/context
  */
-export const createTRPCContext = async (opts: { headers: Headers, res: NextApiResponse }) => {
+export const createTRPCContext = async (opts: { headers: Headers, res: NextApiResponse, req: NextApiRequest }) => {
   return {
     ...opts,
   };

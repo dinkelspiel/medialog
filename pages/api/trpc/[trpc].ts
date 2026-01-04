@@ -16,7 +16,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
         return acc;
       }, {});
 
-      return createTRPCContext({ headers: new Headers(headersInit), res });
+      return createTRPCContext({ headers: new Headers(headersInit), res, req });
     },
     onError:
       process.env.NODE_ENV === 'development'

@@ -32,7 +32,7 @@ export const getUserTitleFromEntryId = async (entryId: number) => {
 
 const getTop3RatedNotCompleted = unstable_cache(
   async (userId: number) => {
-    let highestRatedEntries = await prisma.entry.findMany({
+    const highestRatedEntries = await prisma.entry.findMany({
       include: {
         userEntries: true,
       },
