@@ -1,3 +1,4 @@
+import { EntryWithTranslation } from '@/lib/types';
 import {
   Entry,
   EntryTranslation,
@@ -8,7 +9,7 @@ import { create } from 'zustand';
 
 export type StateList = UserList & {
   entries: (UserListEntry & {
-    entry: Entry & { translations: EntryTranslation[] };
+    entry: EntryWithTranslation;
   })[];
 };
 

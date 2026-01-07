@@ -1,7 +1,8 @@
+import { EntryWithTranslation } from '@/lib/types';
 import { Entry, EntryTranslation, User } from '@/prisma/generated/browser';
 
 export const getUserTitleFromEntry = (
-  entry: Entry & { translations: EntryTranslation[] }
+  entry: EntryWithTranslation
 ) => {
   return entry.translations.length !== 0
     ? entry.translations[0]!.name

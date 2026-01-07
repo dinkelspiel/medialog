@@ -9,6 +9,7 @@ import {
   UserEntryStatus,
 } from '@/prisma/generated/browser';
 import { create } from 'zustand';
+import { EntryWithTranslation } from '@/lib/types';
 
 export type FilterStyle =
   | 'rating-asc'
@@ -17,7 +18,7 @@ export type FilterStyle =
   | 'completed'
   | 'updated';
 export type ExtendedUserEntry = UserEntry & {
-  entry: Entry & { translations: EntryTranslation[] };
+  entry: EntryWithTranslation;
 } & { user: NonNullable<SafeUser> };
 
 type DashboardStore = {
