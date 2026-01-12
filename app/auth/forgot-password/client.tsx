@@ -3,7 +3,7 @@ import Logo from '@/components/icons/logo';
 import SubmitButton from '@/components/submitButton';
 import { Input } from '@/components/ui/input';
 import { api } from '@/trpc/react';
-import { User, UserForgotPassword } from '@prisma/client';
+import { User, UserForgotPassword } from '@/prisma/generated/browser';
 import { redirect, useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { useFormState } from 'react-dom';

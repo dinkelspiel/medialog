@@ -1,9 +1,11 @@
+"use client";
+
 import { useAuthUser } from '@/app/(app)/_components/AuthUserContext';
 import { useSettings } from '@/app/_components/SettingsContext';
 import { capitalizeFirst } from '@/lib/capitalizeFirst';
 import { colors } from '@/lib/colors';
 import { api } from '@/trpc/react';
-import { Language, Theme } from '@prisma/client';
+import { Language, Theme } from '@/prisma/generated/browser';
 import { Sun } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useEffect, useState } from 'react';
@@ -66,20 +68,20 @@ const Settings = () => {
   );
 
   return (
-    <div className="grid lg:grid-cols-[250px,1fr]">
+    <div className="grid lg:grid-cols-[250px_1fr]">
       <Sidebar
         sidebarOpen={true}
         className="h-full"
         header={
           <>
-            <div className="p-1` flex size-[40px] items-center justify-center rounded-lg border border-blue-300/50 bg-blue-200">
-              <div className="flex h-full w-full items-center justify-center rounded-[4px] text-lg font-medium">
+            <div className="p-1` flex size-10 items-center justify-center rounded-lg border border-blue-300/50 bg-blue-200">
+              <div className="flex h-full w-full items-center justify-center rounded-lg text-lg font-medium">
                 {user?.username[0]}
               </div>
             </div>
             <div className="flex flex-col justify-between">
               <div className="text-base font-medium">{user?.username}</div>
-              <div className="bg-opacity-50 text-xs font-medium text-base-900">
+              <div className="text-xs font-medium text-base-900">
                 {user?.email}
               </div>
             </div>

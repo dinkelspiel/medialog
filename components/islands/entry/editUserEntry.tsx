@@ -7,7 +7,7 @@ import { Dialog, DialogContent, DialogTrigger } from '@/components/ui/dialog';
 import { capitalizeFirst } from '@/lib/capitalizeFirst';
 import { AppRouter } from '@/server/api/root';
 import { api } from '@/trpc/react';
-import { UserEntry } from '@prisma/client';
+import { UserEntry } from '@/prisma/generated/browser';
 import { inferRouterOutputs } from '@trpc/server';
 import { useRouter } from 'next/navigation';
 import React, { useEffect, useState } from 'react';

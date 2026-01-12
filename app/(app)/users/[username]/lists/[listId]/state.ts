@@ -1,14 +1,15 @@
+import { EntryWithTranslation } from '@/lib/types';
 import {
   Entry,
   EntryTranslation,
   UserList,
   UserListEntry,
-} from '@prisma/client';
+} from '@/prisma/generated/browser';
 import { create } from 'zustand';
 
 export type StateList = UserList & {
   entries: (UserListEntry & {
-    entry: Entry & { translations: EntryTranslation[] };
+    entry: EntryWithTranslation;
   })[];
 };
 

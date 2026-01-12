@@ -1,11 +1,11 @@
 import { createTRPCRouter, publicProcedure } from '@/server/api/trpc';
-import { Category, UserEntry, UserList } from '@prisma/client';
+import { Category, UserEntry, UserList } from '@/prisma/generated/browser';
 import z from 'zod';
 import { protectedProcedure } from '../trpc';
 import { searchEntries } from '@/server/meilisearch';
 import prisma from '@/server/db';
 import { getDefaultWhereForTranslations } from './dashboard_';
-import { validateSessionToken } from '@/server/auth/validateSession';
+import { validateSessionTokenFromHeaders } from '@/server/auth/validateSession';
 import { TRPCError } from '@trpc/server';
 
 export const entriesRouter = createTRPCRouter({
@@ -53,7 +53,8 @@ export const entriesRouter = createTRPCRouter({
       const entries = await searchEntries(
         input.query,
         input.limit,
-        input.categories as Category[]
+        input.categories as Category[],
+        ctx.headers
       );
 
       return entries;
@@ -64,9 +65,9 @@ export const entriesRouter = createTRPCRouter({
         entryId: z.number(),
       })
     )
-    .query(async ({ input }) => {
+    .query(async ({ input, ctx }) => {
       // Entry Model
-      const authUser = await validateSessionToken();
+      const authUser = await validateSessionTokenFromHeaders(ctx.headers);
       const entry = await prisma.entry.findFirst({
         where: {
           id: input.entryId,
@@ -97,7 +98,7 @@ export const entriesRouter = createTRPCRouter({
       }
 
       // Ratings Graph
-      let ratings = [];
+      const ratings: number[] = [];
       const totalRatings = await prisma.userEntry.count({
         where: {
           entryId: input.entryId,

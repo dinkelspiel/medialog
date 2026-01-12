@@ -5,7 +5,7 @@ import { ServerEntryTitleForUser } from './serverUserEntryTitle';
 import { ExtendedUserEntry } from '@/app/(app)/dashboard/state';
 import { SafeUser, validateSessionToken } from '@/server/auth/validateSession';
 import Link from 'next/link';
-import { Entry, EntryTranslation, User, UserEntry } from '@prisma/client';
+import { Entry, EntryTranslation, User, UserEntry } from '@/prisma/generated/browser';
 import StyleHeader from '@/components/styleHeader';
 
 const Showcase = async ({
@@ -31,7 +31,7 @@ const Showcase = async ({
           <div className="hidden grid-cols-4 gap-2 sm:grid">
             {userEntries.slice(0, 4).map((userEntry, idx) => (
               <EntryRedirect
-                key={userEntry.entry.id}
+                key={idx}
                 className="hover:no-underline"
                 entryId={userEntry.entry.id}
                 entrySlug={userEntry.entry.slug}
@@ -54,7 +54,7 @@ const Showcase = async ({
           <div className="grid grid-cols-3 gap-2 sm:hidden">
             {userEntries.slice(0, 3).map((userEntry, idx) => (
               <EntryRedirect
-                key={userEntry.entry.id}
+                key={idx}
                 className="hover:no-underline"
                 entryId={userEntry.entry.id}
                 entrySlug={userEntry.entry.slug}

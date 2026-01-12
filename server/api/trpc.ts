@@ -6,12 +6,15 @@
  * TL;DR - This is where all the tRPC server stuff is created and plugged in. The pieces you will
  * need to use are documented accordingly near the end.
  */
-import { initTRPC, TRPCError } from '@trpc/server';
-import superjson from 'superjson';
-import { ZodError } from 'zod';
+import { initTRPC, TRPCError } from "@trpc/server";
+import superjson from "superjson";
+import { ZodError } from "zod";
 
-import { validateSessionToken } from '../auth/validateSession';
-import logger from '../logger';
+import {
+  validateSessionToken,
+  validateSessionTokenFromHeaders,
+} from "../auth/validateSession";
+import { NextApiRequest, NextApiResponse } from "next";
 
 /**
  * 1. CONTEXT
@@ -25,7 +28,7 @@ import logger from '../logger';
  *
  * @see https://trpc.io/docs/server/context
  */
-export const createTRPCContext = async (opts: { headers: Headers }) => {
+export const createTRPCContext = async (opts: { headers: Headers, res: NextApiResponse, req: NextApiRequest }) => {
   return {
     ...opts,
   };
@@ -85,13 +88,13 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
   if (t._config.isDev) {
     // artificial delay in dev
     const waitMs = Math.floor(Math.random() * 400) + 100;
-    await new Promise(resolve => setTimeout(resolve, waitMs));
+    await new Promise((resolve) => setTimeout(resolve, waitMs));
   }
 
   const result = await next();
 
   const end = Date.now();
-  logger.info(`[TRPC] ${path} took ${end - start}ms to execute`);
+  console.log(`[TRPC] ${path} took ${end - start}ms to execute`);
 
   return result;
 });
@@ -106,7 +109,9 @@ const timingMiddleware = t.middleware(async ({ next, path }) => {
 export const publicProcedure = t.procedure.use(timingMiddleware);
 
 export const protectedProcedure = t.procedure.use(async function (opts) {
-  const user = await validateSessionToken();
+  // Try to validate using headers from the tRPC HTTP context when available
+  const headers = opts.ctx.headers as Headers | undefined | null;
+  const user = (await validateSessionTokenFromHeaders(headers)) ?? (await validateSessionToken());
 
   if (!user) {
     throw new TRPCError({ code: 'UNAUTHORIZED' });

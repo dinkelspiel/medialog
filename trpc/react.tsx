@@ -1,6 +1,4 @@
-'use client';
-
-import { QueryClientProvider, type QueryClient } from '@tanstack/react-query';
+"use client";
 import {
   httpBatchLink,
   httpBatchStreamLink,
@@ -13,17 +11,7 @@ import { useState } from 'react';
 import SuperJSON from 'superjson';
 
 import { type AppRouter } from '@/server/api/root';
-import { createQueryClient } from './query-client';
-
-let clientQueryClientSingleton: QueryClient | undefined = undefined;
-const getQueryClient = () => {
-  if (typeof window === 'undefined') {
-    // Server: always make a new query client
-    return createQueryClient();
-  }
-  // Browser: use singleton pattern to keep the same query client
-  return (clientQueryClientSingleton ??= createQueryClient());
-};
+import { useQueryClient } from '@tanstack/react-query';
 
 export const api = createTRPCReact<AppRouter>();
 
@@ -42,7 +30,8 @@ export type RouterInputs = inferRouterInputs<AppRouter>;
 export type RouterOutputs = inferRouterOutputs<AppRouter>;
 
 export function TRPCReactProvider(props: { children: React.ReactNode }) {
-  const queryClient = getQueryClient();
+  // Expect a QueryClientProvider to exist above this provider (we'll add it in app/providers)
+  const queryClient = useQueryClient();
 
   const [trpcClient] = useState(() =>
     api.createClient({
@@ -54,7 +43,7 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
         }),
         splitLink({
           condition(op) {
-            return op.path.startsWith('auth.');
+            return (op?.path ?? "").startsWith('auth.');
           },
           true: httpBatchLink({
             transformer: SuperJSON,
@@ -80,11 +69,9 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
   );
 
   return (
-    <QueryClientProvider client={queryClient}>
-      <api.Provider client={trpcClient} queryClient={queryClient}>
-        {props.children}
-      </api.Provider>
-    </QueryClientProvider>
+    <api.Provider client={trpcClient} queryClient={queryClient}>
+      {props.children}
+    </api.Provider>
   );
 }
 

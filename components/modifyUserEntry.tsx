@@ -4,7 +4,7 @@ import SubmitButton from '@/components/submitButton';
 import { Button } from '@/components/ui/button';
 import { Slider } from '@/components/ui/slider';
 import { Textarea } from '@/components/ui/textarea';
-import { UserEntryStatus, UserEntryVisibility, UserList } from '@prisma/client';
+import { UserEntryStatus, UserEntryVisibility, UserList } from '@/prisma/generated/browser';
 import {
   Bookmark,
   Check,
@@ -152,10 +152,10 @@ const ModifyUserEntry = ({
 
   const Header = () => (
     <DialogHeader>
-      <div className="grid w-full grid-cols-[max-content,1fr] gap-4 pb-4 pt-4 lg:pt-0">
+      <div className="grid w-full grid-cols-[max-content_1fr] gap-4 pb-4 pt-4 lg:pt-0">
         <img
           src={userEntry.entry.posterPath}
-          className="aspect-[2/3] w-[100px] rounded-lg shadow-md"
+          className="aspect-2/3 w-[100px] rounded-lg shadow-md"
         />
         <div className="flex flex-col gap-2">
           <div className="flex items-end gap-2">
@@ -286,7 +286,7 @@ const ModifyUserEntry = ({
 
   if (userEntry.watchedAt !== null) {
     return (
-      <div className="grid h-full grow grid-rows-[max-content,max-content,1fr,max-content]">
+      <div className="grid h-full grow grid-rows-[max-content_max-content_1fr_max-content]">
         <Header />
         <div className="flex flex-row items-center gap-3 border-b border-b-base-200 py-3 text-sm">
           <div className="w-max text-base-500">Rating</div>
@@ -351,7 +351,7 @@ const ModifyUserEntry = ({
     );
   } else {
     return (
-      <div className="grid h-full w-full grow grid-rows-[max-content,1fr]">
+      <div className="grid h-full w-full grow grid-rows-[max-content_1fr]">
         <Header />
         <div className="flex flex-col gap-2">
           <Button

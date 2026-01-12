@@ -3,13 +3,12 @@ import z from 'zod';
 import { protectedProcedure } from '../trpc';
 import {
   safeUserSelect,
-  validateSessionToken,
 } from '@/server/auth/validateSession';
 import prisma from '@/server/db';
 import { ExtendedUserEntry } from '@/app/(app)/dashboard/state';
 import { revalidatePath } from 'next/cache';
 import { getDefaultWhereForTranslations } from './dashboard_';
-import { UserEntryStatus, UserEntryVisibility } from '@prisma/client';
+import { UserEntryStatus, UserEntryVisibility } from '@/prisma/generated/browser';
 import { TRPCError } from '@trpc/server';
 import { pushDailyStreak } from '@/server/user/user';
 
@@ -40,8 +39,6 @@ export const userEntryRouter = createTRPCRouter({
           },
         },
       });
-
-      revalidatePath('/dashboard');
 
       return {
         message: 'Added user entry',
@@ -284,8 +281,6 @@ export const userEntryRouter = createTRPCRouter({
       });
 
       await pushDailyStreak(ctx.user);
-
-      revalidatePath('/dashboard');
 
       return {
         message: 'Updated user entry',

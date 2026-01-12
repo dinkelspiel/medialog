@@ -1,6 +1,6 @@
 'use client';
 
-import { Language, Theme } from '@prisma/client';
+import { Language, Theme } from '@/prisma/generated/browser';
 import { createContext, useContext } from 'react';
 
 export type Settings = {

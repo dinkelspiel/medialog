@@ -1,7 +1,5 @@
 import prisma from '@/server/db';
-import { User } from '@prisma/client';
-import React from 'react';
-import { format, subDays } from 'date-fns';
+import { subDays } from 'date-fns';
 import { cn } from '@/lib/utils';
 import {
   Tooltip,
@@ -54,8 +52,8 @@ const ActivityHistory = async ({
             <TooltipTrigger asChild>
               <div
                 key={idx}
-                className={cn('size-3 rounded-sm bg-opacity-5', {
-                  'bg-base-950': day.count === 0,
+                className={cn('size-3 rounded-sm', {
+                  'bg-base-950/5': day.count === 0,
                 })}
                 style={{
                   backgroundColor: day.count

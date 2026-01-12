@@ -23,7 +23,7 @@ const Page = async ({
   }
 
   return (
-    <main className="grid h-[100dvh] w-full items-center justify-center bg-base-100">
+    <main className="grid h-dvh w-full items-center justify-center bg-base-100">
       <Client forgotPassword={forgotPassword} />
     </main>
   );

@@ -5,7 +5,7 @@ import AddLog from '@/components/addLog';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import UserEntryCard from '@/components/userEntryCard';
-import { Entry, User, UserList, UserListEntry } from '@prisma/client';
+import { Entry, User, UserList, UserListEntry } from '@/prisma/generated/browser';
 import { ChevronDown, ChevronUp, ListEnd, Plus, X } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useState } from 'react';
@@ -130,7 +130,7 @@ const AddMedia = ({
         }}
       >
         <Button
-          className="flex aspect-[2/3] h-full w-full rounded-lg lg:flex"
+          className="flex aspect-2/3 h-full w-full rounded-lg lg:flex"
           variant={'outline'}
         >
           <Plus className="stroke-base-600" />

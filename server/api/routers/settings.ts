@@ -1,6 +1,6 @@
 import { createTRPCRouter } from '@/server/api/trpc';
 import prisma from '@/server/db';
-import { Theme } from '@prisma/client';
+import { Theme } from '@/prisma/generated/browser';
 import z from 'zod';
 import { protectedProcedure } from '../trpc';
 import { TRPCError } from '@trpc/server';

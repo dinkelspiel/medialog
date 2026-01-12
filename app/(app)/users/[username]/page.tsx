@@ -1,30 +1,22 @@
-import HeaderLayout from '@/components/layouts/header';
-import SmallRating from '@/components/smallRating';
-import UserEntryCard from '@/components/userEntryCard';
-import { numberSuffix } from '@/lib/numberSuffix';
+import HeaderLayout from "@/components/layouts/header";
 import {
   safeUserSelect,
   validateSessionToken,
-} from '@/server/auth/validateSession';
-import prisma from '@/server/db';
-import { getDailyStreak } from '@/server/user/user';
-import { Entry, UserActivity, UserEntryStatus } from '@prisma/client';
-import Link from 'next/link';
-import { ReactNode } from 'react';
-import { getUserDiary } from './_components/diary';
-import { ProfileHeader } from './_components/header';
-import { ProfileSidebar } from './_components/sidebar';
-import { Stats } from './_components/stats';
-import { ServerEntryTitleForUser } from './_components/serverUserEntryTitle';
-import { getDefaultWhereForTranslations } from '@/server/api/routers/dashboard_';
-import { getUserLists } from './_components/lists';
-import { Metadata, ResolvingMetadata } from 'next';
-import ActivityHistory from './_components/activityHistory';
-import { EntryRedirect } from '../../_components/EntryIslandContext';
-import Showcase from './_components/showcase';
-import Activity from '@/components/activity';
-import { getUserTitleFromEntryId } from '@/server/api/routers/dashboard';
-import StyleHeader from '@/components/styleHeader';
+} from "@/server/auth/validateSession";
+import prisma from "@/server/db";
+import { getDailyStreak } from "@/server/user/user";
+import Link from "next/link";
+import { getUserDiary } from "./_components/diary";
+import { ProfileHeader } from "./_components/header";
+import { ProfileSidebar } from "./_components/sidebar";
+import { Stats } from "./_components/stats";
+import { getDefaultWhereForTranslations } from "@/server/api/routers/dashboard_";
+import { getUserLists } from "./_components/lists";
+import { Metadata } from "next";
+import ActivityHistory from "./_components/activityHistory";
+import Showcase from "./_components/showcase";
+import Activity from "@/components/activity";
+import StyleHeader from "@/components/styleHeader";
 
 const Profile404 = async () => {
   const user = await validateSessionToken();
@@ -52,10 +44,9 @@ export type Props = {
   params: Promise<{ username: string }>;
 };
 
-export async function generateMetadata(
-  { params: _params }: Props,
-  parent: ResolvingMetadata
-): Promise<Metadata> {
+export async function generateMetadata({
+  params: _params,
+}: Props): Promise<Metadata> {
   const params = await _params;
   return {
     title: `${params.username}'s profile - Medialog`,
@@ -130,10 +121,10 @@ const Profile = async ({
   const favorites = await prisma.userEntry.findMany({
     where: {
       userId: profileUser.id,
-      status: 'completed',
+      status: "completed",
     },
     orderBy: {
-      rating: 'desc',
+      rating: "desc",
     },
     take: 4,
     select: {
@@ -150,10 +141,10 @@ const Profile = async ({
   const recentlyWatched = await prisma.userEntry.findMany({
     where: {
       userId: profileUser.id,
-      status: 'completed',
+      status: "completed",
     },
     orderBy: {
-      watchedAt: 'desc',
+      watchedAt: "desc",
     },
     take: 4,
     select: {
@@ -167,15 +158,15 @@ const Profile = async ({
     },
   });
 
-  let activity = await prisma.userActivity.findMany({
+  const activity = await prisma.userActivity.findMany({
     where: {
       userId: profileUser.id,
       NOT: {
-        type: 'progressUpdate',
+        type: "progressUpdate",
       },
     },
     orderBy: {
-      createdAt: 'desc',
+      createdAt: "desc",
     },
     take: 10,
     include: {
@@ -187,11 +178,11 @@ const Profile = async ({
     },
   });
 
-  let ratings = [];
+  const ratings = [];
   const totalRatings = await prisma.userEntry.count({
     where: {
       userId: profileUser.id,
-      status: 'completed',
+      status: "completed",
     },
   });
   for (let ratingThreshold = 0; ratingThreshold <= 10; ratingThreshold++) {
@@ -200,7 +191,7 @@ const Profile = async ({
         (await prisma.userEntry.count({
           where: {
             userId: profileUser.id,
-            status: 'completed',
+            status: "completed",
             rating: {
               gt: (ratingThreshold - 1) * 10,
               lte: ratingThreshold * 10,
@@ -226,15 +217,15 @@ const Profile = async ({
         <div className="block py-2 lg:hidden">
           <Stats profileUser={profileUser as any} />
         </div>
-        <div className="grid w-fit grid-cols-1 gap-16 min-[1330px]:grid-cols-[1fr,250px]">
+        <div className="grid w-fit grid-cols-1 gap-16 min-[1330px]:grid-cols-[1fr_250px]">
           <div className="flex flex-col gap-6 px-4 md:w-[710px]">
             <Showcase
-              title={'Favorites'}
+              title={"Favorites"}
               userEntries={favorites}
               profileUser={profileUser}
             />
             <Showcase
-              title={'Latest Completions'}
+              title={"Latest Completions"}
               userEntries={recentlyWatched}
               profileUser={profileUser}
             />

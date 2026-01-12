@@ -1,6 +1,6 @@
-import { getTheme } from '@/app/_components/settings';
-import { cn } from '@/lib/utils';
-import React, { ReactNode } from 'react';
+import { getTheme } from "@/app/_components/settings";
+import { cn } from "@/lib/utils";
+import React, { ReactNode } from "react";
 
 const BaseLayout = async ({
   children,
@@ -12,14 +12,16 @@ const BaseLayout = async ({
   const theme = await getTheme();
 
   return (
-    <div
-      className={cn(
-        `theme-${theme} min-h-[100dvh] bg-base-50 font-geist`,
-        className
-      )}
-    >
-      {children}
-    </div>
+    <html>
+      <body
+        className={cn(
+          `theme-${theme} min-h-dvh bg-base-50 font-geist`,
+          className
+        )}
+      >
+        {children}
+      </body>
+    </html>
   );
 };
 

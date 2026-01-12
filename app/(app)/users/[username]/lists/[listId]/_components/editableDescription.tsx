@@ -1,5 +1,5 @@
 'use client';
-import { UserList } from '@prisma/client';
+import { UserList } from '@/prisma/generated/browser';
 import React, { createRef, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 

@@ -1,11 +1,10 @@
 import { useEntryIsland } from '@/app/(app)/_components/EntryIslandContext';
 import { getUserTitleFromEntry } from '@/server/api/routers/dashboard_';
-import { api } from '@/trpc/react';
 import { ListPlus, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import React from 'react';
 import { Button } from '../ui/button';
-import { Entry, EntryTranslation } from '@prisma/client';
+import { Entry, EntryTranslation } from '@/prisma/generated/browser';
 import { Card } from '../ui/card';
 import { Label } from '../ui/label';
 import SmallRating from '../smallRating';
@@ -39,13 +38,13 @@ const EntryView = ({
   const title = getUserTitleFromEntry(entryPage.entry);
 
   return (
-    <div className="grid h-full w-full grid-rows-[250px,1fr] p-2 lg:p-0 lg:pb-4">
+    <div className="grid h-full w-full grid-rows-[250px_1fr] p-2 lg:p-0 lg:pb-4">
       <div
         style={{ backgroundImage: `url(${entryPage.entry.backdropPath})` }}
         className="relative h-full w-full bg-cover"
       >
-        <div className="absolute top-[40%] z-0 flex h-[60%] w-full flex-col justify-end rounded-bl-lg rounded-br-lg bg-gradient-to-t from-base-900 to-transparent object-cover p-2">
-          <div className="mx-auto grid h-full w-fit grid-cols-1 bg-cover pb-4 xl:gap-16 min-[1330px]:grid-cols-[250px,1fr]">
+        <div className="absolute top-[40%] z-0 flex h-[60%] w-full flex-col justify-end rounded-bl-lg rounded-br-lg bg-linear-to-t from-base-900 to-transparent object-cover p-2">
+          <div className="mx-auto grid h-full w-fit grid-cols-1 bg-cover pb-4 xl:gap-16 min-[1330px]:grid-cols-[250px_1fr]">
             <div></div>
             <div className="flex h-full flex-col justify-end gap-6 px-4 md:w-[710px]">
               <div className="flex items-end gap-6">
@@ -60,13 +59,13 @@ const EntryView = ({
           </div>
         </div>
       </div>
-      <div className="mx-auto mt-2 grid h-fit w-fit grid-cols-1 xl:gap-16 min-[1330px]:grid-cols-[250px,1fr]">
+      <div className="mx-auto mt-2 grid h-fit w-fit grid-cols-1 xl:gap-16 min-[1330px]:grid-cols-[250px_1fr]">
         <div className="flex flex-col gap-6 lg:-mt-[188px]">
           <div className="flex flex-col gap-2">
             <Image
               width={250}
               height={377}
-              className="z-10 hidden aspect-[2/3] w-[50px] rounded-lg border-2 border-base-200 shadow-md shadow-base-300 lg:block lg:w-[250px]"
+              className="z-10 hidden aspect-2/3 w-[50px] rounded-lg border-2 border-base-200 shadow-md shadow-base-300 lg:block lg:w-[250px]"
               src={entryPage.entry.posterPath}
               alt={`Poster for ${title}`}
             />

@@ -14,7 +14,7 @@ import { Badge } from '@/components/ui/badge';
 import AddWidget from './_components/addWidget';
 import type { Metadata, ResolvingMetadata } from 'next';
 import { Clock, Pen, UserRound } from 'lucide-react';
-import { UserEntry } from '@prisma/client';
+import { UserEntry } from '@/prisma/generated/browser';
 import { Button } from '@/components/ui/button';
 import EditTimedChallenge from './_components/challenges/editTimedChallenge';
 import TimedChallenges from './_components/challenges/timedChallenges';
@@ -139,7 +139,7 @@ const Page = async ({ params: _params }: Props) => {
         </HeaderDescription>
       </Header>
       <PopulateState list={list} />
-      <div className="mx-auto flex w-full flex-col-reverse gap-16 pb-8 pt-4 md:w-fit min-[1330px]:grid min-[1330px]:grid-cols-[1fr,250px]">
+      <div className="mx-auto flex w-full flex-col-reverse gap-16 pb-8 pt-4 md:w-fit min-[1330px]:grid min-[1330px]:grid-cols-[1fr_250px]">
         <div className="grid h-fit w-full grid-cols-3 gap-3 px-4 ps-4  md:grid-cols-4 min-[1330px]:w-[716px] min-[1330px]:pe-4">
           {!(authUser && authUser?.id === targetUser.id) &&
             list.entries

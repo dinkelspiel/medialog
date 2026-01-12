@@ -19,7 +19,7 @@ import Error from '@/components/error';
 import { toast } from 'sonner';
 import ModifyTimedChallenge from './modifyPoll';
 import { Pen } from 'lucide-react';
-import { UserListChallengeTimed, UserListPoll } from '@prisma/client';
+import { UserListChallengeTimed, UserListPoll } from '@/prisma/generated/browser';
 import ModifyPoll from './modifyPoll';
 
 const EditPoll = ({ poll }: { poll: UserListPoll }) => {

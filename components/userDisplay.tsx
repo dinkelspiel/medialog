@@ -1,6 +1,6 @@
 'use client';
 
-import { User } from '@prisma/client';
+import { User } from '@/prisma/generated/browser';
 import React from 'react';
 import {
   DropdownMenu,
@@ -20,7 +20,7 @@ const UserDisplay = ({ user }: { user: User }) => {
       <DropdownMenuTrigger>
         <div className="flex gap-x-3">
           <Logo className="size-[41px]" />
-          <div className="flex flex-col items-start justify-center pb-[1px]">
+          <div className="flex flex-col items-start justify-center pb-px">
             <div className="text-xs font-normal">Medialog</div>
             <div className="text-base font-semibold">@{user.username}</div>
           </div>

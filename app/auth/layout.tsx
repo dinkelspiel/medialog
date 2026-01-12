@@ -1,14 +1,12 @@
-import { validateSessionToken } from '@/server/auth/validateSession';
-import { redirect } from 'next/navigation';
-import { ReactNode } from 'react';
-import { Toaster } from 'sonner';
-import { getTheme } from '../_components/settings';
+import { ReactNode } from "react";
+import { Toaster } from "sonner";
+import { getTheme } from "../_components/settings";
 
 const Layout = async ({ children }: { children: ReactNode }) => {
   const theme = await getTheme();
 
   return (
-    <div className={`theme-${theme} min-h-[100dvh]`}>
+    <div className={`theme-${theme} min-h-dvh`}>
       {children}
       <Toaster />
     </div>

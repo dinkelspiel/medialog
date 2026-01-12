@@ -3,12 +3,13 @@ RUN npm install -g pnpm@9.1.0
 COPY . /usr/src/app
 WORKDIR /usr/src/app
 SHELL ["/bin/bash", "--login", "-c"]
-ENV SHELL bash
+ENV SHELL=bash
 # RUN chmod 777 /usr/src/app -R
 RUN chmod 744 ./prisma/schema.prisma
 RUN apt-get update
 RUN apt-get install -y python3-pip
 RUN pip install mysql-connector-python requests python-levenshtein --break-system-packages
 RUN pnpm install
+# RUN ls -la; cat .env; exit 1
 RUN pnpm dlx prisma generate
 CMD ["pnpm", "dev"]

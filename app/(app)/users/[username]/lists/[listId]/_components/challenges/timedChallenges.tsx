@@ -4,7 +4,7 @@ import {
   UserList,
   UserListChallengeTimed,
   UserListEntry,
-} from '@prisma/client';
+} from '@/prisma/generated/browser';
 import { Clock, UserRound } from 'lucide-react';
 import React from 'react';
 import EditTimedChallenge from './editTimedChallenge';

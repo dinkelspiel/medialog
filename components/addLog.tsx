@@ -14,12 +14,12 @@ import { Toggle } from './ui/toggle';
 
 import { ExtendedUserEntry } from '@/app/(app)/dashboard/state';
 import { cn } from '@/lib/utils';
-import { Category, Entry, EntryTranslation } from '@prisma/client';
+import { Category, Entry, EntryTranslation } from '@/prisma/generated/browser';
 import { useMutation, useQuery } from '@tanstack/react-query';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { useDebounceValue, useMediaQuery } from 'usehooks-ts';
-import { Drawer, DrawerContent, DrawerTrigger } from './ui/drawer';
+import { Drawer, DrawerContent, DrawerHeader, DrawerTitle, DrawerTrigger } from './ui/drawer';
 import UserEntryCard from './userEntryCard';
 import ExternalUserEntry from './userEntryExternal';
 import { api } from '@/trpc/react';
@@ -82,6 +82,11 @@ const AddLog = ({
                 {children}
               </DialogTrigger>
               <DialogContent className="top-[50px] max-h-[calc(100dvh-100px)] max-w-[700px] translate-y-0">
+                <DialogHeader className='sr-only'>
+                <DialogTitle>
+                  Add log
+                </DialogTitle>
+                </DialogHeader>
                 <AddLogContent
                   title={override?.title ?? 'Add Log'}
                   addAction={
@@ -104,7 +109,12 @@ const AddLog = ({
               <DrawerTrigger asChild className="block lg:hidden">
                 {children}
               </DrawerTrigger>
-              <DrawerContent className="top-[50px] mt-0 gap-4 p-4">
+              <DrawerContent className="top-12.5 mt-0 gap-4 p-4">
+                               <DrawerHeader className='sr-only'>
+                <DrawerTitle>
+                  Add log
+                </DrawerTitle>
+                </DrawerHeader>
                 <AddLogContent
                   title={override?.title ?? 'Add Log'}
                   addAction={
@@ -221,7 +231,7 @@ const AddLogContent = ({
   const [queryTitle, setQueryTitle] = useState('');
 
   const generateQueryCategories = (): string[] => {
-    let q = [];
+    const q: string[] = [];
     if (queryCategories.book) {
       q.push('Book');
     }

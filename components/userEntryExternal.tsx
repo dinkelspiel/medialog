@@ -1,14 +1,14 @@
-'use client';
-import { Drawer, DrawerContent } from '@/components/ui/drawer';
-import { Sheet, SheetContent } from '@/components/ui/sheet';
-import { Entry, User, UserEntry, UserList } from '@prisma/client';
-import { Dispatch, SetStateAction, useEffect, useState } from 'react';
-import { useMediaQuery } from 'usehooks-ts';
-import { ExtendedUserEntry } from '../app/(app)/dashboard/state';
-import ModifyUserEntry from '@/components/modifyUserEntry';
-import { toast } from 'sonner';
-import { Dialog, DialogContent } from './ui/dialog';
-import ContainedModifyUserEntry from './containedModifyUserEntry';
+"use client";
+import { Drawer, DrawerContent } from "@/components/ui/drawer";
+import { Sheet, SheetContent } from "@/components/ui/sheet";
+import { Entry, User, UserEntry, UserList } from "@/prisma/generated/browser";
+import { Dispatch, SetStateAction, useEffect, useState } from "react";
+import { useMediaQuery } from "usehooks-ts";
+import { ExtendedUserEntry } from "../app/(app)/dashboard/state";
+import ModifyUserEntry from "@/components/modifyUserEntry";
+import { toast } from "sonner";
+import { Dialog, DialogContent } from "./ui/dialog";
+import ContainedModifyUserEntry from "./containedModifyUserEntry";
 
 const ExternalUserEntry = ({
   userEntry,
@@ -21,7 +21,7 @@ const ExternalUserEntry = ({
     | undefined;
   setUserEntry: (userEntry: ExtendedUserEntry) => void;
 }) => {
-  const isDesktop = useMediaQuery('(min-width: 1024px)');
+  const isDesktop = useMediaQuery("(min-width: 1024px)");
   const [open, setOpen] = openOverride ?? useState(false);
 
   const [lists, setLists] = useState<UserList[]>([]);

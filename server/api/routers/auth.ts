@@ -1,18 +1,16 @@
-import { createTRPCRouter, publicProcedure } from '@/server/api/trpc';
-import z from 'zod';
-import { Octokit } from 'octokit';
-import { createAppAuth } from '@octokit/auth-app';
-import prisma from '@/server/db';
-import bcrypt from 'bcrypt';
-import { addMonths } from '@/lib/addMonths';
-import { cookies, headers } from 'next/headers';
-import { generateToken } from '@/lib/generateToken';
-import { TRPCError } from '@trpc/server';
+import { createTRPCRouter, publicProcedure } from "@/server/api/trpc";
+import z from "zod";
+import prisma from "@/server/db";
+import bcrypt from "bcrypt";
+import { addMonths } from "@/lib/addMonths";
+import { generateToken } from "@/lib/generateToken";
+import { TRPCError } from "@trpc/server";
+import { serialize } from "cookie";
 
-const genericLoginError = 'Invalid email or password';
+const genericLoginError = "Invalid email or password";
 
 export const authRouter = createTRPCRouter({
-  login: publicProcedure 
+  login: publicProcedure
     .input(
       z.object({
         email: z.string(),
@@ -28,7 +26,7 @@ export const authRouter = createTRPCRouter({
 
       if (!user) {
         throw new TRPCError({
-          code: 'BAD_REQUEST',
+          code: "BAD_REQUEST",
           message: genericLoginError,
         });
       }
@@ -36,11 +34,11 @@ export const authRouter = createTRPCRouter({
       if (
         !bcrypt.compareSync(
           input.password,
-          user.password.replace(/^\$2y/, '$2a')
+          user.password.replace(/^\$2y/, "$2a")
         )
       ) {
         throw new TRPCError({
-          code: 'BAD_REQUEST',
+          code: "BAD_REQUEST",
           message: genericLoginError,
         });
       }
@@ -50,20 +48,27 @@ export const authRouter = createTRPCRouter({
           userId: user.id,
           expiry: addMonths(new Date(), 6),
           ipAddress: (
-            (await headers()).get('x-forwarded-for') ?? '127.0.0.1'
-          ).split(',')[0]!,
+           ctx.headers.get("x-forwarded-for") ?? "127.0.0.1"
+          ).split(",")[0]!,
           userAgent:
-            (await headers()).get('User-Agent') ?? 'No user agent found',
+           ctx.headers.get("User-Agent") ?? "No user agent found",
           token: generateToken(64),
         },
       });
 
-      (await cookies()).set('mlSessionToken', session.token, {
-        expires: new Date().getTime() + 1000 * 60 * 60 * 24 * 31 * 6,
-      });
+      // Maybe make this http only?
+      const cookie = serialize('mlSessionToken', session.token, {
+        // httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 31 * 6)
+      })
+
+      ctx.res.setHeader('Set-Cookie', cookie)
 
       return {
-        message: 'Login successful',
+        message: "Login successful",
       };
     }),
   signUp: publicProcedure
@@ -71,11 +76,11 @@ export const authRouter = createTRPCRouter({
       z.object({
         username: z
           .string()
-          .min(3, { message: 'Username must be at least 3 characters long' })
-          .max(25, { message: 'Username must not exceed 25 characters' })
+          .min(3, { message: "Username must be at least 3 characters long" })
+          .max(25, { message: "Username must not exceed 25 characters" })
           .regex(/^[a-zA-Z0-9_]+$/, {
             message:
-              'Username may only contain letters, numbers, and underscores',
+              "Username may only contain letters, numbers, and underscores",
           }),
         email: z.string().email(),
         password: z.string().min(8),
@@ -97,8 +102,8 @@ export const authRouter = createTRPCRouter({
 
       if (user) {
         throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'User already exists with same email or username',
+          code: "BAD_REQUEST",
+          message: "User already exists with same email or username",
         });
       }
 
@@ -113,11 +118,11 @@ export const authRouter = createTRPCRouter({
       if (
         !bcrypt.compareSync(
           input.password,
-          user.password.replace(/^\$2y/, '$2a')
+          user.password.replace(/^\$2y/, "$2a")
         )
       ) {
         throw new TRPCError({
-          code: 'BAD_REQUEST',
+          code: "BAD_REQUEST",
           message: genericLoginError,
         });
       }
@@ -127,20 +132,27 @@ export const authRouter = createTRPCRouter({
           userId: user.id,
           expiry: addMonths(new Date(), 6),
           ipAddress: (
-            (await headers()).get('x-forwarded-for') ?? '127.0.0.1'
-          ).split(',')[0]!,
+            ctx.headers.get("x-forwarded-for") ?? "127.0.0.1"
+          ).split(",")[0]!,
           userAgent:
-            (await headers()).get('User-Agent') ?? 'No user agent found',
+            ctx.headers.get("User-Agent") ?? "No user agent found",
           token: generateToken(64),
         },
       });
 
-      (await cookies()).set('mlSessionToken', session.token, {
-        expires: new Date().getTime() + 1000 * 60 * 60 * 24 * 31 * 6,
-      });
+      // Maybe make this http only?
+      const cookie = serialize('mlSessionToken', session.token, {
+        // httpOnly: true,
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: 'lax',
+        path: '/',
+        expires: new Date(new Date().getTime() + 1000 * 60 * 60 * 24 * 31 * 6)
+      })
+
+      ctx.res.setHeader('Set-Cookie', cookie)
 
       return {
-        message: 'Sign up successfull',
+        message: "Sign up successfull",
       };
     }),
   forgotPassword: publicProcedure
@@ -154,7 +166,7 @@ export const authRouter = createTRPCRouter({
     .mutation(async ({ ctx, input }) => {
       if (input.password != input.confirmPassword) {
         throw new TRPCError({
-          code: 'BAD_REQUEST',
+          code: "BAD_REQUEST",
           message: "Passwords don't match",
         });
       }
@@ -168,8 +180,8 @@ export const authRouter = createTRPCRouter({
 
       if (!forgotPassword) {
         throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'Invalid forgot password',
+          code: "BAD_REQUEST",
+          message: "Invalid forgot password",
         });
       }
 
@@ -191,10 +203,10 @@ export const authRouter = createTRPCRouter({
         },
       });
 
-      (await cookies()).delete('mlSessionToken');
+      ctx.res.setHeader("Set-Cookie", "mlSessionToken=deleted; Expires=Thu, 01 Jan 1970 00:00:00 GMT");
 
       return {
-        message: 'Updated password',
+        message: "Updated password",
       };
     }),
 });

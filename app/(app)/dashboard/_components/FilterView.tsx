@@ -23,7 +23,7 @@ import {
 import { cn } from '@/lib/utils';
 import { Command, Dices, SlidersHorizontal, SortDesc } from 'lucide-react';
 import { FilterStyle, useDashboardStore } from '../state';
-import { Category, Entry, UserEntry, UserEntryStatus } from '@prisma/client';
+import { Category, Entry, UserEntry, UserEntryStatus } from '@/prisma/generated/browser';
 import { useEffect, useRef } from 'react';
 import { Slider } from '@/components/ui/slider';
 import { DualRangeSlider } from '@/components/ui/dual-range-slider';

@@ -1,7 +1,7 @@
 import { getDefaultWhereForTranslations } from '@/server/api/routers/dashboard_';
 import { validateSessionToken } from '@/server/auth/validateSession';
 import prisma from '@/server/db';
-import { Category } from '@prisma/client';
+import { Category } from '@/prisma/generated/browser';
 import { NextRequest } from 'next/server';
 
 export const GET = async (request: NextRequest) => {

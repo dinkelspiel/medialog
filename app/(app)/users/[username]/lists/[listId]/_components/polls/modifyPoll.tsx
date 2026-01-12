@@ -17,7 +17,7 @@ import { DateTimePicker } from '@/components/ui/date-time-picker';
 import { api } from '@/trpc/react';
 import Error from '@/components/error';
 import { toast } from 'sonner';
-import { UserListChallengeTimed, UserListPoll } from '@prisma/client';
+import { UserListChallengeTimed, UserListPoll } from '@/prisma/generated/browser';
 
 const ModifyPoll = ({
   open,

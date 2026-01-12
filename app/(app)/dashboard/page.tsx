@@ -6,7 +6,7 @@ import ModifyUserEntry from '@/components/modifyUserEntry';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
 import { UserEntryCardObject } from '@/components/userEntryCard';
 import { api } from '@/trpc/react';
-import { Entry, UserList } from '@prisma/client';
+import { Entry, UserList } from '@/prisma/generated/browser';
 import { Loader2 } from 'lucide-react';
 import { useEffect, useRef, useState } from 'react';
 import { toast } from 'sonner';

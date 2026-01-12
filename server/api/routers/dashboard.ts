@@ -6,7 +6,7 @@ import {
   safeUserSelect,
   validateSessionToken,
 } from '@/server/auth/validateSession';
-import { Entry, EntryTranslation } from '@prisma/client';
+import { Entry, EntryTranslation } from '@/prisma/generated/browser';
 import {
   getDefaultWhereForTranslations,
   getUserTitleFromEntry,
@@ -32,7 +32,7 @@ export const getUserTitleFromEntryId = async (entryId: number) => {
 
 const getTop3RatedNotCompleted = unstable_cache(
   async (userId: number) => {
-    let highestRatedEntries = await prisma.entry.findMany({
+    const highestRatedEntries = await prisma.entry.findMany({
       include: {
         userEntries: true,
       },
