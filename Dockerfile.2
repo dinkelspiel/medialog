@@ -1,9 +1,0 @@
-FROM node
-
-WORKDIR /app
-RUN npm install -g pnpm
-COPY . .
-RUN pnpm install --frozen-lockfile
-EXPOSE 3000
-RUN pnpm dlx prisma generate
-CMD ["pnpm", "dev"]
