@@ -6,8 +6,6 @@ SHELL ["/bin/bash", "--login", "-c"]
 ENV SHELL=bash
 COPY . .
 
-RUN printenv | sed 's/^\([^=]*\)=\(.*\)$/\1="\2"/' > .env
-
 RUN mkdir -p /.cache/pnpm/dlx
 RUN chmod 777 /.cache/pnpm/dlx/ -R
 RUN mkdir -p /usr/src/app/.next/cache/fetch-cache
