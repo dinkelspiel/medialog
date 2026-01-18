@@ -9,6 +9,7 @@ import { importRouter } from './routers/import';
 import { authRouter } from './routers/auth';
 import { userListRouter } from './routers/userList';
 import { communityRouter } from './routers/community';
+import { entryRouter } from './routers/entry';
 
 /**
  * This is the primary router for your server.
@@ -23,6 +24,7 @@ export const appRouter = createTRPCRouter({
   userEntry: userEntryRouter,
   list: listRouter,
   entries: entriesRouter,
+  entry: entryRouter,
   import: importRouter,
   userList: userListRouter,
   community: communityRouter,

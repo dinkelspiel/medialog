@@ -1,6 +1,6 @@
 import { useEntryIsland } from '@/app/(app)/_components/EntryIslandContext';
 import { getUserTitleFromEntry } from '@/server/api/routers/dashboard_';
-import { ListPlus, Loader2 } from 'lucide-react';
+import { ListPlus, Loader2, RotateCw } from 'lucide-react';
 import Image from 'next/image';
 import React from 'react';
 import { Button } from '../ui/button';
@@ -23,6 +23,7 @@ import { capitalizeFirst } from '@/lib/capitalizeFirst';
 import { SafeUser } from '@/server/auth/validateSession';
 import EditUserEntry from './entry/editUserEntry';
 import StyleHeader from '../styleHeader';
+import CheckForUpdates from './entry/checkForUpdates';
 
 const EntryView = ({
   host,
@@ -138,9 +139,10 @@ const EntryView = ({
                 <div>{entryPage.entry.releaseDate.toDateString()}</div>
               </div>
             </Card>
+            {entryPage.entry.category === "Series" && <CheckForUpdates entry={entryPage.entry} />}
           </div>
         </div>
-        <div className="flex flex-col gap-6 px-4 pt-6 md:w-[710px]">
+        <div className="flex flex-col gap-6 px-4 pt-6 md:w-177.5">
           {entryPage.entry.tagline && (
             <p className="text-lg font-medium italic">
               ‟{entryPage.entry.tagline}

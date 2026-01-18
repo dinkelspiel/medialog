@@ -756,6 +756,10 @@ export const importRouter = createTRPCRouter({
 
       // return Response.json(data);
 
+      let isUpdate = false;
+      let updatedSeasons: string[] = [];
+      let newSeasons: string[] = [];
+
       let entry = await prisma.entry.findFirst({
         where: {
           category: 'Series',
@@ -765,11 +769,9 @@ export const importRouter = createTRPCRouter({
         },
       });
 
+      // If entry exists, we'll update instead of throwing an error
       if (entry) {
-        throw new TRPCError({
-          code: 'BAD_REQUEST',
-          message: 'TMDB Series with id already imported',
-        });
+        isUpdate = true;
       }
 
       let collectionId: number | undefined = undefined;
@@ -793,6 +795,18 @@ export const importRouter = createTRPCRouter({
             category: 'Series',
           },
         });
+      } else if (isUpdate) {
+        // Update collection metadata if it changed
+        collection = await prisma.collection.update({
+          where: { id: collection.id },
+          data: {
+            name: data.original_name,
+            posterPath:
+              'https://image.tmdb.org/t/p/original/' + data.poster_path,
+            backdropPath:
+              'https://image.tmdb.org/t/p/original/' + data.backdrop_path,
+          },
+        });
       }
 
       collectionId = collection.id;
@@ -811,8 +825,31 @@ export const importRouter = createTRPCRouter({
           });
 
           if (existingEntry) {
+            // Check if episode count has changed and update if needed
+            if (existingEntry.length !== season.episode_count) {
+              await prisma.entry.update({
+                where: { id: existingEntry.id },
+                data: {
+                  length: season.episode_count,
+                  // Also update other fields that might have changed
+                  overview: season.overview.length > 0 ? season.overview : existingEntry.overview,
+                  posterPath: season.poster_path 
+                    ? 'https://image.tmdb.org/t/p/original/' + season.poster_path 
+                    : existingEntry.posterPath,
+                  releaseDate: season.air_date ? new Date(season.air_date) : existingEntry.releaseDate,
+                },
+              });
+              updatedSeasons.push(season.name);
+            }
+            
+            if (season.season_number === 1) {
+              firstSeason = existingEntry;
+            }
             continue;
           }
+
+          // This is a new season
+          newSeasons.push(season.name);
 
           entry = await prisma.entry.create({
             data: {
@@ -1183,21 +1220,49 @@ export const importRouter = createTRPCRouter({
           }
         }
 
-        await addMeilisearchEntryByEntryId(entry!.id);
+        // Only add to meilisearch if there are new seasons
+        if (newSeasons.length > 0 && entry) {
+          await addMeilisearchEntryByEntryId(entry.id);
+        }
+
+        // Build appropriate message based on what changed
+        let message = '';
+        if (isUpdate) {
+          const parts: string[] = [];
+          if (newSeasons.length > 0) {
+            parts.push(`added ${newSeasons.length} new season(s): ${newSeasons.join(', ')}`);
+          }
+          if (updatedSeasons.length > 0) {
+            parts.push(`updated ${updatedSeasons.length} season(s): ${updatedSeasons.join(', ')}`);
+          }
+          if (parts.length === 0) {
+            message = `Series ${data.original_name} is already up to date`;
+          } else {
+            message = `Updated series ${data.original_name}: ${parts.join('; ')}`;
+          }
+        } else {
+          message = `Imported series ${data.original_name}`;
+        }
 
         return {
-          message: `Imported series ${data.original_name}`,
+          message,
           entry: firstSeason!,
+          isUpdate,
+          newSeasons,
+          updatedSeasons,
         };
       } catch (error) {
         logger.error(error);
         logger.error('Error importing series: ' + collection.name);
-        await prisma.collection.delete({
-          where: {
-            id: collection.id,
-          },
-        });
-        logger.error('Removed collection.');
+        // Only delete collection if it was newly created (not an update)
+        if (!isUpdate) {
+          await prisma.collection.delete({
+            where: {
+              id: collection.id,
+            },
+          });
+          logger.error('Removed collection.');
+        }
 
         throw new TRPCError({
           code: 'INTERNAL_SERVER_ERROR',
