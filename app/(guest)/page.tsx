@@ -35,24 +35,24 @@ const Page = async () => {
     (await prisma.$queryRawUnsafe(
       `SELECT * FROM Entry WHERE category = "Movie" ORDER BY RAND() LIMIT 1;`
     )) as Entry[]
-  )[0] as Entry;
+  )[0] as Entry | undefined;
 
-  const movieTitles = await getEnglishTitles(randomMovie.id);
+  const movieTitles = randomMovie ? await getEnglishTitles(randomMovie.id) : [];
 
   const randomSeries = (
     (await prisma.$queryRawUnsafe(
       `SELECT * FROM Entry WHERE category = "Series" ORDER BY RAND() LIMIT 1;`
     )) as Entry[]
-  )[0] as Entry;
+  )[0] as Entry | undefined;
 
-  const seriesTitles = await getEnglishTitles(randomSeries.id);
+  const seriesTitles = randomSeries ? await getEnglishTitles(randomSeries.id) : [];
 
   const randomBook = (
     (await prisma.$queryRawUnsafe(
       `SELECT * FROM Entry WHERE category = "Book" ORDER BY RAND() LIMIT 1;`
     )) as Entry[]
-  )[0] as Entry;
-  const bookTitles = await getEnglishTitles(randomBook.id);
+  )[0] as Entry | undefined;
+  const bookTitles = randomBook ? await getEnglishTitles(randomBook.id) : [];
 
   return (
     <div className="flex w-full flex-col items-center bg-white">

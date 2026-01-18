@@ -7,11 +7,14 @@ const adapter = new PrismaMariaDb({
   database: process.env.DATABASE_NAME,
   user: process.env.DATABASE_USER,
   password: process.env.DATABASE_PASS,
-  host: process.env.DATABASE_HOST
+  host: process.env.DATABASE_HOST,
+  port: 3306,
 })
 
 const prismaClientSingleton = () => {
-  return new PrismaClient({ adapter });
+  return new PrismaClient({
+    adapter,
+  });
 };
 
 declare global {
