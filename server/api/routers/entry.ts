@@ -12,28 +12,30 @@ export const entryRouter = createTRPCRouter({
       })
     )
     .query(async ({ input }) => {
-      const entry = await prisma.entry.findFirst({where: {
-        id: input.entryId
-      }})
+      // Single query with include instead of two separate queries
+      const entry = await prisma.entry.findFirst({
+        where: {
+          id: input.entryId
+        },
+        include: {
+          collection: true
+        }
+      });
 
-      if(!entry) {
+      if (!entry) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "No entry with id"
         })
       }
 
-      if(!entry.collectionId) {
+      if (!entry.collection) {
         throw new TRPCError({
           code: "BAD_REQUEST",
           message: "No collection on entry"
         })
       }
 
-      return await prisma.collection.findFirst({
-        where: {
-          id: entry?.collectionId
-        }
-      })
+      return entry.collection;
     }),
 });

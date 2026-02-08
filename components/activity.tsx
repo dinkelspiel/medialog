@@ -1,5 +1,6 @@
 import { EntryRedirect } from '@/app/(app)/_components/EntryIslandContext';
 import { Entry, UserActivity, UserEntryStatus } from '@/prisma/generated/browser';
+import Image from 'next/image';
 import React from 'react';
 import SmallRating from './smallRating';
 import { numberSuffix } from '@/lib/numberSuffix';
@@ -94,9 +95,12 @@ const Activity = ({
 }) => {
   const contents = () => (
     <div className="group grid w-full grid-cols-[max-content_1fr] gap-4 2xl:w-full 2xl:grid-cols-[max-content_1fr]">
-      <img
+      <Image
         src={activity.entry.posterPath}
-        className="aspect-2/3 h-[80px] rounded-md 2xl:h-[100px]"
+        alt={title}
+        width={67}
+        height={100}
+        className="aspect-2/3 h-[80px] w-auto rounded-md 2xl:h-[100px]"
       />
       <div className="flex h-full flex-col justify-center gap-1.5 pb-3 2xl:border-b-0 2xl:pb-0">
         <div className="flex flex-col justify-between lg:flex-row">

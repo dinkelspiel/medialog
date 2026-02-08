@@ -4,6 +4,7 @@ import { cn } from '@/lib/utils';
 import { Diary } from './diary';
 import { Calendar } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
+import Image from 'next/image';
 import { Fragment } from 'react';
 import { ServerEntryTitleForUser } from './serverUserEntryTitle';
 import { Lists } from './lists';
@@ -68,13 +69,15 @@ export const ProfileSidebar = ({
             // .sort(() => Math.random() - 0.5)
             .slice(0, 4)
             .map((watchlist, idx) => (
-              <img
+              <Image
                 key={watchlist.id}
                 src={watchlist.entry.posterPath}
+                alt={watchlist.entry.originalTitle}
+                width={80}
+                height={120}
                 className={cn(
                   `${idx !== 0 && 'ms-[-24px]'} h-[120px] w-[80px] rounded-md shadow-lg`
                 )}
-                alt={watchlist.entry.originalTitle}
                 style={{ zIndex: idx }}
               />
             ))}
@@ -208,13 +211,15 @@ export const ProfileSidebar = ({
             >
               <div className="flex flex-row justify-center rounded-md shadow-slate-900/50 ring-slate-900 ring-offset-2 transition-all duration-150 group-hover:shadow-lg group-hover:ring-4">
                 {list.posterUrls.map((posterUrl, idx) => (
-                  <img
+                  <Image
                     key={posterUrl}
                     src={posterUrl}
+                    alt={list.name}
+                    width={80}
+                    height={120}
                     className={cn(
                       `${idx !== 0 && 'ms-[-24px]'} h-[120px] w-[80px] rounded-md shadow-lg`
                     )}
-                    alt={'Test'}
                     style={{ zIndex: idx }}
                   />
                 ))}

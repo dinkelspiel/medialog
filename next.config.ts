@@ -9,6 +9,8 @@ const nextConfig: NextConfig = {
    * @see https://github.com/vercel/next.js/issues/41980
    */
   images: {
+    // Cache images for 1 year (browser will use cached version)
+    minimumCacheTTL: 31536000,
     remotePatterns: [
       {
         protocol: "https",
@@ -22,7 +24,8 @@ const nextConfig: NextConfig = {
         port: "",
         pathname: "/**",
       },
-    ],  },
+    ],
+  },
   rewrites: async () => {
     return [
       {

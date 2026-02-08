@@ -2,7 +2,8 @@ import { ExtendedUserEntry } from '@/app/(app)/dashboard/state';
 import { cn } from '@/lib/utils';
 import { Category } from '@/prisma/generated/browser';
 import { Book, Film, Star, Tv } from 'lucide-react';
-import { HTMLProps, ReactNode } from 'react';
+import Image from 'next/image';
+import React, { HTMLProps, memo, ReactNode } from 'react';
 import SmallRating from './smallRating';
 import { getUserTitleFromEntry } from '@/server/api/routers/dashboard_';
 import { Badge } from './ui/badge';
@@ -38,7 +39,14 @@ const UserEntryCard = ({
       )}
       {...props}
     >
-      <img src={backgroundImage} className="absolute top-0 h-full w-full" />
+      <Image
+        src={backgroundImage}
+        alt=""
+        fill
+        sizes="(max-width: 768px) 33vw, 150px"
+        className="object-cover"
+        loading="lazy"
+      />
       <div className="absolute top-0 flex h-[20%] w-full flex-col justify-end rounded-bl-lg rounded-br-lg bg-linear-to-b from-base-900/50 to-transparent"></div>
       <div className="absolute top-0 p-2">
         {(() => {
@@ -101,12 +109,12 @@ const UserEntryCard = ({
   );
 };
 
-export const UserEntryCardObject = ({
+export const UserEntryCardObject = memo(function UserEntryCardObject({
   userEntry,
   ...props
 }: {
   userEntry: ExtendedUserEntry;
-} & HTMLProps<HTMLDivElement>) => {
+} & HTMLProps<HTMLDivElement>) {
   return (
     <UserEntryCard
       {...{
@@ -119,6 +127,6 @@ export const UserEntryCardObject = ({
       {...props}
     />
   );
-};
+});
 
-export default UserEntryCard;
+export default memo(UserEntryCard);

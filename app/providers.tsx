@@ -10,7 +10,10 @@ function makeQueryClient() {
   return new QueryClient({
     defaultOptions: {
       queries: {
-        staleTime: 60 * 1000,
+        // Increased staleTime for better caching (5 minutes)
+        staleTime: 5 * 60 * 1000,
+        // Keep unused data in cache for 10 minutes
+        gcTime: 10 * 60 * 1000,
       },
     },
   });

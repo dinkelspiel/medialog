@@ -12,9 +12,15 @@ export const validateSessionToken = cache(async () => {
     return null;
   }
 
+  // Single query with include instead of two separate queries
   const session = await prisma.session.findFirst({
     where: {
       token: sessionToken.value,
+    },
+    include: {
+      user: {
+        select: safeUserSelect(),
+      },
     },
   });
 
@@ -27,12 +33,7 @@ export const validateSessionToken = cache(async () => {
     return null;
   }
 
-  return await prisma.user.findFirst({
-    where: {
-      id: session.userId,
-    },
-    select: safeUserSelect(),
-  });
+  return session.user;
 });
 
 // Validate a session token using the raw request headers (useful for HTTP handlers
@@ -56,19 +57,22 @@ export async function validateSessionTokenFromHeaders(
   const sessionToken = cookiesMap['mlSessionToken'];
   if (!sessionToken) return null;
 
+  // Single query with include instead of two separate queries
   const session = await prisma.session.findFirst({
     where: {
       token: sessionToken,
+    },
+    include: {
+      user: {
+        select: safeUserSelect(),
+      },
     },
   });
 
   if (session === null) return null;
   if (session.expiry && session.expiry < new Date()) return null;
 
-  return await prisma.user.findFirst({
-    where: { id: session.userId },
-    select: safeUserSelect(),
-  });
+  return session.user;
 }
 
 export const safeUserSelect = () => ({

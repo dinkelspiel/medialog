@@ -17,6 +17,7 @@ import {
   UsersRound,
   X,
 } from 'lucide-react';
+import Image from 'next/image';
 import { ReactNode, useEffect, useState } from 'react';
 import { toast } from 'sonner';
 import { Input } from './ui/input';
@@ -153,8 +154,11 @@ const ModifyUserEntry = ({
   const Header = () => (
     <DialogHeader>
       <div className="grid w-full grid-cols-[max-content_1fr] gap-4 pb-4 pt-4 lg:pt-0">
-        <img
+        <Image
           src={userEntry.entry.posterPath}
+          alt={getUserTitleFromEntry(userEntry.entry)}
+          width={100}
+          height={150}
           className="aspect-2/3 w-[100px] rounded-lg shadow-md"
         />
         <div className="flex flex-col gap-2">
@@ -175,7 +179,7 @@ const ModifyUserEntry = ({
           </div>
           {userEntry.entry.tagline && (
             <div className="text-sm font-normal italic text-base-500">
-              "{userEntry.entry.tagline}"
+              {"\""}{userEntry.entry.tagline}{"\""}
             </div>
           )}
           <div className="break-all text-sm font-normal">
@@ -252,7 +256,7 @@ const ModifyUserEntry = ({
           <DropdownMenuContent>
             <DropdownMenuGroup>
               {Object.values(UserEntryVisibility).map(visiblity => (
-                <DropdownMenuItem onClick={() => updateVisibility(visiblity)}>
+                <DropdownMenuItem onClick={() => updateVisibility(visiblity)} key={visiblity}>
                   {(() => {
                     switch (visiblity) {
                       case 'public':

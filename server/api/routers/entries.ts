@@ -97,34 +97,26 @@ export const entriesRouter = createTRPCRouter({
         });
       }
 
-      // Ratings Graph
-      const ratings: number[] = [];
-      const totalRatings = await prisma.userEntry.count({
+      // Ratings Graph - Single query instead of N+1
+      const ratingCounts = await prisma.userEntry.groupBy({
+        by: ['rating'],
         where: {
           entryId: input.entryId,
           status: 'completed',
         },
+        _count: true,
       });
-      for (let ratingThreshold = 0; ratingThreshold <= 10; ratingThreshold++) {
-        if (totalRatings > 0) {
-          ratings[ratingThreshold - 1] =
-            (await prisma.userEntry.count({
-              where: {
-                entryId: input.entryId,
-                status: 'completed',
-                rating: {
-                  gt: (ratingThreshold - 1) * 10,
-                  lte: ratingThreshold * 10,
-                },
-              },
-            })) / totalRatings;
-        } else {
-          ratings[ratingThreshold - 1] = 0;
+
+      const totalRatings = ratingCounts.reduce((sum, r) => sum + r._count, 0);
+      const ratings: number[] = Array(10).fill(0);
+
+      if (totalRatings > 0) {
+        for (const { rating, _count } of ratingCounts) {
+          // Map rating (0-100) to bucket (0-9)
+          const bucket = Math.min(Math.floor(rating / 10), 9);
+          ratings[bucket] += _count / totalRatings;
         }
       }
-
-      ratings[0] = (ratings[0] ?? 0) + (ratings[-1] ?? 0);
-      delete ratings[-1];
 
       // Reviews
       const reviews = await prisma.userEntry.findMany({
