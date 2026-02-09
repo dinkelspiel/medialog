@@ -1,10 +1,8 @@
 'use client';
 
-import React from 'react';
 import { Button, ButtonProps } from './ui/button';
 import { cn } from '@/lib/utils';
-import { useFormStatus } from 'react-dom';
-import { Loader, Loader2 } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 
 const SubmitButton = ({
   children,
