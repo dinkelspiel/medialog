@@ -3,11 +3,8 @@
 import { PrismaClient } from '@/prisma/generated/client';
 import { PrismaMariaDb } from "@prisma/adapter-mariadb"
 
-// Build connection string for MariaDB adapter
-// Format: mariadb://user:password@host:port/database
-const connectionString = `mariadb://${process.env.DATABASE_USER}:${process.env.DATABASE_PASS}@${process.env.DATABASE_HOST}:3306/${process.env.DATABASE_NAME}`;
+const connectionString = `mariadb://${process.env.DATABASE_USER}:${process.env.DATABASE_PASS}@${process.env.DATABASE_HOST}:3306/${process.env.DATABASE_NAME}?allowPublicKeyRetrieval=true`;
 
-// Create adapter with connection string
 const adapter = new PrismaMariaDb(connectionString);
 
 const prismaClientSingleton = () => {

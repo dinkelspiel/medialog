@@ -72,7 +72,7 @@ const EditUserEntry = ({
           {capitalizeFirst(userEntry.status)}
         </Button>
       </DialogTrigger>
-      <DialogContent className="h-full w-full max-w-[800px] min-[600px]:h-[600px] min-[800px]:w-[800px]">
+      <DialogContent className="h-full w-full max-w-200 min-[600px]:h-250 min-[800px]:w-200">
         <ModifyUserEntry
           userEntry={{
             ...userEntry,
