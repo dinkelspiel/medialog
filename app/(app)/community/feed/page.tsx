@@ -116,7 +116,7 @@ const Page = () => {
                     backgroundImage: entry.entry.posterPath,
                     releaseDate: entry.entry.releaseDate,
                     category: entry.entry.category,
-                    topRight: entry.hasUserEntry && <InLibrary variant='sm' />,
+                    topRight: entry.hasUserEntry && <InLibrary />,
                     className: 'max-w-[164px]',
                     variant: "sm"
                   }}
