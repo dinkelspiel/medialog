@@ -25,14 +25,14 @@ const EditUserEntry = ({
   const utils = api.useUtils();
   const authUser = useAuthUser();
   const router = useRouter();
-  if (!authUser) return;
   const [open, setOpen] = useState(false);
   const [userEntry, setUserEntry] = useState<UserEntry | null>(null);
-
+  
   useEffect(() => {
     setUserEntry(entryPage.userEntry);
   }, [entryPage.userEntry]);
-
+  if (!authUser) return;
+  
   const addUserEntry = api.userEntry.create.useMutation({
     onSuccess(data) {
       toast.success(data.message);

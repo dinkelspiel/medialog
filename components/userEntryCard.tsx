@@ -18,6 +18,7 @@ const UserEntryCard = ({
   customStars,
   hoverCard,
   topRight,
+  variant,
   ...props
 }: {
   entryTitle: ReactNode;
@@ -28,6 +29,7 @@ const UserEntryCard = ({
   customStars?: ReactNode;
   hoverCard?: ReactNode;
   topRight?: ReactNode;
+  variant?: "sm" | "default"
 } & HTMLProps<HTMLDivElement>) => {
   // return <img src={backgroundImage} className="aspect-2/3 w-full"></img>;
 
@@ -55,21 +57,21 @@ const UserEntryCard = ({
               return (
                 <Badge className="flex gap-1 border border-amber-300 bg-amber-700/50 px-1 text-xs text-amber-300">
                   <Book className="size-3 stroke-amber-300" />
-                  Book
+                  {variant !== "sm" && "Book"}
                 </Badge>
               );
             case 'Movie':
               return (
                 <Badge className="flex gap-1 border border-blue-300 bg-blue-700/50 px-1 text-xs text-blue-300">
-                  <Book className="size-3 stroke-blue-300" />
-                  Movie
+                  <Film className="size-3 stroke-blue-300" />
+                  {variant !== "sm" && "Movie"}
                 </Badge>
               );
             case 'Series':
               return (
                 <Badge className="flex gap-1 border border-green-300 bg-green-700/50 px-1 text-xs text-green-300">
-                  <Book className="size-3 stroke-green-300" />
-                  Tv
+                  <Tv className="size-3 stroke-green-300" />
+                  {variant !== "sm" && "Tv"}
                 </Badge>
               );
           }
@@ -111,9 +113,11 @@ const UserEntryCard = ({
 
 export const UserEntryCardObject = memo(function UserEntryCardObject({
   userEntry,
+  variant,
   ...props
 }: {
   userEntry: ExtendedUserEntry;
+  variant?: "sm" | "default"
 } & HTMLProps<HTMLDivElement>) {
   return (
     <UserEntryCard
@@ -123,6 +127,7 @@ export const UserEntryCardObject = memo(function UserEntryCardObject({
         releaseDate: userEntry.entry.releaseDate,
         category: userEntry.entry.category,
         rating: userEntry.rating,
+        variant
       }}
       {...props}
     />
