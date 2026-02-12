@@ -217,7 +217,7 @@ const ModifyUserEntry = ({
         </div>
 
         {/* Content */}
-        <div className="relative flex gap-4 p-4 pt-8 sm:p-6 sm:pt-10">
+        <DialogHeader unstyled={true} className="relative flex gap-4 p-4 pt-8 sm:p-6 sm:pt-10">
           <Image
             src={userEntry.entry.posterPath}
             alt={getUserTitleFromEntry(userEntry.entry)}
@@ -230,9 +230,9 @@ const ModifyUserEntry = ({
               entryId={userEntry.entry.id}
               entrySlug={userEntry.entry.slug}
             >
-              <h2 className="line-clamp-2 text-lg font-bold tracking-tight text-white drop-shadow-sm drop-shadow-neutral-500 hover:underline sm:text-xl">
+              <DialogTitle unstyled={true} className="line-clamp-2 text-lg font-bold tracking-tight text-white drop-shadow-sm drop-shadow-neutral-500 hover:underline sm:text-xl">
                 {getUserTitleFromEntry(userEntry.entry)}
-              </h2>
+              </DialogTitle>
             </EntryRedirect>
             <p className="text-sm text-base-200 drop-shadow-sm drop-shadow-neutral-500">
               {userEntry.entry.releaseDate.getFullYear()}
@@ -244,7 +244,7 @@ const ModifyUserEntry = ({
               {userEntry.entry.overview}
             </p>
           </div>
-        </div>
+        </DialogHeader>
       </div>
 
       {/* Quick Actions Bar */}

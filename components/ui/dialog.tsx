@@ -53,11 +53,12 @@ DialogContent.displayName = DialogPrimitive.Content.displayName;
 
 const DialogHeader = ({
   className,
+  unstyled,
   ...props
-}: React.HTMLAttributes<HTMLDivElement>) => (
+}: React.HTMLAttributes<HTMLDivElement> & {unstyled?: boolean}) => (
   <div
     className={cn(
-      'flex flex-col space-y-1.5 text-center sm:text-left',
+      {'flex flex-col space-y-1.5 text-center sm:text-left': !unstyled},
       className
     )}
     {...props}
@@ -79,19 +80,30 @@ const DialogFooter = ({
 );
 DialogFooter.displayName = 'DialogFooter';
 
+type DialogTitleProps = React.ComponentPropsWithoutRef<
+  typeof DialogPrimitive.Title
+> & {
+  unstyled?: boolean;
+};
+
 const DialogTitle = React.forwardRef<
   React.ElementRef<typeof DialogPrimitive.Title>,
-  React.ComponentPropsWithoutRef<typeof DialogPrimitive.Title>
->(({ className, ...props }, ref) => (
+  DialogTitleProps
+>(({ className, unstyled = false, ...props }, ref) => (
   <DialogPrimitive.Title
     ref={ref}
-    className={cn(
-      'text-lg font-semibold leading-none tracking-tight',
-      className
-    )}
+    className={
+      unstyled
+        ? className
+        : cn(
+            {'text-lg font-semibold leading-none tracking-tight': !unstyled},
+            className
+          )
+    }
     {...props}
   />
 ));
+
 DialogTitle.displayName = DialogPrimitive.Title.displayName;
 
 const DialogDescription = React.forwardRef<

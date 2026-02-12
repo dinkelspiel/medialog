@@ -58,7 +58,7 @@ const ContainedModifyUserEntry = ({
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       {children && <DialogTrigger asChild>{children}</DialogTrigger>}
-      <DialogContent className="h-full w-full max-w-[800px] min-[600px]:h-[600px] min-[800px]:w-[800px]">
+      <DialogContent className="h-full w-full max-w-[800px] min-[600px]:h-250 min-[800px]:w-200">
         {(userEntryQuery.isPending ||
           userLists.isPending ||
           userListsWithEntry.isPending) && <Loader2 className="animate-spin" />}
