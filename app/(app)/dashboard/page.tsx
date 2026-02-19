@@ -52,6 +52,7 @@ const Dashboard = ({
     filterCategories,
     filterTitle,
     filterStyle,
+    filterRatingRange,
 
     userEntries,
     setUserEntries,
@@ -134,6 +135,8 @@ const Dashboard = ({
   const filteredAndSortedEntries = useMemo(() => {
     if (!userEntries) return [];
 
+    const filterState = { filterStatus, filterRatingRange, filterCategories };
+
     return userEntries
       .filter(userEntry => {
         if (search.data && filterTitle !== '') {
@@ -141,7 +144,7 @@ const Dashboard = ({
           if (!entry) return false;
           return (entry._rankingScore ?? 0) > 0.5;
         }
-        if (shouldBeFiltered(userEntry)) return false;
+        if (shouldBeFiltered(userEntry, filterState)) return false;
         return true;
       })
       .sort((a, b) => {
@@ -172,7 +175,7 @@ const Dashboard = ({
             );
         }
       });
-  }, [userEntries, search.data, search.isPending, filterTitle, filterStyle]);
+  }, [userEntries, search.data, search.isPending, filterTitle, filterStyle, filterStatus, filterRatingRange, filterCategories]);
 
   // Memoize click handler to prevent recreation on each render
   const handleCardClick = useCallback(

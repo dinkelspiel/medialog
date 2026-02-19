@@ -28,8 +28,15 @@ import { useEffect, useRef } from 'react';
 import { Slider } from '@/components/ui/slider';
 import { DualRangeSlider } from '@/components/ui/dual-range-slider';
 
-export const shouldBeFiltered = (userEntry: UserEntry & { entry: Entry }) => {
-  const state = useDashboardStore.getState();
+export const shouldBeFiltered = (
+  userEntry: UserEntry & { entry: Entry },
+  filterState?: {
+    filterStatus: string;
+    filterRatingRange: [number, number];
+    filterCategories: Category[];
+  }
+) => {
+  const state = filterState ?? useDashboardStore.getState();
 
   if (state.filterStatus !== 'all' && userEntry.status !== state.filterStatus) {
     return true;
