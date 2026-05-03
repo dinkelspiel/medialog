@@ -315,6 +315,7 @@ export type UserWhereInput = {
   forgotPasswords?: Prisma.UserForgotPasswordListRelationFilter
   lists?: Prisma.UserListListRelationFilter
   votes?: Prisma.UserListPollVoteListRelationFilter
+  settings?: Prisma.UserSettingListRelationFilter
 }
 
 export type UserOrderByWithRelationInput = {
@@ -343,6 +344,7 @@ export type UserOrderByWithRelationInput = {
   forgotPasswords?: Prisma.UserForgotPasswordOrderByRelationAggregateInput
   lists?: Prisma.UserListOrderByRelationAggregateInput
   votes?: Prisma.UserListPollVoteOrderByRelationAggregateInput
+  settings?: Prisma.UserSettingOrderByRelationAggregateInput
   _relevance?: Prisma.UserOrderByRelevanceInput
 }
 
@@ -375,6 +377,7 @@ export type UserWhereUniqueInput = Prisma.AtLeast<{
   forgotPasswords?: Prisma.UserForgotPasswordListRelationFilter
   lists?: Prisma.UserListListRelationFilter
   votes?: Prisma.UserListPollVoteListRelationFilter
+  settings?: Prisma.UserSettingListRelationFilter
 }, "id" | "username" | "email">
 
 export type UserOrderByWithAggregationInput = {
@@ -442,6 +445,7 @@ export type UserCreateInput = {
   forgotPasswords?: Prisma.UserForgotPasswordCreateNestedManyWithoutUserInput
   lists?: Prisma.UserListCreateNestedManyWithoutUserInput
   votes?: Prisma.UserListPollVoteCreateNestedManyWithoutUserInput
+  settings?: Prisma.UserSettingCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateInput = {
@@ -468,6 +472,7 @@ export type UserUncheckedCreateInput = {
   forgotPasswords?: Prisma.UserForgotPasswordUncheckedCreateNestedManyWithoutUserInput
   lists?: Prisma.UserListUncheckedCreateNestedManyWithoutUserInput
   votes?: Prisma.UserListPollVoteUncheckedCreateNestedManyWithoutUserInput
+  settings?: Prisma.UserSettingUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserUpdateInput = {
@@ -493,6 +498,7 @@ export type UserUpdateInput = {
   forgotPasswords?: Prisma.UserForgotPasswordUpdateManyWithoutUserNestedInput
   lists?: Prisma.UserListUpdateManyWithoutUserNestedInput
   votes?: Prisma.UserListPollVoteUpdateManyWithoutUserNestedInput
+  settings?: Prisma.UserSettingUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateInput = {
@@ -519,6 +525,7 @@ export type UserUncheckedUpdateInput = {
   forgotPasswords?: Prisma.UserForgotPasswordUncheckedUpdateManyWithoutUserNestedInput
   lists?: Prisma.UserListUncheckedUpdateManyWithoutUserNestedInput
   votes?: Prisma.UserListPollVoteUncheckedUpdateManyWithoutUserNestedInput
+  settings?: Prisma.UserSettingUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInput = {
@@ -752,6 +759,20 @@ export type UserUncheckedUpdateManyWithoutInvitedByNestedInput = {
   deleteMany?: Prisma.UserScalarWhereInput | Prisma.UserScalarWhereInput[]
 }
 
+export type UserCreateNestedOneWithoutSettingsInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSettingsInput, Prisma.UserUncheckedCreateWithoutSettingsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSettingsInput
+  connect?: Prisma.UserWhereUniqueInput
+}
+
+export type UserUpdateOneRequiredWithoutSettingsNestedInput = {
+  create?: Prisma.XOR<Prisma.UserCreateWithoutSettingsInput, Prisma.UserUncheckedCreateWithoutSettingsInput>
+  connectOrCreate?: Prisma.UserCreateOrConnectWithoutSettingsInput
+  upsert?: Prisma.UserUpsertWithoutSettingsInput
+  connect?: Prisma.UserWhereUniqueInput
+  update?: Prisma.XOR<Prisma.XOR<Prisma.UserUpdateToOneWithWhereWithoutSettingsInput, Prisma.UserUpdateWithoutSettingsInput>, Prisma.UserUncheckedUpdateWithoutSettingsInput>
+}
+
 export type UserCreateNestedOneWithoutActivityInput = {
   create?: Prisma.XOR<Prisma.UserCreateWithoutActivityInput, Prisma.UserUncheckedCreateWithoutActivityInput>
   connectOrCreate?: Prisma.UserCreateOrConnectWithoutActivityInput
@@ -928,6 +949,7 @@ export type UserCreateWithoutInviteesInput = {
   forgotPasswords?: Prisma.UserForgotPasswordCreateNestedManyWithoutUserInput
   lists?: Prisma.UserListCreateNestedManyWithoutUserInput
   votes?: Prisma.UserListPollVoteCreateNestedManyWithoutUserInput
+  settings?: Prisma.UserSettingCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutInviteesInput = {
@@ -953,6 +975,7 @@ export type UserUncheckedCreateWithoutInviteesInput = {
   forgotPasswords?: Prisma.UserForgotPasswordUncheckedCreateNestedManyWithoutUserInput
   lists?: Prisma.UserListUncheckedCreateNestedManyWithoutUserInput
   votes?: Prisma.UserListPollVoteUncheckedCreateNestedManyWithoutUserInput
+  settings?: Prisma.UserSettingUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutInviteesInput = {
@@ -982,6 +1005,7 @@ export type UserCreateWithoutInvitedByInput = {
   forgotPasswords?: Prisma.UserForgotPasswordCreateNestedManyWithoutUserInput
   lists?: Prisma.UserListCreateNestedManyWithoutUserInput
   votes?: Prisma.UserListPollVoteCreateNestedManyWithoutUserInput
+  settings?: Prisma.UserSettingCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutInvitedByInput = {
@@ -1007,6 +1031,7 @@ export type UserUncheckedCreateWithoutInvitedByInput = {
   forgotPasswords?: Prisma.UserForgotPasswordUncheckedCreateNestedManyWithoutUserInput
   lists?: Prisma.UserListUncheckedCreateNestedManyWithoutUserInput
   votes?: Prisma.UserListPollVoteUncheckedCreateNestedManyWithoutUserInput
+  settings?: Prisma.UserSettingUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutInvitedByInput = {
@@ -1052,6 +1077,7 @@ export type UserUpdateWithoutInviteesInput = {
   forgotPasswords?: Prisma.UserForgotPasswordUpdateManyWithoutUserNestedInput
   lists?: Prisma.UserListUpdateManyWithoutUserNestedInput
   votes?: Prisma.UserListPollVoteUpdateManyWithoutUserNestedInput
+  settings?: Prisma.UserSettingUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutInviteesInput = {
@@ -1077,6 +1103,7 @@ export type UserUncheckedUpdateWithoutInviteesInput = {
   forgotPasswords?: Prisma.UserForgotPasswordUncheckedUpdateManyWithoutUserNestedInput
   lists?: Prisma.UserListUncheckedUpdateManyWithoutUserNestedInput
   votes?: Prisma.UserListPollVoteUncheckedUpdateManyWithoutUserNestedInput
+  settings?: Prisma.UserSettingUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithWhereUniqueWithoutInvitedByInput = {
@@ -1115,6 +1142,124 @@ export type UserScalarWhereInput = {
   updatedAt?: Prisma.DateTimeFilter<"User"> | Date | string
 }
 
+export type UserCreateWithoutSettingsInput = {
+  username: string
+  email: string
+  password: string
+  ratingStyle?: $Enums.RatingStyle
+  theme?: $Enums.Theme
+  dailyStreakStarted?: Date | string
+  dailyStreakUpdated?: Date | string
+  dailyStreakLength?: number
+  dailyStreakLongest?: number
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionCreateNestedManyWithoutUserInput
+  showMediaMetaIn?: Prisma.LanguageCreateNestedOneWithoutUserShowMediaMetaInInput
+  invitedBy?: Prisma.UserCreateNestedOneWithoutInviteesInput
+  invitees?: Prisma.UserCreateNestedManyWithoutInvitedByInput
+  following?: Prisma.UserFollowCreateNestedManyWithoutUserInput
+  followers?: Prisma.UserFollowCreateNestedManyWithoutFollowInput
+  userEntries?: Prisma.UserEntryCreateNestedManyWithoutUserInput
+  activity?: Prisma.UserActivityCreateNestedManyWithoutUserInput
+  forgotPasswords?: Prisma.UserForgotPasswordCreateNestedManyWithoutUserInput
+  lists?: Prisma.UserListCreateNestedManyWithoutUserInput
+  votes?: Prisma.UserListPollVoteCreateNestedManyWithoutUserInput
+}
+
+export type UserUncheckedCreateWithoutSettingsInput = {
+  id?: number
+  username: string
+  email: string
+  password: string
+  ratingStyle?: $Enums.RatingStyle
+  theme?: $Enums.Theme
+  showMediaMetaInId?: number | null
+  dailyStreakStarted?: Date | string
+  dailyStreakUpdated?: Date | string
+  dailyStreakLength?: number
+  dailyStreakLongest?: number
+  invitedById?: number | null
+  createdAt?: Date | string
+  updatedAt?: Date | string
+  sessions?: Prisma.SessionUncheckedCreateNestedManyWithoutUserInput
+  invitees?: Prisma.UserUncheckedCreateNestedManyWithoutInvitedByInput
+  following?: Prisma.UserFollowUncheckedCreateNestedManyWithoutUserInput
+  followers?: Prisma.UserFollowUncheckedCreateNestedManyWithoutFollowInput
+  userEntries?: Prisma.UserEntryUncheckedCreateNestedManyWithoutUserInput
+  activity?: Prisma.UserActivityUncheckedCreateNestedManyWithoutUserInput
+  forgotPasswords?: Prisma.UserForgotPasswordUncheckedCreateNestedManyWithoutUserInput
+  lists?: Prisma.UserListUncheckedCreateNestedManyWithoutUserInput
+  votes?: Prisma.UserListPollVoteUncheckedCreateNestedManyWithoutUserInput
+}
+
+export type UserCreateOrConnectWithoutSettingsInput = {
+  where: Prisma.UserWhereUniqueInput
+  create: Prisma.XOR<Prisma.UserCreateWithoutSettingsInput, Prisma.UserUncheckedCreateWithoutSettingsInput>
+}
+
+export type UserUpsertWithoutSettingsInput = {
+  update: Prisma.XOR<Prisma.UserUpdateWithoutSettingsInput, Prisma.UserUncheckedUpdateWithoutSettingsInput>
+  create: Prisma.XOR<Prisma.UserCreateWithoutSettingsInput, Prisma.UserUncheckedCreateWithoutSettingsInput>
+  where?: Prisma.UserWhereInput
+}
+
+export type UserUpdateToOneWithWhereWithoutSettingsInput = {
+  where?: Prisma.UserWhereInput
+  data: Prisma.XOR<Prisma.UserUpdateWithoutSettingsInput, Prisma.UserUncheckedUpdateWithoutSettingsInput>
+}
+
+export type UserUpdateWithoutSettingsInput = {
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  ratingStyle?: Prisma.EnumRatingStyleFieldUpdateOperationsInput | $Enums.RatingStyle
+  theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
+  dailyStreakStarted?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dailyStreakUpdated?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dailyStreakLength?: Prisma.IntFieldUpdateOperationsInput | number
+  dailyStreakLongest?: Prisma.IntFieldUpdateOperationsInput | number
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUpdateManyWithoutUserNestedInput
+  showMediaMetaIn?: Prisma.LanguageUpdateOneWithoutUserShowMediaMetaInNestedInput
+  invitedBy?: Prisma.UserUpdateOneWithoutInviteesNestedInput
+  invitees?: Prisma.UserUpdateManyWithoutInvitedByNestedInput
+  following?: Prisma.UserFollowUpdateManyWithoutUserNestedInput
+  followers?: Prisma.UserFollowUpdateManyWithoutFollowNestedInput
+  userEntries?: Prisma.UserEntryUpdateManyWithoutUserNestedInput
+  activity?: Prisma.UserActivityUpdateManyWithoutUserNestedInput
+  forgotPasswords?: Prisma.UserForgotPasswordUpdateManyWithoutUserNestedInput
+  lists?: Prisma.UserListUpdateManyWithoutUserNestedInput
+  votes?: Prisma.UserListPollVoteUpdateManyWithoutUserNestedInput
+}
+
+export type UserUncheckedUpdateWithoutSettingsInput = {
+  id?: Prisma.IntFieldUpdateOperationsInput | number
+  username?: Prisma.StringFieldUpdateOperationsInput | string
+  email?: Prisma.StringFieldUpdateOperationsInput | string
+  password?: Prisma.StringFieldUpdateOperationsInput | string
+  ratingStyle?: Prisma.EnumRatingStyleFieldUpdateOperationsInput | $Enums.RatingStyle
+  theme?: Prisma.EnumThemeFieldUpdateOperationsInput | $Enums.Theme
+  showMediaMetaInId?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  dailyStreakStarted?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dailyStreakUpdated?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  dailyStreakLength?: Prisma.IntFieldUpdateOperationsInput | number
+  dailyStreakLongest?: Prisma.IntFieldUpdateOperationsInput | number
+  invitedById?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
+  createdAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  updatedAt?: Prisma.DateTimeFieldUpdateOperationsInput | Date | string
+  sessions?: Prisma.SessionUncheckedUpdateManyWithoutUserNestedInput
+  invitees?: Prisma.UserUncheckedUpdateManyWithoutInvitedByNestedInput
+  following?: Prisma.UserFollowUncheckedUpdateManyWithoutUserNestedInput
+  followers?: Prisma.UserFollowUncheckedUpdateManyWithoutFollowNestedInput
+  userEntries?: Prisma.UserEntryUncheckedUpdateManyWithoutUserNestedInput
+  activity?: Prisma.UserActivityUncheckedUpdateManyWithoutUserNestedInput
+  forgotPasswords?: Prisma.UserForgotPasswordUncheckedUpdateManyWithoutUserNestedInput
+  lists?: Prisma.UserListUncheckedUpdateManyWithoutUserNestedInput
+  votes?: Prisma.UserListPollVoteUncheckedUpdateManyWithoutUserNestedInput
+}
+
 export type UserCreateWithoutActivityInput = {
   username: string
   email: string
@@ -1137,6 +1282,7 @@ export type UserCreateWithoutActivityInput = {
   forgotPasswords?: Prisma.UserForgotPasswordCreateNestedManyWithoutUserInput
   lists?: Prisma.UserListCreateNestedManyWithoutUserInput
   votes?: Prisma.UserListPollVoteCreateNestedManyWithoutUserInput
+  settings?: Prisma.UserSettingCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutActivityInput = {
@@ -1162,6 +1308,7 @@ export type UserUncheckedCreateWithoutActivityInput = {
   forgotPasswords?: Prisma.UserForgotPasswordUncheckedCreateNestedManyWithoutUserInput
   lists?: Prisma.UserListUncheckedCreateNestedManyWithoutUserInput
   votes?: Prisma.UserListPollVoteUncheckedCreateNestedManyWithoutUserInput
+  settings?: Prisma.UserSettingUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutActivityInput = {
@@ -1202,6 +1349,7 @@ export type UserUpdateWithoutActivityInput = {
   forgotPasswords?: Prisma.UserForgotPasswordUpdateManyWithoutUserNestedInput
   lists?: Prisma.UserListUpdateManyWithoutUserNestedInput
   votes?: Prisma.UserListPollVoteUpdateManyWithoutUserNestedInput
+  settings?: Prisma.UserSettingUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutActivityInput = {
@@ -1227,6 +1375,7 @@ export type UserUncheckedUpdateWithoutActivityInput = {
   forgotPasswords?: Prisma.UserForgotPasswordUncheckedUpdateManyWithoutUserNestedInput
   lists?: Prisma.UserListUncheckedUpdateManyWithoutUserNestedInput
   votes?: Prisma.UserListPollVoteUncheckedUpdateManyWithoutUserNestedInput
+  settings?: Prisma.UserSettingUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutFollowingInput = {
@@ -1251,6 +1400,7 @@ export type UserCreateWithoutFollowingInput = {
   forgotPasswords?: Prisma.UserForgotPasswordCreateNestedManyWithoutUserInput
   lists?: Prisma.UserListCreateNestedManyWithoutUserInput
   votes?: Prisma.UserListPollVoteCreateNestedManyWithoutUserInput
+  settings?: Prisma.UserSettingCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutFollowingInput = {
@@ -1276,6 +1426,7 @@ export type UserUncheckedCreateWithoutFollowingInput = {
   forgotPasswords?: Prisma.UserForgotPasswordUncheckedCreateNestedManyWithoutUserInput
   lists?: Prisma.UserListUncheckedCreateNestedManyWithoutUserInput
   votes?: Prisma.UserListPollVoteUncheckedCreateNestedManyWithoutUserInput
+  settings?: Prisma.UserSettingUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutFollowingInput = {
@@ -1305,6 +1456,7 @@ export type UserCreateWithoutFollowersInput = {
   forgotPasswords?: Prisma.UserForgotPasswordCreateNestedManyWithoutUserInput
   lists?: Prisma.UserListCreateNestedManyWithoutUserInput
   votes?: Prisma.UserListPollVoteCreateNestedManyWithoutUserInput
+  settings?: Prisma.UserSettingCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutFollowersInput = {
@@ -1330,6 +1482,7 @@ export type UserUncheckedCreateWithoutFollowersInput = {
   forgotPasswords?: Prisma.UserForgotPasswordUncheckedCreateNestedManyWithoutUserInput
   lists?: Prisma.UserListUncheckedCreateNestedManyWithoutUserInput
   votes?: Prisma.UserListPollVoteUncheckedCreateNestedManyWithoutUserInput
+  settings?: Prisma.UserSettingUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutFollowersInput = {
@@ -1370,6 +1523,7 @@ export type UserUpdateWithoutFollowingInput = {
   forgotPasswords?: Prisma.UserForgotPasswordUpdateManyWithoutUserNestedInput
   lists?: Prisma.UserListUpdateManyWithoutUserNestedInput
   votes?: Prisma.UserListPollVoteUpdateManyWithoutUserNestedInput
+  settings?: Prisma.UserSettingUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutFollowingInput = {
@@ -1395,6 +1549,7 @@ export type UserUncheckedUpdateWithoutFollowingInput = {
   forgotPasswords?: Prisma.UserForgotPasswordUncheckedUpdateManyWithoutUserNestedInput
   lists?: Prisma.UserListUncheckedUpdateManyWithoutUserNestedInput
   votes?: Prisma.UserListPollVoteUncheckedUpdateManyWithoutUserNestedInput
+  settings?: Prisma.UserSettingUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUpsertWithoutFollowersInput = {
@@ -1430,6 +1585,7 @@ export type UserUpdateWithoutFollowersInput = {
   forgotPasswords?: Prisma.UserForgotPasswordUpdateManyWithoutUserNestedInput
   lists?: Prisma.UserListUpdateManyWithoutUserNestedInput
   votes?: Prisma.UserListPollVoteUpdateManyWithoutUserNestedInput
+  settings?: Prisma.UserSettingUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutFollowersInput = {
@@ -1455,6 +1611,7 @@ export type UserUncheckedUpdateWithoutFollowersInput = {
   forgotPasswords?: Prisma.UserForgotPasswordUncheckedUpdateManyWithoutUserNestedInput
   lists?: Prisma.UserListUncheckedUpdateManyWithoutUserNestedInput
   votes?: Prisma.UserListPollVoteUncheckedUpdateManyWithoutUserNestedInput
+  settings?: Prisma.UserSettingUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutUserEntriesInput = {
@@ -1479,6 +1636,7 @@ export type UserCreateWithoutUserEntriesInput = {
   forgotPasswords?: Prisma.UserForgotPasswordCreateNestedManyWithoutUserInput
   lists?: Prisma.UserListCreateNestedManyWithoutUserInput
   votes?: Prisma.UserListPollVoteCreateNestedManyWithoutUserInput
+  settings?: Prisma.UserSettingCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutUserEntriesInput = {
@@ -1504,6 +1662,7 @@ export type UserUncheckedCreateWithoutUserEntriesInput = {
   forgotPasswords?: Prisma.UserForgotPasswordUncheckedCreateNestedManyWithoutUserInput
   lists?: Prisma.UserListUncheckedCreateNestedManyWithoutUserInput
   votes?: Prisma.UserListPollVoteUncheckedCreateNestedManyWithoutUserInput
+  settings?: Prisma.UserSettingUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutUserEntriesInput = {
@@ -1544,6 +1703,7 @@ export type UserUpdateWithoutUserEntriesInput = {
   forgotPasswords?: Prisma.UserForgotPasswordUpdateManyWithoutUserNestedInput
   lists?: Prisma.UserListUpdateManyWithoutUserNestedInput
   votes?: Prisma.UserListPollVoteUpdateManyWithoutUserNestedInput
+  settings?: Prisma.UserSettingUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutUserEntriesInput = {
@@ -1569,6 +1729,7 @@ export type UserUncheckedUpdateWithoutUserEntriesInput = {
   forgotPasswords?: Prisma.UserForgotPasswordUncheckedUpdateManyWithoutUserNestedInput
   lists?: Prisma.UserListUncheckedUpdateManyWithoutUserNestedInput
   votes?: Prisma.UserListPollVoteUncheckedUpdateManyWithoutUserNestedInput
+  settings?: Prisma.UserSettingUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutListsInput = {
@@ -1593,6 +1754,7 @@ export type UserCreateWithoutListsInput = {
   activity?: Prisma.UserActivityCreateNestedManyWithoutUserInput
   forgotPasswords?: Prisma.UserForgotPasswordCreateNestedManyWithoutUserInput
   votes?: Prisma.UserListPollVoteCreateNestedManyWithoutUserInput
+  settings?: Prisma.UserSettingCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutListsInput = {
@@ -1618,6 +1780,7 @@ export type UserUncheckedCreateWithoutListsInput = {
   activity?: Prisma.UserActivityUncheckedCreateNestedManyWithoutUserInput
   forgotPasswords?: Prisma.UserForgotPasswordUncheckedCreateNestedManyWithoutUserInput
   votes?: Prisma.UserListPollVoteUncheckedCreateNestedManyWithoutUserInput
+  settings?: Prisma.UserSettingUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutListsInput = {
@@ -1658,6 +1821,7 @@ export type UserUpdateWithoutListsInput = {
   activity?: Prisma.UserActivityUpdateManyWithoutUserNestedInput
   forgotPasswords?: Prisma.UserForgotPasswordUpdateManyWithoutUserNestedInput
   votes?: Prisma.UserListPollVoteUpdateManyWithoutUserNestedInput
+  settings?: Prisma.UserSettingUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutListsInput = {
@@ -1683,6 +1847,7 @@ export type UserUncheckedUpdateWithoutListsInput = {
   activity?: Prisma.UserActivityUncheckedUpdateManyWithoutUserNestedInput
   forgotPasswords?: Prisma.UserForgotPasswordUncheckedUpdateManyWithoutUserNestedInput
   votes?: Prisma.UserListPollVoteUncheckedUpdateManyWithoutUserNestedInput
+  settings?: Prisma.UserSettingUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutVotesInput = {
@@ -1707,6 +1872,7 @@ export type UserCreateWithoutVotesInput = {
   activity?: Prisma.UserActivityCreateNestedManyWithoutUserInput
   forgotPasswords?: Prisma.UserForgotPasswordCreateNestedManyWithoutUserInput
   lists?: Prisma.UserListCreateNestedManyWithoutUserInput
+  settings?: Prisma.UserSettingCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutVotesInput = {
@@ -1732,6 +1898,7 @@ export type UserUncheckedCreateWithoutVotesInput = {
   activity?: Prisma.UserActivityUncheckedCreateNestedManyWithoutUserInput
   forgotPasswords?: Prisma.UserForgotPasswordUncheckedCreateNestedManyWithoutUserInput
   lists?: Prisma.UserListUncheckedCreateNestedManyWithoutUserInput
+  settings?: Prisma.UserSettingUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutVotesInput = {
@@ -1772,6 +1939,7 @@ export type UserUpdateWithoutVotesInput = {
   activity?: Prisma.UserActivityUpdateManyWithoutUserNestedInput
   forgotPasswords?: Prisma.UserForgotPasswordUpdateManyWithoutUserNestedInput
   lists?: Prisma.UserListUpdateManyWithoutUserNestedInput
+  settings?: Prisma.UserSettingUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutVotesInput = {
@@ -1797,6 +1965,7 @@ export type UserUncheckedUpdateWithoutVotesInput = {
   activity?: Prisma.UserActivityUncheckedUpdateManyWithoutUserNestedInput
   forgotPasswords?: Prisma.UserForgotPasswordUncheckedUpdateManyWithoutUserNestedInput
   lists?: Prisma.UserListUncheckedUpdateManyWithoutUserNestedInput
+  settings?: Prisma.UserSettingUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutSessionsInput = {
@@ -1821,6 +1990,7 @@ export type UserCreateWithoutSessionsInput = {
   forgotPasswords?: Prisma.UserForgotPasswordCreateNestedManyWithoutUserInput
   lists?: Prisma.UserListCreateNestedManyWithoutUserInput
   votes?: Prisma.UserListPollVoteCreateNestedManyWithoutUserInput
+  settings?: Prisma.UserSettingCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutSessionsInput = {
@@ -1846,6 +2016,7 @@ export type UserUncheckedCreateWithoutSessionsInput = {
   forgotPasswords?: Prisma.UserForgotPasswordUncheckedCreateNestedManyWithoutUserInput
   lists?: Prisma.UserListUncheckedCreateNestedManyWithoutUserInput
   votes?: Prisma.UserListPollVoteUncheckedCreateNestedManyWithoutUserInput
+  settings?: Prisma.UserSettingUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutSessionsInput = {
@@ -1886,6 +2057,7 @@ export type UserUpdateWithoutSessionsInput = {
   forgotPasswords?: Prisma.UserForgotPasswordUpdateManyWithoutUserNestedInput
   lists?: Prisma.UserListUpdateManyWithoutUserNestedInput
   votes?: Prisma.UserListPollVoteUpdateManyWithoutUserNestedInput
+  settings?: Prisma.UserSettingUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutSessionsInput = {
@@ -1911,6 +2083,7 @@ export type UserUncheckedUpdateWithoutSessionsInput = {
   forgotPasswords?: Prisma.UserForgotPasswordUncheckedUpdateManyWithoutUserNestedInput
   lists?: Prisma.UserListUncheckedUpdateManyWithoutUserNestedInput
   votes?: Prisma.UserListPollVoteUncheckedUpdateManyWithoutUserNestedInput
+  settings?: Prisma.UserSettingUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateWithoutShowMediaMetaInInput = {
@@ -1935,6 +2108,7 @@ export type UserCreateWithoutShowMediaMetaInInput = {
   forgotPasswords?: Prisma.UserForgotPasswordCreateNestedManyWithoutUserInput
   lists?: Prisma.UserListCreateNestedManyWithoutUserInput
   votes?: Prisma.UserListPollVoteCreateNestedManyWithoutUserInput
+  settings?: Prisma.UserSettingCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutShowMediaMetaInInput = {
@@ -1960,6 +2134,7 @@ export type UserUncheckedCreateWithoutShowMediaMetaInInput = {
   forgotPasswords?: Prisma.UserForgotPasswordUncheckedCreateNestedManyWithoutUserInput
   lists?: Prisma.UserListUncheckedCreateNestedManyWithoutUserInput
   votes?: Prisma.UserListPollVoteUncheckedCreateNestedManyWithoutUserInput
+  settings?: Prisma.UserSettingUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutShowMediaMetaInInput = {
@@ -2010,6 +2185,7 @@ export type UserCreateWithoutForgotPasswordsInput = {
   activity?: Prisma.UserActivityCreateNestedManyWithoutUserInput
   lists?: Prisma.UserListCreateNestedManyWithoutUserInput
   votes?: Prisma.UserListPollVoteCreateNestedManyWithoutUserInput
+  settings?: Prisma.UserSettingCreateNestedManyWithoutUserInput
 }
 
 export type UserUncheckedCreateWithoutForgotPasswordsInput = {
@@ -2035,6 +2211,7 @@ export type UserUncheckedCreateWithoutForgotPasswordsInput = {
   activity?: Prisma.UserActivityUncheckedCreateNestedManyWithoutUserInput
   lists?: Prisma.UserListUncheckedCreateNestedManyWithoutUserInput
   votes?: Prisma.UserListPollVoteUncheckedCreateNestedManyWithoutUserInput
+  settings?: Prisma.UserSettingUncheckedCreateNestedManyWithoutUserInput
 }
 
 export type UserCreateOrConnectWithoutForgotPasswordsInput = {
@@ -2075,6 +2252,7 @@ export type UserUpdateWithoutForgotPasswordsInput = {
   activity?: Prisma.UserActivityUpdateManyWithoutUserNestedInput
   lists?: Prisma.UserListUpdateManyWithoutUserNestedInput
   votes?: Prisma.UserListPollVoteUpdateManyWithoutUserNestedInput
+  settings?: Prisma.UserSettingUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutForgotPasswordsInput = {
@@ -2100,6 +2278,7 @@ export type UserUncheckedUpdateWithoutForgotPasswordsInput = {
   activity?: Prisma.UserActivityUncheckedUpdateManyWithoutUserNestedInput
   lists?: Prisma.UserListUncheckedUpdateManyWithoutUserNestedInput
   votes?: Prisma.UserListPollVoteUncheckedUpdateManyWithoutUserNestedInput
+  settings?: Prisma.UserSettingUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserCreateManyInvitedByInput = {
@@ -2140,6 +2319,7 @@ export type UserUpdateWithoutInvitedByInput = {
   forgotPasswords?: Prisma.UserForgotPasswordUpdateManyWithoutUserNestedInput
   lists?: Prisma.UserListUpdateManyWithoutUserNestedInput
   votes?: Prisma.UserListPollVoteUpdateManyWithoutUserNestedInput
+  settings?: Prisma.UserSettingUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutInvitedByInput = {
@@ -2165,6 +2345,7 @@ export type UserUncheckedUpdateWithoutInvitedByInput = {
   forgotPasswords?: Prisma.UserForgotPasswordUncheckedUpdateManyWithoutUserNestedInput
   lists?: Prisma.UserListUncheckedUpdateManyWithoutUserNestedInput
   votes?: Prisma.UserListPollVoteUncheckedUpdateManyWithoutUserNestedInput
+  settings?: Prisma.UserSettingUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateManyWithoutInvitedByInput = {
@@ -2221,6 +2402,7 @@ export type UserUpdateWithoutShowMediaMetaInInput = {
   forgotPasswords?: Prisma.UserForgotPasswordUpdateManyWithoutUserNestedInput
   lists?: Prisma.UserListUpdateManyWithoutUserNestedInput
   votes?: Prisma.UserListPollVoteUpdateManyWithoutUserNestedInput
+  settings?: Prisma.UserSettingUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateWithoutShowMediaMetaInInput = {
@@ -2246,6 +2428,7 @@ export type UserUncheckedUpdateWithoutShowMediaMetaInInput = {
   forgotPasswords?: Prisma.UserForgotPasswordUncheckedUpdateManyWithoutUserNestedInput
   lists?: Prisma.UserListUncheckedUpdateManyWithoutUserNestedInput
   votes?: Prisma.UserListPollVoteUncheckedUpdateManyWithoutUserNestedInput
+  settings?: Prisma.UserSettingUncheckedUpdateManyWithoutUserNestedInput
 }
 
 export type UserUncheckedUpdateManyWithoutShowMediaMetaInInput = {
@@ -2279,6 +2462,7 @@ export type UserCountOutputType = {
   forgotPasswords: number
   lists: number
   votes: number
+  settings: number
 }
 
 export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
@@ -2291,6 +2475,7 @@ export type UserCountOutputTypeSelect<ExtArgs extends runtime.Types.Extensions.I
   forgotPasswords?: boolean | UserCountOutputTypeCountForgotPasswordsArgs
   lists?: boolean | UserCountOutputTypeCountListsArgs
   votes?: boolean | UserCountOutputTypeCountVotesArgs
+  settings?: boolean | UserCountOutputTypeCountSettingsArgs
 }
 
 /**
@@ -2366,6 +2551,13 @@ export type UserCountOutputTypeCountVotesArgs<ExtArgs extends runtime.Types.Exte
   where?: Prisma.UserListPollVoteWhereInput
 }
 
+/**
+ * UserCountOutputType without action
+ */
+export type UserCountOutputTypeCountSettingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  where?: Prisma.UserSettingWhereInput
+}
+
 
 export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = runtime.Types.Extensions.GetSelect<{
   id?: boolean
@@ -2393,6 +2585,7 @@ export type UserSelect<ExtArgs extends runtime.Types.Extensions.InternalArgs = r
   forgotPasswords?: boolean | Prisma.User$forgotPasswordsArgs<ExtArgs>
   lists?: boolean | Prisma.User$listsArgs<ExtArgs>
   votes?: boolean | Prisma.User$votesArgs<ExtArgs>
+  settings?: boolean | Prisma.User$settingsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }, ExtArgs["result"]["user"]>
 
@@ -2428,6 +2621,7 @@ export type UserInclude<ExtArgs extends runtime.Types.Extensions.InternalArgs = 
   forgotPasswords?: boolean | Prisma.User$forgotPasswordsArgs<ExtArgs>
   lists?: boolean | Prisma.User$listsArgs<ExtArgs>
   votes?: boolean | Prisma.User$votesArgs<ExtArgs>
+  settings?: boolean | Prisma.User$settingsArgs<ExtArgs>
   _count?: boolean | Prisma.UserCountOutputTypeDefaultArgs<ExtArgs>
 }
 
@@ -2445,6 +2639,7 @@ export type $UserPayload<ExtArgs extends runtime.Types.Extensions.InternalArgs =
     forgotPasswords: Prisma.$UserForgotPasswordPayload<ExtArgs>[]
     lists: Prisma.$UserListPayload<ExtArgs>[]
     votes: Prisma.$UserListPollVotePayload<ExtArgs>[]
+    settings: Prisma.$UserSettingPayload<ExtArgs>[]
   }
   scalars: runtime.Types.Extensions.GetPayloadResult<{
     id: number
@@ -2812,6 +3007,7 @@ export interface Prisma__UserClient<T, Null = never, ExtArgs extends runtime.Typ
   forgotPasswords<T extends Prisma.User$forgotPasswordsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$forgotPasswordsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserForgotPasswordPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   lists<T extends Prisma.User$listsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$listsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserListPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   votes<T extends Prisma.User$votesArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$votesArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserListPollVotePayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
+  settings<T extends Prisma.User$settingsArgs<ExtArgs> = {}>(args?: Prisma.Subset<T, Prisma.User$settingsArgs<ExtArgs>>): Prisma.PrismaPromise<runtime.Types.Result.GetResult<Prisma.$UserSettingPayload<ExtArgs>, T, "findMany", GlobalOmitOptions> | Null>
   /**
    * Attaches callbacks for the resolution and/or rejection of the Promise.
    * @param onfulfilled The callback to execute when the Promise is resolved.
@@ -3449,6 +3645,30 @@ export type User$votesArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs
   take?: number
   skip?: number
   distinct?: Prisma.UserListPollVoteScalarFieldEnum | Prisma.UserListPollVoteScalarFieldEnum[]
+}
+
+/**
+ * User.settings
+ */
+export type User$settingsArgs<ExtArgs extends runtime.Types.Extensions.InternalArgs = runtime.Types.Extensions.DefaultArgs> = {
+  /**
+   * Select specific fields to fetch from the UserSetting
+   */
+  select?: Prisma.UserSettingSelect<ExtArgs> | null
+  /**
+   * Omit specific fields from the UserSetting
+   */
+  omit?: Prisma.UserSettingOmit<ExtArgs> | null
+  /**
+   * Choose, which related nodes to fetch as well
+   */
+  include?: Prisma.UserSettingInclude<ExtArgs> | null
+  where?: Prisma.UserSettingWhereInput
+  orderBy?: Prisma.UserSettingOrderByWithRelationInput | Prisma.UserSettingOrderByWithRelationInput[]
+  cursor?: Prisma.UserSettingWhereUniqueInput
+  take?: number
+  skip?: number
+  distinct?: Prisma.UserSettingScalarFieldEnum | Prisma.UserSettingScalarFieldEnum[]
 }
 
 /**

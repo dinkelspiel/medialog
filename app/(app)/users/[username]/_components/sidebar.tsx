@@ -5,12 +5,10 @@ import { Diary } from './diary';
 import { Calendar } from 'lucide-react';
 import { Progress } from '@/components/ui/progress';
 import Image from 'next/image';
-import { Fragment } from 'react';
 import { ServerEntryTitleForUser } from './serverUserEntryTitle';
 import { Lists } from './lists';
 import Link from 'next/link';
 import GenreOverview from './genreOverview';
-import { Label } from '@/components/ui/label';
 import { EntryRedirect } from '@/app/(app)/_components/EntryIslandContext';
 import StyleHeader from '@/components/styleHeader';
 
@@ -63,25 +61,30 @@ export const ProfileSidebar = ({
             }
           </span>
         </div>
-        <div className="flex flex-row justify-center">
-          {profileUser.userEntries
-            .filter(e => e.status === 'planning')
-            // .sort(() => Math.random() - 0.5)
-            .slice(0, 4)
-            .map((watchlist, idx) => (
-              <Image
-                key={watchlist.id}
-                src={watchlist.entry.posterPath}
-                alt={watchlist.entry.originalTitle}
-                width={80}
-                height={120}
-                className={cn(
-                  `${idx !== 0 && 'ms-[-24px]'} h-[120px] w-[80px] rounded-md shadow-lg`
-                )}
-                style={{ zIndex: idx }}
-              />
-            ))}
-        </div>
+        <Link
+          className="group flex cursor-pointer flex-col gap-2"
+          href={`/@${profileUser.username}/watchlist`}
+        >
+          <div className="flex flex-row justify-center rounded-md shadow-slate-900/50 ring-slate-900 ring-offset-2 transition-all duration-150 group-hover:shadow-lg group-hover:ring-4">
+            {profileUser.userEntries
+              .filter(e => e.status === 'planning')
+              // .sort(() => Math.random() - 0.5)
+              .slice(0, 4)
+              .map((watchlist, idx) => (
+                <Image
+                  key={watchlist.id}
+                  src={watchlist.entry.posterPath}
+                  alt={watchlist.entry.originalTitle}
+                  width={80}
+                  height={120}
+                  className={cn(
+                    `${idx !== 0 && 'ms-[-24px]'} h-[120px] w-[80px] rounded-md shadow-lg`
+                  )}
+                  style={{ zIndex: idx }}
+                />
+              ))}
+          </div>
+        </Link>
 
         {profileUser.userEntries.filter(e => e.status === 'watching').length >
           0 && (

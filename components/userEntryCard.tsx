@@ -25,7 +25,7 @@ const UserEntryCard = ({
   backgroundImage: string;
   category: Category;
   releaseDate: Date;
-  rating: number;
+  rating: number | null;
   customStars?: ReactNode;
   hoverCard?: ReactNode;
   topRight?: ReactNode;
@@ -99,10 +99,12 @@ const UserEntryCard = ({
               <div className="hidden text-white sm:block">
                 <SmallRating rating={rating} />
               </div>
-              <div className="flex items-center gap-1 text-white sm:hidden">
-                <span className="text-sm">{(rating / 20).toFixed(1)}</span>
-                <Star strokeWidth={0} className="size-4 fill-primary" />
-              </div>
+              {rating !== null && (
+                <div className="flex items-center gap-1 text-white sm:hidden">
+                  <span className="text-sm">{(rating / 20).toFixed(1)}</span>
+                  <Star strokeWidth={0} className="size-4 fill-primary" />
+                </div>
+              )}
             </>
           )}
         </div>

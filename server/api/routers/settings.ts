@@ -4,8 +4,58 @@ import { Theme } from '@/prisma/generated/browser';
 import z from 'zod';
 import { protectedProcedure } from '../trpc';
 import { TRPCError } from '@trpc/server';
+import {
+  DEFAULT_MEDIA_TYPE_FILTERS,
+  MEDIA_TYPE_FILTERS_SETTING_NAME,
+} from '@/lib/mediaTypeFilters';
+
+const mediaTypeFiltersSchema = z.object({
+  movie: z.boolean(),
+  book: z.boolean(),
+  series: z.boolean(),
+});
+
+const parseMediaTypeFilters = (value: string) => {
+  try {
+    const result = mediaTypeFiltersSchema.safeParse(JSON.parse(value));
+    return result.success ? result.data : DEFAULT_MEDIA_TYPE_FILTERS;
+  } catch {
+    return DEFAULT_MEDIA_TYPE_FILTERS;
+  }
+};
+
+const saveMediaTypeFilters = async (
+  userId: number,
+  filters: typeof DEFAULT_MEDIA_TYPE_FILTERS
+) => {
+  await prisma.$executeRaw`
+    INSERT INTO UserSetting (userId, name, value, createdAt, updatedAt)
+    VALUES (${userId}, ${MEDIA_TYPE_FILTERS_SETTING_NAME}, ${JSON.stringify(filters)}, NOW(), NOW())
+    ON DUPLICATE KEY UPDATE value = VALUES(value), updatedAt = NOW()
+  `;
+};
 
 export const settingsRouter = createTRPCRouter({
+  getMediaTypeFilters: protectedProcedure.query(async ({ ctx }) => {
+    const rows = await prisma.$queryRaw<{ value: string }[]>`
+      SELECT value FROM UserSetting
+      WHERE userId = ${ctx.user.id} AND name = ${MEDIA_TYPE_FILTERS_SETTING_NAME}
+      LIMIT 1
+    `;
+
+    if (rows[0]) {
+      return parseMediaTypeFilters(rows[0].value);
+    }
+
+    await saveMediaTypeFilters(ctx.user.id, DEFAULT_MEDIA_TYPE_FILTERS);
+    return DEFAULT_MEDIA_TYPE_FILTERS;
+  }),
+  setMediaTypeFilters: protectedProcedure
+    .input(mediaTypeFiltersSchema)
+    .mutation(async ({ input, ctx }) => {
+      await saveMediaTypeFilters(ctx.user.id, input);
+      return input;
+    }),
   setTheme: protectedProcedure
     .input(
       z.object({

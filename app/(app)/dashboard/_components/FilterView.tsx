@@ -43,8 +43,11 @@ export const shouldBeFiltered = (
   }
 
   if (
-    (userEntry.rating > state.filterRatingRange[1] ||
-      userEntry.rating < state.filterRatingRange[0]) &&
+    ((userEntry.rating === null &&
+      (state.filterRatingRange[0] !== 0 || state.filterRatingRange[1] !== 100)) ||
+      (userEntry.rating !== null &&
+        (userEntry.rating > state.filterRatingRange[1] ||
+          userEntry.rating < state.filterRatingRange[0]))) &&
     state.filterStatus !== 'planning'
   ) {
     return true;

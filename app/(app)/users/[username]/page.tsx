@@ -15,8 +15,7 @@ import { getUserLists } from "./_components/lists";
 import { Metadata } from "next";
 import ActivityHistory from "./_components/activityHistory";
 import Showcase from "./_components/showcase";
-import Activity from "@/components/activity";
-import StyleHeader from "@/components/styleHeader";
+import RecentActivity from "./_components/recentActivity";
 
 const Profile404 = async () => {
   const user = await validateSessionToken();
@@ -122,6 +121,9 @@ const Profile = async ({
     where: {
       userId: profileUser.id,
       status: "completed",
+      rating: {
+        not: null,
+      },
     },
     orderBy: {
       rating: "desc",
@@ -158,31 +160,14 @@ const Profile = async ({
     },
   });
 
-  const activity = await prisma.userActivity.findMany({
-    where: {
-      userId: profileUser.id,
-      NOT: {
-        type: "progressUpdate",
-      },
-    },
-    orderBy: {
-      createdAt: "desc",
-    },
-    take: 10,
-    include: {
-      entry: {
-        include: {
-          translations: getDefaultWhereForTranslations(authUser),
-        },
-      },
-    },
-  });
-
   const ratings = [];
   const totalRatings = await prisma.userEntry.count({
     where: {
       userId: profileUser.id,
       status: "completed",
+      rating: {
+        not: null,
+      },
     },
   });
   for (let ratingThreshold = 0; ratingThreshold <= 10; ratingThreshold++) {
@@ -239,29 +224,7 @@ const Profile = async ({
               lists={lists}
             />
             <ActivityHistory profileUser={profileUser} />
-
-            <div className="flex flex-col gap-4">
-              <StyleHeader>Recent Activity</StyleHeader>
-              {activity.length > 0 && (
-                <div className="flex flex-col gap-3">
-                  {activity.map((activity, idx) => {
-                    return (
-                      <Activity
-                        activity={activity}
-                        title={
-                          activity.entry.translations[0]?.name ||
-                          activity.entry.originalTitle
-                        }
-                        key={idx}
-                      />
-                    );
-                  })}
-                </div>
-              )}
-              {activity.length === 0 && (
-                <div className="text-lg">No recent activity found</div>
-              )}
-            </div>
+            <RecentActivity userId={profileUser.id} />
           </div>
           <ProfileSidebar
             profileUser={profileUser as any}

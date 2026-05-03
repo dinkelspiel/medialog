@@ -9,6 +9,49 @@ import { subMonths } from 'date-fns';
 import { z } from 'zod';
 
 export const communityRouter = createTRPCRouter({
+  getUserActivity: publicProcedure
+    .input(
+      z.object({
+        userId: z.number(),
+        cursor: z.number().nullish(),
+      })
+    )
+    .query(async ({ input, ctx }) => {
+      const authUser = await validateSessionTokenFromHeaders(ctx.headers);
+
+      const limit = 10;
+
+      const activity = await prisma.userActivity.findMany({
+        where: {
+          userId: input.userId,
+          NOT: {
+            type: 'progressUpdate',
+          },
+        },
+        orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
+        take: limit + 1,
+        cursor: input.cursor ? { id: input.cursor } : undefined,
+        skip: input.cursor ? 1 : 0,
+        include: {
+          entry: {
+            include: {
+              translations: getDefaultWhereForTranslations(authUser),
+            },
+          },
+        },
+      });
+
+      let nextCursor: typeof input.cursor | undefined = undefined;
+      if (activity.length > limit) {
+        const nextItem = activity.pop();
+        nextCursor = nextItem!.id;
+      }
+
+      return {
+        activity,
+        nextCursor,
+      };
+    }),
   getFeed: publicProcedure
     .input(
       z.object({
@@ -93,7 +136,7 @@ export const communityRouter = createTRPCRouter({
 
     const averages = await prisma.userEntry.groupBy({
       by: ['entryId'],
-      where: { entryId: { in: entryIds }, rating: { gt: 0 } },
+      where: { entryId: { in: entryIds }, rating: { not: null } },
       _avg: { rating: true },
     });
 

@@ -235,7 +235,7 @@ export type UserEntryGroupByOutputType = {
   id: number
   userId: number
   entryId: number
-  rating: number
+  rating: number | null
   notes: string
   watchedAt: Date | null
   status: $Enums.UserEntryStatus
@@ -272,7 +272,7 @@ export type UserEntryWhereInput = {
   id?: Prisma.IntFilter<"UserEntry"> | number
   userId?: Prisma.IntFilter<"UserEntry"> | number
   entryId?: Prisma.IntFilter<"UserEntry"> | number
-  rating?: Prisma.IntFilter<"UserEntry"> | number
+  rating?: Prisma.IntNullableFilter<"UserEntry"> | number | null
   notes?: Prisma.StringFilter<"UserEntry"> | string
   watchedAt?: Prisma.DateTimeNullableFilter<"UserEntry"> | Date | string | null
   status?: Prisma.EnumUserEntryStatusFilter<"UserEntry"> | $Enums.UserEntryStatus
@@ -288,7 +288,7 @@ export type UserEntryOrderByWithRelationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   entryId?: Prisma.SortOrder
-  rating?: Prisma.SortOrder
+  rating?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrder
   watchedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -308,7 +308,7 @@ export type UserEntryWhereUniqueInput = Prisma.AtLeast<{
   NOT?: Prisma.UserEntryWhereInput | Prisma.UserEntryWhereInput[]
   userId?: Prisma.IntFilter<"UserEntry"> | number
   entryId?: Prisma.IntFilter<"UserEntry"> | number
-  rating?: Prisma.IntFilter<"UserEntry"> | number
+  rating?: Prisma.IntNullableFilter<"UserEntry"> | number | null
   notes?: Prisma.StringFilter<"UserEntry"> | string
   watchedAt?: Prisma.DateTimeNullableFilter<"UserEntry"> | Date | string | null
   status?: Prisma.EnumUserEntryStatusFilter<"UserEntry"> | $Enums.UserEntryStatus
@@ -324,7 +324,7 @@ export type UserEntryOrderByWithAggregationInput = {
   id?: Prisma.SortOrder
   userId?: Prisma.SortOrder
   entryId?: Prisma.SortOrder
-  rating?: Prisma.SortOrder
+  rating?: Prisma.SortOrderInput | Prisma.SortOrder
   notes?: Prisma.SortOrder
   watchedAt?: Prisma.SortOrderInput | Prisma.SortOrder
   status?: Prisma.SortOrder
@@ -346,7 +346,7 @@ export type UserEntryScalarWhereWithAggregatesInput = {
   id?: Prisma.IntWithAggregatesFilter<"UserEntry"> | number
   userId?: Prisma.IntWithAggregatesFilter<"UserEntry"> | number
   entryId?: Prisma.IntWithAggregatesFilter<"UserEntry"> | number
-  rating?: Prisma.IntWithAggregatesFilter<"UserEntry"> | number
+  rating?: Prisma.IntNullableWithAggregatesFilter<"UserEntry"> | number | null
   notes?: Prisma.StringWithAggregatesFilter<"UserEntry"> | string
   watchedAt?: Prisma.DateTimeNullableWithAggregatesFilter<"UserEntry"> | Date | string | null
   status?: Prisma.EnumUserEntryStatusWithAggregatesFilter<"UserEntry"> | $Enums.UserEntryStatus
@@ -357,7 +357,7 @@ export type UserEntryScalarWhereWithAggregatesInput = {
 }
 
 export type UserEntryCreateInput = {
-  rating: number
+  rating?: number | null
   notes: string
   watchedAt?: Date | string | null
   status?: $Enums.UserEntryStatus
@@ -373,7 +373,7 @@ export type UserEntryUncheckedCreateInput = {
   id?: number
   userId: number
   entryId: number
-  rating: number
+  rating?: number | null
   notes: string
   watchedAt?: Date | string | null
   status?: $Enums.UserEntryStatus
@@ -384,7 +384,7 @@ export type UserEntryUncheckedCreateInput = {
 }
 
 export type UserEntryUpdateInput = {
-  rating?: Prisma.IntFieldUpdateOperationsInput | number
+  rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   notes?: Prisma.StringFieldUpdateOperationsInput | string
   watchedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumUserEntryStatusFieldUpdateOperationsInput | $Enums.UserEntryStatus
@@ -400,7 +400,7 @@ export type UserEntryUncheckedUpdateInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   entryId?: Prisma.IntFieldUpdateOperationsInput | number
-  rating?: Prisma.IntFieldUpdateOperationsInput | number
+  rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   notes?: Prisma.StringFieldUpdateOperationsInput | string
   watchedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumUserEntryStatusFieldUpdateOperationsInput | $Enums.UserEntryStatus
@@ -414,7 +414,7 @@ export type UserEntryCreateManyInput = {
   id?: number
   userId: number
   entryId: number
-  rating: number
+  rating?: number | null
   notes: string
   watchedAt?: Date | string | null
   status?: $Enums.UserEntryStatus
@@ -425,7 +425,7 @@ export type UserEntryCreateManyInput = {
 }
 
 export type UserEntryUpdateManyMutationInput = {
-  rating?: Prisma.IntFieldUpdateOperationsInput | number
+  rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   notes?: Prisma.StringFieldUpdateOperationsInput | string
   watchedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumUserEntryStatusFieldUpdateOperationsInput | $Enums.UserEntryStatus
@@ -439,7 +439,7 @@ export type UserEntryUncheckedUpdateManyInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.IntFieldUpdateOperationsInput | number
   entryId?: Prisma.IntFieldUpdateOperationsInput | number
-  rating?: Prisma.IntFieldUpdateOperationsInput | number
+  rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   notes?: Prisma.StringFieldUpdateOperationsInput | string
   watchedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumUserEntryStatusFieldUpdateOperationsInput | $Enums.UserEntryStatus
@@ -620,7 +620,7 @@ export type UserEntryUncheckedUpdateManyWithoutEntryNestedInput = {
 }
 
 export type UserEntryCreateWithoutUserInput = {
-  rating: number
+  rating?: number | null
   notes: string
   watchedAt?: Date | string | null
   status?: $Enums.UserEntryStatus
@@ -634,7 +634,7 @@ export type UserEntryCreateWithoutUserInput = {
 export type UserEntryUncheckedCreateWithoutUserInput = {
   id?: number
   entryId: number
-  rating: number
+  rating?: number | null
   notes: string
   watchedAt?: Date | string | null
   status?: $Enums.UserEntryStatus
@@ -677,7 +677,7 @@ export type UserEntryScalarWhereInput = {
   id?: Prisma.IntFilter<"UserEntry"> | number
   userId?: Prisma.IntFilter<"UserEntry"> | number
   entryId?: Prisma.IntFilter<"UserEntry"> | number
-  rating?: Prisma.IntFilter<"UserEntry"> | number
+  rating?: Prisma.IntNullableFilter<"UserEntry"> | number | null
   notes?: Prisma.StringFilter<"UserEntry"> | string
   watchedAt?: Prisma.DateTimeNullableFilter<"UserEntry"> | Date | string | null
   status?: Prisma.EnumUserEntryStatusFilter<"UserEntry"> | $Enums.UserEntryStatus
@@ -688,7 +688,7 @@ export type UserEntryScalarWhereInput = {
 }
 
 export type UserEntryCreateWithoutEntryInput = {
-  rating: number
+  rating?: number | null
   notes: string
   watchedAt?: Date | string | null
   status?: $Enums.UserEntryStatus
@@ -702,7 +702,7 @@ export type UserEntryCreateWithoutEntryInput = {
 export type UserEntryUncheckedCreateWithoutEntryInput = {
   id?: number
   userId: number
-  rating: number
+  rating?: number | null
   notes: string
   watchedAt?: Date | string | null
   status?: $Enums.UserEntryStatus
@@ -741,7 +741,7 @@ export type UserEntryUpdateManyWithWhereWithoutEntryInput = {
 export type UserEntryCreateManyUserInput = {
   id?: number
   entryId: number
-  rating: number
+  rating?: number | null
   notes: string
   watchedAt?: Date | string | null
   status?: $Enums.UserEntryStatus
@@ -752,7 +752,7 @@ export type UserEntryCreateManyUserInput = {
 }
 
 export type UserEntryUpdateWithoutUserInput = {
-  rating?: Prisma.IntFieldUpdateOperationsInput | number
+  rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   notes?: Prisma.StringFieldUpdateOperationsInput | string
   watchedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumUserEntryStatusFieldUpdateOperationsInput | $Enums.UserEntryStatus
@@ -766,7 +766,7 @@ export type UserEntryUpdateWithoutUserInput = {
 export type UserEntryUncheckedUpdateWithoutUserInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   entryId?: Prisma.IntFieldUpdateOperationsInput | number
-  rating?: Prisma.IntFieldUpdateOperationsInput | number
+  rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   notes?: Prisma.StringFieldUpdateOperationsInput | string
   watchedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumUserEntryStatusFieldUpdateOperationsInput | $Enums.UserEntryStatus
@@ -779,7 +779,7 @@ export type UserEntryUncheckedUpdateWithoutUserInput = {
 export type UserEntryUncheckedUpdateManyWithoutUserInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   entryId?: Prisma.IntFieldUpdateOperationsInput | number
-  rating?: Prisma.IntFieldUpdateOperationsInput | number
+  rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   notes?: Prisma.StringFieldUpdateOperationsInput | string
   watchedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumUserEntryStatusFieldUpdateOperationsInput | $Enums.UserEntryStatus
@@ -792,7 +792,7 @@ export type UserEntryUncheckedUpdateManyWithoutUserInput = {
 export type UserEntryCreateManyEntryInput = {
   id?: number
   userId: number
-  rating: number
+  rating?: number | null
   notes: string
   watchedAt?: Date | string | null
   status?: $Enums.UserEntryStatus
@@ -803,7 +803,7 @@ export type UserEntryCreateManyEntryInput = {
 }
 
 export type UserEntryUpdateWithoutEntryInput = {
-  rating?: Prisma.IntFieldUpdateOperationsInput | number
+  rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   notes?: Prisma.StringFieldUpdateOperationsInput | string
   watchedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumUserEntryStatusFieldUpdateOperationsInput | $Enums.UserEntryStatus
@@ -817,7 +817,7 @@ export type UserEntryUpdateWithoutEntryInput = {
 export type UserEntryUncheckedUpdateWithoutEntryInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.IntFieldUpdateOperationsInput | number
-  rating?: Prisma.IntFieldUpdateOperationsInput | number
+  rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   notes?: Prisma.StringFieldUpdateOperationsInput | string
   watchedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumUserEntryStatusFieldUpdateOperationsInput | $Enums.UserEntryStatus
@@ -830,7 +830,7 @@ export type UserEntryUncheckedUpdateWithoutEntryInput = {
 export type UserEntryUncheckedUpdateManyWithoutEntryInput = {
   id?: Prisma.IntFieldUpdateOperationsInput | number
   userId?: Prisma.IntFieldUpdateOperationsInput | number
-  rating?: Prisma.IntFieldUpdateOperationsInput | number
+  rating?: Prisma.NullableIntFieldUpdateOperationsInput | number | null
   notes?: Prisma.StringFieldUpdateOperationsInput | string
   watchedAt?: Prisma.NullableDateTimeFieldUpdateOperationsInput | Date | string | null
   status?: Prisma.EnumUserEntryStatusFieldUpdateOperationsInput | $Enums.UserEntryStatus
@@ -890,7 +890,7 @@ export type $UserEntryPayload<ExtArgs extends runtime.Types.Extensions.InternalA
     id: number
     userId: number
     entryId: number
-    rating: number
+    rating: number | null
     notes: string
     watchedAt: Date | null
     status: $Enums.UserEntryStatus

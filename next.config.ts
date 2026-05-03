@@ -36,6 +36,10 @@ const nextConfig: NextConfig = {
         source: '/@:username/lists/:listId',
         destination: '/users/:username/lists/:listId',
       },
+      {
+        source: '/@:username/watchlist',
+        destination: '/users/:username/watchlist',
+      },
     ];
   },
 };

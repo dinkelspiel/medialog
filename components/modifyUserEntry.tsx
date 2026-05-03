@@ -70,6 +70,7 @@ const ModifyUserEntry = ({
   removeUserEntry: (userEntry: ExtendedUserEntry) => void;
 }) => {
   const [rating, setRating] = useState(userEntry.rating);
+  const [ratingTouched, setRatingTouched] = useState(false);
   const [notes, setNotes] = useState(userEntry.notes);
   const [watchedAt, setWatchedAt] = useState<Date | null>(
     userEntry.watchedAt ? userEntry.watchedAt : new Date()
@@ -87,6 +88,7 @@ const ModifyUserEntry = ({
   useEffect(() => {
     setNotes(userEntry.notes);
     setRating(userEntry.rating);
+    setRatingTouched(false);
     setActiveTab(userEntry.watchedAt !== null ? 'review' : 'status');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userEntryId]);
@@ -406,14 +408,17 @@ const ModifyUserEntry = ({
                   Rating
                 </Label>
                 <span className="rounded-full bg-base-100 px-3 py-1 text-sm font-semibold tabular-nums">
-                  {(rating / 20).toFixed(1)}
+                  {rating === null ? 'Not rated' : (rating / 20).toFixed(1)}
                 </span>
               </div>
               <div className="flex justify-between text-xs text-base-400 gap-3">
                 <span>0</span>
                 <Slider
-                  value={[rating]}
-                  onValueChange={e => setRating(Number(e[0]))}
+                  value={[rating ?? 0]}
+                  onValueChange={e => {
+                    setRating(Number(e[0]));
+                    setRatingTouched(true);
+                  }}
                   className="w-full"
                   step={1}
                   min={0}
@@ -461,7 +466,7 @@ const ModifyUserEntry = ({
               onClick={() =>
                 updateUserEntry.mutate({
                   userEntryId: userEntry.id,
-                  rating,
+                  rating: ratingTouched || userEntry.rating !== null ? rating ?? 0 : undefined,
                   notes,
                   watchedAt: watchedAt ?? undefined,
                 })

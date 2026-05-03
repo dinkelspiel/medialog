@@ -16,7 +16,7 @@ const Showcase = async ({
   title: string;
   profileUser: NonNullable<SafeUser>;
   userEntries: {
-    rating: number;
+    rating: number | null;
     entry: Entry & {
       translations: EntryTranslation[];
     };

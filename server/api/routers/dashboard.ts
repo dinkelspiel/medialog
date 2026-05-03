@@ -5,12 +5,14 @@ import prisma from '@/server/db';
 import {
   safeUserSelect,
   validateSessionToken,
+  validateSessionTokenFromHeaders,
 } from '@/server/auth/validateSession';
-import { Entry, EntryTranslation } from '@/prisma/generated/browser';
 import {
   getDefaultWhereForTranslations,
   getUserTitleFromEntry,
 } from './dashboard_';
+import { publicProcedure } from '../trpc';
+import z from 'zod';
 
 export const getUserTitleFromEntryId = async (entryId: number) => {
   const user = await validateSessionToken();
@@ -141,6 +143,51 @@ const getTop3CompletedNotCompleted = unstable_cache(
 );
 
 export const dashboardRouter = createTRPCRouter({
+  getByUsername: publicProcedure
+    .input(
+      z.object({
+        username: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const authUser = await validateSessionTokenFromHeaders(ctx.headers);
+      const user = await prisma.user.findFirst({
+        where: {
+          username: input.username,
+        },
+        select: safeUserSelect(),
+      });
+
+      if (!user) {
+        return null;
+      }
+
+      const userEntries = await prisma.userEntry.findMany({
+        where: {
+          userId: user.id,
+        },
+        include: {
+          user: {
+            select: safeUserSelect(),
+          },
+          entry: {
+            include: {
+              userEntries: {
+                where: {
+                  userId: user.id,
+                },
+              },
+              translations: getDefaultWhereForTranslations(authUser),
+            },
+          },
+        },
+      });
+
+      return {
+        user,
+        userEntries,
+      };
+    }),
   get: protectedProcedure.query(async ({ ctx }) => {
     const userEntries = await prisma.userEntry.findMany({
       where: {

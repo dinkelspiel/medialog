@@ -24,7 +24,6 @@ export const userEntryRouter = createTRPCRouter({
         data: {
           entryId: input.entryId,
           userId: ctx.user.id,
-          rating: 0,
           progress: 0,
           notes: '',
         },
@@ -151,7 +150,7 @@ export const userEntryRouter = createTRPCRouter({
             }`,
           },
         });
-      } else if (input.notes && input.rating) {
+      } else if (input.notes && input.rating !== undefined) {
         const lastActivity = await prisma.userActivity.findFirst({
           where: {
             userId: ctx.user.id,
@@ -194,7 +193,7 @@ export const userEntryRouter = createTRPCRouter({
                 id: userEntry.id,
               },
             })
-          )?.rating === 0
+          )?.rating === null
         ) {
           await prisma.userActivity.create({
             data: {

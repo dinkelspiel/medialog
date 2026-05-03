@@ -68,6 +68,20 @@ model User {
   forgotPasswords UserForgotPassword[]
   lists           UserList[]
   votes           UserListPollVote[]
+  settings        UserSetting[]
+}
+
+model UserSetting {
+  id     Int    @id @default(autoincrement()) @db.UnsignedInt
+  userId Int    @db.UnsignedInt
+  user   User   @relation(fields: [userId], references: [id], onDelete: Cascade)
+  name   String
+  value  String @db.Text
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @default(now()) @updatedAt
+
+  @@unique([userId, name])
 }
 
 enum Activity {
@@ -126,7 +140,7 @@ model UserEntry {
   user       User                @relation(fields: [userId], references: [id], onDelete: Cascade)
   entryId    Int                 @db.UnsignedInt
   entry      Entry               @relation(fields: [entryId], references: [id], onDelete: Cascade)
-  rating     Int                 @db.SmallInt
+  rating     Int?                @db.SmallInt
   notes      String              @db.Text
   watchedAt  DateTime?
   status     UserEntryStatus     @default(planning)

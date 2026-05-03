@@ -2,7 +2,7 @@ import React from 'react';
 import { cn } from '@/lib/utils';
 import { Star, StarHalf } from 'lucide-react';
 
-export const getRatingAsStars = (rating: number | undefined) => {
+export const getRatingAsStars = (rating: number | null | undefined) => {
   const stars: React.JSX.Element[] = [];
   for (let i = 0; i < 5; i++) {
     if (Math.floor((rating ?? 0) / 20) >= i + 1) {
@@ -36,7 +36,7 @@ const SmallRating = ({
   rating,
   className,
 }: {
-  rating: number | undefined;
+  rating: number | null | undefined;
   className?: string;
 }) => {
   return (

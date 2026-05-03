@@ -1,7 +1,7 @@
 'use client';
 
-import { Book, Film, Library, Loader2, Tv } from 'lucide-react';
-import { Dispatch, Fragment, ReactNode, SetStateAction, useState } from 'react';
+import { Book, Film, Loader2, Tv } from 'lucide-react';
+import { Fragment, ReactNode, useState } from 'react';
 import {
   Dialog,
   DialogContent,
@@ -14,8 +14,7 @@ import { Toggle } from './ui/toggle';
 
 import { ExtendedUserEntry } from '@/app/(app)/dashboard/state';
 import { cn } from '@/lib/utils';
-import { Category, Entry, EntryTranslation } from '@/prisma/generated/browser';
-import { useMutation, useQuery } from '@tanstack/react-query';
+import { Category } from '@/prisma/generated/browser';
 import { useRouter } from 'next/navigation';
 import { toast } from 'sonner';
 import { useDebounceValue, useMediaQuery } from 'usehooks-ts';
@@ -24,10 +23,13 @@ import UserEntryCard from './userEntryCard';
 import ExternalUserEntry from './userEntryExternal';
 import { api } from '@/trpc/react';
 import { getUserTitleFromEntry } from '@/server/api/routers/dashboard_';
-import { Badge } from './ui/badge';
-import ModifyUserEntry from './modifyUserEntry';
 import ContainedModifyUserEntry from './containedModifyUserEntry';
 import InLibrary from './inLibrary';
+import {
+  MediaTypeFilters,
+  mediaTypeFiltersToCategories,
+} from '@/lib/mediaTypeFilters';
+import { useMediaTypeFilters } from './useMediaTypeFilters';
 
 const AddLog = ({
   children,
@@ -81,7 +83,7 @@ const AddLog = ({
               <DialogTrigger asChild className="hidden lg:block">
                 {children}
               </DialogTrigger>
-              <DialogContent className="top-[50px] max-h-[calc(100dvh-100px)] max-w-[700px] translate-y-0">
+              <DialogContent className="top-12.5 max-h-[calc(100dvh-100px)] max-w-175 translate-y-0">
                 <DialogHeader className='sr-only'>
                 <DialogTitle>
                   Add log
@@ -149,18 +151,8 @@ const CategoryToggles = ({
   queryCategories,
   setQueryCategories,
 }: {
-  queryCategories: {
-    movie: boolean;
-    series: boolean;
-    book: boolean;
-  };
-  setQueryCategories: Dispatch<
-    SetStateAction<{
-      movie: boolean;
-      series: boolean;
-      book: boolean;
-    }>
-  >;
+  queryCategories: MediaTypeFilters;
+  setQueryCategories: (filters: MediaTypeFilters) => void;
 }) => {
   return (
     <>
@@ -218,30 +210,12 @@ const AddLogContent = ({
   title: string;
 }) => {
   const isDesktop = useMediaQuery('(min-width: 1024px)');
-
-  const [queryCategories, setQueryCategories] = useState<{
-    movie: boolean;
-    series: boolean;
-    book: boolean;
-  }>({
-    movie: true,
-    series: true,
-    book: true,
-  });
+  const { filters: queryCategories, setFilters: setQueryCategories } =
+    useMediaTypeFilters();
   const [queryTitle, setQueryTitle] = useState('');
 
   const generateQueryCategories = (): string[] => {
-    const q: string[] = [];
-    if (queryCategories.book) {
-      q.push('Book');
-    }
-    if (queryCategories.movie) {
-      q.push('Movie');
-    }
-    if (queryCategories.series) {
-      q.push('Series');
-    }
-    return q;
+    return mediaTypeFiltersToCategories(queryCategories);
   };
 
   const debouncedQueryTitle = useDebounceValue(queryTitle, 500);
