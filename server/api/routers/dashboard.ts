@@ -55,14 +55,19 @@ const getTop3RatedNotCompleted = unstable_cache(
     });
 
     return highestRatedEntries
-      .map(entry => ({
-        ...entry,
-        average:
-          entry.userEntries.reduce(
-            (sum: number, entry) => sum + entry.rating,
-            0
-          ) / entry.userEntries.length,
-      }))
+      .map(entry => {
+        const ratedUserEntries = entry.userEntries.filter(
+          userEntry => userEntry.rating !== null
+        );
+        const average =
+          ratedUserEntries.reduce((sum, userEntry) => sum + userEntry.rating!, 0) /
+          ratedUserEntries.length;
+
+        return {
+          ...entry,
+          average: Number.isNaN(average) ? 0 : average,
+        };
+      })
       .filter(e => userEntries.find(f => f.entryId === e.id) === undefined)
       .filter(e => e.average)
       .filter(
@@ -126,14 +131,19 @@ const getTop3CompletedNotCompleted = unstable_cache(
         },
         take: 3,
       })
-    ).map(entry => ({
-      ...entry,
-      average:
-        entry.userEntries.reduce(
-          (sum: number, entry) => sum + entry.rating,
-          0
-        ) / entry.userEntries.length,
-    }));
+    ).map(entry => {
+      const ratedUserEntries = entry.userEntries.filter(
+        userEntry => userEntry.rating !== null
+      );
+      const average =
+        ratedUserEntries.reduce((sum, userEntry) => sum + userEntry.rating!, 0) /
+        ratedUserEntries.length;
+
+      return {
+        ...entry,
+        average: Number.isNaN(average) ? 0 : average,
+      };
+    });
   },
   ['dashboard-top-completed'],
   {

@@ -113,10 +113,10 @@ const Watchlist = ({
         switch (filterStyle) {
           case 'rating-desc':
             if (b.rating === a.rating) return b.id - a.id;
-            return b.rating - a.rating;
+            return (b.rating ?? 0) - (a.rating ?? 0);
           case 'rating-asc':
             if (b.rating === a.rating) return b.id - a.id;
-            return (a.rating === 0 ? 999 : a.rating) - b.rating;
+            return (a.rating === 0 || a.rating === null ? 999 : a.rating) - (b.rating ?? 0);
           case 'az':
             return a.entry.originalTitle.localeCompare(b.entry.originalTitle);
           case 'completed':
