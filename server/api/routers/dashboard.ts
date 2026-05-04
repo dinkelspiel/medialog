@@ -13,6 +13,130 @@ import {
 } from './dashboard_';
 import { publicProcedure } from '../trpc';
 import z from 'zod';
+import { Category } from '@/prisma/generated/browser';
+
+const userEntryStatusFilterSchema = z.enum([
+  'all',
+  'planning',
+  'watching',
+  'paused',
+  'dnf',
+  'completed',
+]);
+
+const userEntrySortSchema = z.enum([
+  'rating-desc',
+  'rating-asc',
+  'az',
+  'completed',
+  'updated',
+]);
+
+const userEntriesPageInput = z.object({
+  cursor: z.number().nullish(),
+  limit: z.number().default(60),
+  filterStatus: userEntryStatusFilterSchema,
+  filterCategories: z.array(
+    z.string().refine(e => ['Book', 'Movie', 'Series'].includes(e))
+  ),
+  filterTitle: z.string().default(''),
+  filterStyle: userEntrySortSchema,
+  filterRatingRange: z.tuple([z.number(), z.number()]),
+});
+
+const getUserEntryOrderBy = (filterStyle: z.infer<typeof userEntrySortSchema>) => {
+  switch (filterStyle) {
+    case 'rating-desc':
+      return [{ rating: 'desc' as const }, { id: 'desc' as const }];
+    case 'rating-asc':
+      return [{ rating: 'asc' as const }, { id: 'desc' as const }];
+    case 'az':
+      return [{ entry: { originalTitle: 'asc' as const } }, { id: 'desc' as const }];
+    case 'completed':
+      return [{ watchedAt: 'desc' as const }, { id: 'desc' as const }];
+    case 'updated':
+      return [{ updatedAt: 'desc' as const }, { id: 'desc' as const }];
+  }
+};
+
+const getUserEntriesPage = async ({
+  authUser,
+  input,
+  userId,
+}: {
+  authUser: NonNullable<Awaited<ReturnType<typeof validateSessionTokenFromHeaders>>>;
+  input: z.infer<typeof userEntriesPageInput>;
+  userId: number;
+}) => {
+  const offset = input.cursor ?? 0;
+  const title = input.filterTitle.trim();
+  const entryWhere = {
+    category: {
+      in: input.filterCategories as Category[],
+    },
+    OR:
+      title === ''
+        ? undefined
+        : [
+            {
+              originalTitle: {
+                contains: title,
+              },
+            },
+            {
+              translations: {
+                some: {
+                  name: {
+                    contains: title,
+                  },
+                },
+              },
+            },
+          ],
+  };
+  const shouldFilterRating =
+    input.filterStatus !== 'planning' &&
+    (input.filterRatingRange[0] !== 0 || input.filterRatingRange[1] !== 100);
+  const userEntries = await prisma.userEntry.findMany({
+    where: {
+      userId,
+      status:
+        input.filterStatus === 'all'
+          ? undefined
+          : input.filterStatus,
+      rating: shouldFilterRating
+        ? {
+            gte: input.filterRatingRange[0],
+            lte: input.filterRatingRange[1],
+          }
+        : undefined,
+      entry: entryWhere,
+    },
+    include: {
+      user: {
+        select: safeUserSelect(),
+      },
+      entry: {
+        include: {
+          userEntries: {
+            where: {
+              userId,
+            },
+          },
+          translations: getDefaultWhereForTranslations(authUser),
+        },
+      },
+    },
+    orderBy: getUserEntryOrderBy(input.filterStyle),
+    skip: offset,
+    take: input.limit + 1,
+  });
+
+  return {
+    userEntries: userEntries.slice(0, input.limit),
+    nextCursor: userEntries.length > input.limit ? offset + input.limit : undefined,
+  };
+};
 
 export const getUserTitleFromEntryId = async (entryId: number) => {
   const user = await validateSessionToken();
@@ -153,6 +277,52 @@ const getTop3CompletedNotCompleted = unstable_cache(
 );
 
 export const dashboardRouter = createTRPCRouter({
+  getEntries: protectedProcedure.input(userEntriesPageInput).query(async ({ ctx, input }) => {
+    return getUserEntriesPage({
+      authUser: ctx.user,
+      input,
+      userId: ctx.user.id,
+    });
+  }),
+  getUserByUsername: publicProcedure
+    .input(
+      z.object({
+        username: z.string(),
+      })
+    )
+    .query(async ({ input }) => {
+      return prisma.user.findFirst({
+        where: {
+          username: input.username,
+        },
+        select: safeUserSelect(),
+      });
+    }),
+  getEntriesByUsername: publicProcedure
+    .input(
+      userEntriesPageInput.extend({
+        username: z.string(),
+      })
+    )
+    .query(async ({ ctx, input }) => {
+      const authUser = await validateSessionTokenFromHeaders(ctx.headers);
+      const user = await prisma.user.findFirst({
+        where: {
+          username: input.username,
+        },
+        select: safeUserSelect(),
+      });
+
+      if (!user) {
+        return null;
+      }
+
+      return getUserEntriesPage({
+        authUser: authUser ?? user,
+        input,
+        userId: user.id,
+      });
+    }),
   getByUsername: publicProcedure
     .input(
       z.object({

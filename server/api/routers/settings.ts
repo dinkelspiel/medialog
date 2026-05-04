@@ -15,7 +15,7 @@ const mediaTypeFiltersSchema = z.object({
   series: z.boolean(),
 });
 
-const parseMediaTypeFilters = (value: string) => {
+export const parseMediaTypeFilters = (value: string) => {
   try {
     const result = mediaTypeFiltersSchema.safeParse(JSON.parse(value));
     return result.success ? result.data : DEFAULT_MEDIA_TYPE_FILTERS;
@@ -35,20 +35,27 @@ const saveMediaTypeFilters = async (
   `;
 };
 
+export const getMediaTypeFiltersForUser = async (userId?: number | null) => {
+  if (!userId) return DEFAULT_MEDIA_TYPE_FILTERS;
+
+  const rows = await prisma.$queryRaw<{ value: string }[]>`
+    SELECT value FROM UserSetting
+    WHERE userId = ${userId} AND name = ${MEDIA_TYPE_FILTERS_SETTING_NAME}
+    LIMIT 1
+  `;
+
+  return rows[0] ? parseMediaTypeFilters(rows[0].value) : DEFAULT_MEDIA_TYPE_FILTERS;
+};
+
 export const settingsRouter = createTRPCRouter({
   getMediaTypeFilters: protectedProcedure.query(async ({ ctx }) => {
-    const rows = await prisma.$queryRaw<{ value: string }[]>`
-      SELECT value FROM UserSetting
-      WHERE userId = ${ctx.user.id} AND name = ${MEDIA_TYPE_FILTERS_SETTING_NAME}
-      LIMIT 1
-    `;
+    const filters = await getMediaTypeFiltersForUser(ctx.user.id);
 
-    if (rows[0]) {
-      return parseMediaTypeFilters(rows[0].value);
+    if (filters === DEFAULT_MEDIA_TYPE_FILTERS) {
+      await saveMediaTypeFilters(ctx.user.id, DEFAULT_MEDIA_TYPE_FILTERS);
     }
 
-    await saveMediaTypeFilters(ctx.user.id, DEFAULT_MEDIA_TYPE_FILTERS);
-    return DEFAULT_MEDIA_TYPE_FILTERS;
+    return filters;
   }),
   setMediaTypeFilters: protectedProcedure
     .input(mediaTypeFiltersSchema)

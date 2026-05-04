@@ -3,6 +3,7 @@ import prisma from '@/server/db';
 import { ReactNode } from 'react';
 import { ServerEntryTitleForUser } from './serverUserEntryTitle';
 import { getDefaultWhereForTranslations } from '@/server/api/routers/dashboard_';
+import { Category } from '@/prisma/generated/browser';
 
 export type Diary = Record<
   string,
@@ -14,12 +15,20 @@ export type Diary = Record<
   }[]
 >;
 
-export const getUserDiary = async (userId: number): Promise<Diary> => {
+export const getUserDiary = async (
+  userId: number,
+  categories: Category[]
+): Promise<Diary> => {
   const authUser = await validateSessionToken();
   const userEntries = await prisma.userEntry.findMany({
     where: {
       userId,
       status: 'completed',
+      entry: {
+        category: {
+          in: categories,
+        },
+      },
     },
     orderBy: {
       watchedAt: 'desc',

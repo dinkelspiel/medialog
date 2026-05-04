@@ -4,7 +4,7 @@ import { Sidebar, SidebarFooter } from "@/components/sidebar";
 import { Button } from "@/components/ui/button";
 import { ReactNode } from "react";
 import { Toaster } from "sonner";
-import { SidebarButtons } from "../_components/sidebar";
+import { SidebarButtons, SidebarCategoryFilters } from "../_components/sidebar";
 import { useAppStore } from "../state";
 import { Feedback } from "./feedback";
 import { Plus } from "lucide-react";
@@ -35,6 +35,7 @@ export const LoggedIn = ({
       >
         <SidebarButtons />
         <SidebarFooter>
+          <SidebarCategoryFilters />
           <div className="text-sm font-normal text-base-400">
             {process.env.GIT_COMMIT
               ? `${process.env.GIT_COMMIT}@${process.env.GIT_BRANCH}`

@@ -7,12 +7,18 @@ import {
 } from '@/server/auth/validateSession';
 import { subMonths } from 'date-fns';
 import { z } from 'zod';
+import { Category } from '@/prisma/generated/browser';
+
+const categoriesSchema = z.array(
+  z.string().refine(e => ['Book', 'Movie', 'Series'].includes(e))
+);
 
 export const communityRouter = createTRPCRouter({
   getUserActivity: publicProcedure
     .input(
       z.object({
         userId: z.number(),
+        categories: categoriesSchema,
         cursor: z.number().nullish(),
       })
     )
@@ -26,6 +32,11 @@ export const communityRouter = createTRPCRouter({
           userId: input.userId,
           NOT: {
             type: 'progressUpdate',
+          },
+          entry: {
+            category: {
+              in: input.categories as Category[],
+            },
           },
         },
         orderBy: [{ createdAt: 'desc' }, { id: 'desc' }],
@@ -55,6 +66,7 @@ export const communityRouter = createTRPCRouter({
   getFeed: publicProcedure
     .input(
       z.object({
+        categories: categoriesSchema,
         cursor: z.number().nullish(),
       })
     )
@@ -63,10 +75,15 @@ export const communityRouter = createTRPCRouter({
 
       const limit = 50;
 
-      let activity = await prisma.userActivity.findMany({
+      const activity = await prisma.userActivity.findMany({
         where: {
           NOT: {
             type: 'progressUpdate',
+          },
+          entry: {
+            category: {
+              in: input.categories as Category[],
+            },
           },
         },
         orderBy: {
@@ -97,13 +114,26 @@ export const communityRouter = createTRPCRouter({
         nextCursor,
       };
     }),
-  getTrending: publicProcedure.query(async ({ctx}) => {
+  getTrending: publicProcedure
+    .input(
+      z.object({
+        categories: categoriesSchema,
+      })
+    )
+    .query(async ({ctx, input}) => {
     const authUser = await validateSessionTokenFromHeaders(ctx.headers);
     const oneMonthAgo = subMonths(new Date(), 1);
 
     const counts = await prisma.userActivity.groupBy({
       by: ['entryId'],
-      where: { createdAt: { gte: oneMonthAgo } },
+      where: {
+        createdAt: { gte: oneMonthAgo },
+        entry: {
+          category: {
+            in: input.categories as Category[],
+          },
+        },
+      },
       _count: { entryId: true },
       orderBy: { _count: { entryId: 'desc' } },
       take: 4,
@@ -149,7 +179,10 @@ export const communityRouter = createTRPCRouter({
         return {
           entry,
           userEntriesPastMonth: c._count.entryId,
-          hasUserEntry: !!(entry as any).userEntries?.length,
+          hasUserEntry:
+            'userEntries' in entry &&
+            Array.isArray(entry.userEntries) &&
+            entry.userEntries.length > 0,
           averageRating: avgMap.get(c.entryId) ?? null,
         };
       })

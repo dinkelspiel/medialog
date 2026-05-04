@@ -1,7 +1,6 @@
 'use client';
 
 import HeaderLayout from '@/components/layouts/header';
-import { useEffect } from 'react';
 import { Header } from '@/components/header';
 import { api } from '@/trpc/react';
 import Activity from '@/components/activity';
@@ -11,42 +10,42 @@ import UserEntryCard from '@/components/userEntryCard';
 import { EntryRedirect } from '../../_components/EntryIslandContext';
 import { Loader2 } from 'lucide-react';
 import InLibrary from '@/components/inLibrary';
+import { useMediaTypeFilters } from '@/components/useMediaTypeFilters';
+import { mediaTypeFiltersToCategories } from '@/lib/mediaTypeFilters';
+import { useInfiniteScroll } from '@/components/useInfiniteScroll';
+import { useCallback } from 'react';
 
 export const dynamic = 'force-dynamic';
 
 const Page = () => {
+  const { filters } = useMediaTypeFilters();
+  const categories = mediaTypeFiltersToCategories(filters);
   const feed = api.community.getFeed.useInfiniteQuery(
     {
-      cursor: null,
+      categories,
     },
     {
+      initialCursor: null,
       getNextPageParam: lastPage => lastPage.nextCursor,
     }
   );
 
-  const trending = api.community.getTrending.useQuery();
+  const trending = api.community.getTrending.useQuery({ categories });
 
-  useEffect(() => {
-    const handleScroll = () => {
-      if (
-        window.innerHeight + window.scrollY >=
-        document.body.offsetHeight - 600
-      ) {
-        if (feed.hasNextPage && !feed.isFetchingNextPage) {
-          feed.fetchNextPage();
-        }
-      }
-    };
-
-    window.addEventListener('scroll', handleScroll);
-    return () => window.removeEventListener('scroll', handleScroll);
+  const loadMore = useCallback(() => {
+    void feed.fetchNextPage();
   }, [feed]);
+
+  useInfiniteScroll({
+    enabled: !!feed.hasNextPage && !feed.isFetchingNextPage,
+    onLoadMore: loadMore,
+  });
 
   return (
     <HeaderLayout>
       <Header titleComponent="Community" sidebarContent={<></>}></Header>
       <div className="mx-auto flex w-fit flex-col-reverse gap-16 lg:grid min-[1330px]:grid-cols-[1fr_250px]">
-        <div className="mx-auto flex flex-col gap-6 px-4 md:w-[710px]">
+        <div className="mx-auto flex flex-col gap-6 px-4 md:w-177.5">
           <StyleHeader>Feed</StyleHeader>
           <div className="flex flex-col gap-3 pb-6">
             {feed.data?.pages.map(page =>
@@ -80,7 +79,7 @@ const Page = () => {
         </div>
         <div
           className={cn(
-            'flex flex-col gap-6 px-4 lg:sticky lg:top-[80px] lg:h-[calc(100vh-80px)] lg:px-0'
+            'flex flex-col gap-6 px-4 lg:sticky lg:top-20 lg:h-[calc(100vh-80px)] lg:px-0'
           )}
         >
           <div className="flex flex-col gap-4">

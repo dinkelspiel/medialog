@@ -13,9 +13,12 @@ import { Stats } from "./_components/stats";
 import { getDefaultWhereForTranslations } from "@/server/api/routers/dashboard_";
 import { getUserLists } from "./_components/lists";
 import { Metadata } from "next";
+import type { ComponentProps } from "react";
 import ActivityHistory from "./_components/activityHistory";
 import Showcase from "./_components/showcase";
 import RecentActivity from "./_components/recentActivity";
+import { getMediaTypeFiltersForUser } from "@/server/api/routers/settings";
+import { mediaTypeFiltersToCategories } from "@/lib/mediaTypeFilters";
 
 const Profile404 = async () => {
   const user = await validateSessionToken();
@@ -68,6 +71,8 @@ const Profile = async ({
   if (profileUserExists === null) return <Profile404></Profile404>;
 
   await getDailyStreak(profileUserExists);
+  const categoryFilters = await getMediaTypeFiltersForUser(authUser?.id);
+  const categories = mediaTypeFiltersToCategories(categoryFilters);
 
   const profileUser = (await prisma.user.findFirst({
     where: {
@@ -76,6 +81,13 @@ const Profile = async ({
     select: {
       ...safeUserSelect(),
       userEntries: {
+        where: {
+          entry: {
+            category: {
+              in: categories,
+            },
+          },
+        },
         select: {
           id: true,
           rating: true,
@@ -89,6 +101,7 @@ const Profile = async ({
               slug: true,
               posterPath: true,
               length: true,
+              category: true,
             },
           },
         },
@@ -121,6 +134,11 @@ const Profile = async ({
     where: {
       userId: profileUser.id,
       status: "completed",
+      entry: {
+        category: {
+          in: categories,
+        },
+      },
       rating: {
         not: null,
       },
@@ -144,6 +162,11 @@ const Profile = async ({
     where: {
       userId: profileUser.id,
       status: "completed",
+      entry: {
+        category: {
+          in: categories,
+        },
+      },
     },
     orderBy: {
       watchedAt: "desc",
@@ -165,6 +188,11 @@ const Profile = async ({
     where: {
       userId: profileUser.id,
       status: "completed",
+      entry: {
+        category: {
+          in: categories,
+        },
+      },
       rating: {
         not: null,
       },
@@ -177,6 +205,11 @@ const Profile = async ({
           where: {
             userId: profileUser.id,
             status: "completed",
+            entry: {
+              category: {
+                in: categories,
+              },
+            },
             rating: {
               gt: (ratingThreshold - 1) * 10,
               lte: ratingThreshold * 10,
@@ -191,19 +224,25 @@ const Profile = async ({
   ratings[0] = (ratings[0] ?? 0) + (ratings[-1] ?? 0);
   delete ratings[-1];
 
-  const diary = await getUserDiary(profileUser.id);
+  const diary = await getUserDiary(profileUser.id, categories);
 
-  const lists = await getUserLists(profileUser.id);
+  const lists = await getUserLists(profileUser.id, categories);
+  const profileHeaderUser = profileUser as unknown as ComponentProps<
+    typeof ProfileHeader
+  >['profileUser'];
+  const profileSidebarUser = profileUser as unknown as ComponentProps<
+    typeof ProfileSidebar
+  >['profileUser'];
 
   return (
     <HeaderLayout>
-      <ProfileHeader profileUser={profileUser as any} />
+      <ProfileHeader profileUser={profileHeaderUser} />
       <div className="col-span-2 mx-auto pb-4">
         <div className="block py-2 lg:hidden">
-          <Stats profileUser={profileUser as any} />
+          <Stats profileUser={profileHeaderUser} />
         </div>
         <div className="grid w-fit grid-cols-1 gap-16 min-[1330px]:grid-cols-[1fr_250px]">
-          <div className="flex flex-col gap-6 px-4 md:w-[710px]">
+          <div className="flex flex-col gap-6 px-4 md:w-177.5">
             <Showcase
               title={"Favorites"}
               userEntries={favorites}
@@ -216,18 +255,18 @@ const Profile = async ({
             />
 
             <ProfileSidebar
-              profileUser={profileUser as any}
+              profileUser={profileSidebarUser}
               ratings={ratings}
               totalRatings={totalRatings}
               className="flex min-[1330px]:hidden"
               diary={diary}
               lists={lists}
             />
-            <ActivityHistory profileUser={profileUser} />
-            <RecentActivity userId={profileUser.id} />
+            <ActivityHistory profileUser={profileUser} categories={categories} />
+            <RecentActivity userId={profileUser.id} categories={categories} />
           </div>
           <ProfileSidebar
-            profileUser={profileUser as any}
+            profileUser={profileSidebarUser}
             ratings={ratings}
             totalRatings={totalRatings}
             className="hidden min-[1330px]:flex"

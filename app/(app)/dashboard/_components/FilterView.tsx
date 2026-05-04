@@ -1,5 +1,4 @@
 import { Button } from '@/components/ui/button';
-import { Checkbox } from '@/components/ui/checkbox';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -23,9 +22,8 @@ import {
 import { cn } from '@/lib/utils';
 import { Command, Dices, SlidersHorizontal, SortDesc } from 'lucide-react';
 import { FilterStyle, useDashboardStore } from '../state';
-import { Category, Entry, UserEntry, UserEntryStatus } from '@/prisma/generated/browser';
+import { Entry, UserEntry, UserEntryStatus } from '@/prisma/generated/browser';
 import { useEffect, useRef } from 'react';
-import { Slider } from '@/components/ui/slider';
 import { DualRangeSlider } from '@/components/ui/dual-range-slider';
 
 export const shouldBeFiltered = (
@@ -33,7 +31,6 @@ export const shouldBeFiltered = (
   filterState?: {
     filterStatus: string;
     filterRatingRange: [number, number];
-    filterCategories: Category[];
   }
 ) => {
   const state = filterState ?? useDashboardStore.getState();
@@ -53,10 +50,6 @@ export const shouldBeFiltered = (
     return true;
   }
 
-  if (!state.filterCategories.includes(userEntry.entry.category)) {
-    return true;
-  }
-
   return false;
 };
 export const FilterView = ({ className }: { className: string }) => {
@@ -64,8 +57,6 @@ export const FilterView = ({ className }: { className: string }) => {
     userEntries,
     filterStatus,
     setFilterStatus,
-    filterCategories,
-    toggleFilterCategory,
     filterTitle,
     setFilterTitle,
     filterStyle,
@@ -77,7 +68,7 @@ export const FilterView = ({ className }: { className: string }) => {
 
   // Shortcut for search
 
-  const searchTitleRef = useRef(null);
+  const searchTitleRef = useRef<HTMLInputElement>(null);
 
   useEffect(() => {
     function handleKeyDown(e: KeyboardEvent) {
@@ -90,7 +81,7 @@ export const FilterView = ({ className }: { className: string }) => {
         e.preventDefault();
         e.stopPropagation();
 
-        (searchTitleRef.current as any).focus();
+        searchTitleRef.current?.focus();
       }
     }
 
@@ -103,12 +94,12 @@ export const FilterView = ({ className }: { className: string }) => {
 
   return (
     <div className={cn('flex items-center gap-3', className)}>
-      <div className="relative w-full lg:w-[356px]">
+      <div className="relative w-full lg:w-89">
         <Input
           ref={searchTitleRef}
           value={filterTitle}
           onChange={e => setFilterTitle(e.target.value)}
-          className="flex w-full lg:w-[356px]"
+          className="flex w-full lg:w-89"
           placeholder="Search by title..."
         />
         <div className="absolute right-[5.2px] top-1/2 hidden -translate-y-1/2 items-center gap-1 rounded-md border border-base-200 bg-white px-2 py-0.5 text-xs font-medium text-base-600 lg:flex">
@@ -166,7 +157,7 @@ export const FilterView = ({ className }: { className: string }) => {
               <h3 className="text-sm font-medium">Status</h3>
               <RadioGroup
                 value={filterStatus}
-                onValueChange={(e: any) =>
+                onValueChange={e =>
                   setFilterStatus(e as UserEntryStatus | undefined)
                 }
               >
@@ -196,25 +187,6 @@ export const FilterView = ({ className }: { className: string }) => {
                 </div>
               </RadioGroup>
             </div>
-            <div className="space-y-3">
-              <h3 className="text-sm font-medium">Categories</h3>
-              <div className="grid gap-2">
-                {Object.keys(Category).map(category => (
-                  <div key={category} className="flex items-center space-x-2">
-                    <Checkbox
-                      value={category}
-                      id={category}
-                      checked={filterCategories.includes(category as Category)}
-                      onCheckedChange={() =>
-                        toggleFilterCategory(category as Category)
-                      }
-                    />
-                    <Label htmlFor={category}>{category}</Label>
-                  </div>
-                ))}
-              </div>
-            </div>
-
             <div
               className={cn('space-y-1 transition-all duration-150', {
                 'pointer-events-none opacity-50': filterStatus === 'planning',
@@ -252,7 +224,7 @@ export const FilterView = ({ className }: { className: string }) => {
                   return !shouldBeFiltered(userEntry);
                 });
 
-                let index = Math.floor(Math.random() * availableEntries.length);
+                const index = Math.floor(Math.random() * availableEntries.length);
                 setSelectedUserEntry(availableEntries[index]!.id);
               }}
             >

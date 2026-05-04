@@ -4,52 +4,28 @@ import { Header } from '@/components/header';
 import HeaderLayout from '@/components/layouts/header';
 import ModifyUserEntry from '@/components/modifyUserEntry';
 import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { useInfiniteScroll } from '@/components/useInfiniteScroll';
+import { useMediaTypeFilters } from '@/components/useMediaTypeFilters';
 import { UserEntryCardObject } from '@/components/userEntryCard';
+import { mediaTypeFiltersToCategories } from '@/lib/mediaTypeFilters';
 import { api } from '@/trpc/react';
-import { Entry, UserList } from '@/prisma/generated/browser';
+import { UserList } from '@/prisma/generated/browser';
 import { Loader2 } from 'lucide-react';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { toast } from 'sonner';
 import { SidebarButtons } from '../_components/sidebar';
-import { FilterView, shouldBeFiltered } from './_components/FilterView';
-import { ExtendedUserEntry, useDashboardStore } from './state';
+import { FilterView } from './_components/FilterView';
+import { useDashboardStore } from './state';
 import { useDebounceValue } from 'usehooks-ts';
 import { cn } from '@/lib/utils';
 
 const Page = () => {
-  const { data, isPending: dataIsPending } = api.dashboard.get.useQuery();
-
-  if (dataIsPending) {
-    return (
-      <div className="flex h-full items-center justify-center">
-        <Loader2 className="size-4 animate-spin" />
-      </div>
-    );
-  }
-
-  if (!data) {
-    return <div>Error fetching data</div>;
-  }
-
-  return (
-    <Dashboard
-      userEntries={data.userEntries}
-      topRatedNotCompleted={data.topRated}
-      topCompletedNotCompleted={data.topCompleted}
-    />
-  );
+  return <Dashboard />;
 };
 
-const Dashboard = ({
-  userEntries: originalUserEntries,
-}: {
-  userEntries: ExtendedUserEntry[];
-  topCompletedNotCompleted: Entry[];
-  topRatedNotCompleted: Entry[];
-}) => {
+const Dashboard = () => {
   const {
     filterStatus,
-    filterCategories,
     filterTitle,
     filterStyle,
     filterRatingRange,
@@ -62,40 +38,56 @@ const Dashboard = ({
     selectedUserEntry,
     setSelectedUserEntry,
   } = useDashboardStore();
-
-  useEffect(() => {
-    setUserEntries(originalUserEntries);
-  }, [originalUserEntries]);
+  const { filters: mediaTypeFilters } = useMediaTypeFilters();
 
   const debouncedFilterTitle = useDebounceValue(filterTitle, 200);
+  const entries = api.dashboard.getEntries.useInfiniteQuery(
+    {
+      limit: 60,
+      filterStatus,
+      filterCategories: mediaTypeFiltersToCategories(mediaTypeFilters),
+      filterTitle: debouncedFilterTitle[0],
+      filterStyle,
+      filterRatingRange,
+    },
+    {
+      initialCursor: 0,
+      getNextPageParam: lastPage => lastPage.nextCursor,
+    }
+  );
+  const pagedUserEntries = useMemo(
+    () => entries.data?.pages.flatMap(page => page.userEntries) ?? [],
+    [entries.data]
+  );
 
-  const search = api.entries.search.useQuery({
-    query: debouncedFilterTitle[0],
-    limit: 999,
-    categories: filterCategories,
+  useEffect(() => {
+    setUserEntries(pagedUserEntries);
+  }, [pagedUserEntries, setUserEntries]);
+
+  const loadMore = useCallback(() => {
+    void entries.fetchNextPage();
+  }, [entries]);
+
+  useInfiniteScroll({
+    enabled: !!entries.hasNextPage && !entries.isFetchingNextPage,
+    onLoadMore: loadMore,
   });
 
-  const userEntriesRef = useRef(null);
+  const userEntriesRef = useRef<HTMLDivElement>(null);
   const [userEntriesWidth, setUserEntriesWidth] = useState(0);
 
   useEffect(() => {
-    setUserEntriesWidth((userEntriesRef.current as any).clientWidth ?? 0);
     const handleResize = () =>
-      setUserEntriesWidth((userEntriesRef.current as any).clientWidth ?? 0);
+      setUserEntriesWidth(userEntriesRef.current?.clientWidth ?? 0);
+    const animationFrame = window.requestAnimationFrame(handleResize);
     window.addEventListener('resize', handleResize);
-    return () => window.removeEventListener('resize', handleResize);
+    return () => {
+      window.cancelAnimationFrame(animationFrame);
+      window.removeEventListener('resize', handleResize);
+    };
   }, []);
 
   // Lists
-
-  useEffect(() => {
-    if (selectedUserEntry === undefined) {
-      return;
-    }
-
-    fetchUserListsWithEntry(selectedUserEntry ?? 0);
-  }, [selectedUserEntry]);
-
   const [listsWithUserEntry, setListsWithUserEntry] = useState<UserList[]>([]);
   const [userLists, setUserLists] = useState<UserList[]>([]);
 
@@ -131,51 +123,17 @@ const Dashboard = ({
     }
   }, []);
 
-  // Memoize expensive filter and sort operations
-  const filteredAndSortedEntries = useMemo(() => {
-    if (!userEntries) return [];
+  useEffect(() => {
+    if (selectedUserEntry === undefined) {
+      return;
+    }
 
-    const filterState = { filterStatus, filterRatingRange, filterCategories };
+    const animationFrame = window.requestAnimationFrame(() => {
+      fetchUserListsWithEntry(selectedUserEntry ?? 0);
+    });
 
-    return userEntries
-      .filter(userEntry => {
-        if (search.data && filterTitle !== '') {
-          const entry = search.data.find(e => e.id === userEntry.entryId);
-          if (!entry) return false;
-          return (entry._rankingScore ?? 0) > 0.5;
-        }
-        if (shouldBeFiltered(userEntry, filterState)) return false;
-        return true;
-      })
-      .sort((a, b) => {
-        if (filterTitle !== '' && search.data && !search.isPending) {
-          const aEntry = search.data.find(e => e.id === a.entryId);
-          const bEntry = search.data.find(e => e.id === b.entryId);
-          return (
-            (bEntry ? (bEntry._rankingScore ?? 0) : 0) -
-            (aEntry ? (aEntry._rankingScore ?? 0) : 0)
-          );
-        }
-
-        switch (filterStyle) {
-          case 'rating-desc':
-            if (b.rating === a.rating) return b.id - a.id;
-            return (b.rating ?? -1) - (a.rating ?? -1);
-          case 'rating-asc':
-            if (b.rating === a.rating) return b.id - a.id;
-            return (a.rating ?? 101) - (b.rating ?? 101);
-          case 'az':
-            return a.entry.originalTitle.localeCompare(b.entry.originalTitle);
-          case 'completed':
-            if (a.watchedAt === null || b.watchedAt === null) return 0;
-            return b.watchedAt.getTime() - a.watchedAt.getTime();
-          case 'updated':
-            return (
-              new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-            );
-        }
-      });
-  }, [userEntries, search.data, search.isPending, filterTitle, filterStyle, filterStatus, filterRatingRange, filterCategories]);
+    return () => window.cancelAnimationFrame(animationFrame);
+  }, [fetchUserListsWithEntry, selectedUserEntry]);
 
   // Memoize click handler to prevent recreation on each render
   const handleCardClick = useCallback(
@@ -198,18 +156,18 @@ const Dashboard = ({
       >
         <FilterView className="flex pb-4 lg:hidden" />
         <div
-          className="grid h-fit w-fit max-w-[1024px] gap-2"
+          className="grid h-fit w-fit max-w-5xl gap-2"
           style={{
             gridTemplateColumns: `repeat(${Math.max(3, Math.floor(Math.min(userEntriesWidth, 1024) / 148))}, minmax(0, 1fr))`,
           }}
         >
-          {filteredAndSortedEntries.map(userEntry => (
+          {userEntries.map(userEntry => (
             <UserEntryCardObject
               key={'ue' + userEntry.id}
               userEntry={userEntry}
               onClick={() => handleCardClick(userEntry.id)}
               className={cn(
-                'lg:min-w-[132px]',
+                'lg:min-w-33',
                 userEntry.status === 'planning' && filterStatus === 'all'
                   ? 'opacity-70'
                   : 'opacity-100'
@@ -217,6 +175,29 @@ const Dashboard = ({
             />
           ))}
         </div>
+        {entries.isLoading && (
+          <div className="flex h-32 items-center justify-center gap-3">
+            <Loader2 className="size-4 animate-spin" /> Loading entries...
+          </div>
+        )}
+        {!entries.isLoading && userEntries.length === 0 && (
+          <div className="flex h-32 items-center justify-center text-sm text-base-500">
+            No entries found
+          </div>
+        )}
+        {entries.isFetchingNextPage && (
+          <div className="flex items-center justify-center gap-3 py-12">
+            <Loader2 className="size-4 animate-spin" /> Loading more entries...
+          </div>
+        )}
+        {!entries.hasNextPage && userEntries.length > 0 && (
+          <div className="relative py-12">
+            <div className="h-px w-full bg-base-200"></div>
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-base-100 px-4 text-center font-semibold">
+              You have reached the end.
+            </div>
+          </div>
+        )}
       </div>
 
       <Dialog

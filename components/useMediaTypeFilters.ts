@@ -5,8 +5,10 @@ import {
   MediaTypeFilters,
 } from '@/lib/mediaTypeFilters';
 import { api } from '@/trpc/react';
+import { useRouter } from 'next/navigation';
 
 export const useMediaTypeFilters = () => {
+  const router = useRouter();
   const utils = api.useUtils();
   const query = api.settings.getMediaTypeFilters.useQuery();
   const mutation = api.settings.setMediaTypeFilters.useMutation({
@@ -28,6 +30,7 @@ export const useMediaTypeFilters = () => {
     },
     onSettled: () => {
       utils.settings.getMediaTypeFilters.invalidate();
+      router.refresh();
     },
   });
 

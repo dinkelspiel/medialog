@@ -1,6 +1,6 @@
 'use client';
 
-import { Book, Film, Loader2, Tv } from 'lucide-react';
+import { Loader2 } from 'lucide-react';
 import { Fragment, ReactNode, useState } from 'react';
 import {
   Dialog,
@@ -10,7 +10,6 @@ import {
   DialogTrigger,
 } from './ui/dialog';
 import { Input } from './ui/input';
-import { Toggle } from './ui/toggle';
 
 import { ExtendedUserEntry } from '@/app/(app)/dashboard/state';
 import { cn } from '@/lib/utils';
@@ -25,10 +24,7 @@ import { api } from '@/trpc/react';
 import { getUserTitleFromEntry } from '@/server/api/routers/dashboard_';
 import ContainedModifyUserEntry from './containedModifyUserEntry';
 import InLibrary from './inLibrary';
-import {
-  MediaTypeFilters,
-  mediaTypeFiltersToCategories,
-} from '@/lib/mediaTypeFilters';
+import { mediaTypeFiltersToCategories } from '@/lib/mediaTypeFilters';
 import { useMediaTypeFilters } from './useMediaTypeFilters';
 
 const AddLog = ({
@@ -147,61 +143,6 @@ const AddLog = ({
   );
 };
 
-const CategoryToggles = ({
-  queryCategories,
-  setQueryCategories,
-}: {
-  queryCategories: MediaTypeFilters;
-  setQueryCategories: (filters: MediaTypeFilters) => void;
-}) => {
-  return (
-    <>
-      <Toggle
-        size={'sm'}
-        className="w-full"
-        pressed={queryCategories.movie}
-        onPressedChange={(e: boolean) =>
-          setQueryCategories({
-            ...queryCategories,
-            movie: e,
-          })
-        }
-      >
-        <Film className="size-4" />
-        Movies
-      </Toggle>
-      <Toggle
-        size={'sm'}
-        className="w-full"
-        pressed={queryCategories.book}
-        onPressedChange={(e: boolean) =>
-          setQueryCategories({
-            ...queryCategories,
-            book: e,
-          })
-        }
-      >
-        <Book className="size-4" />
-        Books
-      </Toggle>
-      <Toggle
-        size={'sm'}
-        className="w-full whitespace-nowrap"
-        pressed={queryCategories.series}
-        onPressedChange={(e: boolean) =>
-          setQueryCategories({
-            ...queryCategories,
-            series: e,
-          })
-        }
-      >
-        <Tv className="size-4" />
-        Tv Series
-      </Toggle>
-    </>
-  );
-};
-
 const AddLogContent = ({
   addAction,
   title,
@@ -210,8 +151,7 @@ const AddLogContent = ({
   title: string;
 }) => {
   const isDesktop = useMediaQuery('(min-width: 1024px)');
-  const { filters: queryCategories, setFilters: setQueryCategories } =
-    useMediaTypeFilters();
+  const { filters: queryCategories } = useMediaTypeFilters();
   const [queryTitle, setQueryTitle] = useState('');
 
   const generateQueryCategories = (): string[] => {
@@ -284,25 +224,11 @@ const AddLogContent = ({
         <DialogTitle>{title}</DialogTitle>
       </DialogHeader>
       <div className="flex flex-col gap-2">
-        <div className="flex flex-row gap-2">
-          <Input
-            placeholder="Search Media"
-            value={queryTitle}
-            onChange={e => setQueryTitle(e.target.value)}
-          />
-          <div className="hidden flex-row gap-2 lg:flex">
-            <CategoryToggles
-              queryCategories={queryCategories}
-              setQueryCategories={setQueryCategories}
-            />
-          </div>
-        </div>
-        <div className="flex flex-row gap-2 lg:hidden">
-          <CategoryToggles
-            queryCategories={queryCategories}
-            setQueryCategories={setQueryCategories}
-          />
-        </div>
+        <Input
+          placeholder="Search Media"
+          value={queryTitle}
+          onChange={e => setQueryTitle(e.target.value)}
+        />
       </div>
       {!queryIsLoading &&
         !queryIsError &&

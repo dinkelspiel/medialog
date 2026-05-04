@@ -1,6 +1,5 @@
-import { getDefaultWhereForTranslations } from '@/server/api/routers/dashboard_';
-import { validateSessionToken } from '@/server/auth/validateSession';
 import prisma from '@/server/db';
+import { Category } from '@/prisma/generated/browser';
 
 export type Lists = {
   id: number;
@@ -9,8 +8,10 @@ export type Lists = {
   mediaCount: number;
 }[];
 
-export const getUserLists = async (userId: number): Promise<Lists> => {
-  const authUser = await validateSessionToken();
+export const getUserLists = async (
+  userId: number,
+  categories: Category[]
+): Promise<Lists> => {
   const lists = await prisma.userList.findMany({
     where: {
       userId,
@@ -21,6 +22,13 @@ export const getUserLists = async (userId: number): Promise<Lists> => {
     take: 10,
     include: {
       entries: {
+        where: {
+          entry: {
+            category: {
+              in: categories,
+            },
+          },
+        },
         include: {
           entry: true,
         },

@@ -8,30 +8,36 @@ import {
 } from '@/components/ui/tooltip';
 import { SafeUser } from '@/server/auth/validateSession';
 import StyleHeader from '@/components/styleHeader';
+import { Category } from '@/prisma/generated/browser';
 
 const ActivityHistory = async ({
   profileUser,
+  categories,
 }: {
   profileUser: NonNullable<SafeUser>;
+  categories: Category[];
 }) => {
-  const entriesPerDay: {
-    date: string;
-    count: bigint;
-  }[] = await prisma.$queryRawUnsafe(`
-    SELECT 
-      DATE(createdAt) as date,
-      COUNT(*) as count
-    FROM UserActivity
-    WHERE 
-      userId = '${profileUser.id}'
-      AND createdAt >= CURDATE() - INTERVAL 200 DAY
-    GROUP BY DATE(createdAt)
-    ORDER BY date ASC;
-  `);
+  const activity = await prisma.userActivity.findMany({
+    where: {
+      userId: profileUser.id,
+      createdAt: {
+        gte: subDays(new Date(), 200),
+      },
+      entry: {
+        category: {
+          in: categories,
+        },
+      },
+    },
+    select: {
+      createdAt: true,
+    },
+  });
 
   const countMap: Record<string, number> = {};
-  for (const entry of entriesPerDay) {
-    countMap[new Date(entry.date).toDateString()] = Number(entry.count);
+  for (const item of activity) {
+    const date = item.createdAt.toDateString();
+    countMap[date] = (countMap[date] ?? 0) + 1;
   }
 
   const days = Array.from({ length: 200 }, (_, i) => {

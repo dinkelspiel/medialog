@@ -8,58 +8,206 @@ import { getDefaultWhereForTranslations } from './dashboard_';
 import { validateSessionTokenFromHeaders } from '@/server/auth/validateSession';
 import { TRPCError } from '@trpc/server';
 
+const discoverLibraryStatusSchema = z.enum([
+  'all',
+  'in-library',
+  'not-in-library',
+]);
+
+const getAverageRating = (userEntries: UserEntry[]) => {
+  const ratedUserEntries = userEntries.filter(
+    userEntry => userEntry.rating !== null
+  );
+  const averageRating =
+    ratedUserEntries.reduce((sum, userEntry) => sum + userEntry.rating!, 0) /
+    ratedUserEntries.length;
+
+  return {
+    averageRating: Number.isNaN(averageRating) ? 0 : averageRating,
+    ratingCount: ratedUserEntries.length,
+  };
+};
+
+const getLibraryWhere = (
+  userId: number,
+  libraryStatus: z.infer<typeof discoverLibraryStatusSchema>
+) => {
+  if (libraryStatus === 'in-library') {
+    return {
+      some: {
+        userId,
+      },
+    };
+  }
+
+  if (libraryStatus === 'not-in-library') {
+    return {
+      none: {
+        userId,
+      },
+    };
+  }
+
+  return undefined;
+};
+
+const isRatingInRange = (
+  averageRating: number,
+  ratingRange: [number, number]
+) => averageRating >= ratingRange[0] && averageRating <= ratingRange[1];
+
 export const entriesRouter = createTRPCRouter({
   discover: protectedProcedure
     .input(
       z.object({
+        query: z.string().default(''),
         categories: z.array(
           z.string().refine(e => ['Book', 'Movie', 'Series'].includes(e))
         ),
         sort: z.enum(['az', 'rating']),
-        limit: z.number().default(120),
+        libraryStatus: discoverLibraryStatusSchema.default('all'),
+        ratingRange: z.tuple([z.number(), z.number()]).default([0, 100]),
+        cursor: z.number().nullish(),
+        limit: z.number().default(60),
       })
     )
     .query(async ({ input, ctx }) => {
-      const entries = await prisma.entry.findMany({
-        where: {
-          category: {
-            in: input.categories as Category[],
-          },
+      const offset = input.cursor ?? 0;
+      const query = input.query.trim();
+      const libraryWhere = getLibraryWhere(ctx.user.id, input.libraryStatus);
+      const entryWhere = {
+        category: {
+          in: input.categories as Category[],
         },
-        include: {
-          translations: getDefaultWhereForTranslations(ctx.user),
-          userEntries: true,
-        },
-        orderBy: input.sort === 'az' ? { originalTitle: 'asc' } : undefined,
-        take: input.sort === 'az' ? input.limit : undefined,
-      });
+        userEntries: libraryWhere,
+        OR:
+          query === ''
+            ? undefined
+            : [
+                {
+                  originalTitle: {
+                    contains: query,
+                  },
+                },
+                {
+                  translations: {
+                    some: {
+                      name: {
+                        contains: query,
+                      },
+                    },
+                  },
+                },
+              ],
+      };
 
-      return entries
-        .map(entry => {
-          const ratedUserEntries = entry.userEntries.filter(
-            userEntry => userEntry.rating !== null
-          );
-          const averageRating =
-            ratedUserEntries.reduce((sum, userEntry) => sum + userEntry.rating!, 0) /
-            ratedUserEntries.length;
+      if (input.sort === 'rating') {
+        const ratings = await prisma.userEntry.groupBy({
+          by: ['entryId'],
+          where: {
+            rating: {
+              not: null,
+            },
+            entry: entryWhere,
+          },
+          _avg: {
+            rating: true,
+          },
+          _count: {
+            rating: true,
+          },
+          orderBy: [
+            {
+              _avg: {
+                rating: 'desc',
+              },
+            },
+            {
+              _count: {
+                rating: 'desc',
+              },
+            },
+          ],
+        });
+        const filteredRatings = ratings.filter(rating =>
+          isRatingInRange(rating._avg.rating ?? 0, input.ratingRange)
+        );
+        const pagedRatings = filteredRatings.slice(offset, offset + input.limit + 1);
+        const entries = await prisma.entry.findMany({
+          where: {
+            id: {
+              in: pagedRatings.map(rating => rating.entryId),
+            },
+          },
+          include: {
+            translations: getDefaultWhereForTranslations(ctx.user),
+            userEntries: true,
+          },
+        });
+        const entryMap = new Map(entries.map(entry => [entry.id, entry]));
+        const items = pagedRatings.slice(0, input.limit).map(rating => {
+          const entry = entryMap.get(rating.entryId)!;
 
           return {
             ...entry,
-            averageRating: Number.isNaN(averageRating) ? 0 : averageRating,
-            ratingCount: ratedUserEntries.length,
+            averageRating: rating._avg.rating ?? 0,
+            ratingCount: rating._count.rating,
             userEntries: entry.userEntries.filter(
               userEntry => userEntry.userId === ctx.user.id
             ),
           };
-        })
-        .sort((a, b) => {
-          if (input.sort === 'az') return 0;
-          if (b.averageRating === a.averageRating) {
-            return b.ratingCount - a.ratingCount;
-          }
-          return b.averageRating - a.averageRating;
-        })
-        .slice(0, input.limit);
+        });
+
+        return {
+          items,
+          nextCursor:
+            pagedRatings.length > input.limit ? offset + input.limit : undefined,
+        };
+      }
+
+      const shouldFilterRating =
+        input.ratingRange[0] !== 0 || input.ratingRange[1] !== 100;
+      const entries = await prisma.entry.findMany({
+        where: entryWhere,
+        include: {
+          translations: getDefaultWhereForTranslations(ctx.user),
+          userEntries: true,
+        },
+        orderBy: {
+          originalTitle: 'asc',
+        },
+        skip: shouldFilterRating ? undefined : offset,
+        take: shouldFilterRating ? undefined : input.limit + 1,
+      });
+      const entriesWithRating = entries.map(entry => {
+        const rating = getAverageRating(entry.userEntries);
+
+        return {
+          ...entry,
+          ...rating,
+          userEntries: entry.userEntries.filter(
+            userEntry => userEntry.userId === ctx.user.id
+          ),
+        };
+      });
+      const filteredEntries = shouldFilterRating
+        ? entriesWithRating.filter(entry =>
+            isRatingInRange(entry.averageRating, input.ratingRange)
+          )
+        : entriesWithRating;
+      const items = filteredEntries.slice(
+        shouldFilterRating ? offset : 0,
+        (shouldFilterRating ? offset : 0) + input.limit
+      );
+
+      return {
+        items,
+        nextCursor:
+          filteredEntries.length >
+          (shouldFilterRating ? offset : 0) + input.limit
+            ? offset + input.limit
+            : undefined,
+      };
     }),
   search: protectedProcedure
     .input(

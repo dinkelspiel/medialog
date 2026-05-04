@@ -26,6 +26,7 @@ import { DialogHeader, DialogTitle } from "./ui/dialog";
 import { Drawer, DrawerContent, DrawerTrigger } from "./ui/drawer";
 import { Feedback } from "@/app/(app)/_components/feedback";
 import { IslandDialog } from "./islands/islands";
+import { SidebarCategoryFilters } from "@/app/(app)/_components/sidebar";
 
 const SettingsButton = memo(function SettingsButton({
   open,
@@ -138,6 +139,7 @@ export const Header = ({
             </DialogHeader>
             <div className="flex flex-col gap-2 p-4">{sidebarContent}</div>
             <div className="flex flex-col gap-2 p-4">
+              <SidebarCategoryFilters />
               <div className="text-sm font-normal text-base-400">
                 {process.env.GIT_COMMIT
                   ? `${process.env.GIT_COMMIT}@${process.env.GIT_BRANCH}`

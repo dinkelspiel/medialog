@@ -2,14 +2,22 @@
 
 import Activity from '@/components/activity';
 import StyleHeader from '@/components/styleHeader';
+import { Category } from '@/prisma/generated/browser';
 import { api } from '@/trpc/react';
 import { Loader2 } from 'lucide-react';
 import { useEffect } from 'react';
 
-const RecentActivity = ({ userId }: { userId: number }) => {
+const RecentActivity = ({
+  userId,
+  categories,
+}: {
+  userId: number;
+  categories: Category[];
+}) => {
   const activity = api.community.getUserActivity.useInfiniteQuery(
     {
       userId,
+      categories,
     },
     {
       initialCursor: null,

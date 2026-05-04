@@ -3,21 +3,24 @@
 import { EntryRedirect, useEntryIsland } from '@/app/(app)/_components/EntryIslandContext';
 import { Header } from '@/components/header';
 import HeaderLayout from '@/components/layouts/header';
+import { useInfiniteScroll } from '@/components/useInfiniteScroll';
+import { useMediaTypeFilters } from '@/components/useMediaTypeFilters';
 import { UserEntryCardObject } from '@/components/userEntryCard';
+import { mediaTypeFiltersToCategories } from '@/lib/mediaTypeFilters';
 import { cn } from '@/lib/utils';
 import { api } from '@/trpc/react';
 import { Loader2 } from 'lucide-react';
 import { useParams } from 'next/navigation';
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDebounceValue } from 'usehooks-ts';
 import { SidebarButtons } from '../../../_components/sidebar';
-import { FilterView, shouldBeFiltered } from '../../../dashboard/_components/FilterView';
-import { ExtendedUserEntry, useDashboardStore } from '../../../dashboard/state';
+import { FilterView } from '../../../dashboard/_components/FilterView';
+import { useDashboardStore } from '../../../dashboard/state';
 
 const Page = () => {
   const params = useParams<{ username: string }>();
   const username = decodeURIComponent(params?.username ?? '');
-  const { data, isPending: dataIsPending } = api.dashboard.getByUsername.useQuery({
+  const { data, isPending: dataIsPending } = api.dashboard.getUserByUsername.useQuery({
     username,
   });
 
@@ -33,20 +36,13 @@ const Page = () => {
     return <div>User not found</div>;
   }
 
-  return <Watchlist userEntries={data.userEntries} username={data.user.username} />;
+  return <Watchlist username={data.username} />;
 };
 
-const Watchlist = ({
-  userEntries: originalUserEntries,
-  username,
-}: {
-  userEntries: ExtendedUserEntry[];
-  username: string;
-}) => {
+const Watchlist = ({ username }: { username: string }) => {
   const entryIsland = useEntryIsland();
   const {
     filterStatus,
-    filterCategories,
     filterTitle,
     filterStyle,
     filterRatingRange,
@@ -55,18 +51,44 @@ const Watchlist = ({
     selectedUserEntry,
     setSelectedUserEntry,
   } = useDashboardStore();
-
-  useEffect(() => {
-    setUserEntries(originalUserEntries);
-    setSelectedUserEntry(undefined);
-  }, [originalUserEntries, setSelectedUserEntry, setUserEntries]);
+  const { filters: mediaTypeFilters } = useMediaTypeFilters();
 
   const debouncedFilterTitle = useDebounceValue(filterTitle, 200);
+  const entries = api.dashboard.getEntriesByUsername.useInfiniteQuery(
+    {
+      username,
+      limit: 60,
+      filterStatus,
+      filterCategories: mediaTypeFiltersToCategories(mediaTypeFilters),
+      filterTitle: debouncedFilterTitle[0],
+      filterStyle,
+      filterRatingRange,
+    },
+    {
+      initialCursor: 0,
+      getNextPageParam: lastPage => lastPage?.nextCursor,
+    }
+  );
+  const pagedUserEntries = useMemo(
+    () => entries.data?.pages.flatMap(page => page?.userEntries ?? []) ?? [],
+    [entries.data]
+  );
 
-  const search = api.entries.search.useQuery({
-    query: debouncedFilterTitle[0],
-    limit: 999,
-    categories: filterCategories,
+  useEffect(() => {
+    setUserEntries(pagedUserEntries);
+  }, [pagedUserEntries, setUserEntries]);
+
+  useEffect(() => {
+    setSelectedUserEntry(undefined);
+  }, [setSelectedUserEntry, username]);
+
+  const loadMore = useCallback(() => {
+    void entries.fetchNextPage();
+  }, [entries]);
+
+  useInfiniteScroll({
+    enabled: !!entries.hasNextPage && !entries.isFetchingNextPage,
+    onLoadMore: loadMore,
   });
 
   const userEntriesRef = useRef<HTMLDivElement>(null);
@@ -84,51 +106,6 @@ const Watchlist = ({
       window.removeEventListener('resize', handleResize);
     };
   }, []);
-
-  const filteredAndSortedEntries = useMemo(() => {
-    if (!userEntries) return [];
-
-    const filterState = { filterStatus, filterRatingRange, filterCategories };
-
-    return userEntries
-      .filter(userEntry => {
-        if (search.data && filterTitle !== '') {
-          const entry = search.data.find(e => e.id === userEntry.entryId);
-          if (!entry) return false;
-          return (entry._rankingScore ?? 0) > 0.5;
-        }
-        if (shouldBeFiltered(userEntry, filterState)) return false;
-        return true;
-      })
-      .sort((a, b) => {
-        if (filterTitle !== '' && search.data && !search.isPending) {
-          const aEntry = search.data.find(e => e.id === a.entryId);
-          const bEntry = search.data.find(e => e.id === b.entryId);
-          return (
-            (bEntry ? (bEntry._rankingScore ?? 0) : 0) -
-            (aEntry ? (aEntry._rankingScore ?? 0) : 0)
-          );
-        }
-
-        switch (filterStyle) {
-          case 'rating-desc':
-            if (b.rating === a.rating) return b.id - a.id;
-            return (b.rating ?? 0) - (a.rating ?? 0);
-          case 'rating-asc':
-            if (b.rating === a.rating) return b.id - a.id;
-            return (a.rating === 0 || a.rating === null ? 999 : a.rating) - (b.rating ?? 0);
-          case 'az':
-            return a.entry.originalTitle.localeCompare(b.entry.originalTitle);
-          case 'completed':
-            if (a.watchedAt === null || b.watchedAt === null) return 0;
-            return b.watchedAt.getTime() - a.watchedAt.getTime();
-          case 'updated':
-            return (
-              new Date(b.updatedAt).getTime() - new Date(a.updatedAt).getTime()
-            );
-        }
-      });
-  }, [userEntries, search.data, search.isPending, filterTitle, filterStyle, filterStatus, filterRatingRange, filterCategories]);
 
   useEffect(() => {
     if (selectedUserEntry === undefined) {
@@ -161,7 +138,7 @@ const Watchlist = ({
             gridTemplateColumns: `repeat(${Math.max(3, Math.floor(Math.min(userEntriesWidth, 1024) / 148))}, minmax(0, 1fr))`,
           }}
         >
-          {filteredAndSortedEntries.map(userEntry => (
+          {userEntries.map(userEntry => (
             <EntryRedirect
               key={'ue' + userEntry.id}
               entryId={userEntry.entry.id}
@@ -180,6 +157,29 @@ const Watchlist = ({
               </EntryRedirect>
           ))}
         </div>
+        {entries.isLoading && (
+          <div className="flex h-32 items-center justify-center gap-3">
+            <Loader2 className="size-4 animate-spin" /> Loading entries...
+          </div>
+        )}
+        {!entries.isLoading && userEntries.length === 0 && (
+          <div className="flex h-32 items-center justify-center text-sm text-base-500">
+            No entries found
+          </div>
+        )}
+        {entries.isFetchingNextPage && (
+          <div className="flex items-center justify-center gap-3 py-12">
+            <Loader2 className="size-4 animate-spin" /> Loading more entries...
+          </div>
+        )}
+        {!entries.hasNextPage && userEntries.length > 0 && (
+          <div className="relative py-12">
+            <div className="h-px w-full bg-base-200"></div>
+            <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 bg-base-100 px-4 text-center font-semibold">
+              You have reached the end.
+            </div>
+          </div>
+        )}
       </div>
     </HeaderLayout>
   );

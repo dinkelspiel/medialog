@@ -1,4 +1,4 @@
-import { Category, Entry } from '@/prisma/generated/browser';
+import { Category } from '@/prisma/generated/browser';
 import { Meilisearch } from 'meilisearch';
 import prisma from './db';
 import { validateSessionTokenFromHeaders } from './auth/validateSession';
@@ -52,7 +52,8 @@ export const searchEntries = async (
   query: string,
   limit: number,
   categories: Category[],
-  headers: Headers
+  headers: Headers,
+  offset = 0
 ) => {
   const authUser = await validateSessionTokenFromHeaders(headers);
   const index = meilisearchClient.index<MeilisearchEntry>(
@@ -66,9 +67,10 @@ export const searchEntries = async (
   const searchEntries = await index.search(query, {
     filter: [categoryFilter],
     limit,
+    offset,
     showRankingScore: true,
   });
-  let prismaEntries = await prisma.entry.findMany({
+  const prismaEntries = await prisma.entry.findMany({
     where: {
       id: {
         in: searchEntries.hits.map(e => e.id),
